@@ -1,0 +1,524 @@
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Satoshi', sans-serif;
+    }
+
+    :root {
+        --primary-color: #2C3E50;
+        --secondary-color: #3498db;
+        --accent-color: #2ecc71;
+        --gradient-start: #2C3E50;
+        --gradient-end: #1a2530;
+    }
+
+    body {
+        background-color: #FFFFFF;
+        min-height: 100vh;
+        display: flex;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .split-container {
+        display: flex;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .left-side {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #FFFFFF;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .left-side::before {
+        content: '';
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, rgba(52, 152, 219, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
+        animation: gradientFlow 15s ease infinite;
+        z-index: 0;
+    }
+
+    @keyframes gradientFlow {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .right-side {
+        flex: 1;
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .flowing-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        filter: blur(20px);
+        animation: floatShape 8s infinite ease-in-out;
+    }
+
+    .shape:nth-child(1) {
+        width: 300px;
+        height: 300px;
+        top: 20%;
+        left: 20%;
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+        width: 200px;
+        height: 200px;
+        top: 60%;
+        left: 70%;
+        background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+        animation-delay: 2s;
+    }
+
+    .shape:nth-child(3) {
+        width: 150px;
+        height: 150px;
+        top: 30%;
+        left: 60%;
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        animation-delay: 4s;
+    }
+
+    @keyframes floatShape {
+        0%, 100% {
+            transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        50% {
+            transform: translate(20px, -20px) rotate(180deg) scale(1.1);
+        }
+    }
+
+    .right-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #FFFFFF;
+    }
+
+    .right-content h2 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.8));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .right-content p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 400px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .payment-icons {
+        display: flex;
+        gap: 2.5rem;
+        margin-top: 3rem;
+        justify-content: center;
+    }
+
+    .payment-icon {
+        font-size: 2.5rem;
+        color: #FFFFFF;
+        opacity: 0.8;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .payment-icon:hover {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+
+    .payment-icon::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform 0.4s ease;
+    }
+
+    .payment-icon:hover::after {
+        transform: scale(1.5);
+    }
+
+    .login-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+        width: 100%;
+        max-width: 500px;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+    }
+
+    .logo {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .logo h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .logo p {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        color: var(--primary-color);
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 1.2rem;
+        border: 2px solid rgba(44, 62, 80, 0.1);
+        border-radius: 12px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 1.2rem;
+        top: 3.2rem;
+        cursor: pointer;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+        color: var(--secondary-color);
+    }
+
+    .remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .remember-me input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid var(--primary-color);
+        appearance: none;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .remember-me input[type="checkbox"]:checked {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .remember-me input[type="checkbox"]:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .forgot-password {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .forgot-password:hover {
+        color: var(--accent-color);
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .login-button:active {
+        transform: translateY(0);
+    }
+
+    .login-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transition: 0.5s;
+    }
+
+    .login-button:hover::before {
+        left: 100%;
+    }
+
+    .signup-link {
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+    .signup-link a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .signup-link a:hover {
+        color: var(--accent-color);
+    }
+
+    .security-message {
+        text-align: center;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin: 1.5rem 0;
+        opacity: 0.8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .security-message i {
+        color: var(--accent-color);
+    }
+
+    @media (max-width: 1024px) {
+        .split-container {
+            flex-direction: column;
+        }
+        
+        .left-side, .right-side {
+            flex: none;
+            height: 50vh;
+        }
+
+        .right-content h2 {
+            font-size: 2.5rem;
+        }
+
+        .payment-icons {
+            gap: 2rem;
+        }
+    }
+</style>
+<div class="split-container">
+    <div class="left-side">
+        <div class="login-container">
+            <div class="logo">
+                <h1>Halaxa Portal</h1>
+                <p>Secure login to your Halaxa dashboard</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                <div class="security-message">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>256-bit encrypted login</span>
+                </div>
+                <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="login-button" id="loginButton">Log In</button>
+                <div class="error-message" id="generalError"></div>
+                <div class="signup-link">
+                    Don't have an account? <a href="#">Sign up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="right-side">
+        <div class="flowing-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="right-content">
+            <h2>Welcome to Halaxa</h2>
+            <p>Experience the future of digital payments with our advanced crypto processing platform. Secure, instant, and seamless transactions for your business.</p>
+            <div class="payment-icons">
+                <i class="fab fa-usd payment-icon"></i>
+                <i class="fas fa-exchange-alt payment-icon"></i>
+                <i class="fas fa-shield-alt payment-icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password visibility toggle
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+
+    passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        passwordToggle.classList.toggle('fa-eye');
+        passwordToggle.classList.toggle('fa-eye-slash');
+    });
+</script>
+
+<script>
+    // Function to handle login form submission
+    async function handleLogin(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('generalError');
+        
+        try {
+            const response = await fetch('https://halaxa-backend.onrender.com/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Store tokens and user data
+                localStorage.setItem('token', data.accessToken);
+                localStorage.setItem('refreshToken', data.refreshToken);
+                localStorage.setItem('sellerId', data.user.id);
+                localStorage.setItem('isPreview', 'false');
+                
+                // Redirect to dashboard with seller ID
+                window.location.href = `https://halaxapay.netlify.app?seller_id=${data.user.id}`;
+            } else {
+                errorMessage.textContent = data.error || 'Login failed. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.style.display = 'block';
+        }
+    }
+
+    // Add event listener to login form
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+</script> 

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaxa Dashboard</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Satoshi Font -->
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+    <!-- Google Fonts for Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include moment.js for date handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- SPA Styles -->
+    <link rel="stylesheet" href="spa.css">
+    <style>
+        /* Common styles from all pages */
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498db;
+            --accent-color: #2ecc71;
+            --gradient-start: #2C3E50;
+            --gradient-end: #1a2530;
+            --primary-bg: #f8f9fa;
+            --secondary-bg: #e9ecef;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary-text: #2C3E50;
+            --secondary-text: #5a6a7b;
+            --border-color: rgba(44, 62, 80, 0.1);
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --border-radius: 12px;
+            --sidebar-width: 240px;
+            --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Satoshi', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            display: flex;
+            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Navigation styles */
+        .nav-container {
+            width: var(--sidebar-width);
+            background: linear-gradient(145deg, var(--gradient-start), var(--gradient-end));
+            color: #E5E7EB;
+            padding: var(--spacing-md) var(--spacing-sm);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+            position: relative;
+            z-index: 3;
+        }
+
+        .nav-header {
+            padding-bottom: var(--spacing-md);
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+        }
+
+        .nav-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .nav-item i {
+            margin-right: var(--spacing-sm);
+            font-size: 1rem;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex-grow: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Page content */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Subscription badge */
+        .subscription-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .subscription-badge.pro {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .subscription-badge.basic {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-header">
+            <h2>Halaxa</h2>
+            <div id="subscriptionBadge" class="subscription-badge"></div>
+        </div>
+        <div class="nav-items">
+            <div class="nav-item" data-page="home">
+                <i class="fas fa-home"></i> Home
+            </div>
+            <div class="nav-item" data-page="transactions">
+                <i class="fas fa-exchange-alt"></i> Transactions
+            </div>
+            <div class="nav-item" data-page="payment-link">
+                <i class="fas fa-link"></i> Payment Link
+            </div>
+            <div class="nav-item" data-page="capital">
+                <i class="fas fa-money-bill-wave"></i> Capital
+            </div>
+            <div class="nav-item" data-page="plans">
+                <i class="fas fa-crown"></i> Plans
+            </div>
+            <div class="nav-item" data-page="help">
+                <i class="fas fa-question-circle"></i> Help
+            </div>
+            <div class="nav-item" data-page="account">
+                <i class="fas fa-user"></i> Account
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <div id="home" class="page-content active">
+            <!-- Begin home.html content -->
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+            <div class="dashboard-wrapper">
+                <div class="main-content-area">
+                    <div class="dashboard-grid">
+                        <!-- Card 1: Total USDC Earned -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Total USDC Earned</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value" id="total-usdc-earned">$0.00</div>
+                            <div class="metric-label">All time</div>
+                        </div>
+                        <!-- Card 2: Total Transactions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Total Transactions</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value" id="total-transactions">0</div>
+                            <div class="metric-label">All time</div>
+                        </div>
+                        <!-- Card 3: Successful Transactions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Successful Transactions</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value" id="successful-transactions">0</div>
+                            <div class="metric-label">All time</div>
+                        </div>
+                        <!-- Card 4: Average Transaction Value -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Average Transaction Value</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value" id="average-transaction-value">$0.00</div>
+                            <div class="metric-label">All time</div>
+                        </div>
+                        <!-- Card 5: USDC Volume Over Time Chart -->
+                        <div class="card chart-container" style="grid-column: span 2;">
+                            <div class="card-header">
+                                 <div class="card-title">USDC Volume Over Time</div>
+                                  <div class="card-actions">
+                                      <i class="fas fa-download"></i>
+                                      <i class="fas fa-ellipsis-h"></i>
+                                  </div>
+                            </div>
+                             <canvas id="volumeChart" class="chart-canvas"></canvas>
+                        </div>
+                        <!-- Card 6: Recent Transactions List -->
+                        <div class="card" style="grid-column: span 1;">
+                            <div class="card-header">
+                                <div class="card-title">Recent Transactions</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="data-list recent-transactions">
+                                 <!-- Transaction items will be populated here -->
+                            </div>
+                        </div>
+                        <!-- Card 7: Payment Link Summary List -->
+                         <div class="card" style="grid-column: span 1;">
+                            <div class="card-header">
+                                <div class="card-title">Payment Link Summary</div>
+                                 <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="data-list" id="paymentLinkSummaryList">
+                                 <!-- Payment link items will be populated here -->
+                                  <div class="list-item">
+                                      <span class="label">Active Links</span>
+                                      <span class="value">12</span>
+                                  </div>
+                                   <div class="list-item">
+                                       <span class="label">Total Generated Value</span>
+                                       <span class="value">$15,000.00 USDC</span>
+                                   </div>
+                            </div>
+                        </div>
+                        <!-- Card 8: Recent Buyers Information -->
+                        <div class="card" style="grid-column: span 2;">
+                            <div class="card-header">
+                                <div class="card-title">Recent Buyers</div>
+                                <div class="card-actions">
+                                    <i class="fas fa-download"></i>
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </div>
+                            </div>
+                            <div class="data-list recent-buyers">
+                                <!-- Buyer information will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End home.html content -->
+        </div>
+
+        <!-- Transactions Page -->
+        <div id="transactions" class="page-content">
+            <!-- Begin transactions.html content -->
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+            <div class="dashboard-wrapper">
+                <div class="main-content-area">
+                    <h1 class="page-title">Transactions</h1>
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="title">Total Transactions</div>
+                            <div class="value" id="totalTransactions">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="title">Total Volume</div>
+                            <div class="value" id="totalVolume">$0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="title">Success Rate</div>
+                            <div class="value" id="successRate">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="title">Average Value</div>
+                            <div class="value" id="averageValue">$0.00</div>
+                        </div>
+                    </div>
+                    <!-- Filters Section -->
+                    <div class="filters-section">
+                        <div class="filter-group">
+                            <label for="statusFilter">Status:</label>
+                            <select id="statusFilter">
+                                <option value="all">All</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="chainFilter">Chain:</label>
+                            <select id="chainFilter">
+                                <option value="all">All</option>
+                                <option value="Polygon">Polygon</option>
+                                <option value="TRC20">TRC20</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateRange">Date Range:</label>
+                            <input type="date" id="dateRange">
+                        </div>
+                        <button id="exportButton" class="export-button">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <!-- Transactions List -->
+                    <div class="transactions-list" id="transactionsList">
+                        <!-- Transaction items will be populated here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <!-- End transactions.html content -->
+        </div>
+
+        <!-- Payment Link Page -->
+        <div id="payment-link" class="page-content">
+            <!-- Begin Payment Link.html content -->
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+            <div class="dashboard-wrapper">
+                <div class="main-content-area">
+                    <h1 class="page-title">Create Payment Link</h1>
+                    <div class="payment-link-form-container">
+                        <form id="createPaymentLinkForm">
+                            <div class="form-group">
+                                <label for="amount">Amount (USDC)</label>
+                                <input type="number" id="amount" name="amount" step="0.01" required placeholder="e.g., 100.00">
+                                <div class="gas-badge" id="gasEstimateBadge">Select chain for gas estimate</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="wallet_address">Recipient Wallet Address</label>
+                                <input type="text" id="wallet_address" name="wallet_address" required placeholder="e.g., 0x...">
+                            </div>
+                            <div class="form-group">
+                                <label for="chain">Blockchain Network</label>
+                                <select id="chain" name="chain" required>
+                                    <option value="">Select Chain</option>
+                                    <option value="Polygon" class="chain-option">Polygon</option>
+                                    <option value="TRC20" class="chain-option">TRC20 (Tron)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_title">Product/Service Title</label>
+                                <input type="text" id="product_title" name="product_title" required placeholder="e.g., Consulting Service">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Create Link</button>
+                                <div class="microcopy">Securely processed on-chain with 0% fees.</div>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="paymentLinkDisplayArea" class="payment-link-display-area" style="display: none;">
+                        <div class="generated-link-container">
+                            <span id="generatedLink"></span>
+                            <button id="copyLinkButton" class="copy-button">Copy</button>
+                        </div>
+                        <div class="link-timer">Link visible for <span id="linkTimerDisplay">20</span> seconds</div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Payment Link.html content -->
+        </div>
+
+        <!-- Capital Page -->
+        <div id="capital" class="page-content">
+            <!-- Begin Capital.html content -->
+            <div class="floating-shapes">
+                <div class="shape"></div>
+                <div class="shape"></div>
+                <div class="shape"></div>
+            </div>
+            <div class="dashboard-wrapper">
+                <div class="main-content-area">
+                    <h1 class="page-title">Capital Overview</h1>
+                    <div class="capital-grid">
+                        <!-- Card 1: Total Balance -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Total Balance</div>
+                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value">$0.00 USDC</div>
+                            <div class="metric-label">Across all accounts</div>
+                        </div>
+                        <!-- Card 2: Incoming Capital -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Incoming Capital (30 Days)</div>
+                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value">$0.00 USDC</div>
+                            <div class="metric-label">Total received in last 30 days</div>
+                        </div>
+                        <!-- Card 3: Analytics Dashboard -->
+                        <div class="card" style="grid-column: span 2;">
+                            <div class="card-header">
+                                <div class="card-title">Capital Insights</div>
+                                <div class="card-actions">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </div>
+                            </div>
+                            <div class="insights-grid">
+                                <div class="insight-card">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-arrow-trend-up"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Growth Rate</h4>
+                                        <p class="insight-value">+15.8%</p>
+                                        <p class="insight-label">vs last month</p>
+                                    </div>
+                                </div>
+                                <div class="insight-card">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Average Transaction</h4>
+                                        <p class="insight-value">$2,450</p>
+                                        <p class="insight-label">per transaction</p>
+                                    </div>
+                                </div>
+                                <div class="insight-card">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Active Chains</h4>
+                                        <p class="insight-value">3</p>
+                                        <p class="insight-label">networks</p>
+                                    </div>
+                                </div>
+                                <div class="insight-card">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <h4>Connected Wallets</h4>
+                                        <p class="insight-value">5</p>
+                                        <p class="insight-label">active wallets</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 4: Connected Accounts List -->
+                        <div class="card" style="grid-column: span 2;">
+                            <div class="card-header">
+                                <div class="card-title">Connected Accounts</div>
+                                <div class="card-actions"><i class="fas fa-plus"></i><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="account-list">
+                                <div class="account-item">
+                                    <div class="details">
+                                        <span>Wallet: 0xabc...123</span>
+                                        <span class="label">Polygon Chain</span>
+                                    </div>
+                                    <span class="balance">$1,250.00 USDC</span>
+                                </div>
+                                <div class="account-item">
+                                    <div class="details">
+                                        <span>Wallet: TXYZ...Bf</span>
+                                        <span class="label">TRC20 Chain</span>
+                                    </div>
+                                    <span class="balance">$500.00 USDC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 5: Outgoing Capital -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Outgoing Capital (30 Days)</div>
+                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="metric-value">$0.00 USDC</div>
+                            <div class="metric-label">Total sent in last 30 days</div>
+                        </div>
+                        <!-- Card 6: Capital by Chain -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Capital by Chain</div>
+                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="data-list">
+                                <div class="list-item">
+                                    <div class="details">
+                                        <span>Polygon</span>
+                                        <span class="label">Connected Accounts</span>
+                                    </div>
+                                    <span class="value">$1,250.00 USDC</span>
+                                </div>
+                                <div class="list-item">
+                                    <div class="details">
+                                        <span>TRC20</span>
+                                        <span class="label">Connected Accounts</span>
+                                    </div>
+                                    <span class="value">$500.00 USDC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 7: Recent Capital Movements -->
+                        <div class="card" style="grid-column: span 2;">
+                            <div class="card-header">
+                                <div class="card-title">Recent Capital Movements</div>
+                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                            </div>
+                            <div class="data-list">
+                                <div class="list-item">
+                                    <div class="details">
+                                        <span>Received Funds</span>
+                                        <span class="label">From: 0xdef...456 - Jan 16, 2024</span>
+                                    </div>
+                                    <span class="value" style="color: #28a745;">+100.00 USDC</span>
+                                </div>
+                                <div class="list-item">
+                                    <div class="details">
+                                        <span>Sent Funds</span>
+                                        <span class="label">To: 0xghi...789 - Jan 15, 2024</span>
+                                    </div>
+                                    <span class="value" style="color: #dc3545;">-50.00 USDC</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Capital.html content -->
+        </div>
+
+        <!-- Plans Page -->
+        <div id="plans" class="page-content">
+            <!-- Your existing plans.html content -->
+            <!-- ... existing code ... -->
+        </div>
+
+        <!-- Help Page -->
+        <div id="help" class="page-content">
+            <!-- Your existing Help.html content -->
+            <!-- ... existing code ... -->
+        </div>
+
+        <!-- Account Page -->
+        <div id="account" class="page-content">
+            <!-- Your existing Account.html content -->
+            <!-- ... existing code ... -->
+        </div>
+    </main>
+
+    <script>
+        // Global state management
+        const state = {
+            currentPage: 'home',
+            sellerId: null,
+            token: null,
+            subscription: null
+        };
+
+        // Initialize the application
+        async function initializeApp() {
+            // Get seller ID and token
+            state.sellerId = getSellerId();
+            state.token = localStorage.getItem('token');
+
+            if (!state.token || !state.sellerId) {
+                window.location.href = '/Pages/login.html';
+                return;
+            }
+
+            // Set up navigation
+            setupNavigation();
+            
+            // Load initial page
+            loadPage(state.currentPage);
+            
+            // Get subscription info
+            state.subscription = await getSubscriptionInfo();
+            updateSubscriptionBadge(state.subscription);
+        }
+
+        // Get seller ID from URL or localStorage
+        function getSellerId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlSellerId = urlParams.get('seller_id');
+            
+            if (urlSellerId) {
+                localStorage.setItem('sellerId', urlSellerId);
+                return urlSellerId;
+            }
+            
+            return localStorage.getItem('sellerId');
+        }
+
+        // Set up navigation
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const page = item.getAttribute('data-page');
+                    loadPage(page);
+                });
+            });
+        }
+
+        // Load page content
+        async function loadPage(page) {
+            // Update active states
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.getAttribute('data-page') === page);
+            });
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.toggle('active', content.id === page);
+            });
+
+            // Update state
+            state.currentPage = page;
+
+            // Load page specific content
+            switch (page) {
+                case 'home':
+                    await loadHomePage();
+                    break;
+                case 'transactions':
+                    await loadTransactionsPage();
+                    break;
+                case 'payment-link':
+                    await loadPaymentLinkPage();
+                    break;
+                case 'capital':
+                    await loadCapitalPage();
+                    break;
+                case 'plans':
+                    await loadPlansPage();
+                    break;
+                case 'help':
+                    await loadHelpPage();
+                    break;
+                case 'account':
+                    await loadAccountPage();
+                    break;
+            }
+        }
+
+        // Get subscription info
+        async function getSubscriptionInfo() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/subscription/${state.sellerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch subscription info');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    const stripeData = data.data.stripe_subscription;
+                    if (stripeData) {
+                        return {
+                            plan: stripeData.plan_name || 'Basic',
+                            status: stripeData.status,
+                            current_period_end: stripeData.current_period_end,
+                            cancel_at_period_end: stripeData.cancel_at_period_end
+                        };
+                    }
+                    return data.data;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching subscription info:', error);
+                return null;
+            }
+        }
+
+        // Update subscription badge
+        function updateSubscriptionBadge(subscription) {
+            const badge = document.getElementById('subscriptionBadge');
+            if (!badge) return;
+
+            if (!subscription) {
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.style.display = 'block';
+            const plan = subscription.plan.toLowerCase();
+            badge.className = 'subscription-badge ' + plan;
+
+            let statusIndicator = '';
+            if (subscription.status === 'active') {
+                statusIndicator = '<i class="fas fa-check-circle"></i> ';
+            } else if (subscription.status === 'past_due') {
+                statusIndicator = '<i class="fas fa-exclamation-circle"></i> ';
+            } else if (subscription.cancel_at_period_end) {
+                statusIndicator = '<i class="fas fa-clock"></i> ';
+            }
+
+            let expirationText = '';
+            if (plan !== 'basic' && subscription.current_period_end) {
+                const endDate = new Date(subscription.current_period_end * 1000);
+                const formattedDate = endDate.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                expirationText = `<span class="expiration-date">Renews ${formattedDate}</span>`;
+            }
+
+            badge.innerHTML = `
+                ${statusIndicator}${subscription.plan}
+                ${expirationText}
+            `;
+        }
+
+        // Page load functions
+        async function loadHomePage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/dashboard/${state.sellerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+
+                const data = await response.json();
+                updateDashboardUI(data.data);
+            } catch (error) {
+                console.error('Error loading home page:', error);
+            }
+        }
+
+        async function loadTransactionsPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/transactions/${state.sellerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch transactions data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updateTransactionsList(data.data.transactions);
+                    updateTransactionStats(data.data.stats);
+                }
+            } catch (error) {
+                console.error('Error loading transactions page:', error);
+            }
+        }
+
+        async function loadPaymentLinkPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/payment-links`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch payment links data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updatePaymentLinksDisplay(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading payment link page:', error);
+            }
+        }
+
+        async function loadCapitalPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch capital data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updateCapitalUI(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading capital page:', error);
+            }
+        }
+
+        async function loadPlansPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/plans`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch plans data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updatePlansUI(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading plans page:', error);
+            }
+        }
+
+        async function loadHelpPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/help/faq`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch help data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updateHelpUI(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading help page:', error);
+            }
+        }
+
+        async function loadAccountPage() {
+            try {
+                const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${state.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch account data');
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updateAccountUI(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading account page:', error);
+            }
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+    <!-- SPA JavaScript -->
+    <script src="spa.js"></script>
+</body>
+</html> 

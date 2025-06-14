@@ -75,28 +75,34 @@ async function loadPage(page) {
     // Update state
     state.currentPage = page;
     
+    // Show the selected page content
+    const pageId = page.replace('Page', '-page');
+    const pageElement = document.getElementById(pageId);
+    if (pageElement) {
+        pageElement.style.display = 'block';
+    }
+    
     // Load page specific content
     switch (page) {
-        case 'home':
-            document.getElementById('home-page').style.display = 'block';
+        case 'homePage':
             await loadHomePage();
             break;
-        case 'transactions':
+        case 'transactionsPage':
             await loadTransactionsPage();
             break;
-        case 'payment-link':
+        case 'paymentLinkPage':
             await loadPaymentLinkPage();
             break;
-        case 'capital':
+        case 'capitalPage':
             await loadCapitalPage();
             break;
-        case 'account':
+        case 'accountPage':
             await loadAccountPage();
             break;
-        case 'plans':
+        case 'plansPage':
             await loadPlansPage();
             break;
-        case 'help':
+        case 'helpPage':
             await loadHelpPage();
             break;
     }

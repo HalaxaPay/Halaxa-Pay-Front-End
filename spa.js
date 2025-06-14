@@ -1440,10 +1440,10 @@ async function updateProfile() {
             throw new Error('Failed to update profile');
         }
 
-        showSuccess('Profile updated successfully');
+        showSuccess('signupSuccess', 'Profile updated successfully');
     } catch (error) {
         console.error('Error updating profile:', error);
-        showError('Failed to update profile');
+        showError('signupError', 'Failed to update profile');
     }
 }
 
@@ -1461,7 +1461,7 @@ async function updatePassword() {
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     if (newPassword !== confirmPassword) {
-        showError('New passwords do not match');
+        showError('signupError', 'New passwords do not match');
         return;
     }
 
@@ -1482,11 +1482,11 @@ async function updatePassword() {
             throw new Error('Failed to update password');
         }
 
-        showSuccess('Password updated successfully');
+        showSuccess('signupSuccess', 'Password updated successfully');
         document.getElementById('securityForm').reset();
     } catch (error) {
         console.error('Error updating password:', error);
-        showError('Failed to update password');
+        showError('signupError', 'Failed to update password');
     }
 }
 
@@ -1519,10 +1519,10 @@ async function updateNotificationPreferences() {
             throw new Error('Failed to update notification preferences');
         }
 
-        showSuccess('Notification preferences updated successfully');
+        showSuccess('signupSuccess', 'Notification preferences updated successfully');
     } catch (error) {
         console.error('Error updating notification preferences:', error);
-        showError('Failed to update notification preferences');
+        showError('signupError', 'Failed to update notification preferences');
     }
 }
 
@@ -1549,10 +1549,10 @@ async function update2FA(enabled) {
             throw new Error('Failed to update 2FA settings');
         }
 
-        showSuccess(`Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`);
+        showSuccess('signupSuccess', `Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`);
     } catch (error) {
         console.error('Error updating 2FA settings:', error);
-        showError('Failed to update 2FA settings');
+        showError('signupError', 'Failed to update 2FA settings');
         // Revert the toggle
         document.getElementById('enable2FA').checked = !enabled;
     }
@@ -1596,7 +1596,7 @@ async function deleteAccount() {
         window.location.href = '/Pages/login.html';
     } catch (error) {
         console.error('Error deleting account:', error);
-        showError('Failed to delete account');
+        showError('signupError', 'Failed to delete account');
     }
 }
 
@@ -1759,12 +1759,12 @@ async function selectPlan(plan) {
         if (data.payment_required) {
             window.location.href = data.payment_url;
         } else {
-            showSuccess('Plan updated successfully!');
+            showSuccess('signupSuccess', 'Plan updated successfully!');
             fetchCurrentPlan();
         }
     } catch (error) {
         console.error('Error selecting plan:', error);
-        showError('Failed to update subscription');
+        showError('signupError', 'Failed to update subscription');
     }
 }
 
@@ -1842,6 +1842,16 @@ function initializeHelpPage() {
 
 // Function to switch between dashboard pages
 function switchPage(pageId) {
+    // Update active nav item
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('data-page') === pageId) {
+            item.classList.add('active');
+        }
+    });
+
+    // Hide all pages and show the target page
     const pages = document.querySelectorAll('.page-content');
     pages.forEach(page => {
         page.style.display = 'none';
@@ -1852,39 +1862,213 @@ function switchPage(pageId) {
     }
 }
 
-// Function to check authentication and initialize dashboard
-function checkAuthAndInitDashboard() {
-    const token = localStorage.getItem('token');
-    const sellerId = localStorage.getItem('sellerId');
-    if (!token || !sellerId) {
-        window.location.href = '/Pages/signup.html';
-        return;
-    }
-    // Initialize dashboard with seller ID
-    initializeDashboard(sellerId);
-}
-
-// Function to initialize dashboard
-function initializeDashboard(sellerId) {
-    // Here you can load user-specific data or initialize dashboard components
-    console.log('Dashboard initialized with seller ID:', sellerId);
-    // Call other initialization functions as needed
-    initializeHelpPage();
-    // ... other initialization code ...
-}
-
 // Function to handle navigation
 function navigateToPage(pageId) {
     window.location.hash = pageId;
     switchPage(pageId);
 }
 
+// Authentication Functions
+function showSignupPage() {
+    document.getElementById('signupPage').style.display = 'flex';
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboardContainer').style.display = 'none';
+}
+
+function showLoginPage() {
+    document.getElementById('signupPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('dashboardContainer').style.display = 'none';
+}
+
+function showDashboard() {
+    document.getElementById('signupPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboardContainer').style.display = 'flex';
+}
+
+// Handle signup form submission
+async function handleSignup(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    
+    if (password !== confirmPassword) {
+        showError('signupError', 'Passwords do not match');
+        return;
+    }
+    
+    try {
+        showLoading('signup', true);
+        const response = await fetch('https://halaxa-backend.onrender.com/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('sellerId', data.sellerId);
+            showSuccess('signupSuccess', 'Account created successfully!');
+            setTimeout(() => {
+                showDashboard();
+                initializeDashboard(data.sellerId);
+            }, 1000);
+        } else {
+            showError('signupError', data.message || 'Signup failed');
+        }
+    } catch (error) {
+        showError('signupError', 'Network error. Please try again.');
+    } finally {
+        showLoading('signup', false);
+    }
+}
+
+// Handle login form submission
+async function handleLogin(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    const email = formData.get('email');
+    const password = formData.get('password');
+    
+    try {
+        showLoading('login', true);
+        const response = await fetch('https://halaxa-backend.onrender.com/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('sellerId', data.sellerId);
+            showSuccess('loginSuccess', 'Login successful!');
+            setTimeout(() => {
+                showDashboard();
+                initializeDashboard(data.sellerId);
+            }, 1000);
+        } else {
+            showError('loginError', data.message || 'Login failed');
+        }
+    } catch (error) {
+        showError('loginError', 'Network error. Please try again.');
+    } finally {
+        showLoading('login', false);
+    }
+}
+
+// Utility functions
+function showError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    setTimeout(() => {
+        errorElement.style.display = 'none';
+    }, 5000);
+}
+
+function showSuccess(elementId, message) {
+    const successElement = document.getElementById(elementId);
+    successElement.textContent = message;
+    successElement.style.display = 'block';
+    setTimeout(() => {
+        successElement.style.display = 'none';
+    }, 3000);
+}
+
+function showLoading(type, show) {
+    const button = document.querySelector(`#${type}Form .auth-button`);
+    const buttonText = button.querySelector('.button-text');
+    const loadingSpinner = button.querySelector('.loading-spinner');
+    
+    if (show) {
+        buttonText.style.display = 'none';
+        loadingSpinner.style.display = 'flex';
+        button.disabled = true;
+    } else {
+        buttonText.style.display = 'block';
+        loadingSpinner.style.display = 'none';
+        button.disabled = false;
+    }
+}
+
+// Function to check authentication and initialize dashboard
+function checkAuthAndInitDashboard() {
+    const token = localStorage.getItem('token');
+    const sellerId = localStorage.getItem('sellerId');
+    
+    if (!token || !sellerId) {
+        showSignupPage();
+        return false;
+    }
+    
+    showDashboard();
+    initializeDashboard(sellerId);
+    return true;
+}
+
+// Function to initialize dashboard
+function initializeDashboard(sellerId) {
+    console.log('Dashboard initialized with seller ID:', sellerId);
+    
+    // Initialize all page functions
+    initializeHomePage();
+    initializeTransactionsPage();
+    initializePaymentLinkPage();
+    initializeCapitalPage();
+    initializeAccountPage();
+    initializePlansPage();
+    initializeHelpPage();
+}
+
+// Placeholder functions for page initialization
+function initializeHomePage() {
+    console.log('Home page initialized');
+}
+
+function initializeTransactionsPage() {
+    console.log('Transactions page initialized');
+}
+
+function initializePaymentLinkPage() {
+    console.log('Payment Link page initialized');
+}
+
+function initializeCapitalPage() {
+    console.log('Capital page initialized');
+}
+
+function initializeAccountPage() {
+    console.log('Account page initialized');
+}
+
 // Update the page initialization
 document.addEventListener('DOMContentLoaded', function() {
-    // ... existing code ...
-    checkAuthAndInitDashboard();
+    // Add form event listeners
+    document.getElementById('signupForm').addEventListener('submit', handleSignup);
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    
+    // Check authentication and show appropriate page
+    if (!checkAuthAndInitDashboard()) {
+        return; // Show signup page if not authenticated
+    }
 
-    // Add click listeners to nav items for navigation
+    // Add click listeners to nav items for navigation (only if authenticated)
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -1910,8 +2094,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         switchPage('homePage'); // Default to home page
     }
-
-    // ... existing code ...
 });
 
 // ... existing code ...

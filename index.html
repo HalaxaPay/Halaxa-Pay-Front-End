@@ -396,6 +396,84 @@
     </style>
 </head>
 <body>
+    <!-- Signup Page -->
+    <div id="signupPage" class="auth-container">
+        <div class="auth-background"></div>
+        <div class="auth-content">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <h1>Halaxa</h1>
+                    <p>Create your account to get started</p>
+                </div>
+                <form class="auth-form" id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="auth-button">
+                        <span class="button-text">Create Account</span>
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner"></i>
+                            Creating account...
+                        </div>
+                    </button>
+                    <div class="error-message" id="signupError"></div>
+                    <div class="success-message" id="signupSuccess"></div>
+                </form>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" onclick="showLoginPage()">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="auth-container" style="display: none;">
+        <div class="auth-background"></div>
+        <div class="auth-content">
+            <div class="auth-card">
+                <div class="auth-logo">
+                    <h1>Halaxa</h1>
+                    <p>Welcome back! Please sign in to your account</p>
+                </div>
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" required>
+                    </div>
+                    <button type="submit" class="auth-button">
+                        <span class="button-text">Sign In</span>
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner"></i>
+                            Signing in...
+                        </div>
+                    </button>
+                    <div class="error-message" id="loginError"></div>
+                    <div class="success-message" id="loginSuccess"></div>
+                </form>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" onclick="showSignupPage()">Sign up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Auth Container (hidden by default) -->
     <div id="auth-container" class="auth-container" style="display: none;">
         <div class="auth-background"></div>
@@ -429,13 +507,13 @@
                     <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
                 </div>
                 <ul class="nav-menu">
-                    <li class="nav-item active" data-page="home"><i class="fas fa-home"></i> Home</li>
-                    <li class="nav-item" data-page="transactions"><i class="fas fa-list-alt"></i> Transactions</li>
-                    <li class="nav-item" data-page="payment-link"><i class="fas fa-link"></i> Payment Link</li>
-                    <li class="nav-item" data-page="capital"><i class="fas fa-chart-line"></i> Capital</li>
-                    <li class="nav-item" data-page="account"><i class="fas fa-building"></i> Account</li>
-                    <li class="nav-item" data-page="plans"><i class="fas fa-crown"></i> Plans</li>
-                    <li class="nav-item" data-page="help"><i class="fas fa-question-circle"></i> Help</li>
+                    <li class="nav-item active" data-page="homePage"><i class="fas fa-home"></i> Home</li>
+                    <li class="nav-item" data-page="transactionsPage"><i class="fas fa-list-alt"></i> Transactions</li>
+                    <li class="nav-item" data-page="paymentLinkPage"><i class="fas fa-link"></i> Payment Link</li>
+                    <li class="nav-item" data-page="capitalPage"><i class="fas fa-chart-line"></i> Capital</li>
+                    <li class="nav-item" data-page="accountPage"><i class="fas fa-building"></i> Account</li>
+                    <li class="nav-item" data-page="plansPage"><i class="fas fa-crown"></i> Plans</li>
+                    <li class="nav-item" data-page="helpPage"><i class="fas fa-question-circle"></i> Help</li>
                 </ul>
             </div>
 

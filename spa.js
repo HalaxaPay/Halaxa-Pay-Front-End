@@ -81,7 +81,7 @@ async function loadPage(page) {
     
     // Hide all page contents
     document.querySelectorAll('.page-content').forEach(content => {
-        content.style.display = 'none';
+        content.style.setProperty('display', 'none', 'important');
         content.classList.remove('active');
     });
     
@@ -95,7 +95,7 @@ async function loadPage(page) {
     const pageElement = document.getElementById(pageId);
     if (pageElement) {
         console.log('Found page element, displaying it'); // Debug log
-        pageElement.style.display = 'block';
+        pageElement.style.setProperty('display', 'block', 'important');
         pageElement.classList.add('active');
     } else {
         console.error('Page element not found:', pageId); // Debug log

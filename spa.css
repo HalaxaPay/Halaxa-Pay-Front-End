@@ -275,7 +275,7 @@ body::before {
 
 /* Page Content */
 .page-content {
-    display: none;
+    display: none !important;
     opacity: 0;
     transition: opacity var(--transition-speed) ease-in-out;
     height: 100%;
@@ -283,7 +283,7 @@ body::before {
 }
 
 .page-content.active {
-    display: block;
+    display: block !important;
     opacity: 1;
 }
 

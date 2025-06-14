@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeSPA() {
     const navItems = document.querySelectorAll('.nav-item');
     const pages = document.querySelectorAll('.page-content');
-    
+        
     console.log('Initializing SPA with', navItems.length, 'nav items and', pages.length, 'pages');
     
     navItems.forEach((item, index) => {

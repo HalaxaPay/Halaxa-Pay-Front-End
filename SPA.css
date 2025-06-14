@@ -1809,3 +1809,910 @@ body::before {
         font-size: 0.75rem;
     }
 }
+
+/* Crypto Capital Analytics Styling */
+
+/* Crypto Flow Overview */
+.crypto-flow-overview {
+    margin-bottom: var(--space-8);
+}
+
+.flow-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.flow-stat-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 
+        0 4px 20px rgba(16, 185, 129, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.flow-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 8px 30px rgba(16, 185, 129, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.flow-stat-card.received { border-color: rgba(16, 185, 129, 0.2); }
+.flow-stat-card.paid-out { border-color: rgba(59, 130, 246, 0.2); }
+.flow-stat-card.net-flow { border-color: rgba(245, 158, 11, 0.2); }
+
+.flow-stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    flex-shrink: 0;
+}
+
+.flow-stat-card.received .flow-stat-icon {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    color: var(--primary);
+}
+
+.flow-stat-card.paid-out .flow-stat-icon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+    color: #3b82f6;
+}
+
+.flow-stat-card.net-flow .flow-stat-icon {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+    color: #f59e0b;
+}
+
+.flow-stat-content {
+    flex: 1;
+}
+
+.flow-stat-label {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.flow-stat-value {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.flow-stat-value.positive {
+    color: var(--primary);
+}
+
+.flow-stat-crypto {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Crypto Flow Chart */
+.crypto-flow-chart-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 
+        0 4px 20px rgba(16, 185, 129, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dual-bar-chart-container {
+    margin-top: var(--space-4);
+}
+
+.dual-bar-chart {
+    width: 100%;
+    height: 200px;
+    margin-bottom: var(--space-4);
+}
+
+.bar.inflow {
+    fill: #10b981;
+    animation: barGrowIn 1s ease-out forwards;
+    transform-origin: bottom;
+    transform: scaleY(0);
+}
+
+.bar.outflow {
+    fill: #3b82f6;
+    animation: barGrowIn 1s ease-out forwards;
+    transform-origin: bottom;
+    transform: scaleY(0);
+}
+
+.bar.inflow:nth-child(odd) { animation-delay: 0.1s; }
+.bar.inflow:nth-child(even) { animation-delay: 0.2s; }
+.bar.outflow:nth-child(odd) { animation-delay: 0.3s; }
+.bar.outflow:nth-child(even) { animation-delay: 0.4s; }
+
+@keyframes barGrowIn {
+    to {
+        transform: scaleY(1);
+    }
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.inflow {
+    background: #10b981;
+}
+
+.legend-color.outflow {
+    background: #3b82f6;
+}
+
+/* Net Flow Section */
+.net-flow-section {
+    margin-bottom: var(--space-8);
+}
+
+.net-flow-chart-container {
+    margin-top: var(--space-4);
+}
+
+.net-flow-chart {
+    width: 100%;
+    height: 150px;
+}
+
+.net-flow-area {
+    animation: netFlowAreaIn 2s ease-out forwards;
+    transform-origin: bottom;
+}
+
+.net-flow-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: netFlowLineIn 2.5s ease-out forwards;
+}
+
+.flow-point {
+    opacity: 0;
+    animation: flowPointIn 0.6s ease-out forwards;
+    transform-origin: center;
+}
+
+.flow-point:nth-child(4) { animation-delay: 1.5s; }
+.flow-point:nth-child(5) { animation-delay: 1.8s; }
+.flow-point:nth-child(6) { animation-delay: 2.1s; }
+.flow-point:nth-child(7) { animation-delay: 2.4s; }
+.flow-point:nth-child(8) { animation-delay: 2.7s; }
+
+@keyframes netFlowAreaIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes netFlowLineIn {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes flowPointIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* User Balances Section */
+.user-balances-section {
+    margin-bottom: var(--space-8);
+}
+
+.user-balances-table {
+    margin-top: var(--space-4);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.user-cell {
+    gap: var(--space-3);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.user-status {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.user-status.active {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary);
+}
+
+.user-status.inactive {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-secondary);
+}
+
+.wallet-cell {
+    gap: var(--space-2);
+}
+
+.wallet-address {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+.copy-btn {
+    background: rgba(16, 185, 129, 0.1);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: var(--space-1);
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: scale(1.1);
+}
+
+.crypto-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+}
+
+.crypto-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.crypto-amount {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.crypto-network {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.amount-cell {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.time-cell {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* Fees Chart */
+.fees-chart-container {
+    margin-top: var(--space-4);
+}
+
+.fees-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.fee-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.fee-label {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.fee-value {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f59e0b;
+}
+
+.fees-chart {
+    width: 100%;
+    height: 120px;
+}
+
+.fees-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: feesLineIn 2s ease-out forwards;
+}
+
+.fee-point {
+    opacity: 0;
+    animation: feePointIn 0.6s ease-out forwards;
+}
+
+.fee-point:nth-child(2) { animation-delay: 1.5s; }
+.fee-point:nth-child(3) { animation-delay: 1.8s; }
+.fee-point:nth-child(4) { animation-delay: 2.1s; }
+
+@keyframes feesLineIn {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes feePointIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Crypto Pie Chart */
+.crypto-pie-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.crypto-pie-chart {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.pie-segment {
+    animation: pieSegmentIn 2s ease-out forwards;
+    stroke-dashoffset: 377;
+}
+
+.pie-segment.usdc { animation-delay: 0.2s; }
+.pie-segment.eth { animation-delay: 0.4s; }
+.pie-segment.btc { animation-delay: 0.6s; }
+.pie-segment.others { animation-delay: 0.8s; }
+
+@keyframes pieSegmentIn {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.crypto-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.crypto-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+}
+
+.crypto-legend-item:hover {
+    background: rgba(16, 185, 129, 0.05);
+    transform: translateX(4px);
+}
+
+.crypto-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.crypto-color.usdc { background: #10b981; }
+.crypto-color.eth { background: #3b82f6; }
+.crypto-color.btc { background: #f59e0b; }
+.crypto-color.others { background: #ef4444; }
+
+/* Transaction Volume Section */
+.transaction-volume-section {
+    margin-bottom: var(--space-8);
+}
+
+.volume-table {
+    margin-top: var(--space-4);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.volume-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.volume-breakdown span {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: rgba(16, 185, 129, 0.05);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+/* Status Donut */
+.status-donut-container {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.status-donut {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.status-segment {
+    animation: statusSegmentIn 2s ease-out forwards;
+    stroke-dashoffset: 377;
+}
+
+.status-segment.completed { animation-delay: 0.2s; }
+.status-segment.pending { animation-delay: 0.4s; }
+.status-segment.failed { animation-delay: 0.6s; }
+
+@keyframes statusSegmentIn {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.status-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+}
+
+.status-item:hover {
+    background: rgba(16, 185, 129, 0.05);
+    transform: translateX(4px);
+}
+
+.status-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.status-color.completed { background: #10b981; }
+.status-color.pending { background: #f59e0b; }
+.status-color.failed { background: #ef4444; }
+
+/* Growth Chart */
+.growth-chart-container {
+    margin-top: var(--space-4);
+}
+
+.growth-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.growth-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.growth-label {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.growth-value {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.growth-change {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.growth-change.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary);
+}
+
+.growth-chart {
+    width: 100%;
+    height: 100px;
+    margin-bottom: var(--space-2);
+}
+
+.growth-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: growthLineIn 2s ease-out forwards;
+}
+
+.growth-line.users { animation-delay: 0.2s; }
+.growth-line.volume { animation-delay: 0.4s; }
+
+@keyframes growthLineIn {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.growth-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+.growth-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.growth-color {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.growth-color.users { background: #10b981; }
+.growth-color.volume { background: #3b82f6; }
+
+/* Network Bars */
+.network-bars-container {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.network-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.network-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.network-name {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.network-volume {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.network-bar-track {
+    flex: 2;
+    height: 8px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.network-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    animation: networkBarFill 2s ease-out forwards;
+    transform-origin: left;
+    transform: scaleX(0);
+}
+
+.network-bar-fill.polygon {
+    background: linear-gradient(90deg, #10b981, #059669);
+    animation-delay: 0.2s;
+}
+
+.network-bar-fill.trc20 {
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    animation-delay: 0.4s;
+}
+
+.network-bar-fill.ethereum {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    animation-delay: 0.6s;
+}
+
+@keyframes networkBarFill {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.network-percentage {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Payment Links */
+.payment-links-list {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.payment-link-item {
+    padding: var(--space-4);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    animation: linkItemIn 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.payment-link-item:nth-child(1) { animation-delay: 0.1s; }
+.payment-link-item:nth-child(2) { animation-delay: 0.2s; }
+.payment-link-item:nth-child(3) { animation-delay: 0.3s; }
+
+.payment-link-item:hover {
+    background: rgba(16, 185, 129, 0.02);
+    border-color: rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+}
+
+@keyframes linkItemIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.link-info {
+    margin-bottom: var(--space-3);
+}
+
+.link-name {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+}
+
+.link-url {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+.link-stats {
+    display: flex;
+    gap: var(--space-4);
+}
+
+.link-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Responsive Design for Crypto Analytics */
+@media (max-width: 1200px) {
+    .crypto-pie-container,
+    .status-donut-container {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .flow-stats-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .crypto-pie-chart,
+    .status-donut {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .network-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2);
+    }
+    
+    .payment-link-item {
+        padding: var(--space-3);
+    }
+    
+    .link-stats {
+        justify-content: space-between;
+    }
+}

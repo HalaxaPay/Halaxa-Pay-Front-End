@@ -1852,27 +1852,64 @@ function switchPage(pageId) {
     }
 }
 
+// Function to check authentication and initialize dashboard
+function checkAuthAndInitDashboard() {
+    const token = localStorage.getItem('token');
+    const sellerId = localStorage.getItem('sellerId');
+    if (!token || !sellerId) {
+        window.location.href = '/Pages/signup.html';
+        return;
+    }
+    // Initialize dashboard with seller ID
+    initializeDashboard(sellerId);
+}
+
+// Function to initialize dashboard
+function initializeDashboard(sellerId) {
+    // Here you can load user-specific data or initialize dashboard components
+    console.log('Dashboard initialized with seller ID:', sellerId);
+    // Call other initialization functions as needed
+    initializeHelpPage();
+    // ... other initialization code ...
+}
+
+// Function to handle navigation
+function navigateToPage(pageId) {
+    window.location.hash = pageId;
+    switchPage(pageId);
+}
+
 // Update the page initialization
 document.addEventListener('DOMContentLoaded', function() {
     // ... existing code ...
-    
-    // Initialize plans page
-    initializePlansPage();
-    
-    // ... existing code ...
-    initializeHelpPage();
-    // ... existing code ...
+    checkAuthAndInitDashboard();
 
-    // Add click listeners to nav items for page switching
+    // Add click listeners to nav items for navigation
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', function() {
             const pageId = this.getAttribute('data-page');
             if (pageId) {
-                switchPage(pageId);
+                navigateToPage(pageId);
             }
         });
     });
+
+    // Handle hashchange for direct URL navigation
+    window.addEventListener('hashchange', function() {
+        const pageId = window.location.hash.substring(1);
+        if (pageId) {
+            switchPage(pageId);
+        }
+    });
+
+    // Initial page load based on hash
+    const initialPageId = window.location.hash.substring(1);
+    if (initialPageId) {
+        switchPage(initialPageId);
+    } else {
+        switchPage('homePage'); // Default to home page
+    }
 
     // ... existing code ...
 });

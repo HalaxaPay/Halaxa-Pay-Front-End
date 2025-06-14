@@ -904,51 +904,42 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Get all navigation items
             const navItems = document.querySelectorAll('.nav-item');
-            
             // Get all page content divs
             const pages = document.querySelectorAll('.page-content');
-            
+
             // Function to hide all pages
             function hideAllPages() {
                 pages.forEach(page => {
                     page.classList.remove('active-page');
                 });
             }
-            
-            // Function to show a specific page
-            function showPage(pageId) {
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.add('active-page');
+
+            // Function to show a specific page by index
+            function showPageByIndex(index) {
+                if (pages[index]) {
+                    pages[index].classList.add('active-page');
                 }
             }
-            
+
             // Add click event listeners to all nav items
-            navItems.forEach(item => {
+            navItems.forEach((item, idx) => {
                 item.addEventListener('click', function() {
                     // Remove active class from all nav items
                     navItems.forEach(nav => nav.classList.remove('active'));
-                    
                     // Add active class to clicked item
                     this.classList.add('active');
-                    
-                    // Get the target page from data-page attribute
-                    const targetPage = this.getAttribute('data-page');
-                    
-                    // Hide all pages and show the target page
+                    // Hide all pages and show the page by index
                     hideAllPages();
-                    showPage(targetPage);
+                    showPageByIndex(idx);
                 });
             });
-            
+
             // Show home page by default
             hideAllPages();
-            showPage('home-page');
-            
+            showPageByIndex(0);
             // Add active class to home nav item by default
-            const homeNav = document.querySelector('.nav-item[data-page="home-page"]');
-            if (homeNav) {
-                homeNav.classList.add('active');
+            if (navItems[0]) {
+                navItems[0].classList.add('active');
             }
         });
     </script>

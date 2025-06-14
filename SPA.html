@@ -224,6 +224,72 @@
                             </div>
                         </div>
 
+                        <!-- Balance Over Time Chart -->
+                        <div class="balance-chart-panel">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Balance Over Time</h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="balance-chart-container">
+                                <div class="chart-value-display">
+                                    <span class="current-value">$125,430</span>
+                                    <span class="value-change positive">+12.5%</span>
+                                </div>
+                                
+                                <svg class="balance-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+                                    <!-- Gradient Definitions -->
+                                    <defs>
+                                        <linearGradient id="balanceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
+                                            <stop offset="50%" style="stop-color:#34d399;stop-opacity:0.4" />
+                                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.1" />
+                                        </linearGradient>
+                                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#059669" />
+                                            <stop offset="50%" style="stop-color:#10b981" />
+                                            <stop offset="100%" style="stop-color:#34d399" />
+                                        </linearGradient>
+                                    </defs>
+                                    
+                                    <!-- Mountain Area -->
+                                    <path class="chart-area" d="M0,120 L0,80 Q50,60 100,70 T200,50 T300,40 L300,120 Z" 
+                                          fill="url(#balanceGradient)" />
+                                    
+                                    <!-- Mountain Line -->
+                                    <path class="chart-line" d="M0,80 Q50,60 100,70 T200,50 T300,40" 
+                                          fill="none" 
+                                          stroke="url(#lineGradient)" 
+                                          stroke-width="3" 
+                                          stroke-linecap="round" />
+                                    
+                                    <!-- Animated Dots -->
+                                    <circle class="chart-dot" cx="100" cy="70" r="4" fill="#10b981" />
+                                    <circle class="chart-dot" cx="200" cy="50" r="4" fill="#10b981" />
+                                    <circle class="chart-dot" cx="300" cy="40" r="4" fill="#10b981" />
+                                    
+                                    <!-- Glow Effects -->
+                                    <circle class="chart-glow" cx="300" cy="40" r="8" fill="#10b981" opacity="0.3" />
+                                </svg>
+                                
+                                <div class="chart-timeline">
+                                    <span>Jan</span>
+                                    <span>Mar</span>
+                                    <span>May</span>
+                                    <span>Jul</span>
+                                    <span>Sep</span>
+                                    <span>Nov</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Second Row with Metrics Panel -->
+                    <div class="viz-grid" style="margin-top: var(--space-6);">
                         <!-- Interactive Metrics Panel -->
                         <div class="metrics-panel">
                             <div class="metrics-header">
@@ -261,6 +327,46 @@
                             <div class="metric-item">
                                 <div class="metric-label">Gas Optimization</div>
                                 <div class="metric-value">87%</div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Chart Space -->
+                        <div class="metrics-panel">
+                            <div class="metrics-header">
+                                <h3 class="metrics-title">Transaction Insights</h3>
+                                <button class="chart-action">
+                                    <i class="fas fa-chart-pie"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Peak Hour Volume</div>
+                                <div class="metric-value">$8,450</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Cross-chain Transfers</div>
+                                <div class="metric-value">234</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Smart Contract Calls</div>
+                                <div class="metric-value">1,567</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">API Response Time</div>
+                                <div class="metric-value">145ms</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Security Score</div>
+                                <div class="metric-value">99.8%</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">User Satisfaction</div>
+                                <div class="metric-value">4.9/5</div>
                             </div>
                         </div>
                     </div>

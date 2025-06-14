@@ -623,15 +623,18 @@ body::before {
     gap: var(--space-6);
 }
 
-.chart-card {
-    background: var(--gradient-secondary);
-    border: 1px solid var(--border-light);
+.chart-card, .metrics-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
     border-radius: var(--radius-xl);
-    padding: var(--space-8);
-    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 
+        0 4px 20px rgba(16, 185, 129, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    transition: all var(--duration-normal) ease;
 }
 
 .chart-card:hover {
@@ -641,16 +644,17 @@ body::before {
 
 .chart-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-6);
+    align-items: center;
+    margin-bottom: var(--space-4);
 }
 
 .chart-title {
-    font-family: var(--font-primary);
-    font-size: 1.2rem;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
+    margin: 0;
 }
 
 .chart-actions {
@@ -659,19 +663,23 @@ body::before {
 }
 
 .chart-action {
-    padding: var(--space-2);
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(16, 185, 129, 0.1);
     border: none;
-    color: var(--text-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    color: var(--primary);
     cursor: pointer;
-    border-radius: var(--radius-sm);
-    transition: all var(--duration-normal) ease;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
 }
 
 .chart-action:hover {
-    background: var(--accent-light);
-    color: var(--accent-primary);
-    transform: scale(1.1);
+    background: rgba(16, 185, 129, 0.2);
+    transform: scale(1.05);
 }
 
 .chart-container {
@@ -706,15 +714,6 @@ body::before {
 }
 
 /* Interactive Metrics Panel */
-.metrics-panel {
-    background: var(--gradient-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--duration-normal) ease;
-}
-
 .metrics-panel:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
@@ -843,4 +842,264 @@ body::before {
 
 .page-content.active-page {
     display: block;
+}
+
+/* Chart Styling */
+.chart-card, .metrics-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 
+        0 4px 20px rgba(16, 185, 129, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Balance Chart Panel */
+.balance-chart-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 
+        0 4px 20px rgba(16, 185, 129, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+}
+
+.balance-chart-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 30px rgba(16, 185, 129, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.balance-chart-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.balance-chart-panel:hover::before {
+    left: 100%;
+}
+
+/* Chart Header */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-4);
+}
+
+.chart-title {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.chart-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.chart-action {
+    background: rgba(16, 185, 129, 0.1);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.chart-action:hover {
+    background: rgba(16, 185, 129, 0.2);
+    transform: scale(1.05);
+}
+
+/* Balance Chart Container */
+.balance-chart-container {
+    position: relative;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-value-display {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.current-value {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #059669, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.value-change {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.value-change.positive {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary);
+}
+
+.value-change.positive::before {
+    content: '↗';
+    font-size: 0.8rem;
+}
+
+/* SVG Chart Styling */
+.balance-chart {
+    width: 100%;
+    height: 120px;
+    margin: var(--space-2) 0;
+}
+
+.chart-area {
+    animation: chartFillIn 2s ease-out forwards;
+    transform-origin: bottom;
+}
+
+.chart-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: chartLineIn 2.5s ease-out forwards;
+}
+
+.chart-dot {
+    opacity: 0;
+    animation: chartDotIn 0.6s ease-out forwards;
+    transform-origin: center;
+}
+
+.chart-dot:nth-child(4) { animation-delay: 1.5s; }
+.chart-dot:nth-child(5) { animation-delay: 1.8s; }
+.chart-dot:nth-child(6) { animation-delay: 2.1s; }
+
+.chart-glow {
+    animation: chartGlow 2s ease-in-out infinite alternate;
+}
+
+/* Chart Timeline */
+.chart-timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    padding: 0 var(--space-2);
+}
+
+.chart-timeline span {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Chart Animations */
+@keyframes chartFillIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes chartLineIn {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes chartDotIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes chartGlow {
+    0% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+/* Hover Effects for Chart */
+.balance-chart-panel:hover .chart-line {
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+}
+
+.balance-chart-panel:hover .chart-dot {
+    animation: chartDotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes chartDotPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.8;
+    }
 }

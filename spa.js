@@ -597,14 +597,127 @@ async function loadCapitalPage() {
                 <div class="metric-value" id="incomingCapital">$0.00 USDC</div>
                 <div class="metric-label">Total received in last 30 days</div>
             </div>
-            <!-- Additional capital content... -->
+            <!-- Card 3: Outgoing Capital -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Outgoing Capital (30 Days)</div>
+                    <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                </div>
+                <div class="metric-value" id="outgoingCapital">$0.00 USDC</div>
+                <div class="metric-label">Total sent in last 30 days</div>
+            </div>
+            <!-- Card 4: Recent Capital Movements -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Recent Capital Movements</div>
+                    <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                </div>
+                <div class="data-list" id="recentMovements">
+                    <!-- Recent movements will be populated here -->
+                </div>
+            </div>
+        </div>
+        <div class="insights-grid">
+            <!-- Analytics Dashboard -->
+            <div class="insight-card">
+                <div class="insight-header">
+                    <h3>Analytics Dashboard</h3>
+                    <div class="time-filter">
+                        <button class="active" data-period="7d">7D</button>
+                        <button data-period="30d">30D</button>
+                        <button data-period="90d">90D</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="capitalChart"></canvas>
+                </div>
+            </div>
+            <!-- Connected Accounts List -->
+            <div class="insight-card">
+                <div class="insight-header">
+                    <h3>Connected Accounts</h3>
+                    <button class="connect-account-btn">Connect New</button>
+                </div>
+                <div class="account-list" id="connectedAccounts">
+                    <!-- Connected accounts will be populated here -->
+                </div>
+            </div>
         </div>
     `;
     
     pageContainer.style.display = 'block';
     
+    // Initialize capital page functionality
+    initializeCapitalPage();
+}
+
+function initializeCapitalPage() {
+    // Set up real-time updates
+    setupRealTimeUpdates();
+    
+    // Initialize charts
+    initializeCapitalChart();
+    
+    // Set up event listeners
+    setupCapitalEventListeners();
+    
+    // Initial data fetch
+    fetchCapitalData();
+}
+
+function setupRealTimeUpdates() {
+    // Set up WebSocket connection for real-time updates
+    const ws = new WebSocket('wss://halaxa-backend.onrender.com/ws');
+    
+    ws.onopen = () => {
+        console.log('WebSocket connected');
+        // Subscribe to capital updates
+        ws.send(JSON.stringify({
+            type: 'subscribe',
+            channel: 'capital',
+            sellerId: state.sellerId
+        }));
+    };
+    
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'capital_update') {
+            updateCapitalUI(data.data);
+        }
+    };
+    
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+    
+    ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        // Attempt to reconnect after 5 seconds
+        setTimeout(setupRealTimeUpdates, 5000);
+    };
+}
+
+function setupCapitalEventListeners() {
+    // Time filter buttons
+    const timeFilterButtons = document.querySelectorAll('.time-filter button');
+    timeFilterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            timeFilterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            fetchCapitalData(button.dataset.period);
+        });
+    });
+    
+    // Connect new account button
+    const connectAccountBtn = document.querySelector('.connect-account-btn');
+    if (connectAccountBtn) {
+        connectAccountBtn.addEventListener('click', showConnectAccountModal);
+    }
+}
+
+async function fetchCapitalData(period = '7d') {
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary`, {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary?period=${period}`, {
             headers: {
                 'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
@@ -620,397 +733,81 @@ async function loadCapitalPage() {
             updateCapitalUI(data.data);
         }
     } catch (error) {
-        console.error('Error loading capital page:', error);
-    }
-}
-
-async function loadAccountPage() {
-    const pageContainer = document.getElementById('account-page');
-    
-    // Load account page content
-    pageContainer.innerHTML = `
-        <h1 class="page-title">Account Settings</h1>
-        <div class="account-sections">
-            <div class="account-section">
-                <h2>Profile Information</h2>
-                <div id="profileSection">
-                    <!-- Profile content will be loaded here -->
-                </div>
-            </div>
-            <div class="account-section">
-                <h2>Security Settings</h2>
-                <div id="securitySection">
-                    <!-- Security content will be loaded here -->
-                </div>
-            </div>
-        </div>
-    `;
-    
-    pageContainer.style.display = 'block';
-    
-    try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/profile`, {
-            headers: {
-                'Authorization': `Bearer ${state.token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch account data');
-        }
-
-        const data = await response.json();
-        if (data.success) {
-            updateAccountUI(data.data);
-        }
-    } catch (error) {
-        console.error('Error loading account page:', error);
-    }
-}
-
-async function loadPlansPage() {
-    const pageContainer = document.getElementById('plans-page');
-    
-    // Load plans page content
-    pageContainer.innerHTML = `
-        <h1 class="page-title">Subscription Plans</h1>
-        <div class="plans-grid" id="plansGrid">
-            <!-- Plans will be loaded here -->
-        </div>
-    `;
-    
-    pageContainer.style.display = 'block';
-    
-    try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/plans`, {
-            headers: {
-                'Authorization': `Bearer ${state.token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch plans data');
-        }
-
-        const data = await response.json();
-        if (data.success) {
-            updatePlansUI(data.data);
-        }
-    } catch (error) {
-        console.error('Error loading plans page:', error);
-    }
-}
-
-async function loadHelpPage() {
-    const pageContainer = document.getElementById('help-page');
-    
-    // Load help page content
-    pageContainer.innerHTML = `
-        <h1 class="page-title">Help & Support</h1>
-        <div class="help-sections">
-            <div class="faq-section">
-                <h2>Frequently Asked Questions</h2>
-                <div id="faqContainer">
-                    <!-- FAQ items will be loaded here -->
-                </div>
-            </div>
-            <div class="contact-section">
-                <h2>Contact Support</h2>
-                <div id="contactForm">
-                    <!-- Contact form will be loaded here -->
-                </div>
-            </div>
-        </div>
-    `;
-    
-    pageContainer.style.display = 'block';
-    
-    try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/help/faq`, {
-            headers: {
-                'Authorization': `Bearer ${state.token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch help data');
-        }
-
-        const data = await response.json();
-        if (data.success) {
-            updateHelpUI(data.data);
-        }
-    } catch (error) {
-        console.error('Error loading help page:', error);
-    }
-}
-
-// UI Update Functions
-function updateDashboardUI(data) {
-    // Update metrics
-    const metrics = {
-        'total-usdc-earned': data.total_usdc_earned || 0,
-        'total-transactions': data.total_transactions || 0,
-        'successful-transactions': data.successful_transactions || 0,
-        'average-transaction-value': data.average_transaction_value || 0
-    };
-
-    Object.entries(metrics).forEach(([id, value]) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = typeof value === 'number' ? value.toFixed(2) : value;
-        }
-    });
-
-    // Update recent transactions
-    const transactionsList = document.querySelector('.recent-transactions');
-    if (transactionsList && data.recent_transactions) {
-        transactionsList.innerHTML = '';
-        if (data.recent_transactions.length > 0) {
-            data.recent_transactions.forEach(transaction => {
-                const transactionItem = document.createElement('div');
-                transactionItem.classList.add('list-item');
-                transactionItem.innerHTML = `
-                    <div class="details">
-                        <span>${transaction.description || 'Transaction'}</span>
-                        <span class="label">${new Date(transaction.date).toLocaleDateString()}</span>
-                    </div>
-                    <span class="value" style="color: ${transaction.type === 'received' ? '#28a745' : '#dc3545'}">
-                        ${transaction.type === 'received' ? '+' : '-'}$${transaction.amount.toFixed(2)} USDC
-                    </span>
-                `;
-                transactionsList.appendChild(transactionItem);
-            });
-        } else {
-            transactionsList.innerHTML = `
-                <div class="empty-state">
-                    <p>No transactions yet</p>
-                    <small>Your recent transactions will appear here</small>
-                </div>
-            `;
-        }
-    }
-
-    // Update recent buyers
-    const buyersList = document.querySelector('.recent-buyers');
-    if (buyersList && data.recent_buyers) {
-        buyersList.innerHTML = '';
-        if (data.recent_buyers.length > 0) {
-            data.recent_buyers.forEach(buyer => {
-                const buyerItem = document.createElement('div');
-                buyerItem.classList.add('list-item');
-                buyerItem.innerHTML = `
-                    <div class="details">
-                        <span>${buyer.name || 'Anonymous'}</span>
-                        <span class="label">${buyer.email || 'No email'}</span>
-                    </div>
-                    <span class="value">$${buyer.total_spent.toFixed(2)} USDC</span>
-                `;
-                buyersList.appendChild(buyerItem);
-            });
-        } else {
-            buyersList.innerHTML = `
-                <div class="empty-state">
-                    <p>No buyers yet</p>
-                    <small>Your recent buyers will appear here</small>
-                </div>
-            `;
-        }
-    }
-}
-
-function initializeVolumeChart(volumeData) {
-    const volumeChart = document.getElementById('volumeChart');
-    if (volumeChart && volumeData) {
-        const ctx = volumeChart.getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: volumeData.labels || [],
-                datasets: [{
-                    label: 'Volume',
-                    data: volumeData.values || [],
-                    borderColor: '#4CAF50',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(76, 175, 80, 0.1)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            display: true,
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-    }
-}
-
-// Initialize transactions page functionality
-function initializeTransactionsPage() {
-    // Add event listeners for filters
-    const statusFilter = document.getElementById('statusFilter');
-    const chainFilter = document.getElementById('chainFilter');
-    const dateRange = document.getElementById('dateRange');
-    const exportButton = document.getElementById('exportButton');
-
-    if (statusFilter) {
-        statusFilter.addEventListener('change', filterTransactions);
-    }
-    if (chainFilter) {
-        chainFilter.addEventListener('change', filterTransactions);
-    }
-    if (dateRange) {
-        dateRange.addEventListener('change', filterTransactions);
-    }
-    if (exportButton) {
-        exportButton.addEventListener('click', exportTransactions);
-    }
-}
-
-function filterTransactions() {
-    // Implementation for filtering transactions
-    console.log('Filtering transactions...');
-}
-
-function exportTransactions() {
-    // Implementation for exporting transactions
-    console.log('Exporting transactions...');
-}
-
-// Placeholder functions for other UI updates
-function updateTransactionsList(transactions) {
-    const transactionsList = document.getElementById('transactionsList');
-    if (!transactionsList || !transactions) return;
-
-    transactionsList.innerHTML = '';
-    
-    if (transactions.length === 0) {
-        transactionsList.innerHTML = `
-            <div class="empty-state">
-                <p>No transactions found</p>
-                <small>Your transactions will appear here</small>
-            </div>
-        `;
-        return;
-    }
-
-    transactions.forEach(transaction => {
-        const transactionItem = document.createElement('div');
-        transactionItem.classList.add('list-item');
-        transactionItem.innerHTML = `
-            <div class="transaction-info">
-                <div class="description">${transaction.description || 'Transaction'}</div>
-                <div class="details">
-                    <span>${transaction.chain || 'Unknown'}</span>
-                    <span>•</span>
-                    <span>${new Date(transaction.date).toLocaleDateString()}</span>
-                </div>
-            </div>
-            <div class="amount">$${transaction.amount.toFixed(2)} USDC</div>
-            <div class="status ${transaction.status.toLowerCase()}">${transaction.status}</div>
-            <button class="view-details">
-                <i class="fas fa-eye"></i>
-                View
-            </button>
-        `;
-        transactionsList.appendChild(transactionItem);
-    });
-}
-
-function updateTransactionStats(stats) {
-    if (!stats) return;
-
-    const elements = {
-        totalTransactions: document.getElementById('totalTransactions'),
-        totalVolume: document.getElementById('totalVolume'),
-        successRate: document.getElementById('successRate'),
-        averageValue: document.getElementById('averageValue')
-    };
-
-    if (elements.totalTransactions) {
-        elements.totalTransactions.textContent = stats.total_transactions || 0;
-    }
-    if (elements.totalVolume) {
-        elements.totalVolume.textContent = `$${(stats.total_volume || 0).toFixed(2)}`;
-    }
-    if (elements.successRate) {
-        elements.successRate.textContent = `${(stats.success_rate || 0).toFixed(1)}%`;
-    }
-    if (elements.averageValue) {
-        elements.averageValue.textContent = `$${(stats.average_value || 0).toFixed(2)}`;
+        console.error('Error fetching capital data:', error);
+        showError('Failed to fetch capital data');
     }
 }
 
 function updateCapitalUI(data) {
-    // Update summary cards
-    updateSummaryCards(data.summary);
-    
-    // Update insights chart
-    updateInsightsChart(data.insights);
-    
-    // Update connected accounts
-    updateConnectedAccounts(data.accounts);
+    // Update summary metrics
+    updateSummaryMetrics(data.summary);
     
     // Update recent movements
     updateRecentMovements(data.movements);
     
-    // Update chain distribution
-    updateChainDistribution(data.chains);
+    // Update connected accounts
+    updateConnectedAccounts(data.accounts);
+    
+    // Update capital chart
+    updateCapitalChart(data.analytics);
 }
 
-function updateSummaryCards(summary) {
-    // Update total capital
-    document.getElementById('totalCapitalAmount').textContent = formatCurrency(summary.total_capital);
-    updateTrend('totalCapitalTrend', summary.total_capital_trend);
-
-    // Update available capital
-    document.getElementById('availableCapitalAmount').textContent = formatCurrency(summary.available_capital);
-    updateTrend('availableCapitalTrend', summary.available_capital_trend);
-
-    // Update locked capital
-    document.getElementById('lockedCapitalAmount').textContent = formatCurrency(summary.locked_capital);
-    updateTrend('lockedCapitalTrend', summary.locked_capital_trend);
-}
-
-function updateTrend(elementId, trend) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-
-    const icon = element.querySelector('i');
-    const span = element.querySelector('span');
-
-    if (trend >= 0) {
-        icon.className = 'fas fa-arrow-up';
-        element.classList.remove('negative');
-        element.classList.add('positive');
-    } else {
-        icon.className = 'fas fa-arrow-down';
-        element.classList.remove('positive');
-        element.classList.add('negative');
+function updateSummaryMetrics(summary) {
+    // Update total balance
+    const totalBalance = document.getElementById('totalBalance');
+    if (totalBalance) {
+        totalBalance.textContent = formatCurrency(summary.total_balance);
     }
+    
+    // Update incoming capital
+    const incomingCapital = document.getElementById('incomingCapital');
+    if (incomingCapital) {
+        incomingCapital.textContent = formatCurrency(summary.incoming_capital);
+    }
+    
+    // Update outgoing capital
+    const outgoingCapital = document.getElementById('outgoingCapital');
+    if (outgoingCapital) {
+        outgoingCapital.textContent = formatCurrency(summary.outgoing_capital);
+    }
+}
 
-    span.textContent = `${Math.abs(trend)}%`;
+function updateRecentMovements(movements) {
+    const movementsList = document.getElementById('recentMovements');
+    if (!movementsList) return;
+    
+    movementsList.innerHTML = movements.map(movement => `
+        <div class="data-item">
+            <div class="data-icon">
+                <i class="fas ${getMovementIcon(movement.type)}"></i>
+            </div>
+            <div class="data-content">
+                <div class="data-title">${movement.description}</div>
+                <div class="data-subtitle">${formatDate(movement.date)}</div>
+            </div>
+            <div class="data-value ${movement.type === 'incoming' ? 'positive' : 'negative'}">
+                ${movement.type === 'incoming' ? '+' : '-'}${formatCurrency(movement.amount)}
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateConnectedAccounts(accounts) {
+    const accountsList = document.getElementById('connectedAccounts');
+    if (!accountsList) return;
+    
+    accountsList.innerHTML = accounts.map(account => `
+        <div class="account-item">
+            <div class="account-icon">
+                <i class="fas ${getAccountIcon(account.type)}"></i>
+            </div>
+            <div class="account-content">
+                <div class="account-title">${account.name}</div>
+                <div class="account-subtitle">${account.address}</div>
+            </div>
+            <div class="account-balance">${formatCurrency(account.balance)}</div>
+        </div>
+    `).join('');
 }
 
 function initializeCapitalChart() {
@@ -1021,16 +818,28 @@ function initializeCapitalChart() {
             labels: [],
             datasets: [
                 {
-                    label: 'Total Capital',
+                    label: 'Total Balance',
                     data: [],
                     borderColor: '#2C3E50',
-                    tension: 0.4
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(44, 62, 80, 0.1)'
                 },
                 {
-                    label: 'Available Capital',
+                    label: 'Incoming',
                     data: [],
-                    borderColor: '#3498db',
-                    tension: 0.4
+                    borderColor: '#27AE60',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)'
+                },
+                {
+                    label: 'Outgoing',
+                    data: [],
+                    borderColor: '#E74C3C',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)'
                 }
             ]
         },
@@ -1056,302 +865,23 @@ function initializeCapitalChart() {
     });
 }
 
-function updateInsightsChart(insights) {
+function updateCapitalChart(analytics) {
     if (!window.capitalChart) return;
-
-    window.capitalChart.data.labels = insights.dates;
-    window.capitalChart.data.datasets[0].data = insights.total_capital;
-    window.capitalChart.data.datasets[1].data = insights.available_capital;
+    
+    window.capitalChart.data.labels = analytics.dates;
+    window.capitalChart.data.datasets[0].data = analytics.total_balance;
+    window.capitalChart.data.datasets[1].data = analytics.incoming;
+    window.capitalChart.data.datasets[2].data = analytics.outgoing;
     window.capitalChart.update();
-}
-
-function updateConnectedAccounts(accounts) {
-    const accountsList = document.getElementById('accountsList');
-    if (!accountsList) return;
-
-    accountsList.innerHTML = accounts.map(account => `
-        <div class="account-card">
-            <div class="account-icon">
-                <i class="fas fa-wallet"></i>
-            </div>
-            <div class="account-info">
-                <div class="account-name">${account.name}</div>
-                <div class="account-balance">${formatCurrency(account.balance)}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function updateRecentMovements(movements) {
-    const movementsList = document.getElementById('movementsList');
-    if (!movementsList) return;
-
-    movementsList.innerHTML = movements.map(movement => `
-        <div class="movement-item">
-            <div class="movement-info">
-                <div class="movement-icon">
-                    <i class="fas ${getMovementIcon(movement.type)}"></i>
-                </div>
-                <div class="movement-details">
-                    <div class="movement-type">${movement.type}</div>
-                    <div class="movement-date">${formatDate(movement.date)}</div>
-                </div>
-            </div>
-            <div class="movement-amount">${formatCurrency(movement.amount)}</div>
-        </div>
-    `).join('');
-}
-
-function updateChainDistribution(chains) {
-    const chainDistribution = document.getElementById('chainDistribution');
-    if (!chainDistribution) return;
-
-    chainDistribution.innerHTML = chains.map(chain => `
-        <div class="chain-card">
-            <div class="chain-icon">
-                <i class="fas ${getChainIcon(chain.name)}"></i>
-            </div>
-            <div class="chain-info">
-                <div class="chain-name">${chain.name}</div>
-                <div class="chain-amount">${formatCurrency(chain.amount)}</div>
-            </div>
-        </div>
-    `).join('');
 }
 
 function getMovementIcon(type) {
     const icons = {
-        'deposit': 'fa-arrow-down',
-        'withdrawal': 'fa-arrow-up',
-        'transfer': 'fa-exchange-alt',
-        'payment': 'fa-money-bill-wave'
+        'incoming': 'fa-arrow-down',
+        'outgoing': 'fa-arrow-up',
+        'transfer': 'fa-exchange-alt'
     };
-    return icons[type.toLowerCase()] || 'fa-circle';
-}
-
-function getChainIcon(chain) {
-    const icons = {
-        'ethereum': 'fa-ethereum',
-        'polygon': 'fa-polygon',
-        'arbitrum': 'fa-arbitrum'
-    };
-    return icons[chain.toLowerCase()] || 'fa-link';
-}
-
-function setupTimeFilterListeners() {
-    const timeFilter = document.querySelector('.time-filter');
-    if (!timeFilter) return;
-
-    timeFilter.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            // Remove active class from all buttons
-            timeFilter.querySelectorAll('button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Add active class to clicked button
-            e.target.classList.add('active');
-            
-            // Fetch new data for selected period
-            fetchCapitalData(e.target.dataset.period);
-        }
-    });
-}
-
-function loadDemoData() {
-    const demoData = {
-        summary: {
-            total_capital: 50000,
-            total_capital_trend: 5.2,
-            available_capital: 35000,
-            available_capital_trend: 3.8,
-            locked_capital: 15000,
-            locked_capital_trend: 1.4
-        },
-        insights: {
-            dates: ['2024-03-10', '2024-03-11', '2024-03-12', '2024-03-13', '2024-03-14', '2024-03-15', '2024-03-16'],
-            total_capital: [45000, 46000, 47000, 48000, 49000, 49500, 50000],
-            available_capital: [32000, 32500, 33000, 33500, 34000, 34500, 35000]
-        },
-        accounts: [
-            { name: 'Main Wallet', balance: 25000 },
-            { name: 'Trading Account', balance: 15000 },
-            { name: 'Savings', balance: 10000 }
-        ],
-        movements: [
-            { type: 'deposit', date: '2024-03-16', amount: 5000 },
-            { type: 'withdrawal', date: '2024-03-15', amount: -2000 },
-            { type: 'transfer', date: '2024-03-14', amount: 1000 }
-        ],
-        chains: [
-            { name: 'Ethereum', amount: 30000 },
-            { name: 'Polygon', amount: 15000 },
-            { name: 'Arbitrum', amount: 5000 }
-        ]
-    };
-
-    updateCapitalUI(demoData);
-}
-
-// Capital Page Functions
-function initializeCapitalPage() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to view capital information');
-        return;
-    }
-
-    try {
-        fetchCapitalData();
-        initializeCapitalChart();
-        setupTimeFilterListeners();
-    } catch (error) {
-        console.error('Error initializing capital page:', error);
-        showError('Failed to initialize capital page');
-    }
-}
-
-async function fetchCapitalData() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to view capital information');
-        return;
-    }
-
-    try {
-        // Fetch capital summary
-        const summaryResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Fetch capital insights
-        const insightsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/insights`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Fetch connected accounts
-        const accountsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/accounts`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Fetch recent capital movements
-        const movementsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/movements`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Fetch capital by chain
-        const chainResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/by-chain`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!summaryResponse.ok || !insightsResponse.ok || !accountsResponse.ok || 
-            !movementsResponse.ok || !chainResponse.ok) {
-            throw new Error('Failed to fetch capital data');
-        }
-
-        const summaryData = await summaryResponse.json();
-        const insightsData = await insightsResponse.json();
-        const accountsData = await accountsResponse.json();
-        const movementsData = await movementsResponse.json();
-        const chainData = await chainResponse.json();
-
-        // Update UI with the data
-        updateCapitalUI({
-            summary: summaryData.data,
-            insights: insightsData.data,
-            accounts: accountsData.data,
-            movements: movementsData.data,
-            chains: chainData.data
-        });
-    } catch (error) {
-        console.error('Error fetching capital data:', error);
-        showError('Failed to fetch capital data');
-        loadDemoData();
-    }
-}
-
-function updateCapitalUI(data) {
-    // Update summary cards
-    updateSummaryCards(data.summary);
-    
-    // Update insights chart
-    updateInsightsChart(data.insights);
-    
-    // Update connected accounts
-    updateConnectedAccounts(data.accounts);
-    
-    // Update recent movements
-    updateRecentMovements(data.movements);
-    
-    // Update chain distribution
-    updateChainDistribution(data.chains);
-}
-
-function updateAccountUI(data) {
-    // Update profile form
-    updateProfileForm(data.profile);
-    
-    // Update security settings
-    updateSecuritySettings(data.security);
-    
-    // Update notification preferences
-    updateNotificationPreferences(data.settings.notifications);
-    
-    // Update connected accounts
-    updateConnectedAccounts(data.settings.connected_accounts);
-}
-
-function updateProfileForm(profile) {
-    document.getElementById('fullName').value = profile.full_name || '';
-    document.getElementById('email').value = profile.email || '';
-    document.getElementById('phone').value = profile.phone || '';
-    document.getElementById('company').value = profile.company || '';
-}
-
-function updateSecuritySettings(security) {
-    document.getElementById('enable2FA').checked = security.two_factor_enabled || false;
-}
-
-function updateNotificationPreferences(notifications) {
-    document.getElementById('emailNotifications').checked = notifications.email || false;
-    document.getElementById('transactionAlerts').checked = notifications.transactions || false;
-    document.getElementById('securityAlerts').checked = notifications.security || false;
-}
-
-function updateConnectedAccounts(accounts) {
-    const accountsList = document.getElementById('connectedAccountsList');
-    if (!accountsList) return;
-
-    accountsList.innerHTML = accounts.map(account => `
-        <div class="connected-account">
-            <div class="account-icon">
-                <i class="fas ${getAccountIcon(account.type)}"></i>
-            </div>
-            <div class="account-info">
-                <div class="account-name">${account.name}</div>
-                <div class="account-status">${account.status}</div>
-            </div>
-        </div>
-    `).join('');
+    return icons[type] || 'fa-circle';
 }
 
 function getAccountIcon(type) {
@@ -1360,7 +890,198 @@ function getAccountIcon(type) {
         'bank': 'fa-university',
         'crypto': 'fa-bitcoin-sign'
     };
-    return icons[type.toLowerCase()] || 'fa-link';
+    return icons[type] || 'fa-link';
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(amount);
+}
+
+function formatDate(date) {
+    return new Date(date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+async function loadAccountPage() {
+    const pageContainer = document.getElementById('account-page');
+    
+    // Load account page content
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Account Settings</h1>
+        <div class="account-sections">
+            <!-- Profile Section -->
+            <div class="account-section">
+                <h2>Profile Information</h2>
+                <form id="profileForm" class="account-form">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company Name</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+                    <button type="submit" class="btn-primary">Update Profile</button>
+                </form>
+            </div>
+
+            <!-- Security Section -->
+            <div class="account-section">
+                <h2>Security Settings</h2>
+                <form id="securityForm" class="account-form">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Update Password</button>
+                </form>
+                <div class="security-options">
+                    <div class="option-item">
+                        <div class="option-info">
+                            <h3>Two-Factor Authentication</h3>
+                            <p>Add an extra layer of security to your account</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="enable2FA">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connected Accounts Section -->
+            <div class="account-section">
+                <h2>Connected Accounts</h2>
+                <div class="connected-accounts-list" id="connectedAccountsList">
+                    <!-- Connected accounts will be populated here -->
+                </div>
+                <button id="connectNewAccountBtn" class="btn-secondary">
+                    <i class="fas fa-plus"></i> Connect New Account
+                </button>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div class="account-section">
+                <h2>Notification Preferences</h2>
+                <form id="notificationForm" class="account-form">
+                    <div class="option-item">
+                        <div class="option-info">
+                            <h3>Email Notifications</h3>
+                            <p>Receive updates about your account via email</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="emailNotifications">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-info">
+                            <h3>Transaction Alerts</h3>
+                            <p>Get notified about new transactions</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="transactionAlerts">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="option-item">
+                        <div class="option-info">
+                            <h3>Security Alerts</h3>
+                            <p>Receive alerts about security-related activities</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="securityAlerts">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary">Save Preferences</button>
+                </form>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="account-section danger-zone">
+                <h2>Danger Zone</h2>
+                <div class="danger-actions">
+                    <button id="deleteAccountBtn" class="btn-danger">
+                        <i class="fas fa-trash"></i> Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    // Initialize account page functionality
+    initializeAccountPage();
+}
+
+function initializeAccountPage() {
+    // Set up real-time updates
+    setupAccountRealTimeUpdates();
+    
+    // Set up form event listeners
+    setupAccountFormListeners();
+    
+    // Initial data fetch
+    fetchAccountData();
+}
+
+function setupAccountRealTimeUpdates() {
+    // Set up WebSocket connection for real-time updates
+    const ws = new WebSocket('wss://halaxa-backend.onrender.com/ws');
+    
+    ws.onopen = () => {
+        console.log('WebSocket connected');
+        // Subscribe to account updates
+        ws.send(JSON.stringify({
+            type: 'subscribe',
+            channel: 'account',
+            sellerId: state.sellerId
+        }));
+    };
+    
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'account_update') {
+            updateAccountUI(data.data);
+        }
+    };
+    
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+    
+    ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        // Attempt to reconnect after 5 seconds
+        setTimeout(setupAccountRealTimeUpdates, 5000);
+    };
 }
 
 function setupAccountFormListeners() {
@@ -1402,41 +1123,115 @@ function setupAccountFormListeners() {
     // Connect new account button
     const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
     if (connectNewAccountBtn) {
-        connectNewAccountBtn.addEventListener('click', () => {
-            showConnectAccountModal();
-        });
+        connectNewAccountBtn.addEventListener('click', showConnectAccountModal);
     }
 
     // Delete account button
     const deleteAccountBtn = document.getElementById('deleteAccountBtn');
     if (deleteAccountBtn) {
-        deleteAccountBtn.addEventListener('click', () => {
-            showDeleteAccountConfirmation();
-        });
+        deleteAccountBtn.addEventListener('click', showDeleteAccountConfirmation);
     }
 }
 
-async function updateProfile() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to update profile');
-        return;
-    }
-
-    const formData = {
-        full_name: document.getElementById('fullName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        company: document.getElementById('company').value
-    };
-
+async function fetchAccountData() {
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/profile`, {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/profile`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch account data');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            updateAccountUI(data.data);
+        }
+    } catch (error) {
+        console.error('Error fetching account data:', error);
+        showError('Failed to fetch account data');
+    }
+}
+
+function updateAccountUI(data) {
+    // Update profile form
+    updateProfileForm(data.profile);
+    
+    // Update security settings
+    updateSecuritySettings(data.security);
+    
+    // Update notification preferences
+    updateNotificationPreferences(data.settings.notifications);
+    
+    // Update connected accounts
+    updateConnectedAccounts(data.settings.connected_accounts);
+}
+
+function updateProfileForm(profile) {
+    const form = document.getElementById('profileForm');
+    if (!form) return;
+
+    form.fullName.value = profile.full_name || '';
+    form.email.value = profile.email || '';
+    form.phone.value = profile.phone || '';
+    form.company.value = profile.company || '';
+}
+
+function updateSecuritySettings(security) {
+    const enable2FA = document.getElementById('enable2FA');
+    if (enable2FA) {
+        enable2FA.checked = security.two_factor_enabled || false;
+    }
+}
+
+function updateNotificationPreferences(notifications) {
+    const emailNotifications = document.getElementById('emailNotifications');
+    const transactionAlerts = document.getElementById('transactionAlerts');
+    const securityAlerts = document.getElementById('securityAlerts');
+
+    if (emailNotifications) emailNotifications.checked = notifications.email || false;
+    if (transactionAlerts) transactionAlerts.checked = notifications.transactions || false;
+    if (securityAlerts) securityAlerts.checked = notifications.security || false;
+}
+
+function updateConnectedAccounts(accounts) {
+    const accountsList = document.getElementById('connectedAccountsList');
+    if (!accountsList) return;
+
+    accountsList.innerHTML = accounts.map(account => `
+        <div class="connected-account">
+            <div class="account-icon">
+                <i class="fas ${getAccountIcon(account.type)}"></i>
+            </div>
+            <div class="account-info">
+                <div class="account-name">${account.name}</div>
+                <div class="account-status ${account.status.toLowerCase()}">${account.status}</div>
+            </div>
+            <div class="account-actions">
+                <button class="btn-icon" onclick="disconnectAccount('${account.id}')">
+                    <i class="fas fa-unlink"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function updateProfile() {
+    try {
+        const formData = {
+            full_name: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            company: document.getElementById('company').value
+        };
+
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/profile`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
@@ -1446,36 +1241,28 @@ async function updateProfile() {
             throw new Error('Failed to update profile');
         }
 
-        showSuccess('signupSuccess', 'Profile updated successfully');
+        showSuccess('Profile updated successfully');
     } catch (error) {
         console.error('Error updating profile:', error);
-        showError('signupError', 'Failed to update profile');
+        showError('Failed to update profile');
     }
 }
 
 async function updatePassword() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to update password');
-        return;
-    }
-
-    const currentPassword = document.getElementById('currentPassword').value;
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    if (newPassword !== confirmPassword) {
-        showError('signupError', 'New passwords do not match');
-        return;
-    }
-
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/password`, {
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            showError('New passwords do not match');
+            return;
+        }
+
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/password`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -1488,34 +1275,26 @@ async function updatePassword() {
             throw new Error('Failed to update password');
         }
 
-        showSuccess('signupSuccess', 'Password updated successfully');
+        showSuccess('Password updated successfully');
         document.getElementById('securityForm').reset();
     } catch (error) {
         console.error('Error updating password:', error);
-        showError('signupError', 'Failed to update password');
+        showError('Failed to update password');
     }
 }
 
 async function updateNotificationPreferences() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to update notification preferences');
-        return;
-    }
-
-    const preferences = {
-        email: document.getElementById('emailNotifications').checked,
-        transactions: document.getElementById('transactionAlerts').checked,
-        security: document.getElementById('securityAlerts').checked
-    };
-
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/notifications`, {
+        const preferences = {
+            email: document.getElementById('emailNotifications').checked,
+            transactions: document.getElementById('transactionAlerts').checked,
+            security: document.getElementById('securityAlerts').checked
+        };
+
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/notifications`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(preferences)
@@ -1525,27 +1304,19 @@ async function updateNotificationPreferences() {
             throw new Error('Failed to update notification preferences');
         }
 
-        showSuccess('signupSuccess', 'Notification preferences updated successfully');
+        showSuccess('Notification preferences updated successfully');
     } catch (error) {
         console.error('Error updating notification preferences:', error);
-        showError('signupError', 'Failed to update notification preferences');
+        showError('Failed to update notification preferences');
     }
 }
 
 async function update2FA(enabled) {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to update 2FA settings');
-        return;
-    }
-
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/2fa`, {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/2fa`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ enabled })
@@ -1555,18 +1326,112 @@ async function update2FA(enabled) {
             throw new Error('Failed to update 2FA settings');
         }
 
-        showSuccess('signupSuccess', `Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`);
+        showSuccess(`Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`);
     } catch (error) {
         console.error('Error updating 2FA settings:', error);
-        showError('signupError', 'Failed to update 2FA settings');
+        showError('Failed to update 2FA settings');
         // Revert the toggle
         document.getElementById('enable2FA').checked = !enabled;
     }
 }
 
+async function disconnectAccount(accountId) {
+    if (!confirm('Are you sure you want to disconnect this account?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/accounts/${accountId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to disconnect account');
+        }
+
+        showSuccess('Account disconnected successfully');
+        fetchAccountData(); // Refresh the accounts list
+    } catch (error) {
+        console.error('Error disconnecting account:', error);
+        showError('Failed to disconnect account');
+    }
+}
+
 function showConnectAccountModal() {
     // Implementation for showing connect account modal
-    alert('Connect account functionality will be implemented here');
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>Connect New Account</h2>
+            <form id="connectAccountForm">
+                <div class="form-group">
+                    <label for="accountType">Account Type</label>
+                    <select id="accountType" required>
+                        <option value="wallet">Crypto Wallet</option>
+                        <option value="bank">Bank Account</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="accountName">Account Name</label>
+                    <input type="text" id="accountName" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Connect</button>
+                </div>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    // Add form submit handler
+    const form = document.getElementById('connectAccountForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await connectNewAccount();
+    });
+}
+
+async function connectNewAccount() {
+    try {
+        const accountType = document.getElementById('accountType').value;
+        const accountName = document.getElementById('accountName').value;
+
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/accounts`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                type: accountType,
+                name: accountName
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to connect account');
+        }
+
+        showSuccess('Account connected successfully');
+        closeModal();
+        fetchAccountData(); // Refresh the accounts list
+    } catch (error) {
+        console.error('Error connecting account:', error);
+        showError('Failed to connect account');
+    }
+}
+
+function closeModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function showDeleteAccountConfirmation() {
@@ -1576,19 +1441,11 @@ function showDeleteAccountConfirmation() {
 }
 
 async function deleteAccount() {
-    const sellerId = getSellerId();
-    const token = localStorage.getItem('token');
-    
-    if (!token || !sellerId) {
-        showError('Please log in to delete account');
-        return;
-    }
-
     try {
-        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}`, {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${state.token}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -1602,43 +1459,8 @@ async function deleteAccount() {
         window.location.href = '/Pages/login.html';
     } catch (error) {
         console.error('Error deleting account:', error);
-        showError('signupError', 'Failed to delete account');
+        showError('Failed to delete account');
     }
-}
-
-function loadDemoData() {
-    const demoData = {
-        profile: {
-            full_name: 'John Doe',
-            email: 'john@example.com',
-            phone: '+1234567890',
-            company: 'Demo Company'
-        },
-        security: {
-            two_factor_enabled: false
-        },
-        settings: {
-            notifications: {
-                email: true,
-                transactions: true,
-                security: true
-            },
-            connected_accounts: [
-                {
-                    type: 'wallet',
-                    name: 'Main Wallet',
-                    status: 'Connected'
-                },
-                {
-                    type: 'bank',
-                    name: 'Bank Account',
-                    status: 'Connected'
-                }
-            ]
-        }
-    };
-
-    updateAccountUI(demoData);
 }
 
 // Plans Page Functions
@@ -2013,8 +1835,6 @@ function showLoading(type, show) {
     }
 }
 
-// Function removed - always show signup page
-
 // Function to initialize dashboard
 function initializeDashboard(sellerId) {
     console.log('Dashboard initialized with seller ID:', sellerId);
@@ -2040,10 +1860,6 @@ function initializeTransactionsPage() {
 
 function initializePaymentLinkPage() {
     console.log('Payment Link page initialized');
-}
-
-function initializeCapitalPage() {
-    console.log('Capital page initialized');
 }
 
 function initializeAccountPage() {

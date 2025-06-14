@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="./SPA.css">
 </head>
 <body>
+    <!-- Floating Particles Background -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <!-- Auth Container (hidden by default) -->
     <div id="auth-container" class="auth-container" style="display: none;">
         <div class="auth-background"></div>
@@ -33,13 +45,34 @@
                 <h1>Halaxa</h1>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item active"><i class="fas fa-home"></i> Home</li>
-                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
-                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
-                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
-                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
-                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
-                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+                <li class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Transactions</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-link"></i>
+                    <span>Payment Link</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Capital</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Accounts</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-crown"></i>
+                    <span>Plans</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </li>
             </ul>
         </div>
 
@@ -47,32 +80,8 @@
             <div class="page-content active-page" id="home-page">
                 <!-- Welcome Header -->
                 <div class="welcome-header">
-                    <h1 class="welcome-title">Welcome back, User</h1>
-                    <p class="welcome-subtitle">Here's what's happening with your business today.</p>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <button class="action-btn primary">
-                        <i class="fas fa-paper-plane"></i>
-                        Send Payment
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-arrow-down"></i>
-                        Request
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-exchange-alt"></i>
-                        Transfer
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-plus"></i>
-                        Deposit
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-file-invoice"></i>
-                        Create Invoice
-                    </button>
+                    <h1 class="welcome-title">Welcome to Halaxa</h1>
+                    <p class="welcome-subtitle">Your premium crypto payment platform dashboard</p>
                 </div>
 
                 <!-- Main Balance Card -->
@@ -80,7 +89,7 @@
                     <div class="balance-card">
                         <div class="balance-header">
                             <div class="balance-title">
-                                Halaxa balance
+                                Total Balance
                                 <i class="fas fa-info-circle"></i>
                             </div>
                             <div class="balance-actions">
@@ -92,25 +101,23 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="balance-amount">$5,216,471.18</div>
+                        <div class="balance-amount">$125,430.18</div>
                         <div class="balance-change positive">
                             <i class="fas fa-arrow-up"></i>
-                            $1.7M
-                            <span>↗ -$402K</span>
-                            <span style="margin-left: auto; color: var(--text-tertiary);">Last 30 days</span>
+                            +12.5% from last month
                         </div>
                     </div>
                 </div>
 
                 <!-- Stats Overview -->
                 <div class="stats-overview">
-                    <h2 class="section-title">Overview</h2>
+                    <h2 class="section-title">Business Overview</h2>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-header">
                                 <div class="stat-title">Total USDC Earned</div>
                                 <div class="stat-icon">
-                                    <i class="fas fa-dollar-sign"></i>
+                                    <i class="fas fa-coins"></i>
                                 </div>
                             </div>
                             <div class="stat-value">$125,430</div>
@@ -161,187 +168,161 @@
                                 -2.1% from last month
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Content Grid -->
-                <div class="content-grid">
-                    <!-- Chart Section -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <h3 class="chart-title">USDC Volume Over Time</h3>
-                            <div class="chart-actions">
-                                <button class="chart-action">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                                <button class="chart-action">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Active Payment Links</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-link"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value">42</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +15.2% from last month
                             </div>
                         </div>
-                        <div class="chart-container">
-                            Chart will be rendered here
-                        </div>
-                    </div>
 
-                    <!-- Accounts Summary -->
-                    <div class="accounts-card">
-                        <div class="accounts-header">
-                            <h3 class="accounts-title">Accounts</h3>
-                            <button class="add-account">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-                        <div class="account-list">
-                            <div class="account-item">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-credit-card"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>Credit Card</h4>
-                                        <p>•••• 4567</p>
-                                    </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Monthly Revenue</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-dollar-sign"></i>
                                 </div>
-                                <div class="account-balance">$12,505.87</div>
                             </div>
-
-                            <div class="account-item">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-university"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>Treasury</h4>
-                                        <p>Main account</p>
-                                    </div>
-                                </div>
-                                <div class="account-balance">$200,000.00</div>
-                            </div>
-
-                            <div class="account-item">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-cogs"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>Ops / Payroll</h4>
-                                        <p>Operations</p>
-                                    </div>
-                                </div>
-                                <div class="account-balance">$2,023,267.12</div>
-                            </div>
-
-                            <div class="account-item">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-file-invoice"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>AP</h4>
-                                        <p>Accounts payable</p>
-                                    </div>
-                                </div>
-                                <div class="account-balance">$226,767.82</div>
-                            </div>
-
-                            <div class="account-item">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-receipt"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>AR</h4>
-                                        <p>Accounts receivable</p>
-                                    </div>
-                                </div>
-                                <div class="account-balance">$0.00</div>
-                            </div>
-
-                            <div class="account-item" style="border-top: 1px solid var(--border-light); padding-top: var(--space-3); margin-top: var(--space-3);">
-                                <div class="account-info">
-                                    <div class="account-icon">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
-                                    <div class="account-details">
-                                        <h4>View all accounts</h4>
-                                    </div>
-                                </div>
+                            <div class="stat-value">$28,450</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +22.1% from last month
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
-                <div class="activity-section">
-                    <div class="activity-card">
-                        <div class="activity-header">
-                            <h3 class="activity-title">Recent Activity</h3>
-                            <a href="#" class="view-all">View all</a>
+                <!-- Interactive Data Visualization -->
+                <div class="data-visualization">
+                    <div class="viz-grid">
+                        <!-- Chart Section -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Revenue Analytics</h3>
+                                <div class="chart-actions">
+                                    <button class="chart-action">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="chart-action">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="chart-action">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <i class="fas fa-chart-area" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Interactive chart will be rendered here</p>
+                            </div>
                         </div>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-info">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-arrow-up"></i>
-                                    </div>
-                                    <div class="activity-details">
-                                        <h4>Payment sent</h4>
-                                        <p>To John Doe • Polygon</p>
-                                    </div>
-                                </div>
-                                <div class="activity-amount">
-                                    <div class="amount">-$1,250.00</div>
-                                    <div class="time">2 hours ago</div>
+
+                        <!-- Interactive Metrics Panel -->
+                        <div class="metrics-panel">
+                            <div class="metrics-header">
+                                <h3 class="metrics-title">Key Metrics</h3>
+                                <button class="chart-action">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Conversion Rate</div>
+                                <div class="metric-value">94.2%</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Avg. Processing Time</div>
+                                <div class="metric-value">2.3s</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Network Fees Saved</div>
+                                <div class="metric-value">$1,240</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Active Wallets</div>
+                                <div class="metric-value">156</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Total Volume (24h)</div>
+                                <div class="metric-value">$45,230</div>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <div class="metric-label">Gas Optimization</div>
+                                <div class="metric-value">87%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Interactive Stats -->
+                <div class="stats-overview">
+                    <h2 class="section-title">Network Performance</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Polygon Network</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-network-wired"></i>
                                 </div>
                             </div>
+                            <div class="stat-value">$89,240</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +18.5% volume
+                            </div>
+                        </div>
 
-                            <div class="activity-item">
-                                <div class="activity-info">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-arrow-down"></i>
-                                    </div>
-                                    <div class="activity-details">
-                                        <h4>Payment received</h4>
-                                        <p>From Alice Smith • TRC20</p>
-                                    </div>
-                                </div>
-                                <div class="activity-amount">
-                                    <div class="amount">+$850.00</div>
-                                    <div class="time">5 hours ago</div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">TRC20 Network</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-cube"></i>
                                 </div>
                             </div>
+                            <div class="stat-value">$36,190</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +7.2% volume
+                            </div>
+                        </div>
 
-                            <div class="activity-item">
-                                <div class="activity-info">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-link"></i>
-                                    </div>
-                                    <div class="activity-details">
-                                        <h4>Payment link created</h4>
-                                        <p>Invoice #INV-2024-001</p>
-                                    </div>
-                                </div>
-                                <div class="activity-amount">
-                                    <div class="amount">$2,500.00</div>
-                                    <div class="time">1 day ago</div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Gas Efficiency</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-leaf"></i>
                                 </div>
                             </div>
+                            <div class="stat-value">92.8%</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +3.1% optimization
+                            </div>
+                        </div>
 
-                            <div class="activity-item">
-                                <div class="activity-info">
-                                    <div class="activity-icon">
-                                        <i class="fas fa-check-circle"></i>
-                                    </div>
-                                    <div class="activity-details">
-                                        <h4>Transaction completed</h4>
-                                        <p>Payment link settled</p>
-                                    </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-title">Uptime</div>
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
                                 </div>
-                                <div class="activity-amount">
-                                    <div class="amount">+$3,200.00</div>
-                                    <div class="time">2 days ago</div>
-                                </div>
+                            </div>
+                            <div class="stat-value">99.9%</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-check"></i>
+                                Excellent performance
                             </div>
                         </div>
                     </div>
@@ -351,62 +332,33 @@
             <!-- Other pages remain the same for now -->
             <div class="page-content" id="transactions-page">
                 <h1 class="page-title">Transactions</h1>
-
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="title">Total Transactions</div>
-                        <div class="value" id="totalTransactions">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Total Volume</div>
-                        <div class="value" id="totalVolume">$0.00</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Success Rate</div>
-                        <div class="value" id="successRate">0%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Average Value</div>
-                        <div class="value" id="averageValue">$0.00</div>
-                    </div>
-                </div>
-
-                <!-- Filters Section -->
-                <div class="filters-section">
-                    <div class="filter-group">
-                        <label for="statusFilter">Status:</label>
-                        <select id="statusFilter">
-                            <option value="all">All</option>
-                            <option value="completed">Completed</option>
-                            <option value="pending">Pending</option>
-                            <option value="failed">Failed</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="chainFilter">Chain:</label>
-                        <select id="chainFilter">
-                            <option value="all">All</option>
-                            <option value="Polygon">Polygon</option>
-                            <option value="TRC20">TRC20</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="dateRange">Date Range:</label>
-                        <input type="date" id="dateRange">
-                    </div>
-                    <button id="exportButton" class="export-button">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
-
-                <!-- Transactions List -->
-                <div class="transactions-list" id="transactionsList">
-                    <!-- Transaction items will be populated here by JavaScript -->
-                </div>
+                <p>Transactions page content will be updated with the new design...</p>
             </div>
             
-            <!-- ... rest of existing pages ... -->
+            <div class="page-content" id="payment-link-page">
+                <h1 class="page-title">Payment Links</h1>
+                <p>Payment Links page content will be updated with the new design...</p>
+            </div>
+            
+            <div class="page-content" id="capital-page">
+                <h1 class="page-title">Capital</h1>
+                <p>Capital page content will be updated with the new design...</p>
+            </div>
+            
+            <div class="page-content" id="accounts-page">
+                <h1 class="page-title">Accounts</h1>
+                <p>Accounts page content will be updated with the new design...</p>
+            </div>
+            
+            <div class="page-content" id="plans-page">
+                <h1 class="page-title">Plans</h1>
+                <p>Plans page content will be updated with the new design...</p>
+            </div>
+            
+            <div class="page-content" id="help-page">
+                <h1 class="page-title">Help</h1>
+                <p>Help page content will be updated with the new design...</p>
+            </div>
         </div>
     </div>
 

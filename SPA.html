@@ -4,19 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaxa Dashboard</title>
-    </script>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Satoshi Font -->
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
-    <!-- Google Fonts for Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js for charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Include moment.js for date handling -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <!-- SPA Styles -->
-    <link rel="stylesheet" href="./spa.css">
+    <link rel="stylesheet" href="./SPA.css">
 </head>
 <body>
     <!-- Auth Container (hidden by default) -->
@@ -43,35 +34,32 @@
             <div class="shape"></div>
             <div class="shape"></div>
         </div>
-
-        <!-- Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="logo-section">
-                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+        <div class="dashboard-wrapper">
+            <div class="sidebar">
+                <div class="logo-section">
+                    <!-- Replace logo placeholder with subscription badge -->
+                    <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active"><i class="fas fa-home"></i> Home</li>
+                    <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                    <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                    <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                    <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                    <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                    <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+                </ul>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item active" data-page="home-page"><i class="fas fa-home"></i> Home</li>
-                <li class="nav-item" data-page="transactions-page"><i class="fas fa-list-alt"></i> Transactions</li>
-                <li class="nav-item" data-page="payment-link-page"><i class="fas fa-link"></i> Payment Link</li>
-                <li class="nav-item" data-page="capital-page"><i class="fas fa-chart-line"></i> Capital</li>
-                <li class="nav-item" data-page="account-page"><i class="fas fa-building"></i> Account</li>
-                <li class="nav-item" data-page="plans-page"><i class="fas fa-crown"></i> Plans</li>
-                <li class="nav-item" data-page="help-page"><i class="fas fa-question-circle"></i> Help</li>
-            </ul>
-        </div>
 
-        <!-- Main Content Area -->
-        <div class="main-content-area">
-            <!-- Home Page Content -->
-            <div id="home-page" class="page-content active">
+            <div class="main-content-area">
                 <div class="dashboard-grid">
                     <!-- Card 1: Total USDC Earned -->
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Total USDC Earned</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                        <div class="metric-value" id="total-usdc-earned">$0.00</div>
+                        <div class="metric-value" id="total-usdc-earned">$0.00</div> <!-- Placeholder -->
                         <div class="metric-label">All time</div>
                     </div>
 
@@ -79,9 +67,9 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Total Transactions</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                        <div class="metric-value" id="total-transactions">0</div>
+                        <div class="metric-value" id="total-transactions">0</div> <!-- Placeholder -->
                         <div class="metric-label">All time</div>
                     </div>
 
@@ -89,9 +77,9 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Successful Transactions</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                        <div class="metric-value" id="successful-transactions">0</div>
+                        <div class="metric-value" id="successful-transactions">0</div> <!-- Placeholder -->
                         <div class="metric-label">All time</div>
                     </div>
 
@@ -99,50 +87,51 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Average Transaction Value</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                        <div class="metric-value" id="average-transaction-value">$0.00</div>
+                        <div class="metric-value" id="average-transaction-value">$0.00</div> <!-- Placeholder -->
                         <div class="metric-label">All time</div>
                     </div>
 
-                    <!-- Card 5: USDC Volume Over Time Chart -->
-                    <div class="card chart-container" style="grid-column: span 2;">
+                     <!-- Card 5: USDC Volume Over Time Chart -->
+                    <div class="card chart-container" style="grid-column: span 2;"> <!-- Spans two columns -->
                         <div class="card-header">
-                            <div class="card-title">USDC Volume Over Time</div>
-                            <div class="card-actions">
-                                <i class="fas fa-download"></i>
-                                <i class="fas fa-ellipsis-h"></i>
-                            </div>
+                             <div class="card-title">USDC Volume Over Time</div>
+                              <div class="card-actions">
+                                  <i class="fas fa-download"></i>
+                                  <i class="fas fa-ellipsis-h"></i>
+                              </div>
                         </div>
-                        <canvas id="volumeChart" class="chart-canvas"></canvas>
+                         <canvas id="volumeChart" class="chart-canvas"></canvas>
                     </div>
 
                     <!-- Card 6: Recent Transactions List -->
                     <div class="card" style="grid-column: span 1;">
                         <div class="card-header">
                             <div class="card-title">Recent Transactions</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
                         <div class="data-list recent-transactions">
-                            <!-- Transaction items will be populated here -->
+                             <!-- Transaction items will be populated here -->
                         </div>
                     </div>
 
-                    <!-- Card 7: Payment Link Summary List -->
-                    <div class="card" style="grid-column: span 1;">
+                     <!-- Card 7: Payment Link Summary List -->
+                     <div class="card" style="grid-column: span 1;">
                         <div class="card-header">
                             <div class="card-title">Payment Link Summary</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                             <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
                         <div class="data-list" id="paymentLinkSummaryList">
-                            <div class="list-item">
-                                <span class="label">Active Links</span>
-                                <span class="value">0</span>
-                            </div>
-                            <div class="list-item">
-                                <span class="label">Total Generated Value</span>
-                                <span class="value">$0.00 USDC</span>
-                            </div>
+                             <!-- Payment link items will be populated here -->
+                              <div class="list-item">
+                                  <span class="label">Active Links</span>
+                                  <span class="value">12</span>
+                              </div>
+                               <div class="list-item">
+                                   <span class="label">Total Generated Value</span>
+                                   <span class="value">$15,000.00 USDC</span>
+                               </div>
                         </div>
                     </div>
 
@@ -159,687 +148,344 @@
                             <!-- Buyer information will be populated here -->
                         </div>
                     </div>
+
+                    <!-- Add more cards/sections as needed -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TRANSACTION PAGE ==================== -->
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <!-- Replace logo placeholder with subscription badge -->
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item active"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <div class="main-content-area">
+            <h1 class="page-title">Transactions</h1>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Total Transactions</div>
+                    <div class="value" id="totalTransactions">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Total Volume</div>
+                    <div class="value" id="totalVolume">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Success Rate</div>
+                    <div class="value" id="successRate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Average Value</div>
+                    <div class="value" id="averageValue">$0.00</div>
                 </div>
             </div>
 
-            <!-- Transactions Page Content -->
-            <div id="transactions-page" class="page-content">
-                <h1 class="page-title">Transactions</h1>
-
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="title">Total Transactions</div>
-                        <div class="value" id="totalTransactions">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Total Volume</div>
-                        <div class="value" id="totalVolume">$0.00</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Success Rate</div>
-                        <div class="value" id="successRate">0%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="title">Average Value</div>
-                        <div class="value" id="averageValue">$0.00</div>
-                    </div>
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="all">All</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="failed">Failed</option>
+                    </select>
                 </div>
+                <div class="filter-group">
+                    <label for="chainFilter">Chain:</label>
+                    <select id="chainFilter">
+                        <option value="all">All</option>
+                        <option value="Polygon">Polygon</option>
+                        <option value="TRC20">TRC20</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="dateRange">Date Range:</label>
+                    <input type="date" id="dateRange">
+                </div>
+                <button id="exportButton" class="export-button">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
 
-                <!-- Filters Section -->
-                <div class="filters-section">
-                    <div class="filter-group">
-                        <label for="statusFilter">Status:</label>
-                        <select id="statusFilter">
-                            <option value="all">All</option>
-                            <option value="completed">Completed</option>
-                            <option value="pending">Pending</option>
-                            <option value="failed">Failed</option>
+            <!-- Transactions List -->
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transaction items will be populated here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PAYMENT LINK PAGE ==================== -->
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item active"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <div class="main-content-area">
+            <h1 class="page-title">Create Payment Link</h1>
+
+            <div class="payment-link-form-container">
+                <form id="createPaymentLinkForm">
+                    <div class="form-group">
+                        <label for="amount">Amount (USDC)</label>
+                        <input type="number" id="amount" name="amount" step="0.01" required placeholder="e.g., 100.00">
+                        <div class="gas-badge" id="gasEstimateBadge">Select chain for gas estimate</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wallet_address">Recipient Wallet Address</label>
+                        <input type="text" id="wallet_address" name="wallet_address" required placeholder="e.g., 0x...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chain">Blockchain Network</label>
+                        <select id="chain" name="chain" required>
+                            <option value="">Select Chain</option>
+                            <option value="Polygon" class="chain-option">Polygon</option>
+                            <option value="TRC20" class="chain-option">TRC20 (Tron)</option>
                         </select>
                     </div>
-                    <div class="filter-group">
-                        <label for="chainFilter">Chain:</label>
-                        <select id="chainFilter">
-                            <option value="all">All</option>
-                            <option value="Polygon">Polygon</option>
-                            <option value="TRC20">TRC20</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="dateRange">Date Range:</label>
-                        <input type="date" id="dateRange">
-                    </div>
-                    <button id="exportButton" class="export-button">
-                        <i class="fas fa-download"></i> Export
-                    </button>
-                </div>
 
-                <!-- Transactions List -->
-                <div class="transactions-list" id="transactionsList">
-                    <!-- Transaction items will be populated here by JavaScript -->
-                </div>
+                    <div class="form-group">
+                        <label for="product_title">Product/Service Title</label>
+                        <input type="text" id="product_title" name="product_title" required placeholder="e.g., Consulting Service">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Create Link</button>
+                        <div class="microcopy">Securely processed on-chain with 0% fees.</div>
+                    </div>
+                </form>
             </div>
 
-            <!-- Payment Link Page Content -->
-            <div id="payment-link-page" class="page-content">
-                <h1 class="page-title">Create Payment Link</h1>
-
-                <!-- Error and Success Messages -->
-                <div id="error-message"></div>
-                <div id="success-message"></div>
-
-                <div class="payment-link-form-container">
-                    <form id="createPaymentLinkForm">
-                        <div class="form-group">
-                            <label for="amount">Amount (USDC)</label>
-                            <input type="number" id="amount" name="amount" step="0.01" required placeholder="e.g., 100.00">
-                            <div class="gas-badge" id="gasEstimateBadge">Select chain for gas estimate</div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="wallet_address">Recipient Wallet Address</label>
-                            <input type="text" id="wallet_address" name="wallet_address" required placeholder="e.g., 0x...">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="chain">Blockchain Network</label>
-                            <select id="chain" name="chain" required>
-                                <option value="">Select Chain</option>
-                                <option value="Polygon" class="chain-option">Polygon</option>
-                                <option value="TRC20" class="chain-option">TRC20 (Tron)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="product_title">Product/Service Title</label>
-                            <input type="text" id="product_title" name="product_title" required placeholder="e.g., Consulting Service">
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary">Create Link</button>
-                            <div class="microcopy">Securely processed on-chain with 0% fees.</div>
-                        </div>
-                    </form>
+            <div id="paymentLinkDisplayArea" class="payment-link-display-area" style="display: none;">
+                <div class="generated-link-container">
+                    <span id="generatedLink"></span>
+                    <button id="copyLinkButton" class="copy-button">Copy</button>
                 </div>
-
-                <div id="paymentLinkDisplayArea" class="payment-link-display-area" style="display: none;">
-                    <div class="generated-link-container">
-                        <span id="generatedLink"></span>
-                        <button id="copyLinkButton" class="copy-button">Copy</button>
-                    </div>
-                    <div class="link-timer">Link visible for <span id="linkTimerDisplay">20</span> seconds</div>
-                </div>
-
-                <!-- Payment Links List Section -->
-                <div class="payment-links-section">
-                    <h2 class="section-title">Your Payment Links</h2>
-                    <div class="payment-links-list">
-                        <!-- Payment links will be dynamically added here -->
-                    </div>
-                </div>
+                <div class="link-timer">Link visible for <span id="linkTimerDisplay">20</span> seconds</div>
             </div>
+        </div>
+    </div>
 
-            <!-- Capital Page Content -->
-            <div id="capital-page" class="page-content">
-                <h1 class="page-title">Capital Overview</h1>
+    <!-- ==================== CAPITAL PAGE ==================== -->
 
-                <div class="capital-grid">
-                    <!-- Card 1: Total Balance -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Total Balance</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="metric-value">$0.00 USDC</div>
-                        <div class="metric-label">Across all accounts</div>
-                    </div>
-
-                    <!-- Card 2: Incoming Capital -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Incoming Capital (30 Days)</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="metric-value">$0.00 USDC</div>
-                        <div class="metric-label">Total received in last 30 days</div>
-                    </div>
-
-                    <!-- Card 3: Analytics Dashboard -->
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title">Capital Insights</div>
-                            <div class="card-actions">
-                                <i class="fas fa-sync-alt"></i>
-                                <i class="fas fa-ellipsis-h"></i>
-                            </div>
-                        </div>
-                        <div class="insights-grid">
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-arrow-trend-up"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Growth Rate</h4>
-                                    <p class="insight-value">+15.8%</p>
-                                    <p class="insight-label">vs last month</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Average Transaction</h4>
-                                    <p class="insight-value">$2,450</p>
-                                    <p class="insight-label">per transaction</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-chart-pie"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Active Chains</h4>
-                                    <p class="insight-value">3</p>
-                                    <p class="insight-label">networks</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-wallet"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Connected Wallets</h4>
-                                    <p class="insight-value">5</p>
-                                    <p class="insight-label">active wallets</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 4: Connected Accounts List -->
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title">Connected Accounts</div>
-                            <div class="card-actions"><i class="fas fa-plus"></i><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="account-list">
-                            <div class="account-item">
-                                <div class="details">
-                                    <span>Wallet: 0xabc...123</span>
-                                    <span class="label">Polygon Chain</span>
-                                </div>
-                                <span class="balance">$1,250.00 USDC</span>
-                            </div>
-                            <div class="account-item">
-                                <div class="details">
-                                    <span>Wallet: TXYZ...Bf</span>
-                                    <span class="label">TRC20 Chain</span>
-                                </div>
-                                <span class="balance">$500.00 USDC</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 5: Outgoing Capital -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Outgoing Capital (30 Days)</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="metric-value">$0.00 USDC</div>
-                        <div class="metric-label">Total sent in last 30 days</div>
-                    </div>
-
-                    <!-- Card 6: Capital by Chain -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Capital by Chain</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Polygon</span>
-                                    <span class="label">Connected Accounts</span>
-                                </div>
-                                <span class="value">$1,250.00 USDC</span>
-                            </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>TRC20</span>
-                                    <span class="label">Connected Accounts</span>
-                                </div>
-                                <span class="value">$500.00 USDC</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 7: Recent Capital Movements -->
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title">Recent Capital Movements</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Received Funds</span>
-                                    <span class="label">From: 0xdef...456 - Jan 16, 2024</span>
-                                </div>
-                                <span class="value" style="color: #28a745;">+100.00 USDC</span>
-                            </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Sent Funds</span>
-                                    <span class="label">To: 0xghi...789 - Jan 15, 2024</span>
-                                </div>
-                                <span class="value" style="color: #e01616;">-50.00 USDC</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
             </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item active"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
 
-            <!-- Account Page Content -->
-            <div id="account-page" class="page-content">
-                <h1 class="page-title fade-in">Account Details</h1>
+        <div class="main-content-area">
+            <h1 class="page-title">Capital Overview</h1>
 
-                <div class="account-details-grid">
-                    <!-- New Insights Section -->
-                    <div class="card" style="grid-column: span 2;">
-                        <div class="card-header">
-                            <div class="card-title">Account Insights</div>
-                            <div class="card-actions"><i class="fas fa-sync-alt"></i><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="insights-grid">
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Account Age</h4>
-                                    <p class="insight-value">180 days</p>
-                                    <p class="insight-label">Member since Jan 2024</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Security Score</h4>
-                                    <p class="insight-value">92%</p>
-                                    <p class="insight-label">High security level</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Activity Level</h4>
-                                    <p class="insight-value">Active</p>
-                                    <p class="insight-label">Regular user</p>
-                                </div>
-                            </div>
-                            <div class="insight-card">
-                                <div class="insight-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <div class="insight-content">
-                                    <h4>Verification Status</h4>
-                                    <p class="insight-value">Verified</p>
-                                    <p class="insight-label">All checks passed</p>
-                                </div>
-                            </div>
+            <div class="capital-grid">
+                <!-- Card 1: Total Balance -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Total Balance</div>
+                        <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="metric-value">$0.00 USDC</div>
+                    <div class="metric-label">Across all accounts</div>
+                </div>
+
+                <!-- Card 2: Incoming Capital -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Incoming Capital (30 Days)</div>
+                        <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="metric-value">$0.00 USDC</div>
+                    <div class="metric-label">Total received in last 30 days</div>
+                </div>
+
+                <!-- Card 3: Analytics Dashboard -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">Capital Insights</div>
+                        <div class="card-actions">
+                            <i class="fas fa-sync-alt"></i>
+                            <i class="fas fa-ellipsis-h"></i>
                         </div>
                     </div>
-
-                    <!-- Account Summary Card -->
-                    <div class="card fade-in" style="animation-delay: 0.1s;">
-                        <div class="card-header">
-                            <div class="card-title">Account Summary</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <span class="label">Wallet Address:</span>
-                                <span class="value">0xabc...123</span>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-arrow-trend-up"></i>
                             </div>
-                            <div class="list-item">
-                                <span class="label">Chain:</span>
-                                <span class="value">Polygon</span>
-                            </div>
-                            <div class="list-item">
-                                <span class="label">Current Balance:</span>
-                                <span class="value">$1,250.00 USDC</span>
-                            </div>
-                            <div class="list-item">
-                                <span class="label">Status:</span>
-                                <span class="value" style="color: #28a745;">Active</span>
+                            <div class="insight-content">
+                                <h4>Growth Rate</h4>
+                                <p class="insight-value">+15.8%</p>
+                                <p class="insight-label">vs last month</p>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Recent Activity Card -->
-                    <div class="card fade-in" style="grid-column: span 2; animation-delay: 0.2s;">
-                        <div class="card-header">
-                            <div class="card-title">Recent Activity</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Received Payment</span>
-                                    <span class="label">From: 0xdef...456 - Jan 16, 2024</span>
-                                </div>
-                                <span class="value" style="color: #28a745;">+100.00 USDC</span>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-clock"></i>
                             </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Payment Link Created</span>
-                                    <span class="label">Link ID: link_xyz - Jan 15, 2024</span>
-                                </div>
-                                <span class="value">Created</span>
-                            </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Funds Sent</span>
-                                    <span class="label">To: 0xghi...789 - Jan 15, 2024</span>
-                                </div>
-                                <span class="value" style="color: #dc3545;">-50.00 USDC</span>
+                            <div class="insight-content">
+                                <h4>Average Transaction</h4>
+                                <p class="insight-value">$2,450</p>
+                                <p class="insight-label">per transaction</p>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Connected Payment Links Card -->
-                    <div class="card fade-in" style="grid-column: span 2; animation-delay: 0.3s;">
-                        <div class="card-header">
-                            <div class="card-title">Connected Payment Links</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Link ID: link_abc</span>
-                                    <span class="label">Product: Example Item - Status: Active</span>
-                                </div>
-                                <span class="value">$50.00 USDC</span>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-chart-pie"></i>
                             </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>Link ID: link_def</span>
-                                    <span class="label">Product: Another Item - Status: Completed</span>
-                                </div>
-                                <span class="value">$150.00 USDC</span>
+                            <div class="insight-content">
+                                <h4>Active Chains</h4>
+                                <p class="insight-value">3</p>
+                                <p class="insight-label">networks</p>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Most Used Wallet Addresses Card -->
-                    <div class="card fade-in" style="animation-delay: 0.4s;">
-                        <div class="card-header">
-                            <div class="card-title">Most Used Wallets</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>0xaaa...bbb</span>
-                                    <span class="label">Polygon</span>
-                                </div>
-                                <span class="value">15 transactions</span>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-wallet"></i>
                             </div>
-                            <div class="list-item">
-                                <div class="details">
-                                    <span>TUVW...XYZ</span>
-                                    <span class="label">TRC20</span>
-                                </div>
-                                <span class="value">10 transactions</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Email Address Card -->
-                    <div class="card fade-in" style="animation-delay: 0.5s;">
-                        <div class="card-header">
-                            <div class="card-title">Email Address</div>
-                            <div class="card-actions"><i class="fas fa-pencil-alt"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item" style="justify-content: flex-start;">
-                                <span class="value">placeholder@example.com</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Favorite Network Card -->
-                    <div class="card fade-in" style="animation-delay: 0.6s;">
-                        <div class="card-header">
-                            <div class="card-title">Favorite Network</div>
-                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                        </div>
-                        <div class="data-list">
-                            <div class="list-item" style="justify-content: flex-start;">
-                                <span class="value">Polygon</span>
+                            <div class="insight-content">
+                                <h4>Connected Wallets</h4>
+                                <p class="insight-value">5</p>
+                                <p class="insight-label">active wallets</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Plans Page Content -->
-            <div id="plans-page" class="page-content">
-                <h1 class="page-title">Choose Your Plan</h1>
-                
-                <div class="plans-container">
-                    <!-- Basic Plan -->
-                    <div class="plan-card basic">
-                        <h3>Basic Plan</h3>
-                        <p class="plan-price">$0 <span>Forever</span></p>
-                        <button class="get-started-button green-button" data-plan="basic">
-                            <i class="fas fa-credit-card"></i> Get Started
-                        </button>
-                        <ul class="plan-features">
-                            <li><i class="fas fa-check"></i> Accept USDC worldwide</li>
-                            <li><i class="fas fa-check"></i> 0% fees on all transactions</li>
-                            <li><i class="fas fa-check"></i> 1 payment link forever</li>
-                            <li><i class="fas fa-check"></i> Basic dashboard access</li>
-                            <li><i class="fas fa-check"></i> Submit feature ideas</li>
-                            <li class="disabled"><i class="fas fa-times"></i> Advanced metrics</li>
-                            <li class="disabled"><i class="fas fa-times"></i> Recurring payments</li>
-                            <li class="disabled"><i class="fas fa-times"></i> Priority support</li>
-                        </ul>
+                <!-- Card 4: Connected Accounts List -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">Connected Accounts</div>
+                        <div class="card-actions"><i class="fas fa-plus"></i><i class="fas fa-ellipsis-h"></i></div>
                     </div>
-
-                    <!-- Pro Plan -->
-                    <div class="plan-card pro">
-                        <span class="popular-badge">Popular</span>
-                        <h3>Pro Plan</h3>
-                        <p class="plan-price">$29 <span>/ Month</span></p>
-                        <button class="get-started-button blue-button" data-plan="pro">
-                            <i class="fas fa-credit-card"></i> Get Started
-                        </button>
-                        <ul class="plan-features">
-                            <li><i class="fas fa-check"></i> Everything in Basic</li>
-                            <li><i class="fas fa-check"></i> 30 payment links per month</li>
-                            <li><i class="fas fa-check"></i> Advanced metrics & analytics</li>
-                            <li><i class="fas fa-check"></i> Priority feature requests</li>
-                            <li><i class="fas fa-check"></i> Priority support</li>
-                            <li class="disabled"><i class="fas fa-times"></i> Custom features</li>
-                            <li class="disabled"><i class="fas fa-times"></i> Wealth management course</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Help Page Content -->
-            <div id="help-page" class="page-content">
-                <h1 class="page-title fade-in">Help & Support</h1>
-
-                <div class="search-container fade-in" style="animation-delay: 0.1s;">
-                    <input type="text" class="search-input" placeholder="Search for help topics..." id="helpSearch">
-                </div>
-
-                <div class="category-tags fade-in" style="animation-delay: 0.2s;">
-                    <span class="category-tag active">All</span>
-                    <span class="category-tag">Payments</span>
-                    <span class="category-tag">Security</span>
-                    <span class="category-tag">API</span>
-                    <span class="category-tag">Integration</span>
-                    <span class="category-tag">Compliance</span>
-                </div>
-
-                <div class="help-section fade-in" style="animation-delay: 0.3s;">
-                    <div class="section-title">Advanced Integration Guide</div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            How do I implement webhook notifications for real-time transaction updates?
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            To implement webhook notifications, you'll need to:
-                            1. Configure your webhook endpoint in the API settings
-                            2. Implement signature verification using your webhook secret
-                            3. Handle different event types (payment.success, payment.failed, etc.)
-                            4. Implement retry logic for failed webhook deliveries
-                            5. Set up proper error handling and logging
-                            
-                            Example webhook payload structure:
-                            ```json
-                            {
-                                "event": "payment.success",
-                                "data": {
-                                    "transaction_id": "tx_123",
-                                    "amount": "100.00",
-                                    "currency": "USDC",
-                                    "status": "completed",
-                                    "timestamp": "2024-03-20T10:00:00Z"
-                                },
-                                "signature": "whsec_..."
-                            }
-                            ```
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            What are the best practices for handling multi-currency transactions?
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            When handling multi-currency transactions, consider:
-                            1. Exchange rate volatility and slippage
-                            2. Network-specific gas fees
-                            3. Cross-chain transaction confirmation times
-                            4. Currency-specific compliance requirements
-                            5. Liquidity management across different networks
-                            
-                            Recommended approach:
-                            - Use our real-time exchange rate API
-                            - Implement proper error handling for failed conversions
-                            - Set up automated monitoring for exchange rate fluctuations
-                            - Consider using our smart contract for atomic swaps
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            How do I implement advanced security measures for high-value transactions?
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            For high-value transactions, implement:
-                            1. Multi-signature wallet integration
-                            2. Transaction limits and approval workflows
-                            3. IP whitelisting and geofencing
-                            4. Advanced fraud detection using our ML-powered API
-                            5. Automated compliance checks
-                            
-                            Security checklist:
-                            - Enable 2FA for all admin accounts
-                            - Implement session management
-                            - Set up automated alerts for suspicious activity
-                            - Regular security audits
-                            - Backup and recovery procedures
-                        </div>
-                    </div>
-                </div>
-
-                <div class="help-section fade-in" style="animation-delay: 0.4s;">
-                    <div class="section-title">API & Development</div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            How do I optimize API performance for high-volume transactions?
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            To optimize API performance:
-                            1. Implement proper caching strategies
-                            2. Use webhooks instead of polling
-                            3. Batch requests when possible
-                            4. Implement rate limiting and backoff strategies
-                            5. Monitor API usage and performance metrics
-                            
-                            Best practices:
-                            - Use connection pooling
-                            - Implement circuit breakers
-                            - Cache frequently accessed data
-                            - Use compression for large payloads
-                            - Monitor response times and error rates
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            What are the advanced features available in the Enterprise API?
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                        <div class="faq-answer">
-                            Enterprise API features include:
-                            1. Custom smart contract deployment
-                            2. Advanced analytics and reporting
-                            3. White-label solutions
-                            4. Dedicated infrastructure
-                            5. Custom integration support
-                            
-                            Additional capabilities:
-                            - Custom webhook configurations
-                            - Advanced security features
-                            - Priority support
-                            - SLA guarantees
-                            - Custom development support
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-card fade-in" style="animation-delay: 0.5s;">
-                    <div class="section-title">Get in Touch</div>
-                    <div class="contact-info">
-                        <div class="contact-method">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <h4>Email Support</h4>
-                                <p>halaxa.inc@gmail.com</p>
-                                <small>Response within 24 hours</small>
+                    <div class="account-list">
+                        <div class="account-item">
+                            <div class="details">
+                                <span>Wallet: 0xabc...123</span>
+                                <span class="label">Polygon Chain</span>
                             </div>
+                            <span class="balance">$1,250.00 USDC</span>
                         </div>
-                        <div class="contact-method">
-                            <i class="fas fa-code"></i>
-                            <div>
-                                <h4>Developer Support</h4>
-                                <p>dev@halaxa.com</p>
-                                <small>Technical assistance</small>
+                        <div class="account-item">
+                            <div class="details">
+                                <span>Wallet: TXYZ...Bf</span>
+                                <span class="label">TRC20 Chain</span>
                             </div>
+                            <span class="balance">$500.00 USDC</span>
                         </div>
-                        <div class="contact-method">
-                            <i class="fas fa-book"></i>
-                            <div>
-                                <h4>Documentation</h4>
-                                <p>docs.halaxa.com</p>
-                                <small>API & Integration guides</small>
+                    </div>
+                </div>
+
+                <!-- Card 5: Outgoing Capital -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Outgoing Capital (30 Days)</div>
+                        <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="metric-value">$0.00 USDC</div>
+                    <div class="metric-label">Total sent in last 30 days</div>
+                </div>
+
+                <!-- Card 6: Capital by Chain -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Capital by Chain</div>
+                        <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="data-list">
+                        <div class="list-item">
+                            <div class="details">
+                                <span>Polygon</span>
+                                <span class="label">Connected Accounts</span>
                             </div>
+                            <span class="value">$1,250.00 USDC</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="details">
+                                <span>TRC20</span>
+                                <span class="label">Connected Accounts</span>
+                            </div>
+                            <span class="value">$500.00 USDC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7: Recent Capital Movements -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">Recent Capital Movements</div>
+                        <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="data-list">
+                        <div class="list-item">
+                            <div class="details">
+                                <span>Received Funds</span>
+                                <span class="label">From: 0xdef...456 - Jan 16, 2024</span>
+                            </div>
+                            <span class="value" style="color: #28a745;">+100.00 USDC</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="details">
+                                <span>Sent Funds</span>
+                                <span class="label">To: 0xghi...789 - Jan 15, 2024</span>
+                            </div>
+                            <span class="value" style="color: #dc3545;">-50.00 USDC</span>
                         </div>
                     </div>
                 </div>
@@ -847,7 +493,580 @@
         </div>
     </div>
 
+    <!-- ==================== ACCOUNT PAGE ==================== -->
+
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <!-- Subscription badge will be dynamically updated by JS -->
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item active"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <div class="main-content-area">
+            <h1 class="page-title fade-in">Account Details</h1> <!-- Added fade-in animation -->
+
+            <div class="account-details-grid">
+                <!-- New Insights Section -->
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header">
+                        <div class="card-title">Account Insights</div>
+                        <div class="card-actions"><i class="fas fa-sync-alt"></i><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="insight-content">
+                                <h4>Account Age</h4>
+                                <p class="insight-value">180 days</p>
+                                <p class="insight-label">Member since Jan 2024</p>
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="insight-content">
+                                <h4>Security Score</h4>
+                                <p class="insight-value">92%</p>
+                                <p class="insight-label">High security level</p>
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="insight-content">
+                                <h4>Activity Level</h4>
+                                <p class="insight-value">Active</p>
+                                <p class="insight-label">Regular user</p>
+                            </div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="insight-content">
+                                <h4>Verification Status</h4>
+                                <p class="insight-value">Verified</p>
+                                <p class="insight-label">All checks passed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Account Summary Card -->
+                <div class="card fade-in" style="animation-delay: 0.1s;">
+                    <div class="card-header">
+                        <div class="card-title">Account Summary</div>
+                         <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="data-list"> <!-- Using data-list for summary details -->
+                         <div class="list-item">
+                             <span class="label">Wallet Address:</span>
+                             <span class="value">0xabc...123</span> <!-- Placeholder -->
+                         </div>
+                         <div class="list-item">
+                              <span class="label">Chain:</span>
+                              <span class="value">Polygon</span> <!-- Placeholder -->
+                          </div>
+                         <div class="list-item">
+                             <span class="label">Current Balance:</span>
+                             <span class="value">$1,250.00 USDC</span> <!-- Placeholder -->
+                         </div>
+                          <div class="list-item">
+                              <span class="label">Status:</span>
+                              <span class="value" style="color: #28a745;">Active</span> <!-- Placeholder, example status -->
+                          </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Recent Activity -->
+                <div class="card fade-in" style="grid-column: span 2; animation-delay: 0.2s;"> <!-- Added fade-in with delay and spans two columns -->
+                    <div class="card-header">
+                        <div class="card-title">Recent Activity</div>
+                         <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="data-list"> <!-- Reusing data-list for activity items -->
+                         <!-- Example Activity Item -->
+                         <div class="list-item">
+                             <div class="details">
+                                 <span>Received Payment</span>
+                                 <span class="label">From: 0xdef...456 - Jan 16, 2024</span>
+                             </div>
+                             <span class="value" style="color: #28a745;">+100.00 USDC</span> <!-- Green for incoming -->
+                         </div>
+                          <div class="list-item">
+                              <div class="details">
+                                  <span>Payment Link Created</span>
+                                  <span class="label">Link ID: link_xyz - Jan 15, 2024</span>
+                              </div>
+                              <span class="value">Created</span>
+                          </div>
+                           <div class="list-item">
+                               <div class="details">
+                                   <span>Funds Sent</span>
+                                   <span class="label">To: 0xghi...789 - Jan 15, 2024</span>
+                               </div>
+                              <span class="value" style="color: #dc3545;">-50.00 USDC</span> <!-- Red for outgoing -->
+                           </div>
+                          <!-- More activity items would be added by JavaScript -->
+                    </div>
+                </div>
+
+                 <!-- Card 3: Connected Payment Links -->
+                 <div class="card fade-in" style="grid-column: span 2; animation-delay: 0.3s;"> <!-- Added fade-in with delay and spans two columns -->
+                    <div class="card-header">
+                        <div class="card-title">Connected Payment Links</div>
+                         <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="data-list"> <!-- Reusing data-list for payment links -->
+                         <!-- Example Payment Link Item -->
+                         <div class="list-item">
+                              <div class="details">
+                                  <span>Link ID: link_abc</span>
+                                   <span class="label">Product: Example Item - Status: Active</span>
+                              </div>
+                             <span class="value">$50.00 USDC</span> <!-- Link Amount -->
+                         </div>
+                          <div class="list-item">
+                               <div class="details">
+                                   <span>Link ID: link_def</span>
+                                    <span class="label">Product: Another Item - Status: Completed</span>
+                               </div>
+                              <span class="value">$150.00 USDC</span>
+                           </div>
+                          <!-- More payment link items would be added by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Add more cards/sections as needed -->
+
+                <!-- New Card 4: Most Used Wallet Addresses -->
+                <div class="card fade-in" style="animation-delay: 0.4s;">
+                     <div class="card-header">
+                         <div class="card-title">Most Used Wallets</div>
+                         <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                     </div>
+                     <div class="data-list"> <!-- Using data-list for wallet addresses -->
+                          <div class="list-item">
+                              <div class="details">
+                                  <span>0xaaa...bbb</span>
+                                   <span class="label">Polygon</span>
+                              </div>
+                             <span class="value">15 transactions</span> <!-- Placeholder count -->
+                          </div>
+                          <div class="list-item">
+                               <div class="details">
+                                    <span>TUVW...XYZ</span>
+                                    <span class="label">TRC20</span>
+                               </div>
+                              <span class="value">10 transactions</span> <!-- Placeholder count -->
+                           </div>
+                          <!-- More wallet addresses would be added here by JavaScript -->
+                     </div>
+                 </div>
+
+                 <!-- New Card 5: Email Address -->
+                 <div class="card fade-in" style="animation-delay: 0.5s;">
+                     <div class="card-header">
+                         <div class="card-title">Email Address</div>
+                         <div class="card-actions"><i class="fas fa-pencil-alt"></i></div> <!-- Example edit icon -->
+                     </div>
+                     <div class="data-list"> <!-- Using data-list for email -->
+                          <div class="list-item" style="justify-content: flex-start;"> <!-- Align left -->
+                              <span class="value">placeholder@example.com</span> <!-- Placeholder Email -->
+                          </div>
+                     </div>
+                 </div>
+
+                 <!-- New Card 6: Favorite Network Used -->
+                 <div class="card fade-in" style="animation-delay: 0.6s;">
+                     <div class="card-header">
+                         <div class="card-title">Favorite Network</div>
+                         <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                     </div>
+                     <div class="data-list"> <!-- Using data-list for favorite network -->
+                          <div class="list-item" style="justify-content: flex-start;"> <!-- Align left -->
+                               <span class="value">Polygon</span> <!-- Placeholder Network -->
+                           </div>
+                     </div>
+                 </div>
+
+            </div>
+             <!-- JavaScript for Data -->
+            <script>
+            </script>
+
+        </div>
+    </div>
+
+    <!-- ==================== PLANS PAGE ==================== -->
+
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Current Plan</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item active"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <div class="main-content-area">
+            <h1 class="page-title">Choose Your Plan</h1>
+            
+            <div class="plans-container">
+                <!-- Basic Plan -->
+                <div class="plan-card basic">
+                    <h3>Basic Plan</h3>
+                    <p class="plan-price">$0 <span>Forever</span></p>
+                    <button class="get-started-button green-button" data-plan="basic">
+                        <i class="fas fa-credit-card"></i> Get Started
+                    </button>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Accept USDC worldwide</li>
+                        <li><i class="fas fa-check"></i> 0% fees on all transactions</li>
+                        <li><i class="fas fa-check"></i> 1 payment link forever</li>
+                        <li><i class="fas fa-check"></i> Basic dashboard access</li>
+                        <li><i class="fas fa-check"></i> Submit feature ideas</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Advanced metrics</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Recurring payments</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Priority support</li>
+                    </ul>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="plan-card pro">
+                    <span class="popular-badge">Popular</span>
+                    <h3>Pro Plan</h3>
+                    <p class="plan-price">$29 <span>/ Month</span></p>
+                    <button class="get-started-button blue-button" data-plan="pro">
+                        <i class="fas fa-credit-card"></i> Get Started
+                    </button>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Everything in Basic</li>
+                        <li><i class="fas fa-check"></i> 30 payment links per month</li>
+                        <li><i class="fas fa-check"></i> Advanced metrics & analytics</li>
+                        <li><i class="fas fa-check"></i> Priority feature requests</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Custom features</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Wealth management course</li>
+                    </ul>
+                </div>
+
+                <!-- Elite Plan -->
+                <!-- This Elite Plan card has been removed as per user request -->
+            </div>
+        </div>
+    </div>
+    <!-- Add Profile Button and Card -->
+    <button class="profile-button" id="profileButton">
+        <i class="fas fa-user"></i>
+    </button>
+    <div class="profile-card" id="profileCard">
+        <div class="profile-card-header">
+            <i class="fas fa-user-circle"></i>
+            <h3>Profile</h3>
+        </div>
+        <div class="profile-info">
+            <div class="profile-info-item">
+                <i class="fas fa-user"></i>
+                <span id="profileName">Loading...</span>
+            </div>
+            <div class="profile-info-item">
+                <i class="fas fa-envelope"></i>
+                <span id="profileEmail">Loading...</span>
+            </div>
+            <div class="profile-info-item">
+                <i class="fas fa-id-card"></i>
+                <span id="profileSellerId">Loading...</span>
+            </div>
+            <div class="profile-info-item" id="subscriptionInfo" style="display: none;">
+                <i class="fas fa-crown"></i>
+                <span id="currentPlan">Loading...</span>
+            </div>
+            <button id="unsubscribeButton" class="unsubscribe-button" style="display: none;">
+                <i class="fas fa-times-circle"></i> Unsubscribe
+            </button>
+        </div>
+    </div>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- ==================== HELP PAGE ==================== -->
+
+    <div class="dashboard-wrapper">
+        <div class="sidebar">
+            <div class="logo-section">
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item"><i class="fas fa-building"></i> Accounts</li>
+                <li class="nav-item"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item active"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <div class="main-content-area">
+            <h1 class="page-title fade-in">Help & Support</h1>
+
+            <div class="search-container fade-in" style="animation-delay: 0.1s;">
+                <input type="text" class="search-input" placeholder="Search for help topics..." id="helpSearch">
+            </div>
+
+            <div class="category-tags fade-in" style="animation-delay: 0.2s;">
+                <span class="category-tag active">All</span>
+                <span class="category-tag">Payments</span>
+                <span class="category-tag">Security</span>
+                <span class="category-tag">API</span>
+                <span class="category-tag">Integration</span>
+                <span class="category-tag">Compliance</span>
+            </div>
+
+            <div class="help-section fade-in" style="animation-delay: 0.3s;">
+                <div class="section-title">Advanced Integration Guide</div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I implement webhook notifications for real-time transaction updates?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        To implement webhook notifications, you'll need to:
+                        1. Configure your webhook endpoint in the API settings
+                        2. Implement signature verification using your webhook secret
+                        3. Handle different event types (payment.success, payment.failed, etc.)
+                        4. Implement retry logic for failed webhook deliveries
+                        5. Set up proper error handling and logging
+                        
+                        Example webhook payload structure:
+                        ```json
+                        {
+                            "event": "payment.success",
+                            "data": {
+                                "transaction_id": "tx_123",
+                                "amount": "100.00",
+                                "currency": "USDC",
+                                "status": "completed",
+                                "timestamp": "2024-03-20T10:00:00Z"
+                            },
+                            "signature": "whsec_..."
+                        }
+                        ```
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What are the best practices for handling multi-currency transactions?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        When handling multi-currency transactions, consider:
+                        1. Exchange rate volatility and slippage
+                        2. Network-specific gas fees
+                        3. Cross-chain transaction confirmation times
+                        4. Currency-specific compliance requirements
+                        5. Liquidity management across different networks
+                        
+                        Recommended approach:
+                        - Use our real-time exchange rate API
+                        - Implement proper error handling for failed conversions
+                        - Set up automated monitoring for exchange rate fluctuations
+                        - Consider using our smart contract for atomic swaps
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I implement advanced security measures for high-value transactions?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        For high-value transactions, implement:
+                        1. Multi-signature wallet integration
+                        2. Transaction limits and approval workflows
+                        3. IP whitelisting and geofencing
+                        4. Advanced fraud detection using our ML-powered API
+                        5. Automated compliance checks
+                        
+                        Security checklist:
+                        - Enable 2FA for all admin accounts
+                        - Implement session management
+                        - Set up automated alerts for suspicious activity
+                        - Regular security audits
+                        - Backup and recovery procedures
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section fade-in" style="animation-delay: 0.4s;">
+                <div class="section-title">API & Development</div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How do I optimize API performance for high-volume transactions?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        To optimize API performance:
+                        1. Implement proper caching strategies
+                        2. Use webhooks instead of polling
+                        3. Batch requests when possible
+                        4. Implement rate limiting and backoff strategies
+                        5. Monitor API usage and performance metrics
+                        
+                        Best practices:
+                        - Use connection pooling
+                        - Implement circuit breakers
+                        - Cache frequently accessed data
+                        - Use compression for large payloads
+                        - Monitor response times and error rates
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What are the advanced features available in the Enterprise API?
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Enterprise API features include:
+                        1. Custom smart contract deployment
+                        2. Advanced analytics and reporting
+                        3. White-label solutions
+                        4. Dedicated infrastructure
+                        5. Custom integration support
+                        
+                        Additional capabilities:
+                        - Custom webhook configurations
+                        - Advanced security features
+                        - Priority support
+                        - SLA guarantees
+                        - Custom development support
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-card fade-in" style="animation-delay: 0.5s;">
+                <div class="section-title">Get in Touch</div>
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email Support</h4>
+                            <p>halaxa.inc@gmail.com</p>
+                            <small>Response within 24 hours</small>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-code"></i>
+                        <div>
+                            <h4>Developer Support</h4>
+                            <p>dev@halaxa.com</p>
+                            <small>Technical assistance</small>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-book"></i>
+                        <div>
+                            <h4>Documentation</h4>
+                            <p>docs.halaxa.com</p>
+                            <small>API & Integration guides</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
     <!-- Include SPA JavaScript -->
-    <script src="./spa.js"></script>
+    <script src="./SPA.js"></script>
+
+    <!-- SPA Navigation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all navigation items
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            // Get all page content divs
+            const pages = document.querySelectorAll('.page-content');
+            
+            // Function to hide all pages
+            function hideAllPages() {
+                pages.forEach(page => {
+                    page.style.display = 'none';
+                });
+            }
+            
+            // Function to show a specific page
+            function showPage(pageId) {
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.style.display = 'block';
+                }
+            }
+            
+            // Add click event listeners to all nav items
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all nav items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Get the target page from data-page attribute
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    // Hide all pages and show the target page
+                    hideAllPages();
+                    showPage(targetPage);
+                });
+            });
+            
+            // Show home page by default
+            hideAllPages();
+            showPage('home-page');
+            
+            // Add active class to home nav item by default
+            const homeNav = document.querySelector('.nav-item[data-page="home-page"]');
+            if (homeNav) {
+                homeNav.classList.add('active');
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>

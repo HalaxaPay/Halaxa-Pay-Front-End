@@ -323,6 +323,37 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .login-button.loading {
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    .login-button .spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    .login-button.loading .spinner {
+        display: inline-block;
+    }
+
+    .login-button.loading span {
+        display: none;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 
     .login-button:hover {
@@ -437,7 +468,10 @@
                     </label>
                     <a href="#" class="forgot-password">Forgot Password?</a>
                 </div>
-                <button type="submit" class="login-button" id="loginButton">Log In</button>
+                <button type="submit" class="login-button" id="loginButton">
+                    <div class="spinner"></div>
+                    <span>Log In</span>
+                </button>
                 <div class="error-message" id="generalError"></div>
                 <div class="signup-link">
                     Don't have an account? <a href="#">Sign up</a>
@@ -485,6 +519,11 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('generalError');
+        const loginButton = document.getElementById('loginButton');
+        
+        // Show loading state
+        loginButton.classList.add('loading');
+        errorMessage.style.display = 'none';
         
         try {
             const response = await fetch('https://halaxa-backend.onrender.com/api/auth/login', {
@@ -506,16 +545,18 @@
                 localStorage.setItem('sellerId', data.user.id);
                 localStorage.setItem('isPreview', 'false');
                 
-                // Redirect to dashboard with seller ID
-                window.location.href = `https://halaxapay.netlify.app/index.html?seller_id=${data.user.id}`;
+                // Redirect to dashboard
+                window.location.href = `https://halaxapay.netlify.app/dashboard.html?seller_id=${data.user.id}`;
             } else {
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';
                 errorMessage.style.display = 'block';
+                loginButton.classList.remove('loading');
             }
         } catch (error) {
             console.error('Login error:', error);
             errorMessage.textContent = 'An error occurred. Please try again.';
             errorMessage.style.display = 'block';
+            loginButton.classList.remove('loading');
         }
     }
 

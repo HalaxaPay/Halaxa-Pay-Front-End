@@ -7,8 +7,12 @@
     <script>
         // Check if the current domain is halaxapay.netlify.app
         if (window.location.hostname === 'halaxapay.netlify.app') {
-            // Redirect to the sign-up page
-            window.location.href = '/signup.html';
+            // Check if user is authenticated
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Only redirect to signup if not authenticated
+                window.location.href = '/signup.html';
+            }
         }
     </script>
     <!-- Font Awesome for Icons -->

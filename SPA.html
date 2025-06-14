@@ -173,11 +173,11 @@
                         <div class="data-list" id="paymentLinkSummaryList">
                             <div class="list-item">
                                 <span class="label">Active Links</span>
-                                <span class="value">12</span>
+                                <span class="value">0</span>
                             </div>
                             <div class="list-item">
                                 <span class="label">Total Generated Value</span>
-                                <span class="value">$15,000.00 USDC</span>
+                                <span class="value">$0.00 USDC</span>
                             </div>
                         </div>
                     </div>
@@ -200,7 +200,60 @@
 
             <!-- Transactions Page Content -->
             <div id="transactions-page" class="page-content">
-                // ... existing code ...
+                <h1 class="page-title">Transactions</h1>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="title">Total Transactions</div>
+                        <div class="value" id="totalTransactions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">Total Volume</div>
+                        <div class="value" id="totalVolume">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">Success Rate</div>
+                        <div class="value" id="successRate">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">Average Value</div>
+                        <div class="value" id="averageValue">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter">
+                            <option value="all">All</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="chainFilter">Chain:</label>
+                        <select id="chainFilter">
+                            <option value="all">All</option>
+                            <option value="Polygon">Polygon</option>
+                            <option value="TRC20">TRC20</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateRange">Date Range:</label>
+                        <input type="date" id="dateRange">
+                    </div>
+                    <button id="exportButton" class="export-button">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+
+                <!-- Transactions List -->
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transaction items will be populated here by JavaScript -->
+                </div>
             </div>
 
             <!-- Payment Link Page Content -->

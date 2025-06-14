@@ -208,298 +208,6 @@ async function loadHomePage() {
 async function loadTransactionsPage() {
     const pageContainer = document.getElementById('transactions-page');
     
-    // Load transactions page content with exact structure from transactions.html
-    pageContainer.innerHTML = `
-        <style>
-            .page-title {
-                font-size: 2rem;
-                font-weight: 700;
-                margin-bottom: var(--spacing-lg);
-                background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: var(--spacing-md);
-                margin-bottom: var(--spacing-lg);
-            }
-
-            .stat-card {
-                background: var(--card-bg);
-                border-radius: var(--border-radius);
-                padding: var(--spacing-md);
-                border: 1px solid var(--border-color);
-                box-shadow: var(--shadow-light);
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-                text-align: center;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: var(--shadow-medium);
-            }
-
-            .stat-card .title {
-                font-size: 0.9rem;
-                color: var(--secondary-text);
-                margin-bottom: var(--spacing-sm);
-                font-weight: 500;
-            }
-
-            .stat-card .value {
-                font-size: 1.8rem;
-                font-weight: 700;
-                background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            .filters-section {
-                display: flex;
-                gap: var(--spacing-md);
-                margin-bottom: var(--spacing-lg);
-                align-items: end;
-                flex-wrap: wrap;
-            }
-
-            .filter-group {
-                display: flex;
-                flex-direction: column;
-                gap: var(--spacing-xs);
-            }
-
-            .filter-group label {
-                font-weight: 500;
-                color: var(--primary-text);
-                font-size: 0.9rem;
-            }
-
-            .filter-group select,
-            .filter-group input {
-                padding: var(--spacing-sm);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                background: var(--card-bg);
-                color: var(--primary-text);
-                transition: all 0.3s ease;
-                min-width: 150px;
-            }
-
-            .filter-group select:focus,
-            .filter-group input:focus {
-                outline: none;
-                border-color: var(--secondary-color);
-                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-            }
-
-            .export-button {
-                background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-                color: white;
-                border: none;
-                padding: var(--spacing-sm) var(--spacing-md);
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-xs);
-            }
-
-            .export-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
-            }
-
-            .transactions-list {
-                background: var(--card-bg);
-                border-radius: var(--border-radius);
-                border: 1px solid var(--border-color);
-                box-shadow: var(--shadow-light);
-                backdrop-filter: blur(10px);
-            }
-
-            .list-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: var(--spacing-md);
-                border-bottom: 1px solid var(--border-color);
-                transition: all 0.3s ease;
-            }
-
-            .list-item:hover {
-                background-color: var(--secondary-bg);
-                transform: translateX(5px);
-            }
-
-            .list-item:last-child {
-                border-bottom: none;
-            }
-
-            .transaction-info {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .transaction-info .description {
-                font-weight: 600;
-                color: var(--primary-text);
-            }
-
-            .transaction-info .details {
-                font-size: 0.85rem;
-                color: var(--secondary-text);
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-sm);
-            }
-
-            .list-item .amount {
-                font-weight: 600;
-                font-size: 1.1rem;
-            }
-
-            .list-item .status {
-                padding: 4px 12px;
-                border-radius: 8px;
-                font-size: 0.85rem;
-                font-weight: 500;
-                transition: all 0.3s ease;
-            }
-
-            .list-item .status.completed {
-                background: linear-gradient(45deg, #28a745, #20c997);
-                color: white;
-            }
-
-            .list-item .status.pending {
-                background: linear-gradient(45deg, #ffc107, #ff9800);
-                color: white;
-            }
-
-            .list-item .status.failed {
-                background: linear-gradient(45deg, #dc3545, #c82333);
-                color: white;
-            }
-
-            .list-item .view-details {
-                background: none;
-                border: none;
-                color: var(--secondary-color);
-                cursor: pointer;
-                padding: 8px 12px;
-                border-radius: 8px;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .list-item .view-details:hover {
-                background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-                color: white;
-                transform: translateY(-2px);
-            }
-
-            @media (max-width: 768px) {
-                .list-item {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: var(--spacing-sm);
-                }
-
-                .list-item .transaction-info {
-                    width: 100%;
-                    justify-content: space-between;
-                }
-
-                .filters-section {
-                    flex-direction: column;
-                }
-
-                .filter-group {
-                    width: 100%;
-                }
-
-                .filter-group select,
-                .filter-group input {
-                    width: 100%;
-                }
-
-                .export-button {
-                    width: 100%;
-                    justify-content: center;
-                }
-            }
-        </style>
-        
-        <h1 class="page-title">Transactions</h1>
-
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="title">Total Transactions</div>
-                <div class="value" id="totalTransactions">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="title">Total Volume</div>
-                <div class="value" id="totalVolume">$0.00</div>
-            </div>
-            <div class="stat-card">
-                <div class="title">Success Rate</div>
-                <div class="value" id="successRate">0%</div>
-            </div>
-            <div class="stat-card">
-                <div class="title">Average Value</div>
-                <div class="value" id="averageValue">$0.00</div>
-            </div>
-        </div>
-
-        <!-- Filters Section -->
-        <div class="filters-section">
-            <div class="filter-group">
-                <label for="statusFilter">Status:</label>
-                <select id="statusFilter">
-                    <option value="all">All</option>
-                    <option value="completed">Completed</option>
-                    <option value="pending">Pending</option>
-                    <option value="failed">Failed</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="chainFilter">Chain:</label>
-                <select id="chainFilter">
-                    <option value="all">All</option>
-                    <option value="Polygon">Polygon</option>
-                    <option value="TRC20">TRC20</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="dateRange">Date Range:</label>
-                <input type="date" id="dateRange">
-            </div>
-            <button id="exportButton" class="export-button">
-                <i class="fas fa-download"></i> Export
-            </button>
-        </div>
-
-        <!-- Transactions List -->
-        <div class="transactions-list" id="transactionsList">
-            <!-- Transaction items will be populated here by JavaScript -->
-        </div>
-    `;
-    
-    pageContainer.style.display = 'block';
-    
-    // Initialize transactions functionality
-    initializeTransactionsPage();
-    
     try {
         const response = await fetch(`https://halaxa-backend.onrender.com/api/transactions/${state.sellerId}`, {
             headers: {
@@ -514,62 +222,236 @@ async function loadTransactionsPage() {
 
         const data = await response.json();
         if (data.success) {
+            // Update stats
+            document.getElementById('totalTransactions').textContent = data.data.stats.total_transactions;
+            document.getElementById('totalVolume').textContent = formatCurrency(data.data.stats.total_volume);
+            document.getElementById('successRate').textContent = `${data.data.stats.success_rate}%`;
+            document.getElementById('averageValue').textContent = formatCurrency(data.data.stats.average_value);
+
+            // Update transactions list
+            const listElement = document.getElementById('transactionsList');
+            listElement.innerHTML = '';
+            
+            if (!data.data.transactions || data.data.transactions.length === 0) {
+                listElement.innerHTML = '<div class="list-item"><div class="details"><span>No transactions found</span></div></div>';
+                return;
+            }
+            
+            data.data.transactions.forEach(tx => {
+                const listItem = document.createElement('div');
+                listItem.classList.add('list-item');
+                listItem.innerHTML = `
+                    <div class="details">
+                        <span class="transaction-id">${tx.id}</span>
+                        <span class="description">${tx.description || 'Transaction'}</span>
+                        <span class="buyer">${tx.buyer_email || 'Anonymous'}</span>
+                        <span class="chain">${tx.chain}</span>
+                        <span class="date">${formatDate(tx.created_at)}</span>
+                    </div>
+                    <div class="transaction-info">
+                        <span class="amount" style="color: ${tx.type === 'received' ? '#28a745' : '#dc3545'}">
+                            ${tx.type === 'received' ? '+' : '-'}${formatCurrency(tx.amount)} USDC
+                        </span>
+                        <span class="status ${tx.status.toLowerCase()}">${tx.status}</span>
+                        <button class="view-details" onclick="viewTransactionDetails('${tx.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </div>
+                `;
+                listElement.appendChild(listItem);
+            });
+
+            // Set up real-time updates
+            setupTransactionRealTimeUpdates();
+        }
+    } catch (error) {
+        console.error('Error loading transactions page:', error);
+        showError('Failed to load transactions data');
+    }
+}
+
+function setupTransactionRealTimeUpdates() {
+    const ws = new WebSocket('wss://halaxa-backend.onrender.com/ws');
+    
+    ws.onopen = () => {
+        console.log('WebSocket connected for transactions');
+        ws.send(JSON.stringify({
+            type: 'subscribe',
+            channel: 'transactions',
+            sellerId: state.sellerId
+        }));
+    };
+    
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'transaction_update') {
+            loadTransactionsPage(); // Reload the page with new data
+        }
+    };
+    
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+    
+    ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        setTimeout(setupTransactionRealTimeUpdates, 5000);
+    };
+}
+
+function viewTransactionDetails(transactionId) {
+    window.location.href = `https://halaxapay.netlify.app/transaction-details?transaction_id=${transactionId}&seller_id=${state.sellerId}`;
+}
+
+function initializeTransactionsPage() {
+    // Set up filter event listeners
+    const statusFilter = document.getElementById('statusFilter');
+    const chainFilter = document.getElementById('chainFilter');
+    const dateRange = document.getElementById('dateRange');
+    const exportButton = document.getElementById('exportButton');
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterTransactions);
+    }
+    if (chainFilter) {
+        chainFilter.addEventListener('change', filterTransactions);
+    }
+    if (dateRange) {
+        dateRange.addEventListener('change', filterTransactions);
+    }
+    if (exportButton) {
+        exportButton.addEventListener('click', exportTransactions);
+    }
+
+    // Set up real-time updates
+    setupTransactionRealTimeUpdates();
+}
+
+async function filterTransactions() {
+    const status = document.getElementById('statusFilter').value;
+    const chain = document.getElementById('chainFilter').value;
+    const dateRange = document.getElementById('dateRange').value;
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/transactions/${state.sellerId}/filter`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status,
+                chain,
+                date_range: dateRange
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to filter transactions');
+        }
+
+        const data = await response.json();
+        if (data.success) {
             updateTransactionsList(data.data.transactions);
             updateTransactionStats(data.data.stats);
         }
     } catch (error) {
-        console.error('Error loading transactions page:', error);
+        console.error('Error filtering transactions:', error);
+        showError('Failed to filter transactions');
+    }
+}
+
+async function exportTransactions() {
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/transactions/${state.sellerId}/export`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to export transactions');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error exporting transactions:', error);
+        showError('Failed to export transactions');
     }
 }
 
 async function loadPaymentLinkPage() {
     const pageContainer = document.getElementById('payment-link-page');
     
-    // Load payment link page content
-    pageContainer.innerHTML = `
-        <h1 class="page-title">Create Payment Link</h1>
-        <div class="payment-link-form-container">
-            <form id="createPaymentLinkForm">
-                <div class="form-group">
-                    <label for="amount">Amount (USDC)</label>
-                    <input type="number" id="amount" name="amount" step="0.01" required placeholder="e.g., 100.00">
-                    <div class="gas-badge" id="gasEstimateBadge">Select chain for gas estimate</div>
-                </div>
-                <div class="form-group">
-                    <label for="wallet_address">Recipient Wallet Address</label>
-                    <input type="text" id="wallet_address" name="wallet_address" required placeholder="e.g., 0x...">
-                </div>
-                <div class="form-group">
-                    <label for="chain">Blockchain Network</label>
-                    <select id="chain" name="chain" required>
-                        <option value="">Select Chain</option>
-                        <option value="Polygon" class="chain-option">Polygon</option>
-                        <option value="TRC20" class="chain-option">TRC20 (Tron)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="product_title">Product/Service Title</label>
-                    <input type="text" id="product_title" name="product_title" required placeholder="e.g., Consulting Service">
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-primary">Create Link</button>
-                    <div class="microcopy">Securely processed on-chain with 0% fees.</div>
-                </div>
-            </form>
-        </div>
-        <div id="paymentLinkDisplayArea" class="payment-link-display-area" style="display: none;">
-            <div class="generated-link-container">
-                <span id="generatedLink"></span>
-                <button id="copyLinkButton" class="copy-button">Copy</button>
-            </div>
-            <div class="link-timer">Link visible for <span id="linkTimerDisplay">20</span> seconds</div>
-        </div>
-    `;
-    
-    pageContainer.style.display = 'block';
-    
-    // Initialize payment link form functionality
-    initializePaymentLinkPage();
+    try {
+        // Add form submission handler
+        const form = document.getElementById('createPaymentLinkForm');
+        if (form) {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                await generatePaymentLink();
+            });
+        }
+
+        // Add chain selection handler for gas estimate
+        const chainSelect = document.getElementById('chain');
+        if (chainSelect) {
+            chainSelect.addEventListener('change', async () => {
+                const chain = chainSelect.value;
+                if (chain) {
+                    try {
+                        const response = await fetch(`https://halaxa-backend.onrender.com/api/gas-estimate?chain=${chain}`, {
+                            headers: {
+                                'Authorization': `Bearer ${state.token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch gas estimate');
+                        }
+
+                        const data = await response.json();
+                        const gasBadge = document.getElementById('gasEstimateBadge');
+                        if (gasBadge) {
+                            gasBadge.textContent = `Estimated gas: ${data.estimate} USDC`;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching gas estimate:', error);
+                        const gasBadge = document.getElementById('gasEstimateBadge');
+                        if (gasBadge) {
+                            gasBadge.textContent = 'Failed to fetch gas estimate';
+                        }
+                    }
+                }
+            });
+        }
+
+        // Check subscription and update UI
+        const subscription = await getSubscriptionInfo();
+        updateSubscriptionBadge(subscription);
+
+        // Load payment links data
+        if (state.token && state.sellerId) {
+            await fetchPaymentLinksData();
+        } else {
+            console.log('Using demo data - No authentication');
+            updateSubscriptionBadge({ plan: 'Basic' });
+            loadDemoData();
+        }
+    } catch (error) {
+        console.error('Error loading payment link page:', error);
+        showError('Failed to load payment link page');
+    }
 }
 
 async function loadCapitalPage() {
@@ -1255,7 +1137,7 @@ async function updatePassword() {
         const confirmPassword = document.getElementById('confirmPassword').value;
 
         if (newPassword !== confirmPassword) {
-            showError('New passwords do not match');
+            showError('signupError', 'New passwords do not match');
             return;
         }
 
@@ -1854,10 +1736,6 @@ function initializeHomePage() {
     console.log('Home page initialized');
 }
 
-function initializeTransactionsPage() {
-    console.log('Transactions page initialized');
-}
-
 function initializePaymentLinkPage() {
     console.log('Payment Link page initialized');
 }
@@ -1895,4 +1773,159 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ... existing code ...
+async function generatePaymentLink() {
+    if (!state.token || !state.sellerId) {
+        showError('Please log in to generate payment links');
+        return;
+    }
+
+    const amount = document.getElementById('amount').value;
+    const wallet_address = document.getElementById('wallet_address').value;
+    const chain = document.getElementById('chain').value;
+    const product_title = document.getElementById('product_title').value;
+
+    if (!amount || !wallet_address || !chain || !product_title) {
+        showError('Please fill in all required fields');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/payment-links/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: parseFloat(amount),
+                wallet_address,
+                chain,
+                product_title
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create payment link');
+        }
+
+        const { data, error } = await response.json();
+        if (error) throw error;
+
+        // Generate the buyer form URL with parameters
+        const buyerFormUrl = `https://halaxapay.netlify.app/buyer-form-page?amount=${amount}&chain=${chain}&link_id=${data.id}&wallet_address=${wallet_address}`;
+        
+        showSuccess('Payment link generated successfully!');
+        // Clear the form
+        document.getElementById('createPaymentLinkForm').reset();
+        
+        // Copy the link to clipboard
+        await navigator.clipboard.writeText(buyerFormUrl);
+        alert('Payment link copied to clipboard!');
+
+        // Refresh the payment links list
+        await fetchPaymentLinksData();
+    } catch (error) {
+        console.error('Error generating payment link:', error);
+        showError(error.message || 'Failed to generate payment link');
+    }
+}
+
+async function fetchPaymentLinksData() {
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/payment-links`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch payment links');
+        }
+
+        const { data, error } = await response.json();
+        if (error) throw error;
+
+        updatePaymentLinksDisplay({
+            links: data.map(link => ({
+                link_id: link.id,
+                amount: link.amount,
+                description: link.description,
+                created_at: link.created_at,
+                status: link.status
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching payment links:', error);
+        loadDemoData();
+    }
+}
+
+function updatePaymentLinksDisplay(data) {
+    const linksList = document.querySelector('.payment-links-list');
+    if (!linksList) return;
+
+    linksList.innerHTML = '';
+    data.links.forEach(link => {
+        const linkItem = document.createElement('div');
+        linkItem.classList.add('link-item');
+        linkItem.innerHTML = `
+            <div class="link-details">
+                <span class="link-id">Link ID: ${link.link_id}</span>
+                <span class="link-description">${link.description}</span>
+                <span class="link-date">Created: ${new Date(link.created_at).toLocaleDateString()}</span>
+            </div>
+            <div class="link-amount">$${link.amount.toFixed(2)} USDC</div>
+            <div class="link-status" style="color: ${link.status === 'active' ? '#28a745' : '#dc3545'}">
+                ${link.status.charAt(0).toUpperCase() + link.status.slice(1)}
+            </div>
+            <div class="link-actions">
+                <button onclick="copyPaymentLink('${link.link_id}')" class="action-button">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button onclick="viewPaymentDetails('${link.link_id}')" class="action-button">
+                    <i class="fas fa-eye"></i> View
+                </button>
+            </div>
+        `;
+        linksList.appendChild(linkItem);
+    });
+}
+
+function copyPaymentLink(linkId) {
+    const paymentLink = `https://halaxapay.netlify.app/buyers-form?link_id=${linkId}`;
+    
+    navigator.clipboard.writeText(paymentLink).then(() => {
+        alert('Payment link copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy payment link:', err);
+        alert('Failed to copy payment link. Please try again.');
+    });
+}
+
+function viewPaymentDetails(linkId) {
+    window.location.href = `https://halaxapay.netlify.app/payment-details?link_id=${linkId}`;
+}
+
+function loadDemoData() {
+    const demoData = {
+        links: [
+            {
+                link_id: 'link_abc123',
+                amount: 100.00,
+                description: 'Example Payment',
+                created_at: new Date(),
+                status: 'active'
+            },
+            {
+                link_id: 'link_def456',
+                amount: 250.00,
+                description: 'Another Payment',
+                created_at: new Date(),
+                status: 'completed'
+            }
+        ]
+    };
+
+    updatePaymentLinksDisplay(demoData);
+}

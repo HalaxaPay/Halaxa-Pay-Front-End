@@ -8,33 +8,32 @@ const state = {
 };
 
 // Initialize the application
-async function initializeApp() {
-    // Check authentication
-    state.sellerId = getSellerId();
-    state.token = localStorage.getItem('token');
+document.addEventListener('DOMContentLoaded', async () => {
+    // Get seller ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const sellerId = urlParams.get('seller_id');
     
-    if (!state.token || !state.sellerId) {
-        // Redirect to login if not authenticated
-        window.location.href = './login.html';
-        return;
+    if (sellerId) {
+        // Store seller ID in state
+        state.sellerId = sellerId;
+        localStorage.setItem('sellerId', sellerId);
+        
+        // Load initial page
+        const initialPage = window.location.hash.slice(1) || 'homePage';
+        await loadPage(initialPage);
+    } else {
+        // Check if seller ID exists in localStorage
+        const storedSellerId = localStorage.getItem('sellerId');
+        if (storedSellerId) {
+            state.sellerId = storedSellerId;
+            const initialPage = window.location.hash.slice(1) || 'homePage';
+            await loadPage(initialPage);
+        } else {
+            // Redirect to login if no seller ID is found
+            window.location.href = 'https://halaxapay.netlify.app/login.html';
+        }
     }
-    
-    state.isAuthenticated = true;
-    
-    // Show dashboard container
-    document.getElementById('dashboard-container').style.display = 'block';
-    document.getElementById('auth-container').style.display = 'none';
-    
-    // Set up navigation
-    setupNavigation();
-    
-    // Load initial page
-    await loadPage(state.currentPage);
-    
-    // Get subscription info
-    state.subscription = await getSubscriptionInfo();
-    updateSubscriptionBadge(state.subscription);
-}
+});
 
 // Get seller ID from URL or localStorage
 function getSellerId() {

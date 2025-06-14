@@ -546,8 +546,8 @@
                 localStorage.setItem('isPreview', 'false');
                 localStorage.setItem('userData', JSON.stringify(data.user));
                 
-                // Redirect to SPA dashboard
-                window.location.href = 'https://halaxapay.netlify.app/SPA.html';
+                // Redirect to SPA dashboard with seller ID
+                window.location.href = `https://halaxapay.netlify.app/SPA.html?seller_id=${data.seller_id}`;
             } else {
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';
                 errorMessage.style.display = 'block';

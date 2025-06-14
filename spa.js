@@ -398,8 +398,6 @@ async function exportTransactions() {
 }
 
 async function loadPaymentLinkPage() {
-    const pageContainer = document.getElementById('payment-link-page');
-    
     try {
         // Add form submission handler
         const form = document.getElementById('createPaymentLinkForm');

@@ -345,59 +345,11 @@ function initializeButtonEffects() {
     document.head.appendChild(style);
 }
 
-// ==================== DYNAMIC DATA UPDATES ==================== //
-
-function initializeDynamicData() {
-    // Simulate real-time data updates
-    setInterval(() => {
-        updateMetricValues();
-    }, 5000);
-    
-    // Add loading states
-    addLoadingStates();
-}
-
-function updateMetricValues() {
-    const metricValues = document.querySelectorAll('.metric-value');
-    metricValues.forEach(value => {
-        if (Math.random() > 0.7) {
-            value.style.animation = 'numberUpdate 0.5s ease-in-out';
-            setTimeout(() => {
-                value.style.animation = '';
-            }, 500);
-        }
-    });
-}
-
-function addLoadingStates() {
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes numberUpdate {
-            0% { transform: scale(1); color: var(--text-primary); }
-            50% { transform: scale(1.1); color: var(--accent-primary); }
-            100% { transform: scale(1); color: var(--text-primary); }
-        }
-        
-        .loading {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
 // ==================== INITIALIZE ALL EFFECTS ==================== //
 
 // Initialize all interactive effects when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeButtonEffects();
-    initializeDynamicData();
     
     // Add smooth scrolling
     document.documentElement.style.scrollBehavior = 'smooth';

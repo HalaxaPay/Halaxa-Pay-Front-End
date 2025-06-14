@@ -563,7 +563,7 @@ async function loadPaymentLinkPage() {
     pageContainer.style.display = 'block';
     
     // Initialize payment link form functionality
-    initializePaymentLinkForm();
+    initializePaymentLinkPage();
 }
 
 async function loadCapitalPage() {
@@ -957,24 +957,899 @@ function updateTransactionStats(stats) {
 }
 
 function updateCapitalUI(data) {
-    // Implementation for updating capital UI
+    // Update summary cards
+    updateSummaryCards(data.summary);
+    
+    // Update insights chart
+    updateInsightsChart(data.insights);
+    
+    // Update connected accounts
+    updateConnectedAccounts(data.accounts);
+    
+    // Update recent movements
+    updateRecentMovements(data.movements);
+    
+    // Update chain distribution
+    updateChainDistribution(data.chains);
+}
+
+function updateSummaryCards(summary) {
+    // Update total capital
+    document.getElementById('totalCapitalAmount').textContent = formatCurrency(summary.total_capital);
+    updateTrend('totalCapitalTrend', summary.total_capital_trend);
+
+    // Update available capital
+    document.getElementById('availableCapitalAmount').textContent = formatCurrency(summary.available_capital);
+    updateTrend('availableCapitalTrend', summary.available_capital_trend);
+
+    // Update locked capital
+    document.getElementById('lockedCapitalAmount').textContent = formatCurrency(summary.locked_capital);
+    updateTrend('lockedCapitalTrend', summary.locked_capital_trend);
+}
+
+function updateTrend(elementId, trend) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    const icon = element.querySelector('i');
+    const span = element.querySelector('span');
+
+    if (trend >= 0) {
+        icon.className = 'fas fa-arrow-up';
+        element.classList.remove('negative');
+        element.classList.add('positive');
+    } else {
+        icon.className = 'fas fa-arrow-down';
+        element.classList.remove('positive');
+        element.classList.add('negative');
+    }
+
+    span.textContent = `${Math.abs(trend)}%`;
+}
+
+function initializeCapitalChart() {
+    const ctx = document.getElementById('capitalChart').getContext('2d');
+    window.capitalChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Total Capital',
+                    data: [],
+                    borderColor: '#2C3E50',
+                    tension: 0.4
+                },
+                {
+                    label: 'Available Capital',
+                    data: [],
+                    borderColor: '#3498db',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateInsightsChart(insights) {
+    if (!window.capitalChart) return;
+
+    window.capitalChart.data.labels = insights.dates;
+    window.capitalChart.data.datasets[0].data = insights.total_capital;
+    window.capitalChart.data.datasets[1].data = insights.available_capital;
+    window.capitalChart.update();
+}
+
+function updateConnectedAccounts(accounts) {
+    const accountsList = document.getElementById('accountsList');
+    if (!accountsList) return;
+
+    accountsList.innerHTML = accounts.map(account => `
+        <div class="account-card">
+            <div class="account-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="account-info">
+                <div class="account-name">${account.name}</div>
+                <div class="account-balance">${formatCurrency(account.balance)}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateRecentMovements(movements) {
+    const movementsList = document.getElementById('movementsList');
+    if (!movementsList) return;
+
+    movementsList.innerHTML = movements.map(movement => `
+        <div class="movement-item">
+            <div class="movement-info">
+                <div class="movement-icon">
+                    <i class="fas ${getMovementIcon(movement.type)}"></i>
+                </div>
+                <div class="movement-details">
+                    <div class="movement-type">${movement.type}</div>
+                    <div class="movement-date">${formatDate(movement.date)}</div>
+                </div>
+            </div>
+            <div class="movement-amount">${formatCurrency(movement.amount)}</div>
+        </div>
+    `).join('');
+}
+
+function updateChainDistribution(chains) {
+    const chainDistribution = document.getElementById('chainDistribution');
+    if (!chainDistribution) return;
+
+    chainDistribution.innerHTML = chains.map(chain => `
+        <div class="chain-card">
+            <div class="chain-icon">
+                <i class="fas ${getChainIcon(chain.name)}"></i>
+            </div>
+            <div class="chain-info">
+                <div class="chain-name">${chain.name}</div>
+                <div class="chain-amount">${formatCurrency(chain.amount)}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getMovementIcon(type) {
+    const icons = {
+        'deposit': 'fa-arrow-down',
+        'withdrawal': 'fa-arrow-up',
+        'transfer': 'fa-exchange-alt',
+        'payment': 'fa-money-bill-wave'
+    };
+    return icons[type.toLowerCase()] || 'fa-circle';
+}
+
+function getChainIcon(chain) {
+    const icons = {
+        'ethereum': 'fa-ethereum',
+        'polygon': 'fa-polygon',
+        'arbitrum': 'fa-arbitrum'
+    };
+    return icons[chain.toLowerCase()] || 'fa-link';
+}
+
+function setupTimeFilterListeners() {
+    const timeFilter = document.querySelector('.time-filter');
+    if (!timeFilter) return;
+
+    timeFilter.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+            // Remove active class from all buttons
+            timeFilter.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            e.target.classList.add('active');
+            
+            // Fetch new data for selected period
+            fetchCapitalData(e.target.dataset.period);
+        }
+    });
+}
+
+function loadDemoData() {
+    const demoData = {
+        summary: {
+            total_capital: 50000,
+            total_capital_trend: 5.2,
+            available_capital: 35000,
+            available_capital_trend: 3.8,
+            locked_capital: 15000,
+            locked_capital_trend: 1.4
+        },
+        insights: {
+            dates: ['2024-03-10', '2024-03-11', '2024-03-12', '2024-03-13', '2024-03-14', '2024-03-15', '2024-03-16'],
+            total_capital: [45000, 46000, 47000, 48000, 49000, 49500, 50000],
+            available_capital: [32000, 32500, 33000, 33500, 34000, 34500, 35000]
+        },
+        accounts: [
+            { name: 'Main Wallet', balance: 25000 },
+            { name: 'Trading Account', balance: 15000 },
+            { name: 'Savings', balance: 10000 }
+        ],
+        movements: [
+            { type: 'deposit', date: '2024-03-16', amount: 5000 },
+            { type: 'withdrawal', date: '2024-03-15', amount: -2000 },
+            { type: 'transfer', date: '2024-03-14', amount: 1000 }
+        ],
+        chains: [
+            { name: 'Ethereum', amount: 30000 },
+            { name: 'Polygon', amount: 15000 },
+            { name: 'Arbitrum', amount: 5000 }
+        ]
+    };
+
+    updateCapitalUI(demoData);
+}
+
+// Capital Page Functions
+function initializeCapitalPage() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to view capital information');
+        return;
+    }
+
+    try {
+        fetchCapitalData();
+        initializeCapitalChart();
+        setupTimeFilterListeners();
+    } catch (error) {
+        console.error('Error initializing capital page:', error);
+        showError('Failed to initialize capital page');
+    }
+}
+
+async function fetchCapitalData() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to view capital information');
+        return;
+    }
+
+    try {
+        // Fetch capital summary
+        const summaryResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Fetch capital insights
+        const insightsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/insights`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Fetch connected accounts
+        const accountsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/accounts`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Fetch recent capital movements
+        const movementsResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/movements`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Fetch capital by chain
+        const chainResponse = await fetch(`https://halaxa-backend.onrender.com/api/capital/by-chain`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!summaryResponse.ok || !insightsResponse.ok || !accountsResponse.ok || 
+            !movementsResponse.ok || !chainResponse.ok) {
+            throw new Error('Failed to fetch capital data');
+        }
+
+        const summaryData = await summaryResponse.json();
+        const insightsData = await insightsResponse.json();
+        const accountsData = await accountsResponse.json();
+        const movementsData = await movementsResponse.json();
+        const chainData = await chainResponse.json();
+
+        // Update UI with the data
+        updateCapitalUI({
+            summary: summaryData.data,
+            insights: insightsData.data,
+            accounts: accountsData.data,
+            movements: movementsData.data,
+            chains: chainData.data
+        });
+    } catch (error) {
+        console.error('Error fetching capital data:', error);
+        showError('Failed to fetch capital data');
+        loadDemoData();
+    }
+}
+
+function updateCapitalUI(data) {
+    // Update summary cards
+    updateSummaryCards(data.summary);
+    
+    // Update insights chart
+    updateInsightsChart(data.insights);
+    
+    // Update connected accounts
+    updateConnectedAccounts(data.accounts);
+    
+    // Update recent movements
+    updateRecentMovements(data.movements);
+    
+    // Update chain distribution
+    updateChainDistribution(data.chains);
 }
 
 function updateAccountUI(data) {
-    // Implementation for updating account UI
+    // Update profile form
+    updateProfileForm(data.profile);
+    
+    // Update security settings
+    updateSecuritySettings(data.security);
+    
+    // Update notification preferences
+    updateNotificationPreferences(data.settings.notifications);
+    
+    // Update connected accounts
+    updateConnectedAccounts(data.settings.connected_accounts);
 }
 
-function updatePlansUI(data) {
-    // Implementation for updating plans UI
+function updateProfileForm(profile) {
+    document.getElementById('fullName').value = profile.full_name || '';
+    document.getElementById('email').value = profile.email || '';
+    document.getElementById('phone').value = profile.phone || '';
+    document.getElementById('company').value = profile.company || '';
 }
 
-function updateHelpUI(data) {
-    // Implementation for updating help UI
+function updateSecuritySettings(security) {
+    document.getElementById('enable2FA').checked = security.two_factor_enabled || false;
 }
 
-function initializePaymentLinkForm() {
-    // Implementation for payment link form functionality
+function updateNotificationPreferences(notifications) {
+    document.getElementById('emailNotifications').checked = notifications.email || false;
+    document.getElementById('transactionAlerts').checked = notifications.transactions || false;
+    document.getElementById('securityAlerts').checked = notifications.security || false;
 }
 
-// Initialize the app when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeApp);
+function updateConnectedAccounts(accounts) {
+    const accountsList = document.getElementById('connectedAccountsList');
+    if (!accountsList) return;
+
+    accountsList.innerHTML = accounts.map(account => `
+        <div class="connected-account">
+            <div class="account-icon">
+                <i class="fas ${getAccountIcon(account.type)}"></i>
+            </div>
+            <div class="account-info">
+                <div class="account-name">${account.name}</div>
+                <div class="account-status">${account.status}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function getAccountIcon(type) {
+    const icons = {
+        'wallet': 'fa-wallet',
+        'bank': 'fa-university',
+        'crypto': 'fa-bitcoin-sign'
+    };
+    return icons[type.toLowerCase()] || 'fa-link';
+}
+
+function setupAccountFormListeners() {
+    // Profile form
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await updateProfile();
+        });
+    }
+
+    // Security form
+    const securityForm = document.getElementById('securityForm');
+    if (securityForm) {
+        securityForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await updatePassword();
+        });
+    }
+
+    // Notification form
+    const notificationForm = document.getElementById('notificationForm');
+    if (notificationForm) {
+        notificationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await updateNotificationPreferences();
+        });
+    }
+
+    // 2FA toggle
+    const enable2FA = document.getElementById('enable2FA');
+    if (enable2FA) {
+        enable2FA.addEventListener('change', async (e) => {
+            await update2FA(e.target.checked);
+        });
+    }
+
+    // Connect new account button
+    const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
+    if (connectNewAccountBtn) {
+        connectNewAccountBtn.addEventListener('click', () => {
+            showConnectAccountModal();
+        });
+    }
+
+    // Delete account button
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', () => {
+            showDeleteAccountConfirmation();
+        });
+    }
+}
+
+async function updateProfile() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to update profile');
+        return;
+    }
+
+    const formData = {
+        full_name: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        company: document.getElementById('company').value
+    };
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/profile`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update profile');
+        }
+
+        showSuccess('Profile updated successfully');
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showError('Failed to update profile');
+    }
+}
+
+async function updatePassword() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to update password');
+        return;
+    }
+
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+        showError('New passwords do not match');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/password`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                current_password: currentPassword,
+                new_password: newPassword
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update password');
+        }
+
+        showSuccess('Password updated successfully');
+        document.getElementById('securityForm').reset();
+    } catch (error) {
+        console.error('Error updating password:', error);
+        showError('Failed to update password');
+    }
+}
+
+async function updateNotificationPreferences() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to update notification preferences');
+        return;
+    }
+
+    const preferences = {
+        email: document.getElementById('emailNotifications').checked,
+        transactions: document.getElementById('transactionAlerts').checked,
+        security: document.getElementById('securityAlerts').checked
+    };
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/notifications`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(preferences)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update notification preferences');
+        }
+
+        showSuccess('Notification preferences updated successfully');
+    } catch (error) {
+        console.error('Error updating notification preferences:', error);
+        showError('Failed to update notification preferences');
+    }
+}
+
+async function update2FA(enabled) {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to update 2FA settings');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/2fa`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ enabled })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update 2FA settings');
+        }
+
+        showSuccess(`Two-factor authentication ${enabled ? 'enabled' : 'disabled'} successfully`);
+    } catch (error) {
+        console.error('Error updating 2FA settings:', error);
+        showError('Failed to update 2FA settings');
+        // Revert the toggle
+        document.getElementById('enable2FA').checked = !enabled;
+    }
+}
+
+function showConnectAccountModal() {
+    // Implementation for showing connect account modal
+    alert('Connect account functionality will be implemented here');
+}
+
+function showDeleteAccountConfirmation() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        deleteAccount();
+    }
+}
+
+async function deleteAccount() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to delete account');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete account');
+        }
+
+        // Clear local storage and redirect to login
+        localStorage.clear();
+        window.location.href = '/Pages/login.html';
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        showError('Failed to delete account');
+    }
+}
+
+function loadDemoData() {
+    const demoData = {
+        profile: {
+            full_name: 'John Doe',
+            email: 'john@example.com',
+            phone: '+1234567890',
+            company: 'Demo Company'
+        },
+        security: {
+            two_factor_enabled: false
+        },
+        settings: {
+            notifications: {
+                email: true,
+                transactions: true,
+                security: true
+            },
+            connected_accounts: [
+                {
+                    type: 'wallet',
+                    name: 'Main Wallet',
+                    status: 'Connected'
+                },
+                {
+                    type: 'bank',
+                    name: 'Bank Account',
+                    status: 'Connected'
+                }
+            ]
+        }
+    };
+
+    updateAccountUI(demoData);
+}
+
+// Plans Page Functions
+function initializePlansPage() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to view plans');
+        return;
+    }
+
+    try {
+        fetchCurrentPlan();
+        setupPlanSelectionListeners();
+    } catch (error) {
+        console.error('Error initializing plans page:', error);
+        showError('Failed to initialize plans page');
+    }
+}
+
+async function fetchCurrentPlan() {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to view your current plan');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/subscription`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch current plan');
+        }
+
+        const { data, error } = await response.json();
+        if (error) throw error;
+
+        updatePlanUI(data);
+    } catch (error) {
+        console.error('Error fetching current plan:', error);
+        showError('Failed to fetch current plan');
+        loadDemoPlanData();
+    }
+}
+
+function updatePlanUI(data) {
+    // Highlight current plan
+    const planCards = document.querySelectorAll('.plan-card');
+    planCards.forEach(card => {
+        card.classList.remove('current-plan');
+        if (card.querySelector('h3').textContent.toLowerCase() === data.plan.toLowerCase()) {
+            card.classList.add('current-plan');
+            const button = card.querySelector('.plan-button');
+            if (button) {
+                button.textContent = 'Current Plan';
+                button.disabled = true;
+            }
+        }
+    });
+
+    // Update subscription details if available
+    if (data.next_billing_date) {
+        const billingInfo = document.createElement('div');
+        billingInfo.className = 'billing-info';
+        billingInfo.innerHTML = `
+            <p>Next billing date: ${new Date(data.next_billing_date).toLocaleDateString()}</p>
+            <p>Status: ${data.status}</p>
+        `;
+        document.querySelector('.plans-header').appendChild(billingInfo);
+    }
+}
+
+function setupPlanSelectionListeners() {
+    const planButtons = document.querySelectorAll('.plan-button');
+    planButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const plan = e.target.closest('.plan-card').querySelector('h3').textContent.toLowerCase();
+            selectPlan(plan);
+        });
+    });
+}
+
+async function selectPlan(plan) {
+    const sellerId = getSellerId();
+    const token = localStorage.getItem('token');
+    
+    if (!token || !sellerId) {
+        showError('Please log in to select a plan');
+        return;
+    }
+
+    try {
+        // For enterprise plan, redirect to contact form
+        if (plan === 'enterprise') {
+            window.location.href = '/contact-sales.html';
+            return;
+        }
+
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${sellerId}/subscription`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ plan })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update subscription');
+        }
+
+        const { data, error } = await response.json();
+        if (error) throw error;
+
+        // Redirect to payment page or show success message
+        if (data.payment_required) {
+            window.location.href = data.payment_url;
+        } else {
+            showSuccess('Plan updated successfully!');
+            fetchCurrentPlan();
+        }
+    } catch (error) {
+        console.error('Error selecting plan:', error);
+        showError('Failed to update subscription');
+    }
+}
+
+function loadDemoPlanData() {
+    const demoData = {
+        plan: 'free',
+        status: 'active',
+        next_billing_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    };
+    updatePlanUI(demoData);
+}
+
+// Help Page Functions
+function initializeHelpPage() {
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('#helpPage .faq-item');
+    const searchInput = document.getElementById('helpSearch');
+    const categoryTags = document.querySelectorAll('#helpPage .category-tag');
+
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        question.addEventListener('click', () => {
+            const isOpen = answer.classList.contains('open');
+            // Close all other FAQs
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    const otherQuestion = otherItem.querySelector('.faq-question');
+                    const otherAnswer = otherItem.querySelector('.faq-answer');
+                    otherQuestion.classList.remove('active');
+                    otherAnswer.classList.remove('open');
+                    otherAnswer.style.display = 'none';
+                }
+            });
+            // Toggle current FAQ
+            question.classList.toggle('active');
+            answer.classList.toggle('open');
+            answer.style.display = isOpen ? 'none' : 'block';
+        });
+    });
+
+    // Search functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    // Category filtering
+    categoryTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            categoryTags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            const category = tag.textContent.toLowerCase();
+            faqItems.forEach(item => {
+                if (category === 'all') {
+                    item.style.display = 'block';
+                } else {
+                    const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                    item.style.display = question.includes(category) ? 'block' : 'none';
+                }
+            });
+        });
+    });
+}
+
+// Update the page initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    
+    // Initialize plans page
+    initializePlansPage();
+    
+    // ... existing code ...
+    initializeHelpPage();
+    // ... existing code ...
+});
+
+// ... existing code ...

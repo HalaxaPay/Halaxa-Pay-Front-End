@@ -1,212 +1,980 @@
-// SPA Navigation and Content Management - Updated for Halaxa Dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the application only if not already initialized by embedded script
-    if (typeof initializeApp === 'undefined') {
-        initializeSPA();
-    }
-});
+// Global state management
+const state = {
+    currentPage: 'home',
+    sellerId: null,
+    token: null,
+    subscription: null,
+    isAuthenticated: false
+};
 
-function initializeSPA() {
-    // Set up additional SPA navigation event listeners
-    setupSPANavigation();
+// Initialize the application
+async function initializeApp() {
+    // Check authentication
+    state.sellerId = getSellerId();
+    state.token = localStorage.getItem('token');
     
-    // Set up hash-based routing
-    setupHashRouting();
+    if (!state.token || !state.sellerId) {
+        // Redirect to login if not authenticated
+        window.location.href = './login.html';
+        return;
+    }
     
-    // Load initial page based on URL hash or default to home
-    const initialPage = window.location.hash.slice(1) || 'home';
-    navigateToPage(initialPage);
+    state.isAuthenticated = true;
+    
+    // Show dashboard container
+    document.getElementById('dashboard-container').style.display = 'block';
+    document.getElementById('auth-container').style.display = 'none';
+    
+    // Set up navigation
+    setupNavigation();
+    
+    // Load initial page
+    await loadPage(state.currentPage);
+    
+    // Get subscription info
+    state.subscription = await getSubscriptionInfo();
+    updateSubscriptionBadge(state.subscription);
 }
 
-function setupSPANavigation() {
-    // Handle navigation clicks for SPA functionality
-    document.querySelectorAll('[data-page]').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const page = e.currentTarget.getAttribute('data-page');
-            navigateToPage(page);
+// Get seller ID from URL or localStorage
+function getSellerId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlSellerId = urlParams.get('seller_id');
+    
+    if (urlSellerId) {
+        localStorage.setItem('sellerId', urlSellerId);
+        return urlSellerId;
+    }
+    
+    return localStorage.getItem('sellerId');
+}
+
+// Set up navigation
+function setupNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', async () => {
+            const page = item.getAttribute('data-page');
+            await loadPage(page);
         });
     });
 }
 
-function setupHashRouting() {
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', (e) => {
-        const page = window.location.hash.slice(1) || 'home';
-        navigateToPage(page);
-    });
-}
-
-function navigateToPage(page) {
-    // Update URL hash
-    if (window.location.hash.slice(1) !== page) {
-        window.location.hash = page;
-    }
-    
-    // Update active state in navigation
-    updateSPAActiveNavigation(page);
-    
-    // Show the appropriate page content
-    showPageContent(page);
-}
-
-function updateSPAActiveNavigation(page) {
-    // Remove active class from all navigation items
+// Load page content dynamically
+async function loadPage(page) {
+    // Update active states
     document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
+        item.classList.toggle('active', item.getAttribute('data-page') === page);
     });
     
-    // Add active class to current page
-    const activeItem = document.querySelector(`[data-page="${page}"]`);
-    if (activeItem) {
-        activeItem.classList.add('active');
-    }
-}
-
-function showPageContent(page) {
-    // Hide all page content
+    // Hide all page contents
     document.querySelectorAll('.page-content').forEach(content => {
-        content.classList.remove('active');
+        content.style.display = 'none';
     });
     
-    // Show the selected page content
-    const targetPage = document.getElementById(page);
-    if (targetPage) {
-        targetPage.classList.add('active');
-        
-        // Add fade-in animation
-        targetPage.style.opacity = '0';
-        setTimeout(() => {
-            targetPage.style.transition = 'opacity 0.3s ease-in-out';
-            targetPage.style.opacity = '1';
-        }, 10);
+    // Update state
+    state.currentPage = page;
+    
+    // Load page specific content
+    switch (page) {
+        case 'home':
+            document.getElementById('home-page').style.display = 'block';
+            await loadHomePage();
+            break;
+        case 'transactions':
+            await loadTransactionsPage();
+            break;
+        case 'payment-link':
+            await loadPaymentLinkPage();
+            break;
+        case 'capital':
+            await loadCapitalPage();
+            break;
+        case 'account':
+            await loadAccountPage();
+            break;
+        case 'plans':
+            await loadPlansPage();
+            break;
+        case 'help':
+            await loadHelpPage();
+            break;
     }
 }
 
-// Enhanced navigation functions for better UX
-function smoothScrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
+// Get subscription info
+async function getSubscriptionInfo() {
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/subscription/${state.sellerId}`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-// Page transition effects
-function addPageTransition(page) {
-    const pageElement = document.getElementById(page);
-    if (pageElement) {
-        pageElement.style.transform = 'translateX(20px)';
-        pageElement.style.opacity = '0';
-        
-        setTimeout(() => {
-            pageElement.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            pageElement.style.transform = 'translateX(0)';
-            pageElement.style.opacity = '1';
-        }, 50);
-    }
-}
-
-// Utility functions for enhanced SPA experience
-function preloadPage(page) {
-    // Preload page content if needed
-    const pageElement = document.getElementById(page);
-    if (pageElement && !pageElement.dataset.loaded) {
-        // Mark as loaded to avoid duplicate loading
-        pageElement.dataset.loaded = 'true';
-    }
-}
-
-// Mobile navigation toggle
-function toggleMobileNavigation() {
-    const navContainer = document.querySelector('.nav-container');
-    if (navContainer) {
-        navContainer.classList.toggle('mobile-visible');
-    }
-}
-
-// Add mobile navigation button if needed
-function addMobileNavButton() {
-    if (window.innerWidth <= 768) {
-        const mainContent = document.querySelector('.main-content');
-        if (mainContent && !document.querySelector('.mobile-nav-toggle')) {
-            const navToggle = document.createElement('button');
-            navToggle.className = 'mobile-nav-toggle';
-            navToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            navToggle.addEventListener('click', toggleMobileNavigation);
-            mainContent.insertBefore(navToggle, mainContent.firstChild);
+        if (!response.ok) {
+            throw new Error('Failed to fetch subscription info');
         }
+
+        const data = await response.json();
+        if (data.success) {
+            const stripeData = data.data.stripe_subscription;
+            if (stripeData) {
+                return {
+                    plan: stripeData.plan_name || 'Basic',
+                    status: stripeData.status,
+                    current_period_end: stripeData.current_period_end,
+                    cancel_at_period_end: stripeData.cancel_at_period_end
+                };
+            }
+            return data.data;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error fetching subscription info:', error);
+        return null;
     }
 }
 
-// Initialize mobile features
-function initializeMobileFeatures() {
-    addMobileNavButton();
-    
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        addMobileNavButton();
-    });
+// Update subscription badge
+function updateSubscriptionBadge(subscription) {
+    const badge = document.getElementById('subscriptionBadge');
+    if (!badge) return;
+
+    if (!subscription) {
+        badge.style.display = 'none';
+        return;
+    }
+
+    badge.style.display = 'block';
+    const plan = subscription.plan.toLowerCase();
+    badge.className = 'subscription-badge ' + plan;
+
+    let statusIndicator = '';
+    if (subscription.status === 'active') {
+        statusIndicator = '<i class="fas fa-check-circle"></i> ';
+    } else if (subscription.status === 'past_due') {
+        statusIndicator = '<i class="fas fa-exclamation-circle"></i> ';
+    } else if (subscription.cancel_at_period_end) {
+        statusIndicator = '<i class="fas fa-clock"></i> ';
+    }
+
+    let expirationText = '';
+    if (plan !== 'basic' && subscription.current_period_end) {
+        const endDate = new Date(subscription.current_period_end * 1000);
+        const formattedDate = endDate.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        expirationText = `<span class="expiration-date">Renews ${formattedDate}</span>`;
+    }
+
+    badge.innerHTML = `
+        ${statusIndicator}${subscription.plan}
+        ${expirationText}
+    `;
 }
 
-// Enhanced error handling
-function handleSPAError(error, context = 'SPA Navigation') {
-    console.error(`${context} Error:`, error);
+// Page load functions
+async function loadHomePage() {
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/dashboard/${state.sellerId}`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch dashboard data');
+        }
+
+        const data = await response.json();
+        updateDashboardUI(data.data);
+        
+        // Initialize volume chart
+        initializeVolumeChart(data.data.volume);
+    } catch (error) {
+        console.error('Error loading home page:', error);
+    }
+}
+
+async function loadTransactionsPage() {
+    const pageContainer = document.getElementById('transactions-page');
     
-    // Show user-friendly error message
-    const errorContainer = document.createElement('div');
-    errorContainer.className = 'spa-error-message';
-    errorContainer.innerHTML = `
-        <div class="error-content">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Something went wrong</h3>
-            <p>Please refresh the page or try again.</p>
-            <button onclick="location.reload()" class="retry-button">Refresh Page</button>
+    // Load transactions page content with exact structure from transactions.html
+    pageContainer.innerHTML = `
+        <style>
+            .page-title {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: var(--spacing-lg);
+                background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
+            }
+
+            .stat-card {
+                background: var(--card-bg);
+                border-radius: var(--border-radius);
+                padding: var(--spacing-md);
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-light);
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                text-align: center;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-medium);
+            }
+
+            .stat-card .title {
+                font-size: 0.9rem;
+                color: var(--secondary-text);
+                margin-bottom: var(--spacing-sm);
+                font-weight: 500;
+            }
+
+            .stat-card .value {
+                font-size: 1.8rem;
+                font-weight: 700;
+                background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .filters-section {
+                display: flex;
+                gap: var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
+                align-items: end;
+                flex-wrap: wrap;
+            }
+
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-xs);
+            }
+
+            .filter-group label {
+                font-weight: 500;
+                color: var(--primary-text);
+                font-size: 0.9rem;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                padding: var(--spacing-sm);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background: var(--card-bg);
+                color: var(--primary-text);
+                transition: all 0.3s ease;
+                min-width: 150px;
+            }
+
+            .filter-group select:focus,
+            .filter-group input:focus {
+                outline: none;
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+
+            .export-button {
+                background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+                color: white;
+                border: none;
+                padding: var(--spacing-sm) var(--spacing-md);
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-xs);
+            }
+
+            .export-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+            }
+
+            .transactions-list {
+                background: var(--card-bg);
+                border-radius: var(--border-radius);
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-light);
+                backdrop-filter: blur(10px);
+            }
+
+            .list-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: var(--spacing-md);
+                border-bottom: 1px solid var(--border-color);
+                transition: all 0.3s ease;
+            }
+
+            .list-item:hover {
+                background-color: var(--secondary-bg);
+                transform: translateX(5px);
+            }
+
+            .list-item:last-child {
+                border-bottom: none;
+            }
+
+            .transaction-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .transaction-info .description {
+                font-weight: 600;
+                color: var(--primary-text);
+            }
+
+            .transaction-info .details {
+                font-size: 0.85rem;
+                color: var(--secondary-text);
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-sm);
+            }
+
+            .list-item .amount {
+                font-weight: 600;
+                font-size: 1.1rem;
+            }
+
+            .list-item .status {
+                padding: 4px 12px;
+                border-radius: 8px;
+                font-size: 0.85rem;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .list-item .status.completed {
+                background: linear-gradient(45deg, #28a745, #20c997);
+                color: white;
+            }
+
+            .list-item .status.pending {
+                background: linear-gradient(45deg, #ffc107, #ff9800);
+                color: white;
+            }
+
+            .list-item .status.failed {
+                background: linear-gradient(45deg, #dc3545, #c82333);
+                color: white;
+            }
+
+            .list-item .view-details {
+                background: none;
+                border: none;
+                color: var(--secondary-color);
+                cursor: pointer;
+                padding: 8px 12px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .list-item .view-details:hover {
+                background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+                color: white;
+                transform: translateY(-2px);
+            }
+
+            @media (max-width: 768px) {
+                .list-item {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: var(--spacing-sm);
+                }
+
+                .list-item .transaction-info {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .filters-section {
+                    flex-direction: column;
+                }
+
+                .filter-group {
+                    width: 100%;
+                }
+
+                .filter-group select,
+                .filter-group input {
+                    width: 100%;
+                }
+
+                .export-button {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+        </style>
+        
+        <h1 class="page-title">Transactions</h1>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="title">Total Transactions</div>
+                <div class="value" id="totalTransactions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">Total Volume</div>
+                <div class="value" id="totalVolume">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">Success Rate</div>
+                <div class="value" id="successRate">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="title">Average Value</div>
+                <div class="value" id="averageValue">$0.00</div>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter">
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="chainFilter">Chain:</label>
+                <select id="chainFilter">
+                    <option value="all">All</option>
+                    <option value="Polygon">Polygon</option>
+                    <option value="TRC20">TRC20</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="dateRange">Date Range:</label>
+                <input type="date" id="dateRange">
+            </div>
+            <button id="exportButton" class="export-button">
+                <i class="fas fa-download"></i> Export
+            </button>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="transactions-list" id="transactionsList">
+            <!-- Transaction items will be populated here by JavaScript -->
         </div>
     `;
     
-    document.body.appendChild(errorContainer);
+    pageContainer.style.display = 'block';
     
-    // Auto-remove error message after 5 seconds
-    setTimeout(() => {
-        if (errorContainer.parentNode) {
-            errorContainer.parentNode.removeChild(errorContainer);
+    // Initialize transactions functionality
+    initializeTransactionsPage();
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/transactions/${state.sellerId}`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch transactions data');
         }
-    }, 5000);
+
+        const data = await response.json();
+        if (data.success) {
+            updateTransactionsList(data.data.transactions);
+            updateTransactionStats(data.data.stats);
+        }
+    } catch (error) {
+        console.error('Error loading transactions page:', error);
+    }
 }
 
-// Performance optimization
-function optimizeSPAPerformance() {
-    // Lazy load non-critical resources
-    const lazyElements = document.querySelectorAll('[data-lazy]');
+async function loadPaymentLinkPage() {
+    const pageContainer = document.getElementById('payment-link-page');
     
-    if ('IntersectionObserver' in window) {
-        const lazyObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const element = entry.target;
-                    // Load the lazy content
-                    if (element.dataset.lazy) {
-                        element.innerHTML = element.dataset.lazy;
-                        element.removeAttribute('data-lazy');
-                        lazyObserver.unobserve(element);
+    // Load payment link page content
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Create Payment Link</h1>
+        <div class="payment-link-form-container">
+            <form id="createPaymentLinkForm">
+                <div class="form-group">
+                    <label for="amount">Amount (USDC)</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required placeholder="e.g., 100.00">
+                    <div class="gas-badge" id="gasEstimateBadge">Select chain for gas estimate</div>
+                </div>
+                <div class="form-group">
+                    <label for="wallet_address">Recipient Wallet Address</label>
+                    <input type="text" id="wallet_address" name="wallet_address" required placeholder="e.g., 0x...">
+                </div>
+                <div class="form-group">
+                    <label for="chain">Blockchain Network</label>
+                    <select id="chain" name="chain" required>
+                        <option value="">Select Chain</option>
+                        <option value="Polygon" class="chain-option">Polygon</option>
+                        <option value="TRC20" class="chain-option">TRC20 (Tron)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product_title">Product/Service Title</label>
+                    <input type="text" id="product_title" name="product_title" required placeholder="e.g., Consulting Service">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Create Link</button>
+                    <div class="microcopy">Securely processed on-chain with 0% fees.</div>
+                </div>
+            </form>
+        </div>
+        <div id="paymentLinkDisplayArea" class="payment-link-display-area" style="display: none;">
+            <div class="generated-link-container">
+                <span id="generatedLink"></span>
+                <button id="copyLinkButton" class="copy-button">Copy</button>
+            </div>
+            <div class="link-timer">Link visible for <span id="linkTimerDisplay">20</span> seconds</div>
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    // Initialize payment link form functionality
+    initializePaymentLinkForm();
+}
+
+async function loadCapitalPage() {
+    const pageContainer = document.getElementById('capital-page');
+    
+    // Load capital page content with exact structure from Capital.html
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Capital Overview</h1>
+        <div class="capital-grid">
+            <!-- Card 1: Total Balance -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Total Balance</div>
+                    <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                </div>
+                <div class="metric-value" id="totalBalance">$0.00 USDC</div>
+                <div class="metric-label">Across all accounts</div>
+            </div>
+            <!-- Card 2: Incoming Capital -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Incoming Capital (30 Days)</div>
+                    <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                </div>
+                <div class="metric-value" id="incomingCapital">$0.00 USDC</div>
+                <div class="metric-label">Total received in last 30 days</div>
+            </div>
+            <!-- Additional capital content... -->
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/capital/summary`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch capital data');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            updateCapitalUI(data.data);
+        }
+    } catch (error) {
+        console.error('Error loading capital page:', error);
+    }
+}
+
+async function loadAccountPage() {
+    const pageContainer = document.getElementById('account-page');
+    
+    // Load account page content
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Account Settings</h1>
+        <div class="account-sections">
+            <div class="account-section">
+                <h2>Profile Information</h2>
+                <div id="profileSection">
+                    <!-- Profile content will be loaded here -->
+                </div>
+            </div>
+            <div class="account-section">
+                <h2>Security Settings</h2>
+                <div id="securitySection">
+                    <!-- Security content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/users/${state.sellerId}/profile`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch account data');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            updateAccountUI(data.data);
+        }
+    } catch (error) {
+        console.error('Error loading account page:', error);
+    }
+}
+
+async function loadPlansPage() {
+    const pageContainer = document.getElementById('plans-page');
+    
+    // Load plans page content
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Subscription Plans</h1>
+        <div class="plans-grid" id="plansGrid">
+            <!-- Plans will be loaded here -->
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/plans`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch plans data');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            updatePlansUI(data.data);
+        }
+    } catch (error) {
+        console.error('Error loading plans page:', error);
+    }
+}
+
+async function loadHelpPage() {
+    const pageContainer = document.getElementById('help-page');
+    
+    // Load help page content
+    pageContainer.innerHTML = `
+        <h1 class="page-title">Help & Support</h1>
+        <div class="help-sections">
+            <div class="faq-section">
+                <h2>Frequently Asked Questions</h2>
+                <div id="faqContainer">
+                    <!-- FAQ items will be loaded here -->
+                </div>
+            </div>
+            <div class="contact-section">
+                <h2>Contact Support</h2>
+                <div id="contactForm">
+                    <!-- Contact form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    `;
+    
+    pageContainer.style.display = 'block';
+    
+    try {
+        const response = await fetch(`https://halaxa-backend.onrender.com/api/help/faq`, {
+            headers: {
+                'Authorization': `Bearer ${state.token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch help data');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            updateHelpUI(data.data);
+        }
+    } catch (error) {
+        console.error('Error loading help page:', error);
+    }
+}
+
+// UI Update Functions
+function updateDashboardUI(data) {
+    // Update metrics
+    const metrics = {
+        'total-usdc-earned': data.total_usdc_earned || 0,
+        'total-transactions': data.total_transactions || 0,
+        'successful-transactions': data.successful_transactions || 0,
+        'average-transaction-value': data.average_transaction_value || 0
+    };
+
+    Object.entries(metrics).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = typeof value === 'number' ? value.toFixed(2) : value;
+        }
+    });
+
+    // Update recent transactions
+    const transactionsList = document.querySelector('.recent-transactions');
+    if (transactionsList && data.recent_transactions) {
+        transactionsList.innerHTML = '';
+        if (data.recent_transactions.length > 0) {
+            data.recent_transactions.forEach(transaction => {
+                const transactionItem = document.createElement('div');
+                transactionItem.classList.add('list-item');
+                transactionItem.innerHTML = `
+                    <div class="details">
+                        <span>${transaction.description || 'Transaction'}</span>
+                        <span class="label">${new Date(transaction.date).toLocaleDateString()}</span>
+                    </div>
+                    <span class="value" style="color: ${transaction.type === 'received' ? '#28a745' : '#dc3545'}">
+                        ${transaction.type === 'received' ? '+' : '-'}$${transaction.amount.toFixed(2)} USDC
+                    </span>
+                `;
+                transactionsList.appendChild(transactionItem);
+            });
+        } else {
+            transactionsList.innerHTML = `
+                <div class="empty-state">
+                    <p>No transactions yet</p>
+                    <small>Your recent transactions will appear here</small>
+                </div>
+            `;
+        }
+    }
+
+    // Update recent buyers
+    const buyersList = document.querySelector('.recent-buyers');
+    if (buyersList && data.recent_buyers) {
+        buyersList.innerHTML = '';
+        if (data.recent_buyers.length > 0) {
+            data.recent_buyers.forEach(buyer => {
+                const buyerItem = document.createElement('div');
+                buyerItem.classList.add('list-item');
+                buyerItem.innerHTML = `
+                    <div class="details">
+                        <span>${buyer.name || 'Anonymous'}</span>
+                        <span class="label">${buyer.email || 'No email'}</span>
+                    </div>
+                    <span class="value">$${buyer.total_spent.toFixed(2)} USDC</span>
+                `;
+                buyersList.appendChild(buyerItem);
+            });
+        } else {
+            buyersList.innerHTML = `
+                <div class="empty-state">
+                    <p>No buyers yet</p>
+                    <small>Your recent buyers will appear here</small>
+                </div>
+            `;
+        }
+    }
+}
+
+function initializeVolumeChart(volumeData) {
+    const volumeChart = document.getElementById('volumeChart');
+    if (volumeChart && volumeData) {
+        const ctx = volumeChart.getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: volumeData.labels || [],
+                datasets: [{
+                    label: 'Volume',
+                    data: volumeData.values || [],
+                    borderColor: '#4CAF50',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
-            });
-        });
-        
-        lazyElements.forEach(element => {
-            lazyObserver.observe(element);
+            }
         });
     }
 }
 
-// Initialize all SPA features
-try {
-    // Initialize mobile features
-    initializeMobileFeatures();
-    
-    // Optimize performance
-    optimizeSPAPerformance();
-    
-} catch (error) {
-    handleSPAError(error, 'SPA Initialization');
+// Initialize transactions page functionality
+function initializeTransactionsPage() {
+    // Add event listeners for filters
+    const statusFilter = document.getElementById('statusFilter');
+    const chainFilter = document.getElementById('chainFilter');
+    const dateRange = document.getElementById('dateRange');
+    const exportButton = document.getElementById('exportButton');
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterTransactions);
+    }
+    if (chainFilter) {
+        chainFilter.addEventListener('change', filterTransactions);
+    }
+    if (dateRange) {
+        dateRange.addEventListener('change', filterTransactions);
+    }
+    if (exportButton) {
+        exportButton.addEventListener('click', exportTransactions);
+    }
 }
+
+function filterTransactions() {
+    // Implementation for filtering transactions
+    console.log('Filtering transactions...');
+}
+
+function exportTransactions() {
+    // Implementation for exporting transactions
+    console.log('Exporting transactions...');
+}
+
+// Placeholder functions for other UI updates
+function updateTransactionsList(transactions) {
+    const transactionsList = document.getElementById('transactionsList');
+    if (!transactionsList || !transactions) return;
+
+    transactionsList.innerHTML = '';
+    
+    if (transactions.length === 0) {
+        transactionsList.innerHTML = `
+            <div class="empty-state">
+                <p>No transactions found</p>
+                <small>Your transactions will appear here</small>
+            </div>
+        `;
+        return;
+    }
+
+    transactions.forEach(transaction => {
+        const transactionItem = document.createElement('div');
+        transactionItem.classList.add('list-item');
+        transactionItem.innerHTML = `
+            <div class="transaction-info">
+                <div class="description">${transaction.description || 'Transaction'}</div>
+                <div class="details">
+                    <span>${transaction.chain || 'Unknown'}</span>
+                    <span>•</span>
+                    <span>${new Date(transaction.date).toLocaleDateString()}</span>
+                </div>
+            </div>
+            <div class="amount">$${transaction.amount.toFixed(2)} USDC</div>
+            <div class="status ${transaction.status.toLowerCase()}">${transaction.status}</div>
+            <button class="view-details">
+                <i class="fas fa-eye"></i>
+                View
+            </button>
+        `;
+        transactionsList.appendChild(transactionItem);
+    });
+}
+
+function updateTransactionStats(stats) {
+    if (!stats) return;
+
+    const elements = {
+        totalTransactions: document.getElementById('totalTransactions'),
+        totalVolume: document.getElementById('totalVolume'),
+        successRate: document.getElementById('successRate'),
+        averageValue: document.getElementById('averageValue')
+    };
+
+    if (elements.totalTransactions) {
+        elements.totalTransactions.textContent = stats.total_transactions || 0;
+    }
+    if (elements.totalVolume) {
+        elements.totalVolume.textContent = `$${(stats.total_volume || 0).toFixed(2)}`;
+    }
+    if (elements.successRate) {
+        elements.successRate.textContent = `${(stats.success_rate || 0).toFixed(1)}%`;
+    }
+    if (elements.averageValue) {
+        elements.averageValue.textContent = `$${(stats.average_value || 0).toFixed(2)}`;
+    }
+}
+
+function updateCapitalUI(data) {
+    // Implementation for updating capital UI
+}
+
+function updateAccountUI(data) {
+    // Implementation for updating account UI
+}
+
+function updatePlansUI(data) {
+    // Implementation for updating plans UI
+}
+
+function updateHelpUI(data) {
+    // Implementation for updating help UI
+}
+
+function initializePaymentLinkForm() {
+    // Implementation for payment link form functionality
+}
+
+// Initialize the app when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);

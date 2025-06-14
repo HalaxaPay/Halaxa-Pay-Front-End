@@ -507,7 +507,7 @@
                 localStorage.setItem('isPreview', 'false');
                 
                 // Redirect to dashboard with seller ID
-                window.location.href = `https://halaxapay.netlify.app?seller_id=${data.user.id}`;
+                window.location.href = `https://halaxapay.netlify.app/index.html?seller_id=${data.user.id}`;
             } else {
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';
                 errorMessage.style.display = 'block';

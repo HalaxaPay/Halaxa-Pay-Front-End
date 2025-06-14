@@ -70,14 +70,19 @@ function setupNavigation() {
 
 // Load page content dynamically
 async function loadPage(page) {
+    console.log('Loading page:', page); // Debug log
+    
     // Update active states
     document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.getAttribute('data-page') === page);
+        const isActive = item.getAttribute('data-page') === page;
+        item.classList.toggle('active', isActive);
+        console.log(`Nav item ${item.getAttribute('data-page')} active:`, isActive); // Debug log
     });
     
     // Hide all page contents
     document.querySelectorAll('.page-content').forEach(content => {
         content.style.display = 'none';
+        content.classList.remove('active');
     });
     
     // Update state
@@ -85,34 +90,46 @@ async function loadPage(page) {
     
     // Show the selected page content
     const pageId = page.replace('Page', '-page');
+    console.log('Looking for page element with ID:', pageId); // Debug log
+    
     const pageElement = document.getElementById(pageId);
     if (pageElement) {
+        console.log('Found page element, displaying it'); // Debug log
         pageElement.style.display = 'block';
+        pageElement.classList.add('active');
+    } else {
+        console.error('Page element not found:', pageId); // Debug log
     }
     
     // Load page specific content
-    switch (page) {
-        case 'homePage':
-            await loadHomePage();
-            break;
-        case 'transactionsPage':
-            await loadTransactionsPage();
-            break;
-        case 'paymentLinkPage':
-            await loadPaymentLinkPage();
-            break;
-        case 'capitalPage':
-            await loadCapitalPage();
-            break;
-        case 'accountPage':
-            await loadAccountPage();
-            break;
-        case 'plansPage':
-            await loadPlansPage();
-            break;
-        case 'helpPage':
-            await loadHelpPage();
-            break;
+    try {
+        switch (page) {
+            case 'homePage':
+                await loadHomePage();
+                break;
+            case 'transactionsPage':
+                await loadTransactionsPage();
+                break;
+            case 'paymentLinkPage':
+                await loadPaymentLinkPage();
+                break;
+            case 'capitalPage':
+                await loadCapitalPage();
+                break;
+            case 'accountPage':
+                await loadAccountPage();
+                break;
+            case 'plansPage':
+                await loadPlansPage();
+                break;
+            case 'helpPage':
+                await loadHelpPage();
+                break;
+            default:
+                console.error('Unknown page:', page);
+        }
+    } catch (error) {
+        console.error('Error loading page content:', error);
     }
 }
 

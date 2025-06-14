@@ -60,42 +60,6 @@
             </ul>
         </div>
 
-        <script>
-            // Simple navigation handler
-            document.addEventListener('DOMContentLoaded', function() {
-                // Show home page by default
-                document.getElementById('home-page').style.display = 'block';
-                
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        // Remove active class from all items
-                        document.querySelectorAll('.nav-item').forEach(navItem => {
-                            navItem.classList.remove('active');
-                        });
-                        
-                        // Add active class to clicked item
-                        this.classList.add('active');
-                        
-                        // Get the page to show
-                        const pageToShow = this.getAttribute('data-page').replace('Page', '-page');
-                        
-                        // Hide all pages
-                        document.querySelectorAll('.page-content').forEach(page => {
-                            page.style.display = 'none';
-                            page.classList.remove('active');
-                        });
-                        
-                        // Show selected page
-                        const selectedPage = document.getElementById(pageToShow);
-                        if (selectedPage) {
-                            selectedPage.style.display = 'block';
-                            selectedPage.classList.add('active');
-                        }
-                    });
-                });
-            });
-        </script>
-
         <!-- Main Content Area -->
         <div class="main-content-area">
             <!-- Home Page Content -->

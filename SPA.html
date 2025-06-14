@@ -911,7 +911,7 @@
             // Function to hide all pages
             function hideAllPages() {
                 pages.forEach(page => {
-                    page.style.display = 'none';
+                    page.classList.remove('active-page');
                 });
             }
             
@@ -919,7 +919,7 @@
             function showPage(pageId) {
                 const targetPage = document.getElementById(pageId);
                 if (targetPage) {
-                    targetPage.style.display = 'block';
+                    targetPage.classList.add('active-page');
                 }
             }
             

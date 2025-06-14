@@ -446,6 +446,12 @@ body::before {
     color: white;
 }
 
+.subscription-badge .expiration-date {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-left: 4px;
+}
+
 @keyframes badgeGlow {
     0% { box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); }
     50% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); }
@@ -1934,6 +1940,45 @@ input:checked + .slider:before {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
     padding: var(--spacing-sm);
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+}
+
+.chart-wrapper {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 300px;
+    position: relative;
+}
+
+.chart-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.chart-wrapper h3 {
+    font-size: 1rem;
+    color: var(--primary-text);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .insight-card {

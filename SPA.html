@@ -943,5 +943,47 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all navigation items and all page content divs
+            const navItems = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page-content');
+        
+            // Hide all pages
+            function hideAllPages() {
+                pages.forEach(page => {
+                    page.style.display = 'none';
+                });
+            }
+        
+            // Show a specific page by its id
+            function showPage(pageId) {
+                const target = document.getElementById(pageId);
+                if (target) {
+                    target.style.display = 'block';
+                }
+            }
+        
+            // Set up navigation click handlers
+            navItems.forEach((item, idx) => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all nav items
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    // Hide all pages
+                    hideAllPages();
+                    // Show the page that matches this nav item (by order)
+                    if (pages[idx]) {
+                        pages[idx].style.display = 'block';
+                    }
+                });
+            });
+        
+            // On load: hide all, then show only the default page (home-page)
+            hideAllPages();
+            showPage('home-page');
+        });
+        </script>
 </body>
 </html>

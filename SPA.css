@@ -30,6 +30,11 @@ img {
     display: block;
 }
 
+/* Hide all SPA pages by default */
+.page-content {
+    display: none;
+  }
+  
 /* ==================== BASE STYLES ==================== */
 :root {
     /* Color Variables */

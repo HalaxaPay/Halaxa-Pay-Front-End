@@ -275,15 +275,15 @@ body::before {
 
 /* Page Content */
 .page-content {
-    display: none !important;
+    display: none;
     opacity: 0;
-    transition: opacity var(--transition-speed) ease-in-out;
+    transition: opacity 0.3s ease-in-out;
     height: 100%;
     width: 100%;
 }
 
 .page-content.active {
-    display: block !important;
+    display: block;
     opacity: 1;
 }
 

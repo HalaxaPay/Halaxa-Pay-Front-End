@@ -1840,6 +1840,18 @@ function initializeHelpPage() {
     });
 }
 
+// Function to switch between dashboard pages
+function switchPage(pageId) {
+    const pages = document.querySelectorAll('.page-content');
+    pages.forEach(page => {
+        page.style.display = 'none';
+    });
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.style.display = 'block';
+    }
+}
+
 // Update the page initialization
 document.addEventListener('DOMContentLoaded', function() {
     // ... existing code ...
@@ -1849,6 +1861,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ... existing code ...
     initializeHelpPage();
+    // ... existing code ...
+
+    // Add click listeners to nav items for page switching
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const pageId = this.getAttribute('data-page');
+            if (pageId) {
+                switchPage(pageId);
+            }
+        });
+    });
+
     // ... existing code ...
 });
 

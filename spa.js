@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.sellerId = sellerId;
         localStorage.setItem('sellerId', sellerId);
         
+        // Set up navigation
+        setupNavigation();
+        
         // Load initial page
         const initialPage = window.location.hash.slice(1) || 'homePage';
         await loadPage(initialPage);
@@ -26,6 +29,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const storedSellerId = localStorage.getItem('sellerId');
         if (storedSellerId) {
             state.sellerId = storedSellerId;
+            
+            // Set up navigation
+            setupNavigation();
+            
             const initialPage = window.location.hash.slice(1) || 'homePage';
             await loadPage(initialPage);
         } else {
@@ -54,7 +61,9 @@ function setupNavigation() {
     navItems.forEach(item => {
         item.addEventListener('click', async () => {
             const page = item.getAttribute('data-page');
-            await loadPage(page);
+            if (page) {
+                await loadPage(page);
+            }
         });
     });
 }

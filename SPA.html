@@ -62,29 +62,36 @@
 
         <script>
             // Simple navigation handler
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    // Remove active class from all items
-                    document.querySelectorAll('.nav-item').forEach(navItem => {
-                        navItem.classList.remove('active');
+            document.addEventListener('DOMContentLoaded', function() {
+                // Show home page by default
+                document.getElementById('home-page').style.display = 'block';
+                
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        // Remove active class from all items
+                        document.querySelectorAll('.nav-item').forEach(navItem => {
+                            navItem.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked item
+                        this.classList.add('active');
+                        
+                        // Get the page to show
+                        const pageToShow = this.getAttribute('data-page').replace('Page', '-page');
+                        
+                        // Hide all pages
+                        document.querySelectorAll('.page-content').forEach(page => {
+                            page.style.display = 'none';
+                            page.classList.remove('active');
+                        });
+                        
+                        // Show selected page
+                        const selectedPage = document.getElementById(pageToShow);
+                        if (selectedPage) {
+                            selectedPage.style.display = 'block';
+                            selectedPage.classList.add('active');
+                        }
                     });
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Get the page to show
-                    const pageToShow = this.getAttribute('data-page').replace('Page', '-page');
-                    
-                    // Hide all pages
-                    document.querySelectorAll('.page-content').forEach(page => {
-                        page.style.display = 'none';
-                    });
-                    
-                    // Show selected page
-                    const selectedPage = document.getElementById(pageToShow);
-                    if (selectedPage) {
-                        selectedPage.style.display = 'block';
-                    }
                 });
             });
         </script>
@@ -92,7 +99,7 @@
         <!-- Main Content Area -->
         <div class="main-content-area">
             <!-- Home Page Content -->
-            <div id="home-page" class="page-content active">
+            <div id="home-page" class="page-content">
                 <div class="dashboard-grid">
                     <!-- Card 1: Total USDC Earned -->
                     <div class="card">
@@ -192,12 +199,12 @@
             </div>
 
             <!-- Transactions Page Content -->
-            <div id="transactions-page" class="page-content" style="display: none;">
+            <div id="transactions-page" class="page-content">
                 // ... existing code ...
             </div>
 
             <!-- Payment Link Page Content -->
-            <div id="payment-link-page" class="page-content" style="display: none;">
+            <div id="payment-link-page" class="page-content">
                 <div class="page-header">
                     <h1>Create Payment Link</h1>
                     <p>Generate payment links for your customers</p>
@@ -259,7 +266,7 @@
             </div>
 
             <!-- Capital Page Content -->
-            <div id="capital-page" class="page-content" style="display: none;">
+            <div id="capital-page" class="page-content">
                 <div class="page-header">
                     <h1>Capital</h1>
                     <p>Manage your capital and track your financial performance</p>
@@ -346,7 +353,7 @@
             </div>
 
             <!-- Account Page Content -->
-            <div id="accountPage" class="page-content" style="display: none;">
+            <div id="account-page" class="page-content">
                 <div class="page-header">
                     <h1>Account Settings</h1>
                     <p>Manage your account preferences and security settings</p>
@@ -474,7 +481,7 @@
             </div>
 
             <!-- Plans Page Content -->
-            <div id="plansPage" class="page-content" style="display: none;">
+            <div id="plans-page" class="page-content">
                 <div class="plans-container">
                     <div class="plans-header">
                         <h2>Choose Your Plan</h2>
@@ -629,7 +636,7 @@
             </div>
 
             <!-- Help Page Content -->
-            <div id="helpPage" class="page-content" style="display: none;">
+            <div id="help-page" class="page-content">
                 <h1 class="page-title fade-in">Help & Support</h1>
 
                 <div class="search-container fade-in" style="animation-delay: 0.1s;">

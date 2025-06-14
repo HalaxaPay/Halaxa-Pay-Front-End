@@ -19,6 +19,9 @@
     --sidebar-width: 240px;
     --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.05);
     --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+    --font-family-primary: 'Satoshi', sans-serif;
+    --font-family-secondary: 'Inter', sans-serif;
 }
 
 /* Base Styles */
@@ -31,7 +34,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Satoshi', sans-serif;
+    font-family: var(--font-family-primary);
     background-color: var(--primary-bg);
     color: var(--primary-text);
     display: flex;

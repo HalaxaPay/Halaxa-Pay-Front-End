@@ -16,7 +16,7 @@
     <!-- Include moment.js for date handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <!-- SPA Styles -->
-    <link rel="stylesheet" href="spa.css">
+    <link rel="stylesheet" href="./spa.css">
 </head>
 <body>
     <!-- Auth Container (hidden by default) -->
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <div id="dashboardContainer" class="dashboard-wrapper">
+    <div class="dashboard-wrapper">
         <!-- Floating Shapes Background -->
         <div class="floating-shapes">
             <div class="shape"></div>
@@ -44,625 +44,623 @@
             <div class="shape"></div>
         </div>
 
-        <!-- Dashboard Wrapper -->
-        <div class="dashboard-wrapper">
-            <!-- Sidebar Navigation -->
-            <div class="sidebar">
-                <div class="logo-section">
-                    <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <div id="subscriptionBadge" class="subscription-badge" style="display: none;"></div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="homePage"><i class="fas fa-home"></i> Home</li>
+                <li class="nav-item" data-page="transactionsPage"><i class="fas fa-list-alt"></i> Transactions</li>
+                <li class="nav-item" data-page="paymentLinkPage"><i class="fas fa-link"></i> Payment Link</li>
+                <li class="nav-item" data-page="capitalPage"><i class="fas fa-chart-line"></i> Capital</li>
+                <li class="nav-item" data-page="accountPage"><i class="fas fa-building"></i> Account</li>
+                <li class="nav-item" data-page="plansPage"><i class="fas fa-crown"></i> Plans</li>
+                <li class="nav-item" data-page="helpPage"><i class="fas fa-question-circle"></i> Help</li>
+            </ul>
+        </div>
+
+        <script>
+            // Simple navigation handler
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    document.querySelectorAll('.nav-item').forEach(navItem => {
+                        navItem.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Get the page to show
+                    const pageToShow = this.getAttribute('data-page').replace('Page', '-page');
+                    
+                    // Hide all pages
+                    document.querySelectorAll('.page-content').forEach(page => {
+                        page.style.display = 'none';
+                    });
+                    
+                    // Show selected page
+                    const selectedPage = document.getElementById(pageToShow);
+                    if (selectedPage) {
+                        selectedPage.style.display = 'block';
+                    }
+                });
+            });
+        </script>
+
+        <!-- Main Content Area -->
+        <div class="main-content-area">
+            <!-- Home Page Content -->
+            <div id="home-page" class="page-content active">
+                <div class="dashboard-grid">
+                    <!-- Card 1: Total USDC Earned -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Total USDC Earned</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="metric-value" id="total-usdc-earned">$0.00</div>
+                        <div class="metric-label">All time</div>
+                    </div>
+
+                    <!-- Card 2: Total Transactions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Total Transactions</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="metric-value" id="total-transactions">0</div>
+                        <div class="metric-label">All time</div>
+                    </div>
+
+                    <!-- Card 3: Successful Transactions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Successful Transactions</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="metric-value" id="successful-transactions">0</div>
+                        <div class="metric-label">All time</div>
+                    </div>
+
+                    <!-- Card 4: Average Transaction Value -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Average Transaction Value</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="metric-value" id="average-transaction-value">$0.00</div>
+                        <div class="metric-label">All time</div>
+                    </div>
+
+                    <!-- Card 5: USDC Volume Over Time Chart -->
+                    <div class="card chart-container" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <div class="card-title">USDC Volume Over Time</div>
+                            <div class="card-actions">
+                                <i class="fas fa-download"></i>
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                        <canvas id="volumeChart" class="chart-canvas"></canvas>
+                    </div>
+
+                    <!-- Card 6: Recent Transactions List -->
+                    <div class="card" style="grid-column: span 1;">
+                        <div class="card-header">
+                            <div class="card-title">Recent Transactions</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="data-list recent-transactions">
+                            <!-- Transaction items will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Payment Link Summary List -->
+                    <div class="card" style="grid-column: span 1;">
+                        <div class="card-header">
+                            <div class="card-title">Payment Link Summary</div>
+                            <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                        </div>
+                        <div class="data-list" id="paymentLinkSummaryList">
+                            <div class="list-item">
+                                <span class="label">Active Links</span>
+                                <span class="value">12</span>
+                            </div>
+                            <div class="list-item">
+                                <span class="label">Total Generated Value</span>
+                                <span class="value">$15,000.00 USDC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Recent Buyers Information -->
+                    <div class="card" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <div class="card-title">Recent Buyers</div>
+                            <div class="card-actions">
+                                <i class="fas fa-download"></i>
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                        <div class="data-list recent-buyers">
+                            <!-- Buyer information will be populated here -->
+                        </div>
+                    </div>
                 </div>
-                <ul class="nav-menu">
-                    <li class="nav-item active" data-page="homePage"><i class="fas fa-home"></i> Home</li>
-                    <li class="nav-item" data-page="transactionsPage"><i class="fas fa-list-alt"></i> Transactions</li>
-                    <li class="nav-item" data-page="paymentLinkPage"><i class="fas fa-link"></i> Payment Link</li>
-                    <li class="nav-item" data-page="capitalPage"><i class="fas fa-chart-line"></i> Capital</li>
-                    <li class="nav-item" data-page="accountPage"><i class="fas fa-building"></i> Account</li>
-                    <li class="nav-item" data-page="plansPage"><i class="fas fa-crown"></i> Plans</li>
-                    <li class="nav-item" data-page="helpPage"><i class="fas fa-question-circle"></i> Help</li>
-                </ul>
             </div>
 
-            <script>
-                // Simple navigation handler
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        // Remove active class from all items
-                        document.querySelectorAll('.nav-item').forEach(navItem => {
-                            navItem.classList.remove('active');
-                        });
-                        
-                        // Add active class to clicked item
-                        this.classList.add('active');
-                        
-                        // Get the page to show
-                        const pageToShow = this.getAttribute('data-page').replace('Page', '-page');
-                        
-                        // Hide all pages
-                        document.querySelectorAll('.page-content').forEach(page => {
-                            page.style.display = 'none';
-                        });
-                        
-                        // Show selected page
-                        const selectedPage = document.getElementById(pageToShow);
-                        if (selectedPage) {
-                            selectedPage.style.display = 'block';
-                        }
-                    });
-                });
-            </script>
+            <!-- Transactions Page Content -->
+            <div id="transactions-page" class="page-content" style="display: none;">
+                // ... existing code ...
+            </div>
 
-            <!-- Main Content Area -->
-            <div class="main-content-area">
-                <!-- Home Page Content -->
-                <div id="home-page" class="page-content active">
-                    <div class="dashboard-grid">
-                        <!-- Card 1: Total USDC Earned -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Total USDC Earned</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                            </div>
-                            <div class="metric-value" id="total-usdc-earned">$0.00</div>
-                            <div class="metric-label">All time</div>
-                        </div>
+            <!-- Payment Link Page Content -->
+            <div id="payment-link-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1>Create Payment Link</h1>
+                    <p>Generate payment links for your customers</p>
+                </div>
 
-                        <!-- Card 2: Total Transactions -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Total Transactions</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
+                <div class="payment-link-container">
+                    <div class="payment-link-form">
+                        <h2>Create New Payment Link</h2>
+                        <form id="createPaymentLinkForm">
+                            <div class="form-group">
+                                <label for="amount">Amount (USD)</label>
+                                <input type="number" id="amount" name="amount" step="0.01" required>
                             </div>
-                            <div class="metric-value" id="total-transactions">0</div>
-                            <div class="metric-label">All time</div>
-                        </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" id="description" name="description" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="wallet_address">Wallet Address</label>
+                                <input type="text" id="wallet_address" name="wallet_address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="chain">Blockchain</label>
+                                <select id="chain" name="chain" required>
+                                    <option value="ethereum">Ethereum</option>
+                                    <option value="polygon">Polygon</option>
+                                    <option value="arbitrum">Arbitrum</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_title">Product Title</label>
+                                <input type="text" id="product_title" name="product_title" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Generate Payment Link</button>
+                        </form>
+                    </div>
 
-                        <!-- Card 3: Successful Transactions -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Successful Transactions</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                            </div>
-                            <div class="metric-value" id="successful-transactions">0</div>
-                            <div class="metric-label">All time</div>
-                        </div>
-
-                        <!-- Card 4: Average Transaction Value -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-title">Average Transaction Value</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                            </div>
-                            <div class="metric-value" id="average-transaction-value">$0.00</div>
-                            <div class="metric-label">All time</div>
-                        </div>
-
-                        <!-- Card 5: USDC Volume Over Time Chart -->
-                        <div class="card chart-container" style="grid-column: span 2;">
-                            <div class="card-header">
-                                <div class="card-title">USDC Volume Over Time</div>
-                                <div class="card-actions">
-                                    <i class="fas fa-download"></i>
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </div>
-                            </div>
-                            <canvas id="volumeChart" class="chart-canvas"></canvas>
-                        </div>
-
-                        <!-- Card 6: Recent Transactions List -->
-                        <div class="card" style="grid-column: span 1;">
-                            <div class="card-header">
-                                <div class="card-title">Recent Transactions</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                            </div>
-                            <div class="data-list recent-transactions">
-                                <!-- Transaction items will be populated here -->
-                            </div>
-                        </div>
-
-                        <!-- Card 7: Payment Link Summary List -->
-                        <div class="card" style="grid-column: span 1;">
-                            <div class="card-header">
-                                <div class="card-title">Payment Link Summary</div>
-                                <div class="card-actions"><i class="fas fa-ellipsis-h"></i></div>
-                            </div>
-                            <div class="data-list" id="paymentLinkSummaryList">
-                                <div class="list-item">
-                                    <span class="label">Active Links</span>
-                                    <span class="value">12</span>
-                                </div>
-                                <div class="list-item">
-                                    <span class="label">Total Generated Value</span>
-                                    <span class="value">$15,000.00 USDC</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 8: Recent Buyers Information -->
-                        <div class="card" style="grid-column: span 2;">
-                            <div class="card-header">
-                                <div class="card-title">Recent Buyers</div>
-                                <div class="card-actions">
-                                    <i class="fas fa-download"></i>
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </div>
-                            </div>
-                            <div class="data-list recent-buyers">
-                                <!-- Buyer information will be populated here -->
-                            </div>
+                    <div class="payment-links-list">
+                        <h2>Your Payment Links</h2>
+                        <div class="links-table-container">
+                            <table class="links-table">
+                                <thead>
+                                    <tr>
+                                        <th>Link ID</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                        <th>Created</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentLinksTableBody">
+                                    <!-- Payment links will be populated here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Transactions Page Content -->
-                <div id="transactions-page" class="page-content" style="display: none;">
-                    // ... existing code ...
+            <!-- Capital Page Content -->
+            <div id="capital-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1>Capital</h1>
+                    <p>Manage your capital and track your financial performance</p>
                 </div>
 
-                <!-- Payment Link Page Content -->
-                <div id="payment-link-page" class="page-content" style="display: none;">
-                    <div class="page-header">
-                        <h1>Create Payment Link</h1>
-                        <p>Generate payment links for your customers</p>
-                    </div>
-
-                    <div class="payment-link-container">
-                        <div class="payment-link-form">
-                            <h2>Create New Payment Link</h2>
-                            <form id="createPaymentLinkForm">
-                                <div class="form-group">
-                                    <label for="amount">Amount (USD)</label>
-                                    <input type="number" id="amount" name="amount" step="0.01" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <input type="text" id="description" name="description" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="wallet_address">Wallet Address</label>
-                                    <input type="text" id="wallet_address" name="wallet_address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="chain">Blockchain</label>
-                                    <select id="chain" name="chain" required>
-                                        <option value="ethereum">Ethereum</option>
-                                        <option value="polygon">Polygon</option>
-                                        <option value="arbitrum">Arbitrum</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="product_title">Product Title</label>
-                                    <input type="text" id="product_title" name="product_title" required>
-                                </div>
-                                <button type="submit" class="btn-primary">Generate Payment Link</button>
-                            </form>
+                <div class="capital-container">
+                    <!-- Capital Summary Section -->
+                    <div class="capital-summary">
+                        <div class="summary-card total-capital">
+                            <h3>Total Capital</h3>
+                            <div class="amount" id="totalCapitalAmount">$0.00</div>
+                            <div class="trend" id="totalCapitalTrend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0%</span>
+                            </div>
                         </div>
-
-                        <div class="payment-links-list">
-                            <h2>Your Payment Links</h2>
-                            <div class="links-table-container">
-                                <table class="links-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Link ID</th>
-                                            <th>Amount</th>
-                                            <th>Description</th>
-                                            <th>Created</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="paymentLinksTableBody">
-                                        <!-- Payment links will be populated here -->
-                                    </tbody>
-                                </table>
+                        <div class="summary-card available-capital">
+                            <h3>Available Capital</h3>
+                            <div class="amount" id="availableCapitalAmount">$0.00</div>
+                            <div class="trend" id="availableCapitalTrend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                        <div class="summary-card locked-capital">
+                            <h3>Locked Capital</h3>
+                            <div class="amount" id="lockedCapitalAmount">$0.00</div>
+                            <div class="trend" id="lockedCapitalTrend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0%</span>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Capital Page Content -->
-                <div id="capital-page" class="page-content" style="display: none;">
-                    <div class="page-header">
-                        <h1>Capital</h1>
-                        <p>Manage your capital and track your financial performance</p>
-                    </div>
-
-                    <div class="capital-container">
-                        <!-- Capital Summary Section -->
-                        <div class="capital-summary">
-                            <div class="summary-card total-capital">
-                                <h3>Total Capital</h3>
-                                <div class="amount" id="totalCapitalAmount">$0.00</div>
-                                <div class="trend" id="totalCapitalTrend">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>0%</span>
-                                </div>
-                            </div>
-                            <div class="summary-card available-capital">
-                                <h3>Available Capital</h3>
-                                <div class="amount" id="availableCapitalAmount">$0.00</div>
-                                <div class="trend" id="availableCapitalTrend">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>0%</span>
-                                </div>
-                            </div>
-                            <div class="summary-card locked-capital">
-                                <h3>Locked Capital</h3>
-                                <div class="amount" id="lockedCapitalAmount">$0.00</div>
-                                <div class="trend" id="lockedCapitalTrend">
-                                    <i class="fas fa-arrow-up"></i>
-                                    <span>0%</span>
-                                </div>
+                    <!-- Capital Insights Section -->
+                    <div class="capital-insights">
+                        <div class="insights-header">
+                            <h2>Capital Insights</h2>
+                            <div class="time-filter">
+                                <button class="active" data-period="7d">7D</button>
+                                <button data-period="30d">30D</button>
+                                <button data-period="90d">90D</button>
                             </div>
                         </div>
-
-                        <!-- Capital Insights Section -->
-                        <div class="capital-insights">
-                            <div class="insights-header">
-                                <h2>Capital Insights</h2>
-                                <div class="time-filter">
-                                    <button class="active" data-period="7d">7D</button>
-                                    <button data-period="30d">30D</button>
-                                    <button data-period="90d">90D</button>
-                                </div>
-                            </div>
-                            <div class="insights-chart">
-                                <canvas id="capitalChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Connected Accounts Section -->
-                        <div class="connected-accounts">
-                            <div class="accounts-header">
-                                <h2>Connected Accounts</h2>
-                                <button class="btn-secondary" id="connectAccountBtn">
-                                    <i class="fas fa-plus"></i> Connect Account
-                                </button>
-                            </div>
-                            <div class="accounts-list" id="accountsList">
-                                <!-- Accounts will be populated here -->
-                            </div>
-                        </div>
-
-                        <!-- Recent Capital Movements Section -->
-                        <div class="capital-movements">
-                            <div class="movements-header">
-                                <h2>Recent Capital Movements</h2>
-                                <button class="btn-secondary" id="viewAllMovementsBtn">
-                                    View All
-                                </button>
-                            </div>
-                            <div class="movements-list" id="movementsList">
-                                <!-- Movements will be populated here -->
-                            </div>
-                        </div>
-
-                        <!-- Capital by Chain Section -->
-                        <div class="capital-by-chain">
-                            <h2>Capital by Chain</h2>
-                            <div class="chain-distribution" id="chainDistribution">
-                                <!-- Chain distribution will be populated here -->
-                            </div>
+                        <div class="insights-chart">
+                            <canvas id="capitalChart"></canvas>
                         </div>
                     </div>
-                </div>
 
-                <!-- Account Page Content -->
-                <div id="accountPage" class="page-content" style="display: none;">
-                    <div class="page-header">
-                        <h1>Account Settings</h1>
-                        <p>Manage your account preferences and security settings</p>
-                    </div>
-
-                    <div class="account-container">
-                        <!-- Profile Section -->
-                        <div class="account-section">
-                            <h2>Profile Information</h2>
-                            <form id="profileForm" class="account-form">
-                                <div class="form-group">
-                                    <label for="fullName">Full Name</label>
-                                    <input type="text" id="fullName" name="fullName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email Address</label>
-                                    <input type="email" id="email" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone">Phone Number</label>
-                                    <input type="tel" id="phone" name="phone">
-                                </div>
-                                <div class="form-group">
-                                    <label for="company">Company Name</label>
-                                    <input type="text" id="company" name="company">
-                                </div>
-                                <button type="submit" class="btn-primary">Update Profile</button>
-                            </form>
-                        </div>
-
-                        <!-- Security Section -->
-                        <div class="account-section">
-                            <h2>Security Settings</h2>
-                            <form id="securityForm" class="account-form">
-                                <div class="form-group">
-                                    <label for="currentPassword">Current Password</label>
-                                    <input type="password" id="currentPassword" name="currentPassword">
-                                </div>
-                                <div class="form-group">
-                                    <label for="newPassword">New Password</label>
-                                    <input type="password" id="newPassword" name="newPassword">
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirmPassword">Confirm New Password</label>
-                                    <input type="password" id="confirmPassword" name="confirmPassword">
-                                </div>
-                                <button type="submit" class="btn-primary">Update Password</button>
-                            </form>
-
-                            <div class="security-options">
-                                <h3>Two-Factor Authentication</h3>
-                                <div class="toggle-option">
-                                    <span>Enable 2FA</span>
-                                    <label class="switch">
-                                        <input type="checkbox" id="enable2FA">
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Notification Settings -->
-                        <div class="account-section">
-                            <h2>Notification Preferences</h2>
-                            <form id="notificationForm" class="account-form">
-                                <div class="notification-option">
-                                    <div class="option-info">
-                                        <h3>Email Notifications</h3>
-                                        <p>Receive updates about your account via email</p>
-                                    </div>
-                                    <label class="switch">
-                                        <input type="checkbox" id="emailNotifications" checked>
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                                <div class="notification-option">
-                                    <div class="option-info">
-                                        <h3>Transaction Alerts</h3>
-                                        <p>Get notified about new transactions</p>
-                                    </div>
-                                    <label class="switch">
-                                        <input type="checkbox" id="transactionAlerts" checked>
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                                <div class="notification-option">
-                                    <div class="option-info">
-                                        <h3>Security Alerts</h3>
-                                        <p>Receive alerts about security-related activities</p>
-                                    </div>
-                                    <label class="switch">
-                                        <input type="checkbox" id="securityAlerts" checked>
-                                        <span class="slider round"></span>
-                                    </label>
-                                </div>
-                                <button type="submit" class="btn-primary">Save Preferences</button>
-                            </form>
-                        </div>
-
-                        <!-- Connected Accounts -->
-                        <div class="account-section">
+                    <!-- Connected Accounts Section -->
+                    <div class="connected-accounts">
+                        <div class="accounts-header">
                             <h2>Connected Accounts</h2>
-                            <div class="connected-accounts-list" id="connectedAccountsList">
-                                <!-- Connected accounts will be populated here -->
-                            </div>
-                            <button class="btn-secondary" id="connectNewAccountBtn">
-                                <i class="fas fa-plus"></i> Connect New Account
+                            <button class="btn-secondary" id="connectAccountBtn">
+                                <i class="fas fa-plus"></i> Connect Account
                             </button>
                         </div>
+                        <div class="accounts-list" id="accountsList">
+                            <!-- Accounts will be populated here -->
+                        </div>
+                    </div>
 
-                        <!-- Danger Zone -->
-                        <div class="account-section danger-zone">
-                            <h2>Danger Zone</h2>
-                            <div class="danger-actions">
-                                <div class="danger-action">
-                                    <div class="action-info">
-                                        <h3>Delete Account</h3>
-                                        <p>Permanently delete your account and all associated data</p>
-                                    </div>
-                                    <button class="btn-danger" id="deleteAccountBtn">Delete Account</button>
+                    <!-- Recent Capital Movements Section -->
+                    <div class="capital-movements">
+                        <div class="movements-header">
+                            <h2>Recent Capital Movements</h2>
+                            <button class="btn-secondary" id="viewAllMovementsBtn">
+                                View All
+                            </button>
+                        </div>
+                        <div class="movements-list" id="movementsList">
+                            <!-- Movements will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Capital by Chain Section -->
+                    <div class="capital-by-chain">
+                        <h2>Capital by Chain</h2>
+                        <div class="chain-distribution" id="chainDistribution">
+                            <!-- Chain distribution will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Page Content -->
+            <div id="accountPage" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1>Account Settings</h1>
+                    <p>Manage your account preferences and security settings</p>
+                </div>
+
+                <div class="account-container">
+                    <!-- Profile Section -->
+                    <div class="account-section">
+                        <h2>Profile Information</h2>
+                        <form id="profileForm" class="account-form">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="company">Company Name</label>
+                                <input type="text" id="company" name="company">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Profile</button>
+                        </form>
+                    </div>
+
+                    <!-- Security Section -->
+                    <div class="account-section">
+                        <h2>Security Settings</h2>
+                        <form id="securityForm" class="account-form">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" name="currentPassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" name="newPassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Password</button>
+                        </form>
+
+                        <div class="security-options">
+                            <h3>Two-Factor Authentication</h3>
+                            <div class="toggle-option">
+                                <span>Enable 2FA</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="enable2FA">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="account-section">
+                        <h2>Notification Preferences</h2>
+                        <form id="notificationForm" class="account-form">
+                            <div class="notification-option">
+                                <div class="option-info">
+                                    <h3>Email Notifications</h3>
+                                    <p>Receive updates about your account via email</p>
                                 </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="notification-option">
+                                <div class="option-info">
+                                    <h3>Transaction Alerts</h3>
+                                    <p>Get notified about new transactions</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="transactionAlerts" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="notification-option">
+                                <div class="option-info">
+                                    <h3>Security Alerts</h3>
+                                    <p>Receive alerts about security-related activities</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="securityAlerts" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Preferences</button>
+                        </form>
+                    </div>
+
+                    <!-- Connected Accounts -->
+                    <div class="account-section">
+                        <h2>Connected Accounts</h2>
+                        <div class="connected-accounts-list" id="connectedAccountsList">
+                            <!-- Connected accounts will be populated here -->
+                        </div>
+                        <button class="btn-secondary" id="connectNewAccountBtn">
+                            <i class="fas fa-plus"></i> Connect New Account
+                        </button>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="account-section danger-zone">
+                        <h2>Danger Zone</h2>
+                        <div class="danger-actions">
+                            <div class="danger-action">
+                                <div class="action-info">
+                                    <h3>Delete Account</h3>
+                                    <p>Permanently delete your account and all associated data</p>
+                                </div>
+                                <button class="btn-danger" id="deleteAccountBtn">Delete Account</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Plans Page Content -->
-                <div id="plansPage" class="page-content" style="display: none;">
-                    <div class="plans-container">
-                        <div class="plans-header">
-                            <h2>Choose Your Plan</h2>
-                            <p>Select the perfect plan for your business needs</p>
-                        </div>
-                        
-                        <div class="plans-grid">
-                            <!-- Free Plan -->
-                            <div class="plan-card">
-                                <div class="plan-header">
-                                    <h3>Free</h3>
-                                    <div class="plan-price">
-                                        <span class="amount">$0</span>
-                                        <span class="period">/month</span>
-                                    </div>
+            <!-- Plans Page Content -->
+            <div id="plansPage" class="page-content" style="display: none;">
+                <div class="plans-container">
+                    <div class="plans-header">
+                        <h2>Choose Your Plan</h2>
+                        <p>Select the perfect plan for your business needs</p>
+                    </div>
+                    
+                    <div class="plans-grid">
+                        <!-- Free Plan -->
+                        <div class="plan-card">
+                            <div class="plan-header">
+                                <h3>Free</h3>
+                                <div class="plan-price">
+                                    <span class="amount">$0</span>
+                                    <span class="period">/month</span>
                                 </div>
-                                <div class="plan-features">
-                                    <ul>
-                                        <li><i class="fas fa-check"></i> Basic payment processing</li>
-                                        <li><i class="fas fa-check"></i> Up to 10 transactions/month</li>
-                                        <li><i class="fas fa-check"></i> Standard support</li>
-                                        <li><i class="fas fa-check"></i> Basic analytics</li>
-                                    </ul>
-                                </div>
-                                <button class="plan-button" onclick="selectPlan('free')">Get Started</button>
                             </div>
-
-                            <!-- Pro Plan -->
-                            <div class="plan-card featured">
-                                <div class="plan-badge">Most Popular</div>
-                                <div class="plan-header">
-                                    <h3>Pro</h3>
-                                    <div class="plan-price">
-                                        <span class="amount">$29</span>
-                                        <span class="period">/month</span>
-                                    </div>
-                                </div>
-                                <div class="plan-features">
-                                    <ul>
-                                        <li><i class="fas fa-check"></i> Advanced payment processing</li>
-                                        <li><i class="fas fa-check"></i> Unlimited transactions</li>
-                                        <li><i class="fas fa-check"></i> Priority support</li>
-                                        <li><i class="fas fa-check"></i> Advanced analytics</li>
-                                        <li><i class="fas fa-check"></i> Custom payment links</li>
-                                        <li><i class="fas fa-check"></i> API access</li>
-                                    </ul>
-                                </div>
-                                <button class="plan-button" onclick="selectPlan('pro')">Upgrade to Pro</button>
+                            <div class="plan-features">
+                                <ul>
+                                    <li><i class="fas fa-check"></i> Basic payment processing</li>
+                                    <li><i class="fas fa-check"></i> Up to 10 transactions/month</li>
+                                    <li><i class="fas fa-check"></i> Standard support</li>
+                                    <li><i class="fas fa-check"></i> Basic analytics</li>
+                                </ul>
                             </div>
-
-                            <!-- Enterprise Plan -->
-                            <div class="plan-card">
-                                <div class="plan-header">
-                                    <h3>Enterprise</h3>
-                                    <div class="plan-price">
-                                        <span class="amount">$99</span>
-                                        <span class="period">/month</span>
-                                    </div>
-                                </div>
-                                <div class="plan-features">
-                                    <ul>
-                                        <li><i class="fas fa-check"></i> Everything in Pro</li>
-                                        <li><i class="fas fa-check"></i> Dedicated account manager</li>
-                                        <li><i class="fas fa-check"></i> Custom integrations</li>
-                                        <li><i class="fas fa-check"></i> SLA guarantee</li>
-                                        <li><i class="fas fa-check"></i> Advanced security features</li>
-                                        <li><i class="fas fa-check"></i> White-label solutions</li>
-                                    </ul>
-                                </div>
-                                <button class="plan-button" onclick="selectPlan('enterprise')">Contact Sales</button>
-                            </div>
+                            <button class="plan-button" onclick="selectPlan('free')">Get Started</button>
                         </div>
 
-                        <!-- Plan Comparison -->
-                        <div class="plan-comparison">
-                            <h3>Plan Comparison</h3>
-                            <div class="comparison-table">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Feature</th>
-                                            <th>Free</th>
-                                            <th>Pro</th>
-                                            <th>Enterprise</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Transaction Volume</td>
-                                            <td>Up to 10/month</td>
-                                            <td>Unlimited</td>
-                                            <td>Unlimited</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Payment Methods</td>
-                                            <td>Basic</td>
-                                            <td>Advanced</td>
-                                            <td>Custom</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Support Level</td>
-                                            <td>Standard</td>
-                                            <td>Priority</td>
-                                            <td>Dedicated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Analytics</td>
-                                            <td>Basic</td>
-                                            <td>Advanced</td>
-                                            <td>Custom</td>
-                                        </tr>
-                                        <tr>
-                                            <td>API Access</td>
-                                            <td>No</td>
-                                            <td>Yes</td>
-                                            <td>Yes</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Custom Branding</td>
-                                            <td>No</td>
-                                            <td>Basic</td>
-                                            <td>Full</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <!-- Pro Plan -->
+                        <div class="plan-card featured">
+                            <div class="plan-badge">Most Popular</div>
+                            <div class="plan-header">
+                                <h3>Pro</h3>
+                                <div class="plan-price">
+                                    <span class="amount">$29</span>
+                                    <span class="period">/month</span>
+                                </div>
                             </div>
+                            <div class="plan-features">
+                                <ul>
+                                    <li><i class="fas fa-check"></i> Advanced payment processing</li>
+                                    <li><i class="fas fa-check"></i> Unlimited transactions</li>
+                                    <li><i class="fas fa-check"></i> Priority support</li>
+                                    <li><i class="fas fa-check"></i> Advanced analytics</li>
+                                    <li><i class="fas fa-check"></i> Custom payment links</li>
+                                    <li><i class="fas fa-check"></i> API access</li>
+                                </ul>
+                            </div>
+                            <button class="plan-button" onclick="selectPlan('pro')">Upgrade to Pro</button>
                         </div>
 
-                        <!-- FAQ Section -->
-                        <div class="plans-faq">
-                            <h3>Frequently Asked Questions</h3>
-                            <div class="faq-grid">
-                                <div class="faq-item">
-                                    <h4>Can I switch plans later?</h4>
-                                    <p>Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                        <!-- Enterprise Plan -->
+                        <div class="plan-card">
+                            <div class="plan-header">
+                                <h3>Enterprise</h3>
+                                <div class="plan-price">
+                                    <span class="amount">$99</span>
+                                    <span class="period">/month</span>
                                 </div>
-                                <div class="faq-item">
-                                    <h4>What payment methods do you accept?</h4>
-                                    <p>We accept all major credit cards, PayPal, and bank transfers for plan payments.</p>
-                                </div>
-                                <div class="faq-item">
-                                    <h4>Is there a contract?</h4>
-                                    <p>No, all plans are month-to-month with no long-term commitment required.</p>
-                                </div>
-                                <div class="faq-item">
-                                    <h4>Do you offer refunds?</h4>
-                                    <p>Yes, we offer a 30-day money-back guarantee for all paid plans.</p>
-                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <ul>
+                                    <li><i class="fas fa-check"></i> Everything in Pro</li>
+                                    <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                                    <li><i class="fas fa-check"></i> Custom integrations</li>
+                                    <li><i class="fas fa-check"></i> SLA guarantee</li>
+                                    <li><i class="fas fa-check"></i> Advanced security features</li>
+                                    <li><i class="fas fa-check"></i> White-label solutions</li>
+                                </ul>
+                            </div>
+                            <button class="plan-button" onclick="selectPlan('enterprise')">Contact Sales</button>
+                        </div>
+                    </div>
+
+                    <!-- Plan Comparison -->
+                    <div class="plan-comparison">
+                        <h3>Plan Comparison</h3>
+                        <div class="comparison-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Free</th>
+                                        <th>Pro</th>
+                                        <th>Enterprise</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Transaction Volume</td>
+                                        <td>Up to 10/month</td>
+                                        <td>Unlimited</td>
+                                        <td>Unlimited</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Payment Methods</td>
+                                        <td>Basic</td>
+                                        <td>Advanced</td>
+                                        <td>Custom</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Support Level</td>
+                                        <td>Standard</td>
+                                        <td>Priority</td>
+                                        <td>Dedicated</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Analytics</td>
+                                        <td>Basic</td>
+                                        <td>Advanced</td>
+                                        <td>Custom</td>
+                                    </tr>
+                                    <tr>
+                                        <td>API Access</td>
+                                        <td>No</td>
+                                        <td>Yes</td>
+                                        <td>Yes</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Custom Branding</td>
+                                        <td>No</td>
+                                        <td>Basic</td>
+                                        <td>Full</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <div class="plans-faq">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="faq-grid">
+                            <div class="faq-item">
+                                <h4>Can I switch plans later?</h4>
+                                <p>Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>What payment methods do you accept?</h4>
+                                <p>We accept all major credit cards, PayPal, and bank transfers for plan payments.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Is there a contract?</h4>
+                                <p>No, all plans are month-to-month with no long-term commitment required.</p>
+                            </div>
+                            <div class="faq-item">
+                                <h4>Do you offer refunds?</h4>
+                                <p>Yes, we offer a 30-day money-back guarantee for all paid plans.</p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Help Page Content -->
-                <div id="helpPage" class="page-content" style="display: none;">
-                    <h1 class="page-title fade-in">Help & Support</h1>
+            <!-- Help Page Content -->
+            <div id="helpPage" class="page-content" style="display: none;">
+                <h1 class="page-title fade-in">Help & Support</h1>
 
-                    <div class="search-container fade-in" style="animation-delay: 0.1s;">
-                        <input type="text" class="search-input" placeholder="Search for help topics..." id="helpSearch">
-                    </div>
+                <div class="search-container fade-in" style="animation-delay: 0.1s;">
+                    <input type="text" class="search-input" placeholder="Search for help topics..." id="helpSearch">
+                </div>
 
-                    <div class="category-tags fade-in" style="animation-delay: 0.2s;">
-                        <span class="category-tag active">All</span>
-                        <span class="category-tag">Payments</span>
-                        <span class="category-tag">Security</span>
-                        <span class="category-tag">API</span>
-                        <span class="category-tag">Integration</span>
-                        <span class="category-tag">Compliance</span>
-                    </div>
+                <div class="category-tags fade-in" style="animation-delay: 0.2s;">
+                    <span class="category-tag active">All</span>
+                    <span class="category-tag">Payments</span>
+                    <span class="category-tag">Security</span>
+                    <span class="category-tag">API</span>
+                    <span class="category-tag">Integration</span>
+                    <span class="category-tag">Compliance</span>
+                </div>
 
-                    <div class="help-section fade-in" style="animation-delay: 0.3s;">
-                        <div class="section-title">Advanced Integration Guide</div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                How do I implement webhook notifications for real-time transaction updates?
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                To implement webhook notifications, you'll need to:<br>
-                                1. Configure your webhook endpoint in the API settings<br>
-                                2. Implement signature verification using your webhook secret<br>
-                                3. Handle different event types (payment.success, payment.failed, etc.)<br>
-                                4. Implement retry logic for failed webhook deliveries<br>
-                                5. Set up proper error handling and logging<br><br>
-                                Example webhook payload structure:<br>
-                                <pre><code>{
+                <div class="help-section fade-in" style="animation-delay: 0.3s;">
+                    <div class="section-title">Advanced Integration Guide</div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How do I implement webhook notifications for real-time transaction updates?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            To implement webhook notifications, you'll need to:<br>
+                            1. Configure your webhook endpoint in the API settings<br>
+                            2. Implement signature verification using your webhook secret<br>
+                            3. Handle different event types (payment.success, payment.failed, etc.)<br>
+                            4. Implement retry logic for failed webhook deliveries<br>
+                            5. Set up proper error handling and logging<br><br>
+                            Example webhook payload structure:<br>
+                            <pre><code>{
     "event": "payment.success",
     "data": {
         "transaction_id": "tx_123",
@@ -673,119 +671,118 @@
     },
     "signature": "whsec_..."
 }</code></pre>
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                What are the best practices for handling multi-currency transactions?
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                When handling multi-currency transactions, consider:<br>
-                                1. Exchange rate volatility and slippage<br>
-                                2. Network-specific gas fees<br>
-                                3. Cross-chain transaction confirmation times<br>
-                                4. Currency-specific compliance requirements<br>
-                                5. Liquidity management across different networks<br><br>
-                                Recommended approach:<br>
-                                - Use our real-time exchange rate API<br>
-                                - Implement proper error handling for failed conversions<br>
-                                - Set up automated monitoring for exchange rate fluctuations<br>
-                                - Consider using our smart contract for atomic swaps
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                How do I implement advanced security measures for high-value transactions?
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                For high-value transactions, implement:<br>
-                                1. Multi-signature wallet integration<br>
-                                2. Transaction limits and approval workflows<br>
-                                3. IP whitelisting and geofencing<br>
-                                4. Advanced fraud detection using our ML-powered API<br>
-                                5. Automated compliance checks<br><br>
-                                Security checklist:<br>
-                                - Enable 2FA for all admin accounts<br>
-                                - Implement session management<br>
-                                - Set up automated alerts for suspicious activity<br>
-                                - Regular security audits<br>
-                                - Backup and recovery procedures
-                            </div>
                         </div>
                     </div>
-
-                    <div class="help-section fade-in" style="animation-delay: 0.4s;">
-                        <div class="section-title">API & Development</div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                How do I optimize API performance for high-volume transactions?
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                To optimize API performance:<br>
-                                1. Implement proper caching strategies<br>
-                                2. Use webhooks instead of polling<br>
-                                3. Batch requests when possible<br>
-                                4. Implement rate limiting and backoff strategies<br>
-                                5. Monitor API usage and performance metrics<br><br>
-                                Best practices:<br>
-                                - Use connection pooling<br>
-                                - Implement circuit breakers<br>
-                                - Cache frequently accessed data<br>
-                                - Use compression for large payloads<br>
-                                - Monitor response times and error rates
-                            </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What are the best practices for handling multi-currency transactions?
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                What are the advanced features available in the Enterprise API?
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                Enterprise API features include:<br>
-                                1. Custom smart contract deployment<br>
-                                2. Advanced analytics and reporting<br>
-                                3. White-label solutions<br>
-                                4. Dedicated infrastructure<br>
-                                5. Custom integration support<br><br>
-                                Additional capabilities:<br>
-                                - Custom webhook configurations<br>
-                                - Advanced security features<br>
-                                - Priority support<br>
-                                - SLA guarantees<br>
-                                - Custom development support
-                            </div>
+                        <div class="faq-answer">
+                            When handling multi-currency transactions, consider:<br>
+                            1. Exchange rate volatility and slippage<br>
+                            2. Network-specific gas fees<br>
+                            3. Cross-chain transaction confirmation times<br>
+                            4. Currency-specific compliance requirements<br>
+                            5. Liquidity management across different networks<br><br>
+                            Recommended approach:<br>
+                            - Use our real-time exchange rate API<br>
+                            - Implement proper error handling for failed conversions<br>
+                            - Set up automated monitoring for exchange rate fluctuations<br>
+                            - Consider using our smart contract for atomic swaps
                         </div>
                     </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How do I implement advanced security measures for high-value transactions?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            For high-value transactions, implement:<br>
+                            1. Multi-signature wallet integration<br>
+                            2. Transaction limits and approval workflows<br>
+                            3. IP whitelisting and geofencing<br>
+                            4. Advanced fraud detection using our ML-powered API<br>
+                            5. Automated compliance checks<br><br>
+                            Security checklist:<br>
+                            - Enable 2FA for all admin accounts<br>
+                            - Implement session management<br>
+                            - Set up automated alerts for suspicious activity<br>
+                            - Regular security audits<br>
+                            - Backup and recovery procedures
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="contact-card fade-in" style="animation-delay: 0.5s;">
-                        <div class="section-title">Get in Touch</div>
-                        <div class="contact-info">
-                            <div class="contact-method">
-                                <i class="fas fa-envelope"></i>
-                                <div>
-                                    <h4>Email Support</h4>
-                                    <p>halaxa.inc@gmail.com</p>
-                                    <small>Response within 24 hours</small>
-                                </div>
+                <div class="help-section fade-in" style="animation-delay: 0.4s;">
+                    <div class="section-title">API & Development</div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            How do I optimize API performance for high-volume transactions?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            To optimize API performance:<br>
+                            1. Implement proper caching strategies<br>
+                            2. Use webhooks instead of polling<br>
+                            3. Batch requests when possible<br>
+                            4. Implement rate limiting and backoff strategies<br>
+                            5. Monitor API usage and performance metrics<br><br>
+                            Best practices:<br>
+                            - Use connection pooling<br>
+                            - Implement circuit breakers<br>
+                            - Cache frequently accessed data<br>
+                            - Use compression for large payloads<br>
+                            - Monitor response times and error rates
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What are the advanced features available in the Enterprise API?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Enterprise API features include:<br>
+                            1. Custom smart contract deployment<br>
+                            2. Advanced analytics and reporting<br>
+                            3. White-label solutions<br>
+                            4. Dedicated infrastructure<br>
+                            5. Custom integration support<br><br>
+                            Additional capabilities:<br>
+                            - Custom webhook configurations<br>
+                            - Advanced security features<br>
+                            - Priority support<br>
+                            - SLA guarantees<br>
+                            - Custom development support
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-card fade-in" style="animation-delay: 0.5s;">
+                    <div class="section-title">Get in Touch</div>
+                    <div class="contact-info">
+                        <div class="contact-method">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email Support</h4>
+                                <p>halaxa.inc@gmail.com</p>
+                                <small>Response within 24 hours</small>
                             </div>
-                            <div class="contact-method">
-                                <i class="fas fa-code"></i>
-                                <div>
-                                    <h4>Developer Support</h4>
-                                    <p>dev@halaxa.com</p>
-                                    <small>Technical assistance</small>
-                                </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-code"></i>
+                            <div>
+                                <h4>Developer Support</h4>
+                                <p>dev@halaxa.com</p>
+                                <small>Technical assistance</small>
                             </div>
-                            <div class="contact-method">
-                                <i class="fas fa-book"></i>
-                                <div>
-                                    <h4>Documentation</h4>
-                                    <p>docs.halaxa.com</p>
-                                    <small>API & Integration guides</small>
-                                </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-book"></i>
+                            <div>
+                                <h4>Documentation</h4>
+                                <p>docs.halaxa.com</p>
+                                <small>API & Integration guides</small>
                             </div>
                         </div>
                     </div>

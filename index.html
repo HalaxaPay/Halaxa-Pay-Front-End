@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Halaxa Dashboard</title>
+    <script>
+        // Check if the current domain is halaxapay.netlify.app
+        if (window.location.hostname === 'halaxapay.netlify.app') {
+            // Redirect to the sign-up page
+            window.location.href = '/signup.html';
+        }
+    </script>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Satoshi Font -->
@@ -491,7 +498,7 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <div id="dashboard-container" class="dashboard-container">
+    <div id="dashboardContainer" class="dashboard-wrapper">
         <!-- Floating Shapes Background -->
         <div class="floating-shapes">
             <div class="shape"></div>

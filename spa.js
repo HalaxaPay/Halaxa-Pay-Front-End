@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupNavigation();
         
         // Load initial page
-        const initialPage = window.location.hash.slice(1) || 'homePage';
+        const initialPage = window.location.hash.slice(1) || 'home-page';
         await loadPage(initialPage);
     } else {
         // Check if seller ID exists in localStorage
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Set up navigation
             setupNavigation();
             
-            const initialPage = window.location.hash.slice(1) || 'homePage';
+            const initialPage = window.location.hash.slice(1) || 'home-page';
             await loadPage(initialPage);
         } else {
             // Redirect to login if no seller ID is found
@@ -89,40 +89,37 @@ async function loadPage(page) {
     state.currentPage = page;
     
     // Show the selected page content
-    const pageId = page.replace('Page', '-page');
-    console.log('Looking for page element with ID:', pageId); // Debug log
-    
-    const pageElement = document.getElementById(pageId);
+    const pageElement = document.getElementById(page);
     if (pageElement) {
         console.log('Found page element, displaying it'); // Debug log
         pageElement.style.setProperty('display', 'block', 'important');
         pageElement.classList.add('active');
     } else {
-        console.error('Page element not found:', pageId); // Debug log
+        console.error('Page element not found:', page); // Debug log
     }
     
     // Load page specific content
     try {
         switch (page) {
-            case 'homePage':
+            case 'home-page':
                 await loadHomePage();
                 break;
-            case 'transactionsPage':
+            case 'transactions-page':
                 await loadTransactionsPage();
                 break;
-            case 'paymentLinkPage':
+            case 'payment-link-page':
                 await loadPaymentLinkPage();
                 break;
-            case 'capitalPage':
+            case 'capital-page':
                 await loadCapitalPage();
                 break;
-            case 'accountPage':
+            case 'account-page':
                 await loadAccountPage();
                 break;
-            case 'plansPage':
+            case 'plans-page':
                 await loadPlansPage();
                 break;
-            case 'helpPage':
+            case 'help-page':
                 await loadHelpPage();
                 break;
             default:

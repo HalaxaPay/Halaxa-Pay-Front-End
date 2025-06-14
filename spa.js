@@ -2007,20 +2007,7 @@ function showLoading(type, show) {
     }
 }
 
-// Function to check authentication and initialize dashboard
-function checkAuthAndInitDashboard() {
-    const token = localStorage.getItem('token');
-    const sellerId = localStorage.getItem('sellerId');
-    
-    if (!token || !sellerId) {
-        showSignupPage();
-        return false;
-    }
-    
-    showDashboard();
-    initializeDashboard(sellerId);
-    return true;
-}
+// Function removed - always show signup page
 
 // Function to initialize dashboard
 function initializeDashboard(sellerId) {
@@ -2063,12 +2050,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('signupForm').addEventListener('submit', handleSignup);
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
     
-    // Check authentication and show appropriate page
-    if (!checkAuthAndInitDashboard()) {
-        return; // Show signup page if not authenticated
-    }
+    // Always show signup page by default
+    showSignupPage();
 
-    // Add click listeners to nav items for navigation (only if authenticated)
+    // Add click listeners to nav items for navigation
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -2086,14 +2071,6 @@ document.addEventListener('DOMContentLoaded', function() {
             switchPage(pageId);
         }
     });
-
-    // Initial page load based on hash
-    const initialPageId = window.location.hash.substring(1);
-    if (initialPageId) {
-        switchPage(initialPageId);
-    } else {
-        switchPage('homePage'); // Default to home page
-    }
 });
 
 // ... existing code ...

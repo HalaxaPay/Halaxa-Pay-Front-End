@@ -1928,18 +1928,10 @@ input:checked + .slider:before {
     }
 }
 
-/* Capital Page Specific Styles */
 .capital-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-md);
-}
-
-.insights-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm);
 }
 
 .analytics-grid {
@@ -1979,59 +1971,6 @@ input:checked + .slider:before {
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-.insight-card {
-    background: linear-gradient(145deg, var(--card-bg), var(--secondary-bg));
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid var(--border-color);
-}
-
-.insight-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-medium);
-}
-
-.insight-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-}
-
-.insight-content {
-    flex: 1;
-}
-
-.insight-content h4 {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-    font-weight: 500;
-}
-
-.insight-value {
-    margin: 4px 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-text);
-    font-family: 'Satoshi', sans-serif;
-}
-
-.insight-label {
-    margin: 0;
-    font-size: 0.8rem;
-    color: var(--secondary-text);
 }
 
 .account-list {
@@ -2115,9 +2054,69 @@ input:checked + .slider:before {
     .capital-grid {
         grid-template-columns: 1fr;
     }
-    .insights-grid {
+    .analytics-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+}
+
+.insight-card {
+    background: linear-gradient(145deg, var(--card-bg), var(--secondary-bg));
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.insight-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.insight-content {
+    flex: 1;
+}
+
+.insight-content h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    font-weight: 500;
+}
+
+.insight-value {
+    margin: 4px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-text);
+    font-family: 'Satoshi', sans-serif;
+}
+
+.insight-label {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--secondary-text);
 }
 
 /* Transactions Page Styles */

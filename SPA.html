@@ -2141,8 +2141,340 @@
             </div>
             
             <div class="page-content" id="plans-page">
-                <h1 class="page-title">Plans</h1>
-                <p>Plans page content will be updated with the new design...</p>
+                <!-- Plans Page Header -->
+                <div class="plans-header">
+                    <h1 class="plans-title">Choose Your Perfect Plan</h1>
+                    <p class="plans-subtitle">Unlock the power of crypto payments with the plan that's right for you</p>
+                    <div class="plans-switch">
+                        <div class="billing-toggle">
+                            <span class="billing-option" data-billing="monthly">Monthly</span>
+                            <div class="toggle-slider"></div>
+                            <span class="billing-option active" data-billing="annual">Annual</span>
+                            <div class="savings-badge">Save 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plans Grid -->
+                <div class="plans-grid">
+                    <!-- Basic Plan -->
+                    <div class="plan-card basic-plan">
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="plan-name">Basic</h3>
+                            <p class="plan-description">Perfect for getting started</p>
+                        </div>
+                        
+                        <div class="plan-pricing">
+                            <div class="price-display">
+                                <span class="currency">$</span>
+                                <span class="price-amount" data-monthly="0" data-annual="0">0</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                            <div class="price-note">Forever free</div>
+                        </div>
+
+                        <div class="plan-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Up to 10 payment links</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>$1,000 monthly volume</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Standard transaction fees</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Email support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Basic analytics</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Polygon & TRC20 networks</span>
+                            </div>
+                        </div>
+
+                        <button class="plan-cta-btn basic-btn">
+                            <span>Get Started Free</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Pro Plan -->
+                    <div class="plan-card pro-plan popular">
+                        <div class="popular-badge">
+                            <i class="fas fa-fire"></i>
+                            <span>Most Popular</span>
+                        </div>
+                        
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h3 class="plan-name">Pro</h3>
+                            <p class="plan-description">For growing businesses</p>
+                        </div>
+                        
+                        <div class="plan-pricing">
+                            <div class="price-display">
+                                <span class="currency">$</span>
+                                <span class="price-amount" data-monthly="29" data-annual="23">23</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                            <div class="price-note">Billed annually</div>
+                        </div>
+
+                        <div class="plan-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Unlimited payment links</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>$50,000 monthly volume</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Reduced transaction fees</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Priority email support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Advanced analytics & insights</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>All networks + webhooks</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Custom branding</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>API access</span>
+                            </div>
+                        </div>
+
+                        <button class="plan-cta-btn pro-btn">
+                            <span>Upgrade to Pro</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Elite Plan -->
+                    <div class="plan-card elite-plan">
+                        <div class="elite-badge">
+                            <i class="fas fa-gem"></i>
+                            <span>Best Value</span>
+                        </div>
+                        
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                <i class="fas fa-infinity"></i>
+                            </div>
+                            <h3 class="plan-name">Elite</h3>
+                            <p class="plan-description">For enterprise & power users</p>
+                        </div>
+                        
+                        <div class="plan-pricing">
+                            <div class="price-display">
+                                <span class="currency">$</span>
+                                <span class="price-amount" data-monthly="99" data-annual="79">79</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                            <div class="price-note">Billed annually</div>
+                        </div>
+
+                        <div class="plan-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Everything in Pro</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Unlimited volume</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Lowest transaction fees</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>24/7 priority support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>AI-powered insights</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>White-label solutions</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Dedicated account manager</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check"></i>
+                                <span>Custom integrations</span>
+                            </div>
+                        </div>
+
+                        <button class="plan-cta-btn elite-btn">
+                            <span>Go Elite Now</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Features Comparison -->
+                <div class="features-comparison">
+                    <div class="comparison-header">
+                        <h2 class="comparison-title">Complete Feature Comparison</h2>
+                        <p class="comparison-subtitle">See exactly what's included in each plan</p>
+                    </div>
+
+                    <div class="comparison-table">
+                        <div class="comparison-row header-row">
+                            <div class="feature-name">Features</div>
+                            <div class="plan-column basic">Basic</div>
+                            <div class="plan-column pro">Pro</div>
+                            <div class="plan-column elite">Elite</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">Payment Links</div>
+                            <div class="plan-column basic">10</div>
+                            <div class="plan-column pro">Unlimited</div>
+                            <div class="plan-column elite">Unlimited</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">Monthly Volume</div>
+                            <div class="plan-column basic">$1,000</div>
+                            <div class="plan-column pro">$50,000</div>
+                            <div class="plan-column elite">Unlimited</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">Transaction Fees</div>
+                            <div class="plan-column basic">Standard</div>
+                            <div class="plan-column pro">Reduced</div>
+                            <div class="plan-column elite">Lowest</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">API Access</div>
+                            <div class="plan-column basic"><i class="fas fa-times"></i></div>
+                            <div class="plan-column pro"><i class="fas fa-check"></i></div>
+                            <div class="plan-column elite"><i class="fas fa-check"></i></div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">Custom Branding</div>
+                            <div class="plan-column basic"><i class="fas fa-times"></i></div>
+                            <div class="plan-column pro"><i class="fas fa-check"></i></div>
+                            <div class="plan-column elite"><i class="fas fa-check"></i></div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">AI Insights</div>
+                            <div class="plan-column basic"><i class="fas fa-times"></i></div>
+                            <div class="plan-column pro">Basic</div>
+                            <div class="plan-column elite">Advanced</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="feature-name">Support</div>
+                            <div class="plan-column basic">Email</div>
+                            <div class="plan-column pro">Priority Email</div>
+                            <div class="plan-column elite">24/7 Priority</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="faq-section">
+                    <div class="faq-header">
+                        <h2 class="faq-title">Frequently Asked Questions</h2>
+                        <p class="faq-subtitle">Everything you need to know about our plans</p>
+                    </div>
+
+                    <div class="faq-grid">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Can I switch plans anytime?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate your billing accordingly.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>What payment methods do you accept?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                We accept all major credit cards, PayPal, and of course, cryptocurrency payments through our own platform!
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Is there a setup fee?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                No setup fees! Start with our Basic plan for free, or jump straight into paid plans with no hidden costs.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Do you offer refunds?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, we offer a 30-day money-back guarantee on all paid plans. If you're not satisfied, we'll refund your money.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Can I get a custom plan?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Absolutely! Elite plan customers can work with our team to create custom solutions that fit their specific needs.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>What networks do you support?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                We support Polygon, TRC20 (Tron), and Ethereum networks. Pro and Elite plans get access to all networks and new ones as they're added.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="page-content" id="help-page">

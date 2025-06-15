@@ -13,7 +13,7 @@
     display: none;
   }
 :root {
-    /* Light Color Palette with Green Accents */
+    /* Light Color Palette with Green and Blue Accents */
     --bg-primary: #fafbfc;
     --bg-secondary: #ffffff;
     --bg-tertiary: #f8fffe;
@@ -25,18 +25,26 @@
     --border-light: #e5f3f0;
     --border-medium: #d1f2eb;
     
-    --accent-primary: #10b981;
+    --accent-primary: #2ECC71;
     --accent-secondary: #059669;
+    --accent-blue: #3498DB;
+    --accent-blue-light: #85C1E9;
     --accent-light: #d1fae5;
     --accent-ultra-light: #ecfdf5;
+    --accent-blue-ultra-light: #EBF5FB;
     
-    --gradient-primary: linear-gradient(135deg, #10b981 0%, #34d399 50%, #ffffff 100%);
+    --gradient-primary: linear-gradient(135deg, #2ECC71 0%, #34d399 50%, #ffffff 100%);
+    --gradient-blue-primary: linear-gradient(135deg, #3498DB 0%, #85C1E9 50%, #ffffff 100%);
+    --gradient-mixed: linear-gradient(135deg, #2ECC71 0%, #3498DB 50%, #34d399 100%);
     --gradient-secondary: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdf4 100%);
+    --gradient-blue-secondary: linear-gradient(135deg, #EBF5FB 0%, #ffffff 50%, #F8FBFF 100%);
+    --gradient-mixed-secondary: linear-gradient(135deg, #ecfdf5 0%, #EBF5FB 30%, #ffffff 70%, #f0fdf4 100%);
     --gradient-shine: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+    --gradient-shine-mixed: linear-gradient(135deg, transparent 0%, rgba(16, 185, 129, 0.1) 25%, rgba(52, 152, 219, 0.1) 75%, transparent 100%);
     
     --sidebar-bg: #ffffff;
     --sidebar-text: #6b7280;
-    --sidebar-text-active: #10b981;
+    --sidebar-text-active: #2ECC71;
     --sidebar-hover: #f0fdf4;
     --sidebar-active: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
     
@@ -966,7 +974,7 @@ body::before {
     font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
-    background: linear-gradient(135deg, #059669, #10b981);
+    background: linear-gradient(135deg, #059669, #2ECC71);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1142,8 +1150,9 @@ body::before {
     transform: translateY(-4px);
     box-shadow: 
         0 8px 30px rgba(16, 185, 129, 0.15),
+        0 8px 30px rgba(52, 152, 219, 0.1),
         0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.25);
 }
 
 .stat-card::before {
@@ -1153,7 +1162,7 @@ body::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+    background: var(--gradient-shine-mixed);
     transition: left 0.8s ease;
 }
 
@@ -1273,12 +1282,13 @@ body::before {
 }
 
 .chart-panel {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    background: var(--gradient-mixed-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
-    border: 1px solid rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.15);
     box-shadow: 
         0 4px 20px rgba(16, 185, 129, 0.08),
+        0 4px 20px rgba(52, 152, 219, 0.05),
         0 1px 3px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(10px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1290,8 +1300,9 @@ body::before {
     transform: translateY(-2px);
     box-shadow: 
         0 8px 30px rgba(16, 185, 129, 0.15),
+        0 8px 30px rgba(52, 152, 219, 0.1),
         0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.25);
 }
 
 .chart-panel.large {
@@ -1355,7 +1366,7 @@ body::before {
     font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
-    background: linear-gradient(135deg, #059669, #10b981);
+    background: linear-gradient(135deg, #059669, #2ECC71);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1552,7 +1563,7 @@ body::before {
 .bar:nth-child(12) { animation-delay: 1.2s; }
 
 .bar.positive {
-    fill: linear-gradient(180deg, #10b981, #059669);
+    fill: linear-gradient(180deg, #2ECC71, #059669);
 }
 
 .bar.negative {
@@ -1817,6 +1828,32 @@ body::before {
 
 /* Crypto Capital Analytics Styling */
 
+/* Capital Page Header - Match Home Page Style */
+.capital-page-header {
+    margin-bottom: var(--space-12);
+    text-align: center;
+}
+
+.capital-welcome-title {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.025em;
+    background: var(--gradient-mixed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.capital-welcome-subtitle {
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
 /* Crypto Flow Overview */
 .crypto-flow-overview {
     margin-bottom: var(--space-8);
@@ -1830,12 +1867,13 @@ body::before {
 }
 
 .flow-stat-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+    background: var(--gradient-mixed-secondary);
     border-radius: var(--radius-xl);
     padding: var(--space-6);
-    border: 1px solid rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.15);
     box-shadow: 
         0 4px 20px rgba(16, 185, 129, 0.08),
+        0 4px 20px rgba(52, 152, 219, 0.05),
         0 1px 3px rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(10px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1939,7 +1977,7 @@ body::before {
 }
 
 .bar.inflow {
-    fill: #10b981;
+    fill: #2ECC71;
     animation: barGrowIn 1s ease-out forwards;
     transform-origin: bottom;
     transform: scaleY(0);
@@ -1986,7 +2024,7 @@ body::before {
 }
 
 .legend-color.inflow {
-    background: #10b981;
+    background: #2ECC71;
 }
 
 .legend-color.outflow {
@@ -2337,10 +2375,9 @@ body::before {
     border-radius: 50%;
 }
 
-.crypto-color.usdc { background: #10b981; }
-.crypto-color.eth { background: #3b82f6; }
-.crypto-color.btc { background: #f59e0b; }
-.crypto-color.others { background: #ef4444; }
+.crypto-color.usdc-polygon { background: #2ECC71; }
+.crypto-color.usdc-trc20 { background: #3498DB; }
+.crypto-color.others { background: #85C1E9; }
 
 /* Transaction Volume Section */
 .transaction-volume-section {
@@ -2430,7 +2467,7 @@ body::before {
     border-radius: 50%;
 }
 
-.status-color.completed { background: #10b981; }
+.status-color.completed { background: #2ECC71; }
 .status-color.pending { background: #f59e0b; }
 .status-color.failed { background: #ef4444; }
 
@@ -2522,7 +2559,7 @@ body::before {
     border-radius: 50%;
 }
 
-.growth-color.users { background: #10b981; }
+.growth-color.users { background: #2ECC71; }
 .growth-color.volume { background: #3b82f6; }
 
 /* Network Bars */
@@ -2577,18 +2614,13 @@ body::before {
 }
 
 .network-bar-fill.polygon {
-    background: linear-gradient(90deg, #10b981, #059669);
+    background: linear-gradient(90deg, #2ECC71, #059669);
     animation-delay: 0.2s;
 }
 
 .network-bar-fill.trc20 {
-    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(90deg, #3498DB, #2980B9);
     animation-delay: 0.4s;
-}
-
-.network-bar-fill.ethereum {
-    background: linear-gradient(90deg, #f59e0b, #d97706);
-    animation-delay: 0.6s;
 }
 
 @keyframes networkBarFill {

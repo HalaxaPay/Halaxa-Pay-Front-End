@@ -89,97 +89,421 @@
             <div class="page-content active-page" id="home-page">
                 <!-- Welcome Header -->
                 <div class="welcome-header">
-                    <h1 class="welcome-title">Welcome to Halaxa</h1>
-                    <p class="welcome-subtitle">Your premium crypto payment platform dashboard</p>
-                </div>
-
-                <!-- Main Balance Card -->
-                <div class="balance-section">
-                    <div class="balance-card">
-                        <div class="balance-header">
-                            <div class="balance-title">
-                                Total Balance
-                                <i class="fas fa-info-circle"></i>
+                    <div class="welcome-content">
+                        <h1 class="welcome-title">Welcome to Your Financial Universe</h1>
+                        <p class="welcome-subtitle">Where digital wealth meets infinite possibilities</p>
+                        <div class="welcome-metrics">
+                            <div class="metric-pill">
+                                <i class="fas fa-rocket"></i>
+                                <span>Portfolio Ascending</span>
                             </div>
-                            <div class="balance-actions">
-                                <button class="balance-action">
-                                    <i class="fas fa-chart-line"></i>
-                                </button>
-                                <button class="balance-action">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </button>
+                            <div class="metric-pill">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Fortress-Grade Security</span>
+                            </div>
+                            <div class="metric-pill">
+                                <i class="fas fa-lightning-bolt"></i>
+                                <span>Lightning Transactions</span>
                             </div>
                         </div>
-                        <div class="balance-amount">$125,430.18</div>
-                        <div class="balance-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            +12.5% from last month
+                    </div>
+                    <div class="welcome-visual">
+                        <div class="floating-elements">
+                            <div class="float-element crypto-coin">₿</div>
+                            <div class="float-element crypto-coin">Ξ</div>
+                            <div class="float-element crypto-coin">$</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Stats Overview -->
-                <div class="stats-overview">
-                    <h2 class="section-title">Business Overview</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Total USDC Earned</div>
-                                <div class="stat-icon">
+                <!-- Enhanced Portfolio Overview -->
+                <div class="portfolio-section">
+                    <div class="portfolio-grid">
+                        <!-- USDC Treasury Card -->
+                        <div class="treasury-card primary-vault">
+                            <div class="treasury-header">
+                                <div class="vault-info">
+                                    <div class="vault-icon">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <div class="vault-details">
+                                        <h3>Digital Treasury</h3>
+                                        <p>USDC Stronghold</p>
+                                    </div>
+                                </div>
+                                <div class="vault-actions">
+                                    <button class="vault-action">
+                                        <i class="fas fa-chart-area"></i>
+                                    </button>
+                                    <button class="vault-action">
+                                        <i class="fas fa-expand-arrows-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="vault-balance">
+                                <div class="balance-display">
+                                    <span class="currency-symbol">$</span>
+                                    <span class="balance-main">125,430</span>
+                                    <span class="balance-decimal">.18</span>
+                                </div>
+                                <div class="balance-subtitle">125,430.18 USDC</div>
+                            </div>
+                            
+                            <div class="treasury-chart-container">
+                                <svg class="treasury-chart" viewBox="0 0 350 80" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="treasuryGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
+                                            <stop offset="50%" style="stop-color:#34d399;stop-opacity:0.4" />
+                                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05" />
+                                        </linearGradient>
+                                        <linearGradient id="treasuryLine" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#059669" />
+                                            <stop offset="50%" style="stop-color:#10b981" />
+                                            <stop offset="100%" style="stop-color:#34d399" />
+                                        </linearGradient>
+                                    </defs>
+                                    
+                                    <path class="chart-area" d="M0,80 L0,45 Q30,35 60,40 Q90,30 120,35 Q150,25 180,30 Q210,20 240,25 Q270,15 300,20 Q330,10 350,15 L350,80 Z" 
+                                          fill="url(#treasuryGradient)" />
+                                    
+                                    <path class="chart-line" d="M0,45 Q30,35 60,40 Q90,30 120,35 Q150,25 180,30 Q210,20 240,25 Q270,15 300,20 Q330,10 350,15" 
+                                          fill="none" 
+                                          stroke="url(#treasuryLine)" 
+                                          stroke-width="3" 
+                                          stroke-linecap="round" />
+                                    
+                                    <circle class="chart-dot" cx="350" cy="15" r="4" fill="#10b981" />
+                                    <circle class="chart-glow" cx="350" cy="15" r="8" fill="#10b981" opacity="0.3" />
+                                </svg>
+                            </div>
+                            
+                            <div class="vault-metrics">
+                                <div class="vault-change positive">
+                                    <i class="fas fa-trending-up"></i>
+                                    <span>+12.5% Moon Trajectory</span>
+                                </div>
+                                <div class="vault-period">30-Day Performance</div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions Hub -->
+                        <div class="actions-hub">
+                            <div class="hub-header">
+                                <h3>Command Center</h3>
+                                <p>Execute with precision</p>
+                            </div>
+                            <div class="actions-grid">
+                                <button class="action-tile send">
+                                    <div class="tile-icon">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </div>
+                                    <span>Deploy Funds</span>
+                                </button>
+                                <button class="action-tile receive">
+                                    <div class="tile-icon">
+                                        <i class="fas fa-download"></i>
+                                    </div>
+                                    <span>Summon Assets</span>
+                                </button>
+                                <button class="action-tile exchange">
+                                    <div class="tile-icon">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <span>Transmute Value</span>
+                                </button>
+                                <button class="action-tile link">
+                                    <div class="tile-icon">
+                                        <i class="fas fa-link"></i>
+                                    </div>
+                                    <span>Forge Link</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Market Pulse -->
+                        <div class="market-pulse-card">
+                            <div class="pulse-header">
+                                <div class="pulse-info">
+                                    <h3>Market Heartbeat</h3>
+                                    <p>Real-time ecosystem pulse</p>
+                                </div>
+                                <div class="pulse-indicator">
+                                    <div class="heartbeat"></div>
+                                </div>
+                            </div>
+                            <div class="market-stats">
+                                <div class="market-stat">
+                                    <div class="stat-icon crypto-up">
+                                        <i class="fab fa-bitcoin"></i>
+                                    </div>
+                                    <div class="stat-data">
+                                        <div class="stat-value">$67,420</div>
+                                        <div class="stat-change positive">+2.4%</div>
+                                    </div>
+                                </div>
+                                <div class="market-stat">
+                                    <div class="stat-icon crypto-stable">
+                                        <i class="fab fa-ethereum"></i>
+                                    </div>
+                                    <div class="stat-data">
+                                        <div class="stat-value">$3,840</div>
+                                        <div class="stat-change positive">+1.8%</div>
+                                    </div>
+                                </div>
+                                <div class="market-stat">
+                                    <div class="stat-icon crypto-neutral">
+                                        <span class="usdc-icon">USDC</span>
+                                    </div>
+                                    <div class="stat-data">
+                                        <div class="stat-value">$1.00</div>
+                                        <div class="stat-change neutral">0.0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empire Metrics -->
+                <div class="empire-metrics">
+                    <div class="metrics-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-crown"></i>
+                            Empire Analytics
+                        </h2>
+                        <p class="section-subtitle">Your digital dominion at a glance</p>
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card wealth">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
+                                    <i class="fas fa-gem"></i>
+                                </div>
+                                <div class="metric-pulse"></div>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-label">Digital Vault</div>
+                                <div class="metric-value">$125,430</div>
+                                <div class="metric-insight">USDC Accumulated</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card velocity">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="metric-pulse"></div>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-label">Transaction Velocity</div>
+                                <div class="metric-value">1,247</div>
+                                <div class="metric-insight">Network Executions</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card precision">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
+                                    <i class="fas fa-crosshairs"></i>
+                                </div>
+                                <div class="metric-pulse"></div>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-label">Precision Rate</div>
+                                <div class="metric-value">98.5%</div>
+                                <div class="metric-insight">Flawless Execution</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card magnitude">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div class="metric-pulse"></div>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-label">Transaction Magnitude</div>
+                                <div class="metric-value">$100.58</div>
+                                <div class="metric-insight">Average Flow</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card network">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <div class="metric-pulse"></div>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-label">Payment Conduits</div>
+                                <div class="metric-value">42</div>
+                                <div class="metric-insight">Active Bridges</div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card revenue">
+                            <div class="metric-visual">
+                                <div class="metric-icon">
                                     <i class="fas fa-coins"></i>
                                 </div>
+                                <div class="metric-pulse"></div>
                             </div>
-                            <div class="stat-value">$125,430</div>
+                            <div class="metric-content">
+                                <div class="metric-label">Monthly Harvest</div>
+                                <div class="metric-value">$28,450</div>
+                                <div class="metric-insight">Revenue Stream</div>
+                            </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Total Transactions</div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-exchange-alt"></i>
+                <!-- Performance Observatory -->
+                <div class="performance-observatory">
+                    <div class="observatory-header">
+                        <div class="header-content">
+                            <h2 class="section-title">
+                                <i class="fas fa-satellite"></i>
+                                Performance Observatory
+                            </h2>
+                            <p class="section-subtitle">Stellar journey through time and value</p>
+                        </div>
+                        <div class="time-controls">
+                            <button class="time-btn active" data-period="6M">6M</button>
+                            <button class="time-btn" data-period="1Y">1Y</button>
+                            <button class="time-btn" data-period="ALL">ALL</button>
+                        </div>
+                    </div>
+                    
+                    <div class="observatory-content">
+                        <!-- Monthly Performance Chart -->
+                        <div class="constellation-chart">
+                            <div class="chart-header">
+                                <h3>Monthly Constellation</h3>
+                                <div class="chart-value">
+                                    <span class="current-month">December</span>
+                                    <span class="performance-delta positive">+24.7%</span>
                                 </div>
                             </div>
-                            <div class="stat-value">1,247</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Success Rate</div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-check-circle"></i>
+                            
+                            <div class="stellar-bars-container">
+                                <div class="stellar-bar" data-month="Jan" data-value="85">
+                                    <div class="bar-core" style="height: 85%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Jan</div>
+                                    <div class="bar-tooltip">$18,450</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Feb" data-value="92">
+                                    <div class="bar-core" style="height: 92%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Feb</div>
+                                    <div class="bar-tooltip">$19,870</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Mar" data-value="78">
+                                    <div class="bar-core" style="height: 78%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Mar</div>
+                                    <div class="bar-tooltip">$16,890</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Apr" data-value="95">
+                                    <div class="bar-core" style="height: 95%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Apr</div>
+                                    <div class="bar-tooltip">$20,560</div>
+                                </div>
+                                <div class="stellar-bar" data-month="May" data-value="88">
+                                    <div class="bar-core" style="height: 88%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">May</div>
+                                    <div class="bar-tooltip">$19,120</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Jun" data-value="100">
+                                    <div class="bar-core" style="height: 100%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Jun</div>
+                                    <div class="bar-tooltip">$21,750</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Jul" data-value="82">
+                                    <div class="bar-core" style="height: 82%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Jul</div>
+                                    <div class="bar-tooltip">$17,920</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Aug" data-value="96">
+                                    <div class="bar-core" style="height: 96%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Aug</div>
+                                    <div class="bar-tooltip">$20,890</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Sep" data-value="91">
+                                    <div class="bar-core" style="height: 91%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Sep</div>
+                                    <div class="bar-tooltip">$19,650</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Oct" data-value="87">
+                                    <div class="bar-core" style="height: 87%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Oct</div>
+                                    <div class="bar-tooltip">$18,960</div>
+                                </div>
+                                <div class="stellar-bar" data-month="Nov" data-value="93">
+                                    <div class="bar-core" style="height: 93%"></div>
+                                    <div class="bar-glow"></div>
+                                    <div class="bar-label">Nov</div>
+                                    <div class="bar-tooltip">$20,340</div>
+                                </div>
+                                <div class="stellar-bar active" data-month="Dec" data-value="98">
+                                    <div class="bar-core" style="height: 98%"></div>
+                                    <div class="bar-glow active"></div>
+                                    <div class="bar-label">Dec</div>
+                                    <div class="bar-tooltip active">$21,280</div>
                                 </div>
                             </div>
-                            <div class="stat-value">98.5%</div>
                         </div>
-
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Average Transaction</div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-chart-bar"></i>
+                        
+                        <!-- Intelligence Insights -->
+                        <div class="intelligence-panel">
+                            <div class="intelligence-header">
+                                <div class="ai-indicator">
+                                    <i class="fas fa-brain"></i>
+                                    <span>AI Oracle</span>
                                 </div>
                             </div>
-                            <div class="stat-value">$100.58</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Active Payment Links</div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-link"></i>
+                            <div class="insights-feed">
+                                <div class="insight-item priority">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <div class="insight-title">Velocity Surge Detected</div>
+                                        <div class="insight-desc">Transaction frequency increased 34% this week</div>
+                                    </div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <div class="insight-title">Security Fortress Active</div>
+                                        <div class="insight-desc">Zero threats detected in the last 30 days</div>
+                                    </div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="insight-content">
+                                        <div class="insight-title">Trajectory Optimization</div>
+                                        <div class="insight-desc">Portfolio on track for 145% annual growth</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="stat-value">42</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-title">Monthly Revenue</div>
-                                <div class="stat-icon">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </div>
-                            </div>
-                            <div class="stat-value">$28,450</div>
                         </div>
                     </div>
                 </div>

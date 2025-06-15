@@ -425,8 +425,230 @@
             </div>
             
             <div class="page-content" id="payment-link-page">
-                <h1 class="page-title">Payment Links</h1>
-                <p>Payment Links page content will be updated with the new design...</p>
+                <!-- Payment Link Page Header -->
+                <div class="payment-link-header">
+                    <h1 class="payment-link-title">Create Payment Links</h1>
+                    <p class="payment-link-subtitle">Generate secure USDC payment links for seamless transactions</p>
+                </div>
+
+                <!-- Payment Link Creation Form -->
+                <div class="payment-form-section">
+                    <div class="payment-form-card">
+                        <div class="form-header">
+                            <h3 class="form-title">New Payment Link</h3>
+                            <div class="form-subtitle">Fill in the details to create your payment link</div>
+                        </div>
+
+                        <form class="payment-form" id="payment-form">
+                            <div class="form-group">
+                                <label for="usdc-amount" class="form-label">USDC Amount</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="usdc-amount" class="form-input" placeholder="Enter amount" step="0.01" min="0.01">
+                                    <span class="input-suffix">USDC</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="wallet-address" class="form-label">Your Wallet Address</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="wallet-address" class="form-input" placeholder="0x... or T...">
+                                    <button type="button" class="paste-btn">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="network-select" class="form-label">Network Selection</label>
+                                <div class="network-selector">
+                                    <div class="network-option active" data-network="polygon">
+                                        <div class="network-icon polygon-icon">
+                                            <i class="fas fa-link"></i>
+                                        </div>
+                                        <div class="network-info">
+                                            <div class="network-name">Polygon</div>
+                                            <div class="network-desc">0 Fees, Fast Transactions</div>
+                                        </div>
+                                        <div class="network-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                    <div class="network-option" data-network="trc20">
+                                        <div class="network-icon trc20-icon">
+                                            <i class="fas fa-cube"></i>
+                                        </div>
+                                        <div class="network-info">
+                                            <div class="network-name">TRC20</div>
+                                            <div class="network-desc">TRON network, 0 Fees, Fast Transactions</div>
+                                        </div>
+                                        <div class="network-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="gas-fee-display">
+                                    <div class="gas-fee-label">Estimated Gas Fee</div>
+                                    <div class="gas-fee-value" id="gas-fee-value">~$0.02</div>
+                                    <div class="gas-fee-desc">Network processing fee</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="link-name" class="form-label">Payment Link Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="link-name" class="form-input" placeholder="e.g., Product Sale, Service Payment">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="create-link-btn" id="create-link-btn">
+                                <span class="btn-text">Create Payment Link</span>
+                                <span class="btn-loader">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Halaxa Pay Branding -->
+                <div class="halaxa-branding">
+                    <div class="powered-by">Powered Fully By Halaxa Pay</div>
+                    <div class="goal-text">You Receiving USDC is Halaxa Pay's Goal</div>
+                </div>
+
+                <!-- Generated Link Display -->
+                <div class="generated-link-section">
+                    <div class="link-display-card">
+                        <h4 class="link-display-title">Your Payment Link Will Appear Here</h4>
+                        <div class="link-display-content" id="generated-link-content">
+                            <div class="link-placeholder">
+                                <i class="fas fa-link"></i>
+                                <p>Create a payment link to see it here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Payment Links Table -->
+                <div class="active-links-section">
+                    <div class="active-links-card">
+                        <div class="table-header-section">
+                            <h3 class="table-title">Active Payment Links</h3>
+                            <div class="table-subtitle">Monitor your payment link performance</div>
+                        </div>
+
+                        <div class="active-links-table">
+                            <div class="table-header">
+                                <div class="table-cell">Link Name</div>
+                                <div class="table-cell">Amount</div>
+                                <div class="table-cell">Network</div>
+                                <div class="table-cell">Success Rate</div>
+                                <div class="table-cell">Payments</div>
+                                <div class="table-cell">Created</div>
+                                <div class="table-cell">Actions</div>
+                            </div>
+
+                            <div class="table-row">
+                                <div class="table-cell link-name-cell">
+                                    <div class="link-name">Product Sales</div>
+                                    <div class="link-url">halaxa.pay/prod-sales-xyz</div>
+                                </div>
+                                <div class="table-cell amount-cell">250 USDC</div>
+                                <div class="table-cell network-cell">
+                                    <span class="network-badge polygon">Polygon</span>
+                                </div>
+                                <div class="table-cell success-rate-cell">
+                                    <div class="success-rate high">
+                                        <span class="rate-percentage">87%</span>
+                                        <div class="rate-bar">
+                                            <div class="rate-fill" style="width: 87%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-cell payments-cell">24 / 28</div>
+                                <div class="table-cell date-cell">Dec 10, 2024</div>
+                                <div class="table-cell actions-cell">
+                                    <button class="action-btn copy-btn-table">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="action-btn edit-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-row">
+                                <div class="table-cell link-name-cell">
+                                    <div class="link-name">Service Payment</div>
+                                    <div class="link-url">halaxa.pay/service-abc</div>
+                                </div>
+                                <div class="table-cell amount-cell">150 USDC</div>
+                                <div class="table-cell network-cell">
+                                    <span class="network-badge trc20">TRC20</span>
+                                </div>
+                                <div class="table-cell success-rate-cell">
+                                    <div class="success-rate medium">
+                                        <span class="rate-percentage">70%</span>
+                                        <div class="rate-bar">
+                                            <div class="rate-fill" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-cell payments-cell">14 / 20</div>
+                                <div class="table-cell date-cell">Dec 08, 2024</div>
+                                <div class="table-cell actions-cell">
+                                    <button class="action-btn copy-btn-table">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="action-btn edit-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-row">
+                                <div class="table-cell link-name-cell">
+                                    <div class="link-name">Donations</div>
+                                    <div class="link-url">halaxa.pay/donate-help</div>
+                                </div>
+                                <div class="table-cell amount-cell">50 USDC</div>
+                                <div class="table-cell network-cell">
+                                    <span class="network-badge polygon">Polygon</span>
+                                </div>
+                                <div class="table-cell success-rate-cell">
+                                    <div class="success-rate low">
+                                        <span class="rate-percentage">65%</span>
+                                        <div class="rate-bar">
+                                            <div class="rate-fill" style="width: 65%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-cell payments-cell">13 / 20</div>
+                                <div class="table-cell date-cell">Dec 05, 2024</div>
+                                <div class="table-cell actions-cell">
+                                    <button class="action-btn copy-btn-table">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="action-btn edit-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="page-content" id="capital-page">

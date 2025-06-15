@@ -4370,3 +4370,116 @@ body::before {
         font-size: 0.7rem;
     }
 }
+
+/* ==================== ACCOUNT PAGE STYLING ==================== */
+
+/* Account Page Header */
+.account-header {
+    margin-bottom: var(--space-12);
+    text-align: center;
+}
+
+.account-title {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.025em;
+    background: var(--gradient-mixed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.account-subtitle {
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* Profile & Status Row */
+.profile-status-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
+}
+
+/* Profile Summary Card */
+.profile-summary-card {
+    background: var(--gradient-mixed-secondary);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    border: 1px solid rgba(46, 204, 113, 0.15);
+    box-shadow: 
+        0 4px 20px rgba(46, 204, 113, 0.08),
+        0 4px 20px rgba(52, 152, 219, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-shine-mixed);
+    transition: left 0.8s ease;
+}
+
+.profile-summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 8px 30px rgba(46, 204, 113, 0.15),
+        0 8px 30px rgba(52, 152, 219, 0.1);
+    border-color: rgba(46, 204, 113, 0.25);
+}
+
+.profile-summary-card:hover::before {
+    left: 100%;
+}
+
+.profile-header {
+    display: flex;
+    gap: var(--space-6);
+    align-items: flex-start;
+}
+
+.profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.profile-picture {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--accent-primary);
+    transition: all 0.3s ease;
+}
+
+.profile-picture:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-blue);
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;

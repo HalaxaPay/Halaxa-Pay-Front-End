@@ -867,30 +867,320 @@
         }
     }
 
-    @media (max-width: 768px) {
-        .login-container {
-            padding: var(--space-8);
-            border-radius: var(--radius-lg);
+    /* Enhanced Mobile Responsive Design */
+    @media (max-width: 1024px) {
+        .split-container {
+            flex-direction: column;
+        }
+        
+        .left-side, .right-side {
+            flex: none;
+            height: 50vh;
         }
 
-        .logo h1 {
-            font-size: 2.8rem;
+        .left-side {
+            padding: var(--space-4);
+            overflow-y: auto;
+        }
+
+        .right-side {
+            padding: var(--space-6);
+        }
+
+        .login-container {
+            padding: var(--space-8);
+            max-width: 90%;
+            margin: 0 auto;
         }
 
         .right-content h2 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
+            margin-bottom: var(--space-4);
         }
 
         .right-content p {
             font-size: 1.2rem;
+            max-width: 100%;
         }
 
         .payment-icons {
             gap: var(--space-6);
+            margin-top: var(--space-6);
         }
 
         .payment-icon {
             font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        body {
+            overflow-x: hidden;
+        }
+
+        .split-container {
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .left-side, .right-side {
+            height: auto;
+            min-height: 50vh;
+            padding: var(--space-4);
+        }
+
+        .left-side {
+            order: 1;
+            padding: var(--space-3) var(--space-4);
+        }
+
+        .right-side {
+            order: 2;
+            padding: var(--space-6) var(--space-4);
+        }
+
+        .login-container {
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            margin-bottom: var(--space-6);
+            text-align: center;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-2);
+        }
+
+        .logo p {
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            margin-bottom: var(--space-2);
+        }
+
+        .form-group input {
+            padding: var(--space-4);
+            font-size: 1rem;
+            border-radius: var(--radius-md);
+        }
+
+        .password-toggle {
+            right: var(--space-4);
+            top: 2.8rem;
+            font-size: 1rem;
+        }
+
+        .remember-forgot {
+            margin: var(--space-5) 0;
+            flex-direction: column;
+            gap: var(--space-3);
+            align-items: flex-start;
+        }
+
+        .remember-me {
+            font-size: 0.95rem;
+        }
+
+        .forgot-password {
+            font-size: 0.95rem;
+            align-self: center;
+        }
+
+        .login-button {
+            padding: var(--space-5);
+            font-size: 1.1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-5);
+        }
+
+        .security-message {
+            margin: var(--space-4) 0;
+            font-size: 0.9rem;
+            padding: var(--space-3);
+        }
+
+        .security-message i {
+            font-size: 1rem;
+        }
+
+        .signup-link {
+            margin-top: var(--space-6);
+            font-size: 1rem;
+        }
+
+        .right-content {
+            text-align: center;
+            padding: 0;
+        }
+
+        .right-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: var(--space-4);
+            line-height: 1.2;
+        }
+
+        .right-content p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: var(--space-6);
+        }
+
+        .payment-icons {
+            gap: var(--space-5);
+            margin-top: var(--space-4);
+        }
+
+        .payment-icon {
+            font-size: 2.2rem;
+        }
+
+        /* Floating shapes adjustments for mobile */
+        .shape:nth-child(1) {
+            width: 250px;
+            height: 250px;
+            top: 5%;
+            left: 5%;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 40%;
+            left: 70%;
+        }
+
+        .shape:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 15%;
+            left: 65%;
+        }
+
+        .shape:nth-child(4) {
+            width: 180px;
+            height: 180px;
+            top: 60%;
+            left: 10%;
+        }
+
+        .shape:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 80%;
+            left: 60%;
+        }
+
+        /* Particles adjustment for mobile */
+        .floating-particles {
+            opacity: 0.6;
+        }
+
+        .particle {
+            width: 2px;
+            height: 2px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .left-side, .right-side {
+            padding: var(--space-3);
+        }
+
+        .login-container {
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+        }
+
+        .logo p {
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            padding: var(--space-3);
+            font-size: 0.95rem;
+        }
+
+        .password-toggle {
+            top: 2.6rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            font-size: 0.9rem;
+        }
+
+        .forgot-password {
+            font-size: 0.9rem;
+        }
+
+        .login-button {
+            padding: var(--space-4);
+            font-size: 1rem;
+        }
+
+        .security-message {
+            font-size: 0.85rem;
+            padding: var(--space-2);
+        }
+
+        .right-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-3);
+        }
+
+        .right-content p {
+            font-size: 0.9rem;
+            margin-bottom: var(--space-4);
+        }
+
+        .payment-icons {
+            gap: var(--space-4);
+        }
+
+        .payment-icon {
+            font-size: 1.8rem;
+        }
+
+        /* Further reduce shapes on very small screens */
+        .shape:nth-child(1) {
+            width: 200px;
+            height: 200px;
+        }
+
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+        }
+
+        .shape:nth-child(3) {
+            width: 120px;
+            height: 120px;
+        }
+
+        .shape:nth-child(4) {
+            width: 140px;
+            height: 140px;
+        }
+
+        .shape:nth-child(5) {
+            width: 100px;
+            height: 100px;
         }
     }
 </style>

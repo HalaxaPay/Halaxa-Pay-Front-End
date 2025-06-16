@@ -655,7 +655,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive Design */
+        /* Enhanced Mobile Responsive Design */
         @media (max-width: 1024px) {
             .split-container {
                 flex-direction: column;
@@ -667,22 +667,35 @@
             }
 
             .left-side {
+                padding: var(--space-4);
                 overflow-y: auto;
+            }
+
+            .right-side {
+                padding: var(--space-6);
             }
 
             .signup-container {
                 padding: var(--space-8);
                 max-width: 90%;
+                margin: 0 auto;
             }
 
             .right-content h2 {
                 font-size: 2.8rem;
+                margin-bottom: var(--space-4);
+            }
+
+            .right-content p {
+                font-size: 1.2rem;
+                max-width: 100%;
             }
 
             .features-list {
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: center;
+                margin-top: var(--space-6);
             }
 
             .feature-item {
@@ -693,25 +706,256 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .split-container {
+                min-height: 100vh;
+                flex-direction: column;
+            }
+
+            .left-side, .right-side {
+                height: auto;
+                min-height: 50vh;
+                padding: var(--space-4);
+            }
+
+            .left-side {
+                order: 1;
+                padding: var(--space-3) var(--space-4);
+            }
+
+            .right-side {
+                order: 2;
+                padding: var(--space-6) var(--space-4);
+            }
+
             .signup-container {
                 padding: var(--space-6);
                 border-radius: var(--radius-lg);
+                max-width: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .logo {
+                margin-bottom: var(--space-6);
+                text-align: center;
             }
 
             .logo h1 {
                 font-size: 2.5rem;
+                margin-bottom: var(--space-2);
+            }
+
+            .logo p {
+                font-size: 1.1rem;
+            }
+
+            .form-group {
+                margin-bottom: var(--space-5);
+            }
+
+            .form-group label {
+                font-size: 1rem;
+                margin-bottom: var(--space-2);
+            }
+
+            .form-group input {
+                padding: var(--space-4);
+                font-size: 1rem;
+                border-radius: var(--radius-md);
+            }
+
+            .password-toggle {
+                right: var(--space-4);
+                top: 2.8rem;
+                font-size: 1rem;
+            }
+
+            .terms-checkbox {
+                margin-bottom: var(--space-6);
+                font-size: 0.9rem;
+            }
+
+            .terms-checkbox input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                min-width: 18px;
+            }
+
+            .signup-button {
+                padding: var(--space-5);
+                font-size: 1.1rem;
+                border-radius: var(--radius-lg);
+                margin-bottom: var(--space-5);
+            }
+
+            .login-link {
+                margin-top: var(--space-6);
+                font-size: 1rem;
+            }
+
+            .right-content {
+                text-align: center;
+                padding: 0;
             }
 
             .right-content h2 {
                 font-size: 2.2rem;
+                margin-bottom: var(--space-4);
+                line-height: 1.2;
             }
 
             .right-content p {
-                font-size: 1.1rem;
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-bottom: var(--space-6);
             }
 
             .features-list {
                 flex-direction: column;
+                margin-top: var(--space-4);
+                gap: var(--space-3);
+            }
+
+            .feature-item {
+                padding: var(--space-3);
+                min-width: auto;
+                max-width: none;
+            }
+
+            .feature-icon {
+                font-size: 1.3rem;
+            }
+
+            .feature-text {
+                font-size: 0.95rem;
+            }
+
+            /* Floating shapes adjustments for mobile */
+            .shape:nth-child(1) {
+                width: 300px;
+                height: 300px;
+                top: 5%;
+                left: 5%;
+            }
+
+            .shape:nth-child(2) {
+                width: 250px;
+                height: 250px;
+                top: 40%;
+                left: 65%;
+            }
+
+            .shape:nth-child(3) {
+                width: 180px;
+                height: 180px;
+                top: 15%;
+                left: 70%;
+            }
+
+            /* Particles adjustment for mobile */
+            .floating-particles {
+                opacity: 0.6;
+            }
+
+            .particle {
+                width: 2px;
+                height: 2px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-side, .right-side {
+                padding: var(--space-3);
+            }
+
+            .signup-container {
+                padding: var(--space-4);
+                border-radius: var(--radius-md);
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .logo p {
+                font-size: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: var(--space-4);
+            }
+
+            .form-group input {
+                padding: var(--space-3);
+                font-size: 0.95rem;
+            }
+
+            .password-toggle {
+                top: 2.6rem;
+                font-size: 0.9rem;
+            }
+
+            .terms-checkbox {
+                margin-bottom: var(--space-5);
+                font-size: 0.85rem;
+                gap: var(--space-2);
+            }
+
+            .terms-checkbox input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                min-width: 16px;
+            }
+
+            .signup-button {
+                padding: var(--space-4);
+                font-size: 1rem;
+            }
+
+            .right-content h2 {
+                font-size: 1.8rem;
+                margin-bottom: var(--space-3);
+            }
+
+            .right-content p {
+                font-size: 0.9rem;
+                margin-bottom: var(--space-4);
+            }
+
+            .features-list {
+                gap: var(--space-2);
+            }
+
+            .feature-item {
+                padding: var(--space-2);
+            }
+
+            .feature-icon {
+                font-size: 1.1rem;
+            }
+
+            .feature-text {
+                font-size: 0.85rem;
+            }
+
+            /* Further reduce shapes on very small screens */
+            .shape:nth-child(1) {
+                width: 200px;
+                height: 200px;
+            }
+
+            .shape:nth-child(2) {
+                width: 180px;
+                height: 180px;
+            }
+
+            .shape:nth-child(3) {
+                width: 120px;
+                height: 120px;
             }
         }
     </style>

@@ -200,150 +200,32 @@ body::before {
     display: none;
 }
 
-/* Mobile Navigation Styles */
+/* Show mobile navigation only on mobile devices */
 @media (max-width: 768px) {
-    body {
-        overflow-x: hidden;
-        padding-bottom: 80px; /* Space for bottom nav */
-    }
-
-    .dashboard-wrapper {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        display: none; /* Hide desktop sidebar */
-    }
-
-    /* Bottom Navigation Bar */
     .mobile-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100vw;
-        height: 80px;
-        background: var(--gradient-mixed-secondary);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(46, 204, 113, 0.1);
-        box-shadow: 
-            0 -10px 30px rgba(16, 185, 129, 0.1),
-            0 0 0 1px rgba(255, 255, 255, 0.05);
-        z-index: 99999;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        padding: 0 var(--space-2);
-        margin: 0;
-    }
-
-    .mobile-nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--space-2) var(--space-1);
-        border-radius: var(--radius-lg);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-        min-width: 50px;
-        text-decoration: none;
-    }
-
-    .mobile-nav-item:hover {
-        background: rgba(46, 204, 113, 0.1);
-        transform: translateY(-2px);
-    }
-
-    .mobile-nav-item.active {
-        background: var(--gradient-mixed);
-        color: white;
-        transform: translateY(-3px);
-        box-shadow: 
-            0 8px 20px rgba(46, 204, 113, 0.3),
-            0 4px 10px rgba(52, 152, 219, 0.2);
-    }
-
-    .mobile-nav-item.active::before {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 3px;
-        background: var(--gradient-mixed);
-        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-    }
-
-    .mobile-nav-icon {
-        font-size: 1.2rem;
-        margin-bottom: var(--space-1);
-        color: var(--text-secondary);
-        transition: all 0.3s ease;
-    }
-
-    .mobile-nav-item:hover .mobile-nav-icon,
-    .mobile-nav-item.active .mobile-nav-icon {
-        color: white;
-        transform: scale(1.1);
-    }
-
-    .mobile-nav-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        transition: all 0.3s ease;
-        text-align: center;
-        line-height: 1;
-    }
-
-    .mobile-nav-item:hover .mobile-nav-label,
-    .mobile-nav-item.active .mobile-nav-label {
-        color: white;
-    }
-
-    .main-content-area {
-        margin-left: 0;
-        width: 100%;
-        padding-bottom: 120px; /* Extra space for bottom nav + safety margin */
-        min-height: calc(100vh - 120px);
-    }
-
-    .page-content {
-        padding: var(--space-4);
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 
-/* Very Small Mobile Devices */
-@media (max-width: 480px) {
+/* Additional mobile device detection */
+@media screen and (max-width: 768px) {
     .mobile-nav {
-        height: 70px;
-        padding: 0 var(--space-1);
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
+}
 
-    .mobile-nav-item {
-        min-width: 45px;
-        padding: var(--space-1);
-    }
-
-    .mobile-nav-icon {
-        font-size: 1.1rem;
-    }
-
-    .mobile-nav-label {
-        font-size: 0.65rem;
-    }
-
-    body {
-        padding-bottom: 70px;
-    }
-
-    .main-content-area {
-        padding-bottom: 100px; /* Adjusted for smaller nav height */
-        min-height: calc(100vh - 100px);
+/* Touch device detection */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 
@@ -594,6 +476,7 @@ body::before {
 .welcome-metrics {
     display: flex;
     gap: var(--space-3);
+    flex-wrap: wrap;
 }
 
 .metric-pill {

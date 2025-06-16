@@ -707,59 +707,74 @@
 
         @media (max-width: 768px) {
             body {
-                overflow-x: hidden;
-                overflow-y: auto;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
             }
 
             .split-container {
-                flex-direction: column;
-                height: auto;
-                min-height: 200vh;
+                flex-direction: column !important;
+                height: auto !important;
+                min-height: 200vh !important;
+                width: 100% !important;
             }
 
             .left-side, .right-side {
-                height: 100vh;
-                min-height: 100vh;
-                width: 100%;
+                height: 100vh !important;
+                min-height: 100vh !important;
+                width: 100% !important;
+                flex: none !important;
             }
 
             .left-side {
-                order: 1;
-                padding: var(--space-6);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                order: 1 !important;
+                padding: var(--space-4) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: var(--gradient-mixed-secondary) !important;
+                backdrop-filter: blur(20px) !important;
             }
 
             .right-side {
-                order: 2;
-                padding: var(--space-6);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                order: 2 !important;
+                padding: var(--space-4) !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: var(--gradient-mixed) !important;
             }
 
             .signup-container {
-                padding: var(--space-8);
-                border-radius: var(--radius-xl);
-                max-width: 90%;
-                width: 90%;
-                box-sizing: border-box;
-                margin: 0 auto;
+                padding: var(--space-6) !important;
+                border-radius: var(--radius-xl) !important;
+                max-width: 95% !important;
+                width: 95% !important;
+                box-sizing: border-box !important;
+                margin: 0 auto !important;
+                background: var(--gradient-mixed-secondary) !important;
+                backdrop-filter: blur(25px) !important;
+                box-shadow: 
+                    0 20px 40px rgba(16, 185, 129, 0.12),
+                    0 0 0 1px rgba(255, 255, 255, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
             }
 
             .logo {
-                margin-bottom: var(--space-6);
-                text-align: center;
+                margin-bottom: var(--space-6) !important;
+                text-align: center !important;
             }
 
             .logo h1 {
-                font-size: 2.5rem;
-                margin-bottom: var(--space-2);
+                font-size: 2.8rem !important;
+                margin-bottom: var(--space-3) !important;
+                background: var(--gradient-mixed) !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
             }
 
             .logo p {
-                font-size: 1.1rem;
+                font-size: 1.2rem !important;
+                color: var(--text-secondary) !important;
             }
 
             .form-group {
@@ -772,9 +787,12 @@
             }
 
             .form-group input {
-                padding: var(--space-4);
-                font-size: 1rem;
-                border-radius: var(--radius-md);
+                padding: var(--space-5) !important;
+                font-size: 1.1rem !important;
+                border-radius: var(--radius-lg) !important;
+                width: 100% !important;
+                border: 2px solid var(--border-light) !important;
+                background: var(--bg-secondary) !important;
             }
 
             .password-toggle {
@@ -795,10 +813,16 @@
             }
 
             .signup-button {
-                padding: var(--space-5);
-                font-size: 1.1rem;
-                border-radius: var(--radius-lg);
-                margin-bottom: var(--space-5);
+                padding: var(--space-6) !important;
+                font-size: 1.3rem !important;
+                border-radius: var(--radius-xl) !important;
+                margin-bottom: var(--space-5) !important;
+                width: 100% !important;
+                background: var(--gradient-mixed) !important;
+                color: #FFFFFF !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
             }
 
             .login-link {

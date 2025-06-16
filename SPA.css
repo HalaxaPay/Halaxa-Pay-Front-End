@@ -195,6 +195,11 @@ body::before {
     background: transparent;
 }
 
+/* Hide mobile navigation on desktop */
+.mobile-nav {
+    display: none;
+}
+
 /* ==================== SIDEBAR - INTERACTIVE & ANIMATED ==================== */
 
 .sidebar {
@@ -1693,18 +1698,21 @@ body::before {
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
+        width: 100% !important;
         height: 80px !important;
         background: var(--gradient-mixed-secondary) !important;
         backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
         border-top: 1px solid rgba(46, 204, 113, 0.1) !important;
         box-shadow: 
             0 -10px 30px rgba(16, 185, 129, 0.1),
             0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-        z-index: 1000 !important;
+        z-index: 9999 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-around !important;
         padding: 0 var(--space-2) !important;
+        margin: 0 !important;
     }
 
     .mobile-nav-item {
@@ -1777,7 +1785,8 @@ body::before {
     .main-content-area {
         margin-left: 0 !important;
         width: 100% !important;
-        padding-bottom: 100px !important; /* Extra space for bottom nav */
+        padding-bottom: 120px !important; /* Extra space for bottom nav + safety margin */
+        min-height: calc(100vh - 120px) !important;
     }
 
     .page-content {
@@ -1875,6 +1884,7 @@ body::before {
     .mobile-nav {
         height: 70px !important;
         padding: 0 var(--space-1) !important;
+        z-index: 9999 !important;
     }
 
     .mobile-nav-item {
@@ -1908,6 +1918,11 @@ body::before {
 
     body {
         padding-bottom: 70px !important;
+    }
+
+    .main-content-area {
+        padding-bottom: 100px !important; /* Adjusted for smaller nav height */
+        min-height: calc(100vh - 100px) !important;
     }
 }
 

@@ -9,27 +9,151 @@
         }
 
         :root {
-            --primary-color: #2C3E50;
-            --secondary-color: #3498db;
-            --accent-color: #2ecc71;
-            --gradient-start: #2C3E50;
-            --gradient-end: #1a2530;
+            /* Exact Dashboard Theme Colors */
+            --bg-primary: #fafbfc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f8fffe;
+            
+            --text-primary: #1a1d29;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            
+            --border-light: #e5f3f0;
+            --border-medium: #d1f2eb;
+            
+            --accent-primary: #2ECC71;
+            --accent-secondary: #059669;
+            --accent-blue: #3498DB;
+            --accent-blue-light: #85C1E9;
+            --accent-light: #d1fae5;
+            --accent-ultra-light: #ecfdf5;
+            --accent-blue-ultra-light: #EBF5FB;
+            
+            --gradient-primary: linear-gradient(135deg, #2ECC71 0%, #34d399 50%, #ffffff 100%);
+            --gradient-blue-primary: linear-gradient(135deg, #3498DB 0%, #85C1E9 50%, #ffffff 100%);
+            --gradient-mixed: linear-gradient(135deg, #2ECC71 0%, #3498DB 50%, #34d399 100%);
+            --gradient-secondary: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #f0fdf4 100%);
+            --gradient-blue-secondary: linear-gradient(135deg, #EBF5FB 0%, #ffffff 50%, #F8FBFF 100%);
+            --gradient-mixed-secondary: linear-gradient(135deg, #ecfdf5 0%, #EBF5FB 30%, #ffffff 70%, #f0fdf4 100%);
+            --gradient-shine: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%);
+            --gradient-shine-mixed: linear-gradient(135deg, transparent 0%, rgba(16, 185, 129, 0.1) 25%, rgba(52, 152, 219, 0.1) 75%, transparent 100%);
+            
+            --shadow-xs: 0 1px 2px 0 rgba(16, 185, 129, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(16, 185, 129, 0.1), 0 1px 2px 0 rgba(16, 185, 129, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05);
+            --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+            
+            --font-primary: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
         }
 
         body {
-            background-color: #FFFFFF;
+            background: var(--bg-primary);
             min-height: 100vh;
             display: flex;
             width: 100%;
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            position: relative;
+            font-family: var(--font-primary);
+        }
+
+        /* Dashboard-style animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(167, 243, 208, 0.08) 0%, transparent 50%);
+            animation: backgroundFlow 25s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes backgroundFlow {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.05) rotate(180deg);
+                opacity: 0.9;
+            }
+        }
+
+        /* Floating particles */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: floatParticle 18s infinite linear;
+        }
+
+        .particle:nth-child(1) { left: 15%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 25%; animation-delay: 3s; }
+        .particle:nth-child(3) { left: 35%; animation-delay: 6s; }
+        .particle:nth-child(4) { left: 45%; animation-delay: 9s; }
+        .particle:nth-child(5) { left: 55%; animation-delay: 12s; }
+        .particle:nth-child(6) { left: 65%; animation-delay: 15s; }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0);
+                opacity: 0;
+            }
         }
 
         .split-container {
             display: flex;
             width: 100%;
             height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
         .left-side {
@@ -37,35 +161,39 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #FFFFFF;
-            padding: 2rem;
+            padding: var(--space-6);
             position: relative;
-            overflow: hidden;
+            background: var(--gradient-mixed-secondary);
+            backdrop-filter: blur(20px);
+            overflow-y: auto;
         }
 
         .left-side::before {
             content: '';
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, rgba(52, 152, 219, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
-            animation: gradientFlow 15s ease infinite;
-            z-index: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-shine-mixed);
+            opacity: 0;
+            animation: shimmerFlow 6s ease-in-out infinite;
+            z-index: -1;
         }
 
-        @keyframes gradientFlow {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        @keyframes shimmerFlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.2; }
         }
 
         .right-side {
             flex: 1;
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            background: var(--gradient-mixed);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            padding: var(--space-8);
             position: relative;
             overflow: hidden;
         }
@@ -81,45 +209,48 @@
 
         .shape {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            filter: blur(20px);
-            animation: floatShape 8s infinite ease-in-out;
+            filter: blur(50px);
+            animation: floatShape 20s infinite ease-in-out;
+            opacity: 0.3;
         }
 
         .shape:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: 20%;
-            left: 20%;
-            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: 10%;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.5), rgba(16, 185, 129, 0.2));
             animation-delay: 0s;
         }
 
         .shape:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            top: 60%;
-            left: 70%;
-            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
-            animation-delay: 2s;
+            width: 350px;
+            height: 350px;
+            top: 50%;
+            left: 60%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.5), rgba(133, 193, 233, 0.2));
+            animation-delay: 7s;
         }
 
         .shape:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            top: 30%;
-            left: 60%;
-            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
-            animation-delay: 4s;
+            width: 250px;
+            height: 250px;
+            top: 20%;
+            left: 70%;
+            background: radial-gradient(circle, rgba(167, 243, 208, 0.5), rgba(209, 250, 229, 0.2));
+            animation-delay: 14s;
         }
 
         @keyframes floatShape {
             0%, 100% {
                 transform: translate(0, 0) rotate(0deg) scale(1);
             }
-            50% {
-                transform: translate(20px, -20px) rotate(180deg) scale(1.1);
+            33% {
+                transform: translate(30px, -40px) rotate(120deg) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 30px) rotate(240deg) scale(0.9);
             }
         }
 
@@ -128,193 +259,300 @@
             z-index: 2;
             text-align: center;
             color: #FFFFFF;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .right-content h2 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.8));
+            font-size: 3.5rem;
+            margin-bottom: var(--space-6);
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.9), #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 300% 300%;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .right-content p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            max-width: 400px;
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 450px;
             margin: 0 auto;
-            line-height: 1.6;
+            line-height: 1.7;
+            font-weight: 400;
         }
 
-        .payment-icons {
+        .features-list {
             display: flex;
-            gap: 2.5rem;
-            margin-top: 3rem;
-            justify-content: center;
+            flex-direction: column;
+            gap: var(--space-4);
+            margin-top: var(--space-8);
+            text-align: left;
         }
 
-        .payment-icon {
-            font-size: 2.5rem;
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
             color: #FFFFFF;
-            opacity: 0.8;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            opacity: 0.9;
+            min-width: 24px;
         }
 
-        .payment-icon:hover {
-            opacity: 1;
-            transform: translateY(-10px);
-        }
-
-        .payment-icon::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: scale(0);
-            transition: transform 0.4s ease;
-        }
-
-        .payment-icon:hover::after {
-            transform: scale(1.5);
+        .feature-text {
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .signup-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+            background: var(--gradient-mixed-secondary);
+            backdrop-filter: blur(25px);
+            padding: var(--space-12);
+            border-radius: var(--radius-xl);
+            box-shadow: 
+                0 20px 40px rgba(16, 185, 129, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             position: relative;
             z-index: 1;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .signup-container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: var(--gradient-mixed);
+            border-radius: var(--radius-xl);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .signup-container:hover::before {
+            opacity: 0.05;
         }
 
         .logo {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: var(--space-10);
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .logo h1 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-primary);
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: var(--space-2);
+            background: var(--gradient-mixed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease-in-out infinite;
         }
 
         .logo p {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            font-weight: 400;
-            opacity: 0.8;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.9;
         }
 
         .form-group {
-            margin-bottom: 1.8rem;
+            margin-bottom: var(--space-6);
             position: relative;
+            animation: fadeInUp 0.6s ease-out var(--delay, 0.5s) both;
         }
+
+        .form-group:nth-child(1) { --delay: 0.5s; }
+        .form-group:nth-child(2) { --delay: 0.6s; }
+        .form-group:nth-child(3) { --delay: 0.7s; }
+        .form-group:nth-child(4) { --delay: 0.8s; }
 
         .form-group label {
             display: block;
-            color: var(--primary-color);
-            margin-bottom: 0.8rem;
-            font-weight: 500;
-            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s ease;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1.2rem;
-            border: 2px solid rgba(44, 62, 80, 0.1);
-            border-radius: 12px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
+            padding: var(--space-5) var(--space-4);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-primary);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+            border-color: var(--accent-primary);
+            box-shadow: 
+                0 0 0 3px rgba(46, 204, 113, 0.08),
+                0 8px 20px rgba(16, 185, 129, 0.12);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .form-group input:focus + .password-toggle {
+            color: var(--accent-primary);
         }
 
         .password-toggle {
             position: absolute;
-            right: 1.2rem;
-            top: 3.2rem;
+            right: var(--space-4);
+            top: 2.8rem;
             cursor: pointer;
-            color: var(--primary-color);
-            transition: color 0.3s ease;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            padding: var(--space-2);
+            border-radius: 50%;
         }
 
         .password-toggle:hover {
-            color: var(--secondary-color);
+            color: var(--accent-primary);
+            background: rgba(46, 204, 113, 0.08);
         }
 
         .terms-checkbox {
             display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            color: var(--primary-color);
+            align-items: flex-start;
+            gap: var(--space-3);
+            color: var(--text-primary);
             font-size: 0.95rem;
-            margin-bottom: 2rem;
+            margin-bottom: var(--space-8);
+            animation: fadeInUp 0.6s ease-out 0.9s both;
+            line-height: 1.5;
         }
 
         .terms-checkbox input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            border-radius: 4px;
-            border: 2px solid var(--primary-color);
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border-medium);
             appearance: none;
             cursor: pointer;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-secondary);
+            margin-top: 2px;
         }
 
         .terms-checkbox input[type="checkbox"]:checked {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
+            background: var(--gradient-mixed);
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
         }
 
         .terms-checkbox input[type="checkbox"]:checked::after {
             content: '✓';
             position: absolute;
             color: white;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: bold;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            animation: checkmarkAppear 0.2s ease;
+        }
+
+        @keyframes checkmarkAppear {
+            from { transform: translate(-50%, -50%) scale(0); }
+            to { transform: translate(-50%, -50%) scale(1); }
         }
 
         .signup-button {
             width: 100%;
-            padding: 1.2rem;
-            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            padding: var(--space-5);
+            background: var(--gradient-mixed);
             color: #FFFFFF;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             font-size: 1.2rem;
-            font-weight: 500;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.6s ease-out 1s both;
+            font-family: var(--font-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .signup-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 30px rgba(46, 204, 113, 0.25),
+                0 8px 16px rgba(52, 152, 219, 0.15);
         }
 
         .signup-button:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
         }
 
         .signup-button::before {
@@ -324,13 +562,8 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transition: 0.5s;
+            background: var(--gradient-shine);
+            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .signup-button:hover::before {
@@ -339,29 +572,90 @@
 
         .login-link {
             text-align: center;
-            margin-top: 2rem;
-            color: var(--primary-color);
+            margin-top: var(--space-8);
+            color: var(--text-secondary);
             font-size: 1rem;
+            animation: fadeInUp 0.6s ease-out 1.2s both;
         }
 
         .login-link a {
-            color: var(--secondary-color);
+            color: var(--accent-blue);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
+            position: relative;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+        }
+
+        .login-link a::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: var(--space-1);
+            left: var(--space-3);
+            background: var(--gradient-blue-primary);
+            transition: width 0.3s ease;
+        }
+
+        .login-link a:hover::before {
+            width: calc(100% - 1.5rem);
         }
 
         .login-link a:hover {
-            color: var(--accent-color);
+            color: var(--accent-secondary);
+            background: rgba(52, 152, 219, 0.05);
         }
 
         .error-message {
-            color: #ff0000;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
             display: none;
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: var(--space-2);
+            animation: shake 0.5s ease-in-out;
+            padding: var(--space-2) var(--space-3);
+            background: rgba(239, 68, 68, 0.08);
+            border-radius: var(--radius-md);
+            border-left: 3px solid #ef4444;
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .signup-container:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 25px 50px rgba(16, 185, 129, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Loading state */
+        .signup-button.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .signup-button.loading::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: buttonLoading 1s linear infinite;
+            margin-left: var(--space-2);
+        }
+
+        @keyframes buttonLoading {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .split-container {
                 flex-direction: column;
@@ -372,22 +666,72 @@
                 height: 50vh;
             }
 
+            .left-side {
+                overflow-y: auto;
+            }
+
+            .signup-container {
+                padding: var(--space-8);
+                max-width: 90%;
+            }
+
             .right-content h2 {
+                font-size: 2.8rem;
+            }
+
+            .features-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .feature-item {
+                flex: 1;
+                min-width: 200px;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .signup-container {
+                padding: var(--space-6);
+                border-radius: var(--radius-lg);
+            }
+
+            .logo h1 {
                 font-size: 2.5rem;
             }
 
-            .payment-icons {
-                gap: 2rem;
+            .right-content h2 {
+                font-size: 2.2rem;
+            }
+
+            .right-content p {
+                font-size: 1.1rem;
+            }
+
+            .features-list {
+                flex-direction: column;
             }
         }
     </style>
+
+    <!-- Floating particles -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
     <div class="split-container">
         <div class="left-side">
             <div class="signup-container">
                 <div class="logo">
-                    <h1>Connect to Halaxa</h1>
-                    <p>Create your account</p>
+                    <h1>Join Halaxa</h1>
+                    <p>Start your crypto payment journey</p>
                 </div>
                 <form id="signupForm">
                     <div class="form-group">
@@ -396,13 +740,13 @@
                         <div class="error-message" id="fullnameError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your business email" required>
                         <div class="error-message" id="emailError"></div>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
                         <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
                         <div class="error-message" id="passwordError"></div>
                     </div>
@@ -415,13 +759,13 @@
                     
                     <div class="terms-checkbox">
                         <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">I agree to the Terms of Service Of Halaxa</label>
+                        <label for="terms">I agree to Halaxa's Terms of Service and Privacy Policy</label>
                     </div>
 
-                    <button type="submit" class="signup-button" id="signupButton">Sign Up</button>
+                    <button type="submit" class="signup-button" id="signupButton">Create Account</button>
                     <div class="error-message" id="generalError"></div>
                     <div class="login-link">
-                        Have a Halaxa account? <a href="https://halaxapay.netlify.app/login.html">Log In</a>
+                        Already have an account? <a href="login.html">Sign In</a>
                     </div>
                 </form>
             </div>
@@ -434,19 +778,32 @@
                 <div class="shape"></div>
             </div>
             <div class="right-content">
-                <h2>Join Halaxa</h2>
-                <p>Start your journey with the most advanced crypto payment processing platform. Experience secure, instant, and seamless transactions for your business.</p>
-                <div class="payment-icons">
-                    <i class="fas fa-user-shield payment-icon"></i>
-                    <i class="fas fa-chart-line payment-icon"></i>
-                    <i class="fas fa-globe payment-icon"></i>
+                <h2>Start Growing Today</h2>
+                <p>Join thousands of businesses already using Halaxa to accept crypto payments, scale globally, and unlock new revenue streams.</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-rocket feature-icon"></i>
+                        <span class="feature-text">Launch in minutes</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <span class="feature-text">Bank-grade security</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-globe feature-icon"></i>
+                        <span class="feature-text">Global reach</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <span class="feature-text">Real-time analytics</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Password visibility toggle
+        // Enhanced password visibility toggle
         const passwordToggle = document.getElementById('passwordToggle');
         const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
         const passwordInput = document.getElementById('password');
@@ -466,6 +823,18 @@
             confirmPasswordToggle.classList.toggle('fa-eye-slash');
         });
 
+        // Enhanced form interactions
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-1px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
         const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
@@ -476,13 +845,20 @@
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const generalError = document.getElementById('generalError');
+            const signupButton = document.getElementById('signupButton');
             
             // Clear previous errors
             generalError.style.display = 'none';
             
+            // Add loading state
+            signupButton.classList.add('loading');
+            signupButton.textContent = 'Creating Account...';
+            
             if (password !== confirmPassword) {
                 generalError.style.display = 'block';
                 generalError.textContent = 'Passwords do not match';
+                signupButton.classList.remove('loading');
+                signupButton.textContent = 'Create Account';
                 return;
             }
 
@@ -534,13 +910,23 @@
                     localStorage.setItem('refreshToken', data.refreshToken);
                 }
 
-                // Redirect to login
-                window.location.href = 'https://halaxapay.netlify.app/login.html';
+                // Success feedback
+                signupButton.textContent = 'Account Created!';
+                signupButton.style.background = 'var(--gradient-mixed)';
+
+                // Redirect to login page in same directory
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
 
             } catch (error) {
                 console.error('Registration error:', error);
                 generalError.style.display = 'block';
                 generalError.textContent = error.message || 'Registration failed. Please try again.';
+                
+                // Reset button
+                signupButton.classList.remove('loading');
+                signupButton.textContent = 'Create Account';
             }
         });
     </script>

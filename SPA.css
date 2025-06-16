@@ -195,9 +195,38 @@ body::before {
     background: transparent;
 }
 
-/* Hide mobile navigation on desktop */
+/* Hide mobile navigation on desktop by default */
 .mobile-nav {
     display: none;
+}
+
+/* Show mobile navigation only on mobile devices */
+@media (max-width: 768px) {
+    .mobile-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Additional mobile device detection */
+@media screen and (max-width: 768px) {
+    .mobile-nav {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Touch device detection */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 }
 
 /* ==================== SIDEBAR - INTERACTIVE & ANIMATED ==================== */
@@ -1698,7 +1727,7 @@ body::before {
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        width: 100% !important;
+        width: 100vw !important;
         height: 80px !important;
         background: var(--gradient-mixed-secondary) !important;
         backdrop-filter: blur(20px) !important;
@@ -1707,12 +1736,14 @@ body::before {
         box-shadow: 
             0 -10px 30px rgba(16, 185, 129, 0.1),
             0 0 0 1px rgba(255, 255, 255, 0.05) !important;
-        z-index: 9999 !important;
+        z-index: 99999 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-around !important;
         padding: 0 var(--space-2) !important;
         margin: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     .mobile-nav-item {
@@ -1884,7 +1915,10 @@ body::before {
     .mobile-nav {
         height: 70px !important;
         padding: 0 var(--space-1) !important;
-        z-index: 9999 !important;
+        z-index: 99999 !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     .mobile-nav-item {

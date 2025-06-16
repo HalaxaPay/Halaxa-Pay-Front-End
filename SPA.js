@@ -18,23 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeSPA() {
     const navItems = document.querySelectorAll('.nav-item');
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
     const pages = document.querySelectorAll('.page-content');
         
-    console.log('Initializing SPA with', navItems.length, 'nav items and', pages.length, 'pages');
+    console.log('Initializing SPA with', navItems.length, 'nav items,', mobileNavItems.length, 'mobile nav items and', pages.length, 'pages');
     
+    // Handle desktop navigation
     navItems.forEach((item, index) => {
         item.addEventListener('click', function() {
             const targetPageId = this.getAttribute('data-page');
-            console.log('Navigation clicked:', targetPageId);
+            console.log('Desktop navigation clicked:', targetPageId);
             
             // Animate navigation item selection
             animateNavSelection(item, navItems);
+            animateMobileNavSelection(null, mobileNavItems, targetPageId);
             
             // Smooth page transition
             smoothPageTransition(targetPageId, pages);
         });
         
-        // Add hover effect
+        // Add hover effect for desktop
         item.addEventListener('mouseenter', function() {
             if (!this.classList.contains('active')) {
                 this.style.transform = 'translateX(8px)';
@@ -49,6 +52,30 @@ function initializeSPA() {
             }
         });
     });
+
+    // Handle mobile navigation
+    mobileNavItems.forEach((item, index) => {
+        item.addEventListener('click', function() {
+            const targetPageId = this.getAttribute('data-page');
+            console.log('Mobile navigation clicked:', targetPageId);
+            
+            // Animate mobile navigation item selection
+            animateMobileNavSelection(item, mobileNavItems);
+            animateNavSelection(null, navItems, targetPageId);
+            
+            // Smooth page transition
+            smoothPageTransition(targetPageId, pages);
+        });
+
+        // Add touch feedback for mobile
+        item.addEventListener('touchstart', function() {
+            this.style.transform = 'translateY(-1px) scale(0.98)';
+        });
+
+        item.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    });
     
     // Make sure home page is active on load
     const homePage = document.getElementById('home-page');
@@ -57,21 +84,56 @@ function initializeSPA() {
     }
 }
 
-function animateNavSelection(selectedItem, allItems) {
+function animateNavSelection(selectedItem, allItems, targetPageId = null) {
     // Remove active class from all items
     allItems.forEach(item => {
         item.classList.remove('active');
     });
     
-    // Add active class to selected item with animation
-    selectedItem.classList.add('active');
+    // If no selectedItem provided, find it by targetPageId
+    if (!selectedItem && targetPageId) {
+        selectedItem = Array.from(allItems).find(item => 
+            item.getAttribute('data-page') === targetPageId
+        );
+    }
     
-    // Add a temporary shine effect
-    selectedItem.style.animation = 'activeItemGlow 0.6s ease-out';
+    if (selectedItem) {
+        // Add active class to selected item with animation
+        selectedItem.classList.add('active');
+        
+        // Add a temporary shine effect
+        selectedItem.style.animation = 'activeItemGlow 0.6s ease-out';
+        
+        setTimeout(() => {
+            selectedItem.style.animation = '';
+        }, 600);
+    }
+}
+
+function animateMobileNavSelection(selectedItem, allItems, targetPageId = null) {
+    // Remove active class from all items
+    allItems.forEach(item => {
+        item.classList.remove('active');
+    });
     
-    setTimeout(() => {
-        selectedItem.style.animation = '';
-    }, 600);
+    // If no selectedItem provided, find it by targetPageId
+    if (!selectedItem && targetPageId) {
+        selectedItem = Array.from(allItems).find(item => 
+            item.getAttribute('data-page') === targetPageId
+        );
+    }
+    
+    if (selectedItem) {
+        // Add active class to selected item with animation
+        selectedItem.classList.add('active');
+        
+        // Add a temporary bounce effect for mobile
+        selectedItem.style.animation = 'mobileItemBounce 0.4s ease-out';
+        
+        setTimeout(() => {
+            selectedItem.style.animation = '';
+        }, 400);
+    }
 }
 
 function smoothPageTransition(targetPageId, allPages) {
@@ -144,6 +206,12 @@ function initializeAnimations() {
         @keyframes shimmer {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
+        }
+        
+        @keyframes mobileItemBounce {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-4px) scale(1.05); }
+            100% { transform: translateY(0) scale(1); }
         }
     `;
     document.head.appendChild(style);

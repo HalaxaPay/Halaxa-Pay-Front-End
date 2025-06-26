@@ -1356,11 +1356,12 @@
             const data = await response.json();
             
             if (response.ok) {
-                // Store tokens and user data
-                localStorage.setItem('token', data.accessToken);
+                // Store tokens and user data using SPA.js conventions
+                localStorage.setItem('halaxa_token', data.accessToken); // SPA.js expects 'halaxa_token'
                 localStorage.setItem('refreshToken', data.refreshToken);
                 localStorage.setItem('sellerId', data.user.id);
                 localStorage.setItem('isPreview', 'false');
+                localStorage.removeItem('token'); // Remove old key if present
                 
                 // Success feedback
                 loginButton.textContent = 'Access Granted!';

@@ -1338,11 +1338,17 @@
         const errorMessage = document.getElementById('generalError');
         const loginButton = document.getElementById('loginButton');
         
+        // Clear any previous errors
+        errorMessage.style.display = 'none';
+        
         // Add loading state
         loginButton.classList.add('loading');
         loginButton.textContent = 'Authenticating...';
         
+        console.log('Starting login process for:', email);
+        
         try {
+            console.log('Making request to backend...');
             const response = await fetch('https://halaxa-backend.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: {
@@ -1353,9 +1359,14 @@
                 body: JSON.stringify({ email, password })
             });
 
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            
             const data = await response.json();
+            console.log('Response data:', data);
             
             if (response.ok) {
+                console.log('Login successful, storing tokens...');
                 // Store tokens and user data using SPA.js conventions
                 localStorage.setItem('halaxa_token', data.accessToken); // SPA.js expects 'halaxa_token'
                 localStorage.setItem('refreshToken', data.refreshToken);
@@ -1363,15 +1374,19 @@
                 localStorage.setItem('isPreview', 'false');
                 localStorage.removeItem('token'); // Remove old key if present
                 
+                console.log('Tokens stored, redirecting...');
+                
                 // Success feedback
                 loginButton.textContent = 'Access Granted!';
                 loginButton.style.background = 'var(--gradient-mixed)';
                 
-                // Redirect to local SPA.html
+                // Redirect to local SPA.html with user ID for personalization
                 setTimeout(() => {
-                    window.location.href = 'SPA.html';
+                    console.log('Redirecting to SPA.html...');
+                    window.location.href = `SPA.html?userId=${data.user.id}`;
                 }, 1000);
             } else {
+                console.log('Login failed:', data.error);
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';
                 errorMessage.style.display = 'block';
                 
@@ -1381,7 +1396,7 @@
             }
         } catch (error) {
             console.error('Login error:', error);
-            errorMessage.textContent = 'An error occurred. Please try again.';
+            errorMessage.textContent = 'Network error. Please check your connection and try again.';
             errorMessage.style.display = 'block';
             
             // Reset button

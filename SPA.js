@@ -1,7 +1,7 @@
 // ==================== PREMIUM ANIMATED SPA JAVASCRIPT ==================== //
 
-// BACKEND URL CONFIGURATION - REPLACE WITH YOUR ACTUAL BACKEND URL
-const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+// BACKEND URL CONFIGURATION - Use environment variable or fallback
+const BACKEND_URL = import.meta.env?.VITE_BACKEND_URL || 'https://halaxa-backend.onrender.com';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize user personalization from URL

@@ -601,7 +601,8 @@
             console.log('Current payment details:', currentPayment); // Debug log
             
             // First, save buyer details to backend
-            fetch(`https://halaxa-backend.onrender.com/api/payment-links/${currentPayment.link_id}/buyer`, {
+            const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+            fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/buyer`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -645,3 +646,6 @@
             }
         });
 </script>
+<script type="module" src="./supabase-client.js"></script>
+</body>
+</html>

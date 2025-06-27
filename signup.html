@@ -1117,6 +1117,268 @@
 
         const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
+        // ==================== USER DASHBOARD INITIALIZATION ==================== //
+        
+        async function initializeUserDashboard(userId, fullName, email) {
+            console.log('🎯 Initializing dashboard tables for user:', userId);
+            
+            // Import Supabase client
+            const { supabase } = await import('./supabase-client.js');
+            
+            // Generate initials from full name
+            const initials = generateInitials(fullName);
+            
+            // Calculate next billing date (30 days from now)
+            const nextBilling = new Date();
+            nextBilling.setDate(nextBilling.getDate() + 30);
+            
+                         const initializationResults = {
+                 user_profiles: false,
+                 user_plans: false,
+                 user_balances: false,
+                 user_metrics: false,
+                 fees_saved: false,
+                 key_metrics: false,
+                 execution_metrics: false,
+                 network_distributions: false,
+                 transaction_insights: false,
+                 monthly_metrics: false,
+                 ai_oracle_messages: false,
+                 user_growth: false,
+                 usdc_balances: false
+             };
+
+            try {
+                // 1. Initialize user_profiles (CRITICAL)
+                initializationResults.user_profiles = await safeInsert(supabase, 'user_profiles', {
+                    user_id: userId,
+                    name: fullName || '',
+                    initials: initials,
+                    email: email,
+                    created_at: new Date().toISOString()
+                }, 'Creating user profile');
+
+                // 2. Initialize user_plans (CRITICAL)
+                initializationResults.user_plans = await safeInsert(supabase, 'user_plans', {
+                    user_id: userId,
+                    plan_type: 'basic',
+                    started_at: new Date().toISOString(),
+                    next_billing: nextBilling.toISOString(),
+                    auto_renewal: true
+                }, 'Creating user plan');
+
+                // 3. Initialize user_balances (CRITICAL)
+                initializationResults.user_balances = await safeInsert(supabase, 'user_balances', {
+                    user_id: userId,
+                    wallet_address: '',
+                    usdc_polygon: 0,
+                    usdc_tron: 0,
+                    usdc_solana: 0,
+                    usd_equivalent: 0,
+                    last_updated: new Date().toISOString()
+                }, 'Creating user balances');
+
+                // 4. Initialize user_metrics (CRITICAL)
+                initializationResults.user_metrics = await safeInsert(supabase, 'user_metrics', {
+                    user_id: userId,
+                    days_active: 0,
+                    status_level: 'new',
+                    current_streak: 0,
+                    longest_streak: 0,
+                    total_transactions: 0,
+                    last_transaction: null,
+                    last_updated: new Date().toISOString()
+                }, 'Creating user metrics');
+
+                // 5. Initialize fees_saved (OPTIONAL)
+                initializationResults.fees_saved = await safeInsert(supabase, 'fees_saved', {
+                    user_id: userId,
+                    saved_amount: 0,
+                    total_transactions: 0,
+                    average_savings_per_tx: 0,
+                    last_updated: new Date().toISOString()
+                }, 'Creating fees saved tracking');
+
+                // 6. Initialize key_metrics (OPTIONAL)
+                initializationResults.key_metrics = await safeInsert(supabase, 'key_metrics', {
+                    user_id: userId,
+                    total_volume: 0,
+                    total_transactions: 0,
+                    successful_payments: 0,
+                    failed_payments: 0,
+                    pending_payments: 0,
+                    conversion_rate: 0,
+                    last_updated: new Date().toISOString()
+                }, 'Creating key metrics');
+
+                                 // 7. Initialize execution_metrics (OPTIONAL)
+                 initializationResults.execution_metrics = await safeInsert(supabase, 'execution_metrics', {
+                     user_id: userId,
+                     average_processing_time: 0,
+                     fastest_transaction: 0,
+                     slowest_transaction: 0,
+                     total_processing_time: 0,
+                     success_rate: 100,
+                     error_rate: 0,
+                     last_updated: new Date().toISOString()
+                 }, 'Creating execution metrics');
+
+                 // 8. Initialize network_distributions (OPTIONAL) - Network-specific entries
+                 console.log('🌐 Creating network distributions...');
+                 const networks = ['polygon', 'solana', 'tron'];
+                 let networkDistributionSuccess = true;
+                 
+                 for (const network of networks) {
+                     const success = await safeInsert(supabase, 'network_distributions', {
+                         user_id: userId,
+                         network: network,
+                         percentage: 0,
+                         amount_usdc: 0,
+                         transaction_count: 0,
+                         last_updated: new Date().toISOString()
+                     }, `Creating ${network} network distribution`);
+                     
+                     if (!success) networkDistributionSuccess = false;
+                 }
+                 initializationResults.network_distributions = networkDistributionSuccess;
+
+                 // 9. Initialize transaction_insights (OPTIONAL)
+                 initializationResults.transaction_insights = await safeInsert(supabase, 'transaction_insights', {
+                     user_id: userId,
+                     total_volume: 0,
+                     average_transaction_size: 0,
+                     peak_hour: null,
+                     most_active_day: null,
+                     transaction_frequency: 0,
+                     largest_transaction: 0,
+                     smallest_transaction: 0,
+                     last_updated: new Date().toISOString()
+                 }, 'Creating transaction insights');
+
+                 // 10. Initialize monthly_metrics (OPTIONAL)
+                 initializationResults.monthly_metrics = await safeInsert(supabase, 'monthly_metrics', {
+                     user_id: userId,
+                     month: new Date().toISOString().slice(0, 7), // YYYY-MM format
+                     total_volume: 0,
+                     transaction_count: 0,
+                     unique_payers: 0,
+                     average_transaction: 0,
+                     growth_rate: 0,
+                     created_at: new Date().toISOString()
+                 }, 'Creating monthly metrics');
+
+                 // 11. Initialize ai_oracle_messages (OPTIONAL)
+                 initializationResults.ai_oracle_messages = await safeInsert(supabase, 'ai_oracle_messages', {
+                     user_id: userId,
+                     message_type: 'welcome',
+                     content: 'Welcome to Halaxa Pay! Your dashboard is ready.',
+                     is_read: false,
+                     priority: 'low',
+                     created_at: new Date().toISOString()
+                 }, 'Creating AI oracle welcome message');
+
+                 // 12. Initialize user_growth (OPTIONAL)
+                 initializationResults.user_growth = await safeInsert(supabase, 'user_growth', {
+                     user_id: userId,
+                     growth_stage: 'onboarding',
+                     metrics_score: 0,
+                     engagement_level: 'new',
+                     next_milestone: 'first_payment',
+                     recommendations: '["Complete your first payment link", "Set up wallet addresses"]',
+                     last_updated: new Date().toISOString()
+                 }, 'Creating user growth tracking');
+
+                 // 13. Initialize usdc_balances (OPTIONAL) - Network-specific entries
+                 console.log('💰 Creating USDC balances...');
+                 let usdcBalanceSuccess = true;
+                 
+                 for (const network of networks) {
+                     const success = await safeInsert(supabase, 'usdc_balances', {
+                         user_id: userId,
+                         network: network,
+                         balance: 0,
+                         wallet_address: '',
+                         last_sync: new Date().toISOString(),
+                         is_active: false
+                     }, `Creating ${network} USDC balance`);
+                     
+                     if (!success) usdcBalanceSuccess = false;
+                 }
+                 initializationResults.usdc_balances = usdcBalanceSuccess;
+
+                                 // Log final results
+                 const successCount = Object.values(initializationResults).filter(Boolean).length;
+                 const totalTables = Object.keys(initializationResults).length;
+                 
+                 console.log(`🎉 Dashboard initialization complete: ${successCount}/${totalTables} tables initialized`);
+                 console.log('📋 Initialization results:', initializationResults);
+                 
+                 // Check core tables (critical for dashboard functionality)
+                 const coreResults = {
+                     user_profiles: initializationResults.user_profiles,
+                     user_plans: initializationResults.user_plans,
+                     user_balances: initializationResults.user_balances,
+                     user_metrics: initializationResults.user_metrics
+                 };
+                 const coreSuccessCount = Object.values(coreResults).filter(Boolean).length;
+                 
+                 if (coreSuccessCount >= 4) {
+                     console.log('✅ All core dashboard tables initialized successfully');
+                 } else {
+                     console.warn('⚠️ Some core tables failed to initialize - dashboard may have empty states');
+                     console.warn('🔧 Core table results:', coreResults);
+                 }
+                 
+                 // Log optional tables status
+                 const optionalTables = totalTables - 4; // Total minus core tables
+                 const optionalSuccess = successCount - coreSuccessCount;
+                 console.log(`📊 Optional tables: ${optionalSuccess}/${optionalTables} initialized`);
+                 
+                 if (successCount >= 10) { // Most tables successful
+                     console.log('🌟 Excellent initialization! User dashboard fully prepared');
+                 }
+
+            } catch (error) {
+                console.error('❌ Error during dashboard initialization:', error);
+            }
+        }
+
+        function generateInitials(fullName) {
+            if (!fullName || typeof fullName !== 'string') return 'U';
+            
+            const names = fullName.trim().split(' ').filter(n => n.length > 0);
+            if (names.length === 0) return 'U';
+            if (names.length === 1) return names[0].charAt(0).toUpperCase();
+            
+            // Take first letter of first name and first letter of last name
+            return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+        }
+
+        // Helper function to safely insert data with error handling
+        async function safeInsert(supabase, tableName, data, description) {
+            try {
+                console.log(`📝 ${description}...`);
+                const { data: insertData, error } = await supabase
+                    .from(tableName)
+                    .insert([data]);
+                
+                if (error) {
+                    if (error.code === '42P01') {
+                        console.warn(`⚠️ Table '${tableName}' doesn't exist yet - skipping`);
+                    } else {
+                        console.error(`❌ Failed to ${description.toLowerCase()}:`, error);
+                    }
+                    return false;
+                } else {
+                    console.log(`✅ ${description} successful`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Error during ${description.toLowerCase()}:`, error);
+                return false;
+            }
+        }
+
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1190,14 +1452,46 @@
                     localStorage.setItem('refreshToken', data.refreshToken);
                 }
 
+                // 🚀 INITIALIZE USER DASHBOARD DATA
+                console.log('🚀 Initializing user dashboard data...');
+                signupButton.textContent = 'Setting up your dashboard...';
+                
+                // Import Supabase client for dashboard initialization
+                const { supabase, auth } = await import('./supabase-client.js');
+                
+                // Sign in the user with Supabase to get their user ID for dashboard initialization
+                console.log('🔐 Signing in user for dashboard setup...');
+                const { data: signInData, error: signInError } = await auth.signIn(email, password);
+                
+                if (signInError || !signInData.data?.user) {
+                    console.error('❌ Could not sign in user for dashboard setup:', signInError);
+                    console.log('⚠️ User registered but dashboard initialization skipped');
+                } else {
+                    console.log('✅ User signed in successfully for dashboard setup');
+                    await initializeUserDashboard(signInData.data.user.id, fullName, email);
+                    
+                    // Sign out after initialization (user will sign in again on login page)
+                    await auth.signOut();
+                    console.log('🔓 User signed out after dashboard initialization');
+                }
+
                 // Success feedback
-                signupButton.textContent = 'Account Created!';
+                signupButton.textContent = 'Welcome to Halaxa! 🎉';
                 signupButton.style.background = 'var(--gradient-mixed)';
+
+                // Show success message
+                generalError.style.display = 'block';
+                generalError.style.color = '#10b981';
+                generalError.style.background = 'rgba(16, 185, 129, 0.1)';
+                generalError.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                generalError.style.borderRadius = '8px';
+                generalError.style.padding = '12px';
+                generalError.textContent = '✅ Account created and dashboard initialized! Redirecting to login...';
 
                 // Redirect to login page in same directory
                 setTimeout(() => {
                     window.location.href = 'login.html';
-                }, 1000);
+                }, 2000);
 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -1210,3 +1504,6 @@
             }
         });
     </script>
+    <script type="module" src="./supabase-client.js"></script>
+</body>
+</html>

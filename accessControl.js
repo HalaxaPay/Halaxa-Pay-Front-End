@@ -1,4 +1,4 @@
-import { supabase } from './supabase.js';
+import { supabase } from './supabase-client.js';
 
 // ==================== HALAXA ACCESS CONTROL SYSTEM ==================== //
 

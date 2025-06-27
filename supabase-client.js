@@ -66,6 +66,9 @@ export const auth = {
       
       // Store user data in localStorage for access control
       if (data.user) {
+        // ⚠️ DEV WARNING: data.user.id is Supabase Auth UUID - use for user_id in dashboard tables
+        console.log(`🔐 Storing Supabase Auth user ID: ${data.user.id.substring(0, 8)}**** (use for user_id fields)`);
+        
         localStorage.setItem('user', JSON.stringify({
           id: data.user.id,
           email: data.user.email,
@@ -265,6 +268,9 @@ auth.onAuthStateChange((event, session) => {
   console.log('Auth state changed:', event);
   
   if (event === 'SIGNED_IN' && session?.user) {
+    // ⚠️ DEV WARNING: session.user.id is Supabase Auth UUID - use for user_id in dashboard tables
+    console.log(`🔐 Auth state change - user ID: ${session.user.id.substring(0, 8)}**** (use for user_id fields)`);
+    
     // Update user data
     localStorage.setItem('user', JSON.stringify({
       id: session.user.id,

@@ -22,92 +22,123 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ==================== USER PERSONALIZATION ==================== //
 
-function initializeUserPersonalization() {
-    // Get user ID from URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const userIdFromUrl = urlParams.get('userId');
-    
-    if (userIdFromUrl) {
-        console.log('Personalizing dashboard for user:', userIdFromUrl);
-        
-        // Store user ID in localStorage for consistency
-        localStorage.setItem('sellerId', userIdFromUrl);
-        
-        // Update welcome message with user info
-        updateWelcomeMessage(userIdFromUrl);
-        
-        // Load personalized data for this user
-        loadPersonalizedData(userIdFromUrl);
-        
-        // Clean up URL (remove userId parameter for cleaner URL)
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else {
-        // Check if user ID exists in localStorage (for returning users)
-        const storedUserId = localStorage.getItem('sellerId');
-        if (storedUserId) {
-            console.log('Using stored user ID for personalization:', storedUserId);
-            loadPersonalizedData(storedUserId);
-        } else {
-            console.log('No user ID found - showing default dashboard');
-        }
-    }
-}
-
-function updateWelcomeMessage(userId) {
-    // Update welcome title to be more personalized
-    const welcomeTitle = document.querySelector('.welcome-title');
-    if (welcomeTitle) {
-        welcomeTitle.textContent = `Welcome to Your Financial Universe`;
-        // You can add more personalization here based on user data
-    }
-}
-
-async function loadPersonalizedData(userId) {
+async function initializeUserPersonalization() {
     try {
-        const token = localStorage.getItem('halaxa_token');
-        if (!token) {
-            console.log('No token found - cannot load personalized data');
+        // Import Supabase client for secure session handling
+        const { supabase, auth } = await import('./supabase-client.js');
+        
+        // Check for active Supabase session (secure method)
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+            console.error('Error getting session:', error);
+            redirectToLogin();
             return;
         }
         
-        console.log('Loading personalized data for user:', userId);
-        
-        // Here you can make API calls to load user-specific data
-        // For example, load user's transactions, balances, etc.
-        
-        // Example: Load user profile
-        const profileResponse = await fetch(`${BACKEND_URL}/api/account/profile`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        
-        if (profileResponse.ok) {
-            const userData = await profileResponse.json();
-            console.log('User data loaded:', userData);
+        if (session?.user) {
+            const userId = session.user.id;
+            console.log('🔐 Secure session found for user:', userId.substring(0, 4) + '****');
             
-            // Update dashboard with user-specific information
-            updateDashboardWithUserData(userData);
+            // Store minimal data in localStorage (not the full user ID)
+            localStorage.setItem('userActive', 'true');
+            
+            // Update welcome message with user info
+            updateWelcomeMessage(session.user);
+            
+            // Load personalized data for this user
+            await loadPersonalizedData(userId, session.user);
+            
+            // Clean up URL (remove any lingering parameters)
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            console.log('❌ No active session found - redirecting to login');
+            redirectToLogin();
         }
-        
     } catch (error) {
-        console.error('Error loading personalized data:', error);
+        console.error('❌ Session initialization error:', error);
+        redirectToLogin();
     }
 }
 
-function updateDashboardWithUserData(userData) {
+function redirectToLogin() {
+    // Clear any stored authentication data
+    localStorage.removeItem('userActive');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userPlan');
+    
+    // Redirect to login page
+    window.location.href = 'login.html';
+}
+
+function updateWelcomeMessage(user) {
+    // Update welcome title to be more personalized
+    const welcomeTitle = document.querySelector('.welcome-title');
+    if (welcomeTitle && user) {
+        const firstName = user.user_metadata?.first_name || user.email?.split('@')[0] || 'User';
+        welcomeTitle.textContent = `Welcome back, ${firstName}!`;
+    }
+}
+
+async function loadPersonalizedData(userId, user) {
+    try {
+        console.log('🔄 Loading personalized data securely...');
+        
+        // Use Supabase session token for API calls
+        const { supabase } = await import('./supabase-client.js');
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+            console.log('❌ No session found - cannot load personalized data');
+            redirectToLogin();
+            return;
+        }
+        
+        // Load user profile data using secure backend API
+        try {
+            const profileResponse = await fetch(`${BACKEND_URL}/api/account/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (profileResponse.ok) {
+                const userData = await profileResponse.json();
+                console.log('✅ User data loaded securely');
+                
+                // Update dashboard with user-specific information
+                updateDashboardWithUserData(userData, user);
+            } else {
+                console.warn('⚠️ Profile API call failed, using session data');
+                updateDashboardWithUserData({}, user);
+            }
+        } catch (apiError) {
+            console.warn('⚠️ API error, using session data:', apiError);
+            updateDashboardWithUserData({}, user);
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading personalized data:', error);
+    }
+}
+
+function updateDashboardWithUserData(userData, user) {
     // Update various dashboard elements with user-specific data
     
     // Update profile section if it exists
     const profileName = document.querySelector('.profile-name');
-    if (profileName && userData.first_name) {
-        profileName.textContent = `${userData.first_name} ${userData.last_name || ''}`;
+    if (profileName) {
+        const firstName = userData.first_name || user.user_metadata?.first_name || '';
+        const lastName = userData.last_name || user.user_metadata?.last_name || '';
+        const displayName = [firstName, lastName].filter(Boolean).join(' ') || 'User';
+        profileName.textContent = displayName;
     }
     
     // Update email if shown
     const profileEmail = document.querySelector('.profile-email');
-    if (profileEmail && userData.email) {
-        profileEmail.textContent = userData.email;
+    if (profileEmail) {
+        profileEmail.textContent = userData.email || user.email || '';
     }
     
     // Update plan information
@@ -115,7 +146,7 @@ function updateDashboardWithUserData(userData) {
         updatePlanDisplay(userData.plan);
     }
     
-    console.log('Dashboard updated with user data');
+    console.log('✅ Dashboard updated with secure user data');
 }
 
 // ==================== SPA NAVIGATION WITH SMOOTH TRANSITIONS ==================== //

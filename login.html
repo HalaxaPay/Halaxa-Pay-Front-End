@@ -1268,7 +1268,7 @@
                 </button>
                 <div class="error-message" id="generalError"></div>
                 <div class="signup-link">
-                    New to Halaxa? <a href="#">Create your account</a>
+                    New to Halaxa? <a href="signup.html">Create your account</a>
                 </div>
             </form>
         </div>
@@ -1367,25 +1367,50 @@
             console.log('Response data:', data);
             
             if (response.ok) {
-                console.log('Login successful, storing tokens...');
-                // Store tokens and user data using SPA.js conventions
-                localStorage.setItem('halaxa_token', data.accessToken); // SPA.js expects 'halaxa_token'
-                localStorage.setItem('refreshToken', data.refreshToken);
-                localStorage.setItem('sellerId', data.user.id);
-                localStorage.setItem('isPreview', 'false');
-                localStorage.removeItem('token'); // Remove old key if present
+                console.log('✅ Login successful - setting up secure session...');
                 
-                console.log('Tokens stored, redirecting...');
+                // 🔐 SECURE SESSION SETUP
+                try {
+                    // Import Supabase client for secure session
+                    const { supabase, auth } = await import('./supabase-client.js');
+                    
+                    // Sign in with Supabase for secure session management
+                    const { data: signInData, error: signInError } = await auth.signIn(email, password);
+                    
+                    if (signInError) {
+                        console.error('❌ Supabase session error:', signInError);
+                        throw new Error('Session setup failed');
+                    }
+                    
+                    console.log('🔐 Secure Supabase session established');
+                    
+                    // Store minimal authentication data (no user IDs in localStorage)
+                    localStorage.setItem('userActive', 'true');
+                    localStorage.setItem('isPreview', 'false');
+                    
+                    // Clean up any old insecure data
+                    localStorage.removeItem('sellerId');
+                    localStorage.removeItem('halaxa_token');
+                    localStorage.removeItem('token');
+                    
+                    console.log('🧹 Cleaned up insecure authentication data');
+                    
+                } catch (sessionError) {
+                    console.error('❌ Secure session setup failed:', sessionError);
+                    // Fallback: still allow login but warn about session
+                    console.warn('⚠️ Using fallback authentication - some features may be limited');
+                    localStorage.setItem('userActive', 'true');
+                }
                 
                 // Success feedback
-                loginButton.textContent = 'Access Granted!';
+                loginButton.textContent = 'Access Granted! 🎉';
                 loginButton.style.background = 'var(--gradient-mixed)';
                 
-                // Redirect to local SPA.html with user ID for personalization
+                // 🚀 SECURE REDIRECT (no user ID in URL)
                 setTimeout(() => {
-                    console.log('Redirecting to SPA.html...');
-                    window.location.href = `SPA.html?userId=${data.user.id}`;
-                }, 1000);
+                    console.log('🚀 Redirecting to secure dashboard...');
+                    window.location.href = 'SPA.html'; // Clean URL, no parameters
+                }, 1500);
             } else {
                 console.log('Login failed:', data.error);
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';

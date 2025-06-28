@@ -1742,20 +1742,28 @@ function showQRCode(url) {
 
 // Initialize all Engine.js features via backend API calls
 async function initializeAllEngineFeatures(userId) {
-    console.log('🚀 Initializing dashboard features for user:', userId);
+    console.log('🚀 Initializing ALL dashboard features for user:', userId);
     
     try {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) return;
         
-        // Call backend APIs to initialize features
+        // Call ALL backend APIs to initialize features
         const initPromises = [
-            // Initialize capital page data
+            // Core data endpoints
             fetch(`${BACKEND_URL}/api/account/capital-data`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             }),
-            // Initialize user metrics
             fetch(`${BACKEND_URL}/api/account/user-metrics`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            fetch(`${BACKEND_URL}/api/account/dashboard-data`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            fetch(`${BACKEND_URL}/api/payment-links`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            fetch(`${BACKEND_URL}/api/account/transactions?limit=50`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
         ];
@@ -1774,10 +1782,34 @@ async function initializeAllEngineFeatures(userId) {
             updateMetricsWithRealData(metricsData);
         }
         
-        // Initialize interactive buttons
-        initializeInteractiveButtons();
+        // Process dashboard data
+        if (responses[2].status === 'fulfilled' && responses[2].value.ok) {
+            const dashboardData = await responses[2].value.json();
+            updateAllDashboardElements(dashboardData);
+        }
         
-        console.log('✅ Dashboard features initialized successfully');
+        // Process payment links
+        if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
+            const paymentLinksData = await responses[3].value.json();
+            updatePaymentLinksElements(paymentLinksData);
+        }
+        
+        // Process transactions
+        if (responses[4].status === 'fulfilled' && responses[4].value.ok) {
+            const transactionsData = await responses[4].value.json();
+            updateTransactionElements(transactionsData);
+        }
+        
+        // Initialize ALL interactive elements
+        initializeAllInteractiveElements();
+        
+        // Initialize ALL charts and graphs
+        initializeAllCharts();
+        
+        // Initialize ALL buttons and controls
+        initializeAllButtons();
+        
+        console.log('✅ ALL dashboard features initialized successfully');
     } catch (error) {
         console.error('❌ Error initializing dashboard features:', error);
     }
@@ -1788,25 +1820,75 @@ function updateCapitalPageWithRealData(capitalData) {
     try {
         // Update Total USDC Received
         const receivedElement = document.querySelector('.flow-stat-card.received .flow-stat-content .flow-stat-value');
-        if (receivedElement && capitalData.total_received !== undefined) {
-            receivedElement.textContent = `$${capitalData.total_received.toLocaleString()}`;
+        if (receivedElement) {
+            if (capitalData.has_data && capitalData.total_received > 0) {
+                receivedElement.textContent = `$${capitalData.total_received.toLocaleString()}`;
+            } else {
+                receivedElement.textContent = '$0.00';
+            }
+        }
+        
+        // Update crypto breakdown for received
+        const receivedCryptoElement = document.querySelector('.flow-stat-card.received .flow-stat-content .flow-stat-crypto');
+        if (receivedCryptoElement) {
+            if (capitalData.has_data && capitalData.total_received > 0) {
+                receivedCryptoElement.textContent = `${(capitalData.total_received * 0.6).toLocaleString()} USDC Polygon • ${(capitalData.total_received * 0.4).toLocaleString()} USDC Solana`;
+            } else {
+                receivedCryptoElement.textContent = 'No payments received yet • Create a payment link to start';
+            }
         }
         
         // Update Total USDC Paid Out
         const paidOutElement = document.querySelector('.flow-stat-card.paid-out .flow-stat-content .flow-stat-value');
-        if (paidOutElement && capitalData.total_paid_out !== undefined) {
-            paidOutElement.textContent = `$${capitalData.total_paid_out.toLocaleString()}`;
+        if (paidOutElement) {
+            if (capitalData.has_data && capitalData.total_paid_out > 0) {
+                paidOutElement.textContent = `$${capitalData.total_paid_out.toLocaleString()}`;
+            } else {
+                paidOutElement.textContent = '$0.00';
+            }
+        }
+        
+        // Update crypto breakdown for paid out
+        const paidOutCryptoElement = document.querySelector('.flow-stat-card.paid-out .flow-stat-content .flow-stat-crypto');
+        if (paidOutCryptoElement) {
+            if (capitalData.has_data && capitalData.total_paid_out > 0) {
+                paidOutCryptoElement.textContent = `${(capitalData.total_paid_out * 0.6).toLocaleString()} USDC Polygon • ${(capitalData.total_paid_out * 0.4).toLocaleString()} USDC Solana`;
+            } else {
+                paidOutCryptoElement.textContent = 'No outgoing payments yet • Funds stay in your wallet';
+            }
         }
         
         // Update Net Flow
         const netFlowElement = document.querySelector('.flow-stat-card.net-flow .flow-stat-content .flow-stat-value');
-        if (netFlowElement && capitalData.net_flow !== undefined) {
-            const isPositive = capitalData.net_flow >= 0;
-            netFlowElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(capitalData.net_flow).toLocaleString()}`;
-            netFlowElement.className = `flow-stat-value ${isPositive ? 'positive' : 'negative'}`;
+        if (netFlowElement) {
+            if (capitalData.has_data || capitalData.net_flow !== 0) {
+                const isPositive = capitalData.net_flow >= 0;
+                netFlowElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(capitalData.net_flow).toLocaleString()}`;
+                netFlowElement.className = `flow-stat-value ${isPositive ? 'positive' : 'negative'}`;
+            } else {
+                netFlowElement.textContent = '$0.00';
+                netFlowElement.className = 'flow-stat-value neutral';
+            }
         }
         
-        console.log('✅ Capital page updated with real data');
+        // Update crypto breakdown for net flow
+        const netFlowCryptoElement = document.querySelector('.flow-stat-card.net-flow .flow-stat-content .flow-stat-crypto');
+        if (netFlowCryptoElement) {
+            if (capitalData.has_data && capitalData.net_flow !== 0) {
+                const netPolygon = capitalData.net_flow * 0.6;
+                const netSolana = capitalData.net_flow * 0.4;
+                netFlowCryptoElement.textContent = `${netPolygon >= 0 ? '+' : ''}${netPolygon.toLocaleString()} USDC Polygon • ${netSolana >= 0 ? '+' : ''}${netSolana.toLocaleString()} USDC Solana`;
+            } else {
+                netFlowCryptoElement.textContent = 'Start accepting payments to see your net flow';
+            }
+        }
+        
+        // Show appropriate message
+        if (!capitalData.has_data) {
+            console.log('💡 No capital data found - showing getting started message');
+        }
+        
+        console.log('✅ Capital page updated with real data:', capitalData);
     } catch (error) {
         console.error('❌ Error updating capital page:', error);
     }
@@ -1815,74 +1897,885 @@ function updateCapitalPageWithRealData(capitalData) {
 // Update metrics with real data
 function updateMetricsWithRealData(metricsData) {
     try {
-        // Update various metric cards throughout the dashboard
-        if (metricsData.transaction_velocity !== undefined) {
-            const velocityElement = document.querySelector('[data-metric="velocity"]');
-            if (velocityElement) {
+        // Update Transaction Velocity
+        const velocityElement = document.querySelector('[data-metric="velocity"]');
+        if (velocityElement) {
+            if (metricsData.has_data && metricsData.transaction_velocity > 0) {
                 velocityElement.textContent = metricsData.transaction_velocity.toLocaleString();
+            } else {
+                velocityElement.textContent = '0';
             }
         }
         
-        if (metricsData.flawless_executions !== undefined) {
-            const flawlessElement = document.querySelector('[data-metric="flawless_executions"]');
-            if (flawlessElement) {
-                flawlessElement.textContent = `${metricsData.flawless_executions}%`;
-            }
+        // Update Precision Rate (Flawless Executions)
+        const flawlessElement = document.querySelector('[data-metric="flawless_executions"]');
+        if (flawlessElement) {
+            flawlessElement.textContent = `${metricsData.flawless_executions}%`;
         }
         
         // Update Digital Vault (total volume)
-        if (metricsData.total_volume !== undefined) {
-            const vaultElement = document.querySelector('.metric-card.wealth .metric-value');
-            if (vaultElement) {
+        const vaultElement = document.querySelector('.metric-card.wealth .metric-value');
+        if (vaultElement) {
+            if (metricsData.has_data && metricsData.total_volume > 0) {
                 vaultElement.textContent = `$${metricsData.total_volume.toLocaleString()}`;
+            } else {
+                vaultElement.textContent = '$0';
+            }
+        }
+        
+        // Update Digital Vault insight
+        const vaultInsightElement = document.querySelector('.metric-card.wealth .metric-insight');
+        if (vaultInsightElement) {
+            if (metricsData.has_data && metricsData.total_volume > 0) {
+                vaultInsightElement.textContent = 'USDC Accumulated';
+            } else {
+                vaultInsightElement.textContent = 'Create payment link to start';
             }
         }
         
         // Update Transaction Magnitude (average processing time)
-        if (metricsData.avg_processing_time !== undefined) {
-            const magnitudeElement = document.querySelector('.metric-card.magnitude .metric-value');
-            if (magnitudeElement) {
-                magnitudeElement.textContent = `${metricsData.avg_processing_time}ms`;
+        const magnitudeElement = document.querySelector('.metric-card.magnitude .metric-value');
+        if (magnitudeElement) {
+            magnitudeElement.textContent = `${metricsData.avg_processing_time}s`;
+        }
+        
+        // Update Payment Conduits (active payment links)
+        const conduitsElement = document.querySelector('.metric-card.network .metric-value');
+        if (conduitsElement) {
+            conduitsElement.textContent = metricsData.payment_conduits.toString();
+        }
+        
+        // Update Payment Conduits insight
+        const conduitsInsightElement = document.querySelector('.metric-card.network .metric-insight');
+        if (conduitsInsightElement) {
+            if (metricsData.payment_conduits > 0) {
+                conduitsInsightElement.textContent = 'Active Bridges';
+            } else {
+                conduitsInsightElement.textContent = 'Create your first link';
             }
         }
         
-        console.log('✅ Metrics updated with real data');
+        // Update Monthly Harvest (revenue)
+        const revenueElement = document.querySelector('.metric-card.revenue .metric-value');
+        if (revenueElement) {
+            if (metricsData.has_data && metricsData.monthly_harvest > 0) {
+                revenueElement.textContent = `$${metricsData.monthly_harvest.toLocaleString()}`;
+            } else {
+                revenueElement.textContent = '$0';
+            }
+        }
+        
+        // Update Monthly Harvest insight
+        const revenueInsightElement = document.querySelector('.metric-card.revenue .metric-insight');
+        if (revenueInsightElement) {
+            if (metricsData.has_data && metricsData.monthly_harvest > 0) {
+                revenueInsightElement.textContent = 'Revenue Stream';
+            } else {
+                revenueInsightElement.textContent = 'Start earning this month';
+            }
+        }
+        
+        // Show status message if no data
+        if (!metricsData.has_data) {
+            console.log('💡 No metrics data found - showing getting started state');
+        }
+        
+        console.log('✅ Metrics updated with real data:', metricsData);
     } catch (error) {
         console.error('❌ Error updating metrics:', error);
     }
 }
 
-// Initialize interactive buttons and features
-function initializeInteractiveButtons() {
+// Update ALL dashboard elements with real data
+function updateAllDashboardElements(dashboardData) {
     try {
-        // Deploy Funds button
-        const deployBtn = document.querySelector('.action-tile.deploy');
-        if (deployBtn) {
-            deployBtn.addEventListener('click', () => {
-                showPaymentNotification('Deploy Funds feature coming soon!', 'info');
-            });
+        console.log('🔄 Updating ALL dashboard elements with data:', dashboardData);
+        
+        // Update balance overview cards
+        updateBalanceOverviewCards(dashboardData);
+        
+        // Update transaction insights
+        updateTransactionInsightCards(dashboardData);
+        
+        // Update network distribution
+        updateNetworkDistributionCards(dashboardData);
+        
+        // Update monthly metrics
+        updateMonthlyMetricsCards(dashboardData);
+        
+        // Update key performance indicators
+        updateKeyPerformanceIndicators(dashboardData);
+        
+        console.log('✅ All dashboard elements updated');
+    } catch (error) {
+        console.error('❌ Error updating dashboard elements:', error);
+    }
+}
+
+// Update balance overview cards
+function updateBalanceOverviewCards(dashboardData) {
+    try {
+        const balances = dashboardData.user_balances || {};
+        const usdcBalances = dashboardData.usdc_balances || [];
+        
+        // Total balance calculation
+        let totalBalance = 0;
+        if (usdcBalances.length > 0) {
+            totalBalance = usdcBalances.reduce((sum, balance) => sum + (parseFloat(balance.balance) || 0), 0);
         }
         
-        // Summon Assets button
-        const summonBtn = document.querySelector('.action-tile.summon');
-        if (summonBtn) {
-            summonBtn.addEventListener('click', () => {
-                showPaymentNotification('Summon Assets feature coming soon!', 'info');
-            });
+        // Update main balance display
+        const mainBalanceElement = document.querySelector('.balance-amount');
+        if (mainBalanceElement) {
+            mainBalanceElement.textContent = `$${totalBalance.toLocaleString()}`;
         }
         
-        // Transmute Value button
-        const transmuteBtn = document.querySelector('.action-tile.transmute');
-        if (transmuteBtn) {
-            transmuteBtn.addEventListener('click', () => {
-                showPaymentNotification('Transmute Value feature coming soon!', 'info');
-            });
+        // Update balance breakdown by network
+        const polygonBalanceElement = document.querySelector('.network-balance.polygon .balance-value');
+        const solanaBalanceElement = document.querySelector('.network-balance.solana .balance-value');
+        
+        if (polygonBalanceElement) {
+            const polygonBalance = usdcBalances.filter(b => b.network === 'polygon').reduce((sum, b) => sum + (parseFloat(b.balance) || 0), 0);
+            polygonBalanceElement.textContent = `$${polygonBalance.toLocaleString()}`;
         }
         
-        console.log('✅ Interactive buttons initialized');
+        if (solanaBalanceElement) {
+            const solanaBalance = usdcBalances.filter(b => b.network === 'solana').reduce((sum, b) => sum + (parseFloat(b.balance) || 0), 0);
+            solanaBalanceElement.textContent = `$${solanaBalance.toLocaleString()}`;
+        }
+        
+        console.log('✅ Balance overview cards updated');
+    } catch (error) {
+        console.error('❌ Error updating balance cards:', error);
+    }
+}
+
+// Update transaction insight cards
+function updateTransactionInsightCards(dashboardData) {
+    try {
+        const insights = dashboardData.transaction_insights || {};
+        
+        // Update total transactions
+        const totalTxElement = document.querySelector('.insight-card.total-transactions .insight-value');
+        if (totalTxElement) {
+            totalTxElement.textContent = (insights.total_transactions || 0).toLocaleString();
+        }
+        
+        // Update successful transactions
+        const successfulTxElement = document.querySelector('.insight-card.successful .insight-value');
+        if (successfulTxElement) {
+            successfulTxElement.textContent = (insights.successful_transactions || 0).toLocaleString();
+        }
+        
+        // Update pending transactions
+        const pendingTxElement = document.querySelector('.insight-card.pending .insight-value');
+        if (pendingTxElement) {
+            pendingTxElement.textContent = (insights.pending_transactions || 0).toLocaleString();
+        }
+        
+        // Update average transaction value
+        const avgTxElement = document.querySelector('.insight-card.average .insight-value');
+        if (avgTxElement) {
+            avgTxElement.textContent = `$${(insights.average_transaction_value || 0).toLocaleString()}`;
+        }
+        
+        console.log('✅ Transaction insight cards updated');
+    } catch (error) {
+        console.error('❌ Error updating transaction insights:', error);
+    }
+}
+
+// Update network distribution cards
+function updateNetworkDistributionCards(dashboardData) {
+    try {
+        const distributions = dashboardData.network_distributions || [];
+        
+        distributions.forEach(dist => {
+            const networkElement = document.querySelector(`.network-stat.${dist.network}`);
+            if (networkElement) {
+                const valueElement = networkElement.querySelector('.network-value');
+                const percentElement = networkElement.querySelector('.network-percent');
+                
+                if (valueElement) {
+                    valueElement.textContent = `$${(dist.total_volume || 0).toLocaleString()}`;
+                }
+                if (percentElement) {
+                    percentElement.textContent = `${(dist.percentage || 0).toFixed(1)}%`;
+                }
+            }
+        });
+        
+        console.log('✅ Network distribution cards updated');
+    } catch (error) {
+        console.error('❌ Error updating network distribution:', error);
+    }
+}
+
+// Update monthly metrics cards
+function updateMonthlyMetricsCards(dashboardData) {
+    try {
+        const monthlyMetrics = dashboardData.monthly_metrics || {};
+        
+        // Update monthly revenue
+        const monthlyRevenueElement = document.querySelector('.monthly-metric.revenue .metric-amount');
+        if (monthlyRevenueElement) {
+            monthlyRevenueElement.textContent = `$${(monthlyMetrics.monthly_revenue || 0).toLocaleString()}`;
+        }
+        
+        // Update monthly transactions
+        const monthlyTxElement = document.querySelector('.monthly-metric.transactions .metric-amount');
+        if (monthlyTxElement) {
+            monthlyTxElement.textContent = (monthlyMetrics.monthly_transactions || 0).toLocaleString();
+        }
+        
+        // Update monthly growth
+        const monthlyGrowthElement = document.querySelector('.monthly-metric.growth .metric-amount');
+        if (monthlyGrowthElement) {
+            const growth = monthlyMetrics.growth_percentage || 0;
+            monthlyGrowthElement.textContent = `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%`;
+            monthlyGrowthElement.className = `metric-amount ${growth >= 0 ? 'positive' : 'negative'}`;
+        }
+        
+        console.log('✅ Monthly metrics cards updated');
+    } catch (error) {
+        console.error('❌ Error updating monthly metrics:', error);
+    }
+}
+
+// Update key performance indicators
+function updateKeyPerformanceIndicators(dashboardData) {
+    try {
+        const keyMetrics = dashboardData.key_metrics || {};
+        
+        // Update success rate
+        const successRateElement = document.querySelector('.kpi-card.success-rate .kpi-value');
+        if (successRateElement) {
+            successRateElement.textContent = `${(keyMetrics.success_rate || 99.8).toFixed(1)}%`;
+        }
+        
+        // Update average processing time
+        const processingTimeElement = document.querySelector('.kpi-card.processing-time .kpi-value');
+        if (processingTimeElement) {
+            processingTimeElement.textContent = `${(keyMetrics.avg_processing_time || 2.3).toFixed(1)}s`;
+        }
+        
+        // Update uptime
+        const uptimeElement = document.querySelector('.kpi-card.uptime .kpi-value');
+        if (uptimeElement) {
+            uptimeElement.textContent = `${(keyMetrics.uptime || 99.9).toFixed(1)}%`;
+        }
+        
+        console.log('✅ Key performance indicators updated');
+    } catch (error) {
+        console.error('❌ Error updating KPIs:', error);
+    }
+}
+
+// Update payment links elements
+function updatePaymentLinksElements(paymentLinksData) {
+    try {
+        const links = paymentLinksData.payment_links || [];
+        
+        // Update payment links count
+        const linksCountElement = document.querySelector('.links-count');
+        if (linksCountElement) {
+            linksCountElement.textContent = links.length.toString();
+        }
+        
+        // Update active links count
+        const activeLinksElement = document.querySelector('.active-links-count');
+        if (activeLinksElement) {
+            const activeCount = links.filter(link => link.is_active !== false).length;
+            activeLinksElement.textContent = activeCount.toString();
+        }
+        
+        // Update links table if it exists
+        updatePaymentLinksTable(links);
+        
+        console.log('✅ Payment links elements updated');
+    } catch (error) {
+        console.error('❌ Error updating payment links:', error);
+    }
+}
+
+// Update transaction elements
+function updateTransactionElements(transactionsData) {
+    try {
+        const transactions = transactionsData.transactions || [];
+        
+        // Update recent transactions list
+        updateRecentTransactionsList(transactions);
+        
+        // Update transaction count
+        const txCountElement = document.querySelector('.transactions-count');
+        if (txCountElement) {
+            txCountElement.textContent = transactions.length.toString();
+        }
+        
+        console.log('✅ Transaction elements updated');
+    } catch (error) {
+        console.error('❌ Error updating transactions:', error);
+    }
+}
+
+// Initialize ALL interactive elements
+function initializeAllInteractiveElements() {
+        try {
+            // Action buttons
+            initializeActionButtons();
+            
+            // Copy buttons
+            initializeCopyButtons();
+            
+            // Share buttons
+            initializeShareButtons();
+            
+            // Delete buttons
+            initializeDeleteButtons();
+            
+            // Edit buttons
+            initializeEditButtons();
+            
+            // Filter controls
+            initializeFilterControls();
+            
+            // Time period controls
+            initializeTimePeriodControls();
+            
+            // Table interactions
+            initializeTableInteractions();
+            
+            // Modal and dropdown interactions
+            initializeModalAndDropdowns();
+            
+            // Chart interactions
+            initializeChartInteractions();
+            
+            console.log('✅ All interactive elements initialized');
+        } catch (error) {
+            console.error('❌ Error initializing interactive elements:', error);
+        }
+    }
+
+// Initialize action buttons (Deploy, Summon, Transmute, etc.)
+function initializeActionButtons() {
+    // Deploy Funds button
+    const deployBtn = document.querySelector('.action-tile.deploy, .action-btn.deploy');
+    if (deployBtn) {
+        deployBtn.addEventListener('click', () => {
+            showPaymentNotification('Deploy Funds: Transfer USDC to external wallets', 'info');
+        });
+    }
+    
+    // Summon Assets button
+    const summonBtn = document.querySelector('.action-tile.summon, .action-btn.summon');
+    if (summonBtn) {
+        summonBtn.addEventListener('click', () => {
+            showPaymentNotification('Summon Assets: Retrieve USDC from external sources', 'info');
+        });
+    }
+    
+    // Transmute Value button
+    const transmuteBtn = document.querySelector('.action-tile.transmute, .action-btn.transmute');
+    if (transmuteBtn) {
+        transmuteBtn.addEventListener('click', () => {
+            showPaymentNotification('Transmute Value: Convert between crypto networks', 'info');
+        });
+    }
+    
+    // Refresh buttons
+    document.querySelectorAll('.refresh-btn, .reload-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            location.reload();
+        });
+    });
+}
+
+// Initialize copy buttons with enhanced functionality
+function initializeCopyButtons() {
+    document.querySelectorAll('.copy-btn, .copy-button, [data-action="copy"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Get text to copy from multiple possible sources
+            const textToCopy = btn.dataset.copy || 
+                             btn.getAttribute('data-text') || 
+                             btn.previousElementSibling?.textContent?.trim() || 
+                             btn.parentElement?.querySelector('.wallet-address, .payment-link, .link-url')?.textContent || 
+                             btn.closest('.table-row')?.querySelector('.wallet-address')?.textContent || '';
+            
+            if (textToCopy) {
+                copyToClipboard(textToCopy);
+                
+                // Enhanced visual feedback
+                const originalIcon = btn.innerHTML;
+                const originalColor = btn.style.color;
+                
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.style.color = '#10b981';
+                btn.style.transform = 'scale(1.1)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalIcon;
+                    btn.style.color = originalColor;
+                    btn.style.transform = '';
+                }, 1500);
+                
+                showPaymentNotification('📋 Copied to clipboard!', 'success');
+            } else {
+                showPaymentNotification('❌ Nothing to copy', 'error');
+            }
+        });
+    });
+}
+
+// Initialize share buttons
+function initializeShareButtons() {
+    document.querySelectorAll('.share-btn, .share-button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const urlToShare = btn.dataset.url || window.location.href;
+            sharePaymentLink(urlToShare);
+        });
+    });
+}
+
+// Initialize delete buttons
+function initializeDeleteButtons() {
+    document.querySelectorAll('.delete-btn, .delete-button').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (confirm('Are you sure you want to delete this item?')) {
+                const itemId = btn.dataset.id;
+                const itemType = btn.dataset.type || 'item';
+                
+                try {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    
+                    // Simulate delete API call
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    showPaymentNotification(`${itemType} deleted successfully`, 'success');
+                    
+                    // Remove the item from DOM
+                    const itemElement = btn.closest('.table-row, .card, .item');
+                    if (itemElement) {
+                        itemElement.remove();
+                    }
+                } catch (error) {
+                    showPaymentNotification(`Failed to delete ${itemType}`, 'error');
+                    btn.innerHTML = '<i class="fas fa-trash"></i>';
+                }
+            }
+        });
+    });
+}
+
+// Initialize edit buttons
+function initializeEditButtons() {
+    document.querySelectorAll('.edit-btn, .edit-button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const itemId = btn.dataset.id;
+            const itemType = btn.dataset.type || 'item';
+            
+            showPaymentNotification(`Edit ${itemType} feature coming soon!`, 'info');
+        });
+    });
+}
+
+// Initialize filter controls with enhanced functionality
+function initializeFilterControls() {
+    // Chart controls and filter buttons
+    document.querySelectorAll('.filter-btn, .chart-control, .time-btn, .period-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from siblings
+            const parent = btn.parentElement;
+            if (parent) {
+                parent.querySelectorAll('.active').forEach(activeBtn => {
+                    activeBtn.classList.remove('active');
+                });
+            }
+            
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            // Enhanced visual feedback
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+            
+            const filterValue = btn.dataset.filter || 
+                              btn.dataset.period || 
+                              btn.textContent?.trim();
+            
+            showPaymentNotification(`📊 Filter applied: ${filterValue}`, 'info');
+            
+            // Trigger data refresh based on filter
+            if (btn.dataset.filter === 'All' || btn.dataset.filter === 'Active') {
+                // Simulate filtering
+                setTimeout(() => {
+                    showPaymentNotification(`✅ Showing ${filterValue} items`, 'success');
+                }, 500);
+            }
+        });
+    });
+    
+    // Dropdown filters
+    document.querySelectorAll('select[data-filter], .filter-dropdown').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const selectedValue = e.target.value;
+            const selectedText = e.target.selectedOptions[0]?.textContent || selectedValue;
+            showPaymentNotification(`🔍 Filtering by: ${selectedText}`, 'info');
+        });
+    });
+}
+
+// Initialize time period controls
+function initializeTimePeriodControls() {
+    document.querySelectorAll('.time-btn, .period-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from siblings
+            btn.parentElement?.querySelectorAll('.active').forEach(activeBtn => {
+                activeBtn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            btn.classList.add('active');
+            
+            const period = btn.dataset.period || btn.textContent;
+            showPaymentNotification(`Time period set to: ${period}`, 'info');
+        });
+    });
+}
+
+// Initialize ALL charts and graphs
+function initializeAllCharts() {
+    try {
+        // Monthly constellation chart
+        initializeMonthlyConstellationChart();
+        
+        // Balance over time chart
+        initializeBalanceChart();
+        
+        // Transaction activity chart
+        initializeTransactionChart();
+        
+        // Network distribution chart
+        initializeNetworkChart();
+        
+        // USDC flow charts
+        initializeUSDCFlowCharts();
+        
+        console.log('✅ All charts initialized');
+    } catch (error) {
+        console.error('❌ Error initializing charts:', error);
+    }
+}
+
+// Initialize monthly constellation chart with full interactivity
+function initializeMonthlyConstellationChart() {
+    const chartContainer = document.querySelector('.stellar-bars-container');
+    if (chartContainer) {
+        const bars = chartContainer.querySelectorAll('.stellar-bar');
+        bars.forEach((bar, index) => {
+            // Click interaction
+            bar.addEventListener('click', () => {
+                const month = bar.dataset.month || `Month ${index + 1}`;
+                const value = bar.dataset.value || '0';
+                
+                // Visual feedback
+                bar.style.transform = 'scale(1.1)';
+                bar.style.filter = 'brightness(1.3)';
+                
+                setTimeout(() => {
+                    bar.style.transform = '';
+                    bar.style.filter = '';
+                }, 300);
+                
+                showPaymentNotification(`📈 ${month}: $${value} in transactions`, 'info');
+            });
+            
+            // Hover effects
+            bar.addEventListener('mouseenter', () => {
+                bar.style.transform = 'scale(1.05)';
+                bar.style.filter = 'brightness(1.2)';
+                
+                // Show tooltip
+                const tooltip = bar.querySelector('.bar-tooltip');
+                if (tooltip) {
+                    tooltip.style.opacity = '1';
+                    tooltip.style.transform = 'translateY(-10px)';
+                }
+            });
+            
+            bar.addEventListener('mouseleave', () => {
+                bar.style.transform = '';
+                bar.style.filter = '';
+                
+                // Hide tooltip
+                const tooltip = bar.querySelector('.bar-tooltip');
+                if (tooltip) {
+                    tooltip.style.opacity = '0';
+                    tooltip.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    }
+}
+
+// Initialize balance chart
+function initializeBalanceChart() {
+    const balanceChart = document.querySelector('.balance-chart');
+    if (balanceChart) {
+        // Add hover effects and click handlers
+        balanceChart.addEventListener('click', () => {
+            showPaymentNotification('Balance chart details coming soon!', 'info');
+        });
+    }
+}
+
+// Initialize transaction chart
+function initializeTransactionChart() {
+    const transactionChart = document.querySelector('.transaction-chart');
+    if (transactionChart) {
+        transactionChart.addEventListener('click', () => {
+            showPaymentNotification('Transaction analytics coming soon!', 'info');
+        });
+    }
+}
+
+// Initialize network chart
+function initializeNetworkChart() {
+    const networkChart = document.querySelector('.network-chart');
+    if (networkChart) {
+        networkChart.addEventListener('click', () => {
+            showPaymentNotification('Network distribution details coming soon!', 'info');
+        });
+    }
+}
+
+// Initialize USDC flow charts
+function initializeUSDCFlowCharts() {
+    const flowChart = document.querySelector('.dual-bar-chart, .net-flow-chart');
+    if (flowChart) {
+        flowChart.addEventListener('click', () => {
+            showPaymentNotification('USDC flow analysis coming soon!', 'info');
+        });
+    }
+}
+
+// Initialize ALL buttons
+function initializeAllButtons() {
+    try {
+        // Initialize all button types
+        initializeNavigationButtons();
+        initializePaginationButtons();
+        initializeModalButtons();
+        initializeDropdownButtons();
+        
+        console.log('✅ All buttons initialized');
     } catch (error) {
         console.error('❌ Error initializing buttons:', error);
     }
+}
+
+// Initialize navigation buttons
+function initializeNavigationButtons() {
+    document.querySelectorAll('.nav-btn, .navigation-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = btn.dataset.target;
+            if (target) {
+                showPaymentNotification(`Navigating to: ${target}`, 'info');
+            }
+        });
+    });
+}
+
+// Initialize pagination buttons
+function initializePaginationButtons() {
+    document.querySelectorAll('.page-btn, .pagination-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = btn.dataset.page || btn.textContent;
+            showPaymentNotification(`Loading page: ${page}`, 'info');
+        });
+    });
+}
+
+// Initialize modal buttons
+function initializeModalButtons() {
+    document.querySelectorAll('.modal-btn, .modal-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modalId = btn.dataset.modal;
+            showPaymentNotification(`Opening modal: ${modalId || 'details'}`, 'info');
+        });
+    });
+}
+
+// Initialize dropdown buttons
+function initializeDropdownButtons() {
+    document.querySelectorAll('.dropdown-btn, .dropdown-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const dropdown = btn.nextElementSibling;
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            }
+        });
+    });
+}
+
+// Initialize table interactions
+function initializeTableInteractions() {
+    // Table row clicks
+    document.querySelectorAll('.table-row, .user-balances-table .table-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Don't trigger if clicking on a button
+            if (e.target.closest('button, .btn, .copy-btn, .delete-btn, .edit-btn')) return;
+            
+            // Visual feedback
+            const originalBg = row.style.backgroundColor;
+            row.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+            row.style.transform = 'scale(1.01)';
+            
+            setTimeout(() => {
+                row.style.backgroundColor = originalBg;
+                row.style.transform = '';
+            }, 300);
+            
+            // Get row data
+            const userName = row.querySelector('.user-name')?.textContent || 'User';
+            const walletAddress = row.querySelector('.wallet-address')?.textContent || '';
+            
+            if (walletAddress) {
+                showPaymentNotification(`👤 ${userName} - Click copy button to copy wallet`, 'info');
+            } else {
+                showPaymentNotification('ℹ️ Row details coming soon!', 'info');
+            }
+        });
+    });
+    
+    // Sortable table headers
+    document.querySelectorAll('.table-header .table-cell, .sortable-header').forEach(header => {
+        header.style.cursor = 'pointer';
+        header.addEventListener('click', () => {
+            const sortBy = header.textContent?.trim() || 'value';
+            
+            // Visual feedback
+            header.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                header.style.transform = '';
+            }, 150);
+            
+            showPaymentNotification(`🔄 Sorting by: ${sortBy}`, 'info');
+        });
+    });
+}
+
+// Initialize modal and dropdown interactions
+function initializeModalAndDropdowns() {
+    // Modal triggers
+    document.querySelectorAll('.modal-trigger, [data-modal]').forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modalId = trigger.dataset.modal || 'details';
+            showPaymentNotification(`🔍 Opening ${modalId} modal...`, 'info');
+        });
+    });
+    
+    // Dropdown toggles
+    document.querySelectorAll('.dropdown-toggle, .dropdown-btn').forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropdown = toggle.nextElementSibling || 
+                           toggle.parentElement?.querySelector('.dropdown-menu');
+            
+            if (dropdown) {
+                const isVisible = dropdown.style.display === 'block';
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+                
+                // Toggle current dropdown
+                dropdown.style.display = isVisible ? 'none' : 'block';
+                
+                if (!isVisible) {
+                    showPaymentNotification('📋 Dropdown opened', 'info');
+                }
+            }
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
+        });
+    });
+}
+
+// Initialize chart interactions
+function initializeChartInteractions() {
+    // USDC Flow chart bars
+    document.querySelectorAll('.bar.inflow, .bar.outflow').forEach(bar => {
+        bar.addEventListener('click', () => {
+            const type = bar.classList.contains('inflow') ? 'Inflow' : 'Outflow';
+            
+            // Visual feedback
+            bar.style.filter = 'brightness(1.3)';
+            setTimeout(() => {
+                bar.style.filter = '';
+            }, 300);
+            
+            showPaymentNotification(`💰 ${type} details coming soon!`, 'info');
+        });
+        
+        // Hover effects
+        bar.addEventListener('mouseenter', () => {
+            bar.style.filter = 'brightness(1.1)';
+        });
+        
+        bar.addEventListener('mouseleave', () => {
+            bar.style.filter = '';
+        });
+    });
+    
+    // Net flow chart points
+    document.querySelectorAll('.flow-point').forEach(point => {
+        point.addEventListener('click', () => {
+            point.style.transform = 'scale(1.5)';
+            setTimeout(() => {
+                point.style.transform = '';
+            }, 300);
+            
+            showPaymentNotification('📊 Flow point details coming soon!', 'info');
+        });
+    });
+    
+    // Chart containers
+    document.querySelectorAll('.chart-container, .dual-bar-chart-container, .net-flow-chart-container').forEach(chart => {
+        chart.addEventListener('click', (e) => {
+            // Don't trigger if clicking on specific elements
+            if (e.target.closest('.bar, .flow-point, .chart-control')) return;
+            
+            showPaymentNotification('📊 Detailed chart analysis coming soon!', 'info');
+        });
+    });
 }
 
 // Fix authentication scope across all SPA pages

@@ -1452,34 +1452,12 @@
                     localStorage.setItem('refreshToken', data.refreshToken);
                 }
 
-                // 🚀 INITIALIZE USER DASHBOARD DATA
-                console.log('🚀 Initializing user dashboard data...');
+                // 🚀 DASHBOARD INITIALIZATION
+                console.log('🚀 User dashboard initialized by backend during registration');
                 signupButton.textContent = 'Setting up your dashboard...';
                 
-                // Dashboard initialization is handled by backend auth.js
-                // Frontend initialization as backup safety net
-                try {
-                    // Import Supabase client for dashboard initialization
-                    const { supabase, auth } = await import('./supabase-client.js');
-                    
-                    // Sign in the user with Supabase to get their user ID for dashboard initialization
-                    console.log('🔐 Signing in user for dashboard setup...');
-                    const { data: signInData, error: signInError } = await auth.signIn(email, password);
-                    
-                    if (signInError || !signInData.data?.user) {
-                        console.error('❌ Could not sign in user for dashboard setup:', signInError);
-                        console.log('⚠️ Frontend dashboard initialization skipped - relying on backend');
-                    } else {
-                        console.log('✅ User signed in successfully for frontend dashboard backup');
-                        await initializeUserDashboard(signInData.data.user.id, fullName, email);
-                        
-                        // Sign out after initialization (user will sign in again on login page)
-                        await auth.signOut();
-                        console.log('🔓 User signed out after dashboard initialization');
-                    }
-                } catch (dashboardError) {
-                    console.warn('⚠️ Frontend dashboard initialization failed - backend should handle it:', dashboardError);
-                }
+                // Backend handles all dashboard initialization automatically
+                // No frontend initialization needed - cleaner and more secure
 
                 // Success feedback
                 signupButton.textContent = 'Welcome to Halaxa! 🎉';

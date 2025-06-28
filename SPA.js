@@ -121,26 +121,47 @@ async function loadPersonalizedData(user) {
             return;
         }
         
-        // Load user profile data using secure backend API
+        // Load user profile and dashboard data using secure backend API
         try {
-            console.log('📡 Attempting to fetch user profile...');
-            const profileResponse = await fetch(`${BACKEND_URL}/api/account/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            console.log('📡 Attempting to fetch user profile and dashboard data...');
+            
+            // Fetch profile and dashboard data in parallel
+            const [profileResponse, dashboardResponse] = await Promise.all([
+                fetch(`${BACKEND_URL}/api/account/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                }),
+                fetch(`${BACKEND_URL}/api/account/dashboard-data`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+            ]);
+            
+            let userData = {};
+            let dashboardData = {};
             
             if (profileResponse.ok) {
-                const userData = await profileResponse.json();
-                console.log('✅ User data loaded securely');
-                
-                // Update dashboard with user-specific information
-                updateDashboardWithUserData(userData, user);
+                userData = await profileResponse.json();
+                console.log('✅ User profile loaded securely');
             } else {
-                console.warn(`⚠️ Profile API call failed with status ${profileResponse.status}, using local user data`);
-                updateDashboardWithUserData({}, user);
+                console.warn(`⚠️ Profile API call failed with status ${profileResponse.status}`);
             }
+            
+            if (dashboardResponse.ok) {
+                dashboardData = await dashboardResponse.json();
+                console.log('✅ Dashboard data loaded securely');
+            } else {
+                console.warn(`⚠️ Dashboard API call failed with status ${dashboardResponse.status}`);
+            }
+            
+            // Update dashboard with real data
+            updateDashboardWithUserData(userData, user);
+            updateDashboardWithRealData(dashboardData);
+            
         } catch (apiError) {
             console.warn('⚠️ API error, using local user data:', apiError);
             // Network error or backend down - continue with local user data
@@ -178,6 +199,234 @@ function updateDashboardWithUserData(userData, user) {
     }
     
     console.log('✅ Dashboard updated with secure user data');
+}
+
+function updateDashboardWithRealData(dashboardData) {
+    console.log('📊 Updating dashboard with real data...');
+    
+    try {
+        // Update Digital Treasury
+        if (dashboardData.user_balances) {
+            const balance = dashboardData.user_balances.usd_equivalent || 0;
+            const digitalVaultAmount = document.querySelector('.digital-vault-amount');
+            if (digitalVaultAmount) {
+                digitalVaultAmount.textContent = `$${balance.toFixed(2)}`;
+            }
+        }
+        
+        // Update Key Metrics
+        if (dashboardData.key_metrics) {
+            const metrics = dashboardData.key_metrics;
+            
+            // Conversion Rate
+            const conversionElement = document.querySelector('[data-metric="conversion_rate"]');
+            if (conversionElement && metrics.conversion_rate !== undefined) {
+                conversionElement.textContent = `${(metrics.conversion_rate * 100).toFixed(1)}%`;
+            }
+            
+            // Processing Time
+            const processingElement = document.querySelector('[data-metric="avg_processing_time"]');
+            if (processingElement && metrics.avg_processing_time !== undefined) {
+                processingElement.textContent = `${metrics.avg_processing_time.toFixed(1)}s`;
+            }
+            
+            // Fees Saved
+            const feesElement = document.querySelector('[data-metric="fees_saved_total"]');
+            if (feesElement && metrics.fees_saved_total !== undefined) {
+                feesElement.textContent = `$${metrics.fees_saved_total.toFixed(2)}`;
+            }
+        }
+        
+        // Update Execution Metrics
+        if (dashboardData.execution_metrics) {
+            const execMetrics = dashboardData.execution_metrics;
+            
+            // Transaction Velocity
+            const velocityElement = document.querySelector('[data-metric="velocity"]');
+            if (velocityElement && execMetrics.velocity !== undefined) {
+                velocityElement.textContent = execMetrics.velocity.toString();
+            }
+            
+            // Flawless Executions
+            const flawlessElement = document.querySelector('[data-metric="flawless_executions"]');
+            if (flawlessElement && execMetrics.flawless_executions !== undefined) {
+                flawlessElement.textContent = execMetrics.flawless_executions.toString();
+            }
+        }
+        
+        // Update Recent Transactions
+        if (dashboardData.recent_transactions && dashboardData.recent_transactions.length > 0) {
+            updateRecentTransactionsList(dashboardData.recent_transactions);
+        }
+        
+        // Update Payment Links
+        if (dashboardData.payment_links && dashboardData.payment_links.length > 0) {
+            updatePaymentLinksList(dashboardData.payment_links);
+            updatePaymentLinksTable(dashboardData.payment_links);
+        }
+        
+        // Update Network Distribution
+        if (dashboardData.network_distributions && dashboardData.network_distributions.length > 0) {
+            updateNetworkDistribution(dashboardData.network_distributions);
+        }
+        
+        console.log('✅ Dashboard updated with real data successfully');
+        
+    } catch (error) {
+        console.error('❌ Error updating dashboard with real data:', error);
+    }
+}
+
+function updateRecentTransactionsList(transactions) {
+    const transactionsList = document.querySelector('.recent-transactions-list') || 
+                            document.querySelector('.transactions-container') ||
+                            document.querySelector('#transactions-list');
+    
+    if (!transactionsList) return;
+    
+    const transactionsHTML = transactions.map(tx => `
+        <div class="transaction-item">
+            <div class="transaction-info">
+                <div class="transaction-type">${tx.direction === 'in' ? '📥' : '📤'} ${tx.direction === 'in' ? 'Received' : 'Sent'}</div>
+                <div class="transaction-amount">$${tx.amount_usdc.toFixed(2)} USDC</div>
+                <div class="transaction-network">${tx.network}</div>
+                <div class="transaction-date">${new Date(tx.created_at).toLocaleDateString()}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    transactionsList.innerHTML = transactionsHTML || '<p>No recent transactions</p>';
+}
+
+function updatePaymentLinksList(paymentLinks) {
+    const linksList = document.querySelector('.payment-links-list') || 
+                     document.querySelector('.links-container') ||
+                     document.querySelector('#payment-links-list');
+    
+    if (!linksList) return;
+    
+    const linksHTML = paymentLinks.map(link => `
+        <div class="payment-link-item">
+            <div class="link-info">
+                <div class="link-name">${link.link_name}</div>
+                <div class="link-amount">$${link.amount_usdc.toFixed(2)} USDC</div>
+                <div class="link-network">${link.network}</div>
+                <div class="link-status ${link.is_active ? 'active' : 'inactive'}">${link.is_active ? 'Active' : 'Inactive'}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    linksList.innerHTML = linksHTML || '<p>No payment links created</p>';
+}
+
+function updateNetworkDistribution(distributions) {
+    distributions.forEach(dist => {
+        const networkElement = document.querySelector(`[data-network="${dist.network}"]`);
+        if (networkElement) {
+            const percentElement = networkElement.querySelector('.network-percent');
+            const volumeElement = networkElement.querySelector('.network-volume');
+            
+            if (percentElement) {
+                percentElement.textContent = `${dist.percent_usage.toFixed(1)}%`;
+            }
+            if (volumeElement) {
+                volumeElement.textContent = `$${dist.volume_usdc.toFixed(2)}`;
+            }
+        }
+    });
+}
+
+function updatePaymentLinksTable(paymentLinks) {
+    const tableBody = document.getElementById('payment-links-table-body');
+    if (!tableBody) return;
+    
+    if (!paymentLinks || paymentLinks.length === 0) {
+        tableBody.innerHTML = `
+            <div class="table-row no-data">
+                <div class="table-cell" colspan="7" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-link" style="font-size: 2rem; color: #ccc; margin-bottom: 10px;"></i>
+                    <p>No payment links created yet. Create your first payment link above!</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    const linksHTML = paymentLinks.map(link => {
+        const successRate = link.payments_received && link.payments_attempted 
+            ? ((link.payments_received / link.payments_attempted) * 100).toFixed(0)
+            : '0';
+        
+        const successClass = successRate >= 80 ? 'high' : successRate >= 60 ? 'medium' : 'low';
+        
+        return `
+            <div class="table-row">
+                <div class="table-cell link-name-cell">
+                    <div class="link-name">${link.link_name}</div>
+                    <div class="link-url">${link.payment_url || `halaxa.pay/${link.link_id}`}</div>
+                </div>
+                <div class="table-cell amount-cell">${link.amount_usdc.toFixed(2)} USDC</div>
+                <div class="table-cell network-cell">
+                    <span class="network-badge ${link.network}">${link.network.charAt(0).toUpperCase() + link.network.slice(1)}</span>
+                </div>
+                <div class="table-cell success-rate-cell">
+                    <div class="success-rate ${successClass}">
+                        <span class="rate-percentage">${successRate}%</span>
+                        <div class="rate-bar">
+                            <div class="rate-fill" style="width: ${successRate}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-cell payments-cell">${link.payments_received || 0} / ${link.payments_attempted || 0}</div>
+                <div class="table-cell date-cell">${new Date(link.created_at).toLocaleDateString()}</div>
+                <div class="table-cell actions-cell">
+                    <button class="action-btn copy-btn-table" onclick="copyToClipboard('${link.payment_url || `halaxa.pay/${link.link_id}`}')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="action-btn edit-btn" onclick="editPaymentLink('${link.link_id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deletePaymentLink('${link.link_id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    tableBody.innerHTML = linksHTML;
+}
+
+function editPaymentLink(linkId) {
+    showPaymentNotification('Edit functionality coming soon!', 'info');
+}
+
+function deletePaymentLink(linkId) {
+    if (confirm('Are you sure you want to delete this payment link?')) {
+        // TODO: Implement delete functionality
+        showPaymentNotification('Delete functionality coming soon!', 'info');
+    }
+}
+
+async function reloadPaymentLinks() {
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return;
+        
+        const response = await fetch(`${BACKEND_URL}/api/payment-links`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            updatePaymentLinksTable(result.payment_links);
+        }
+    } catch (error) {
+        console.error('Error reloading payment links:', error);
+    }
 }
 
 function addDetectionRefreshButton() {
@@ -1036,3 +1285,309 @@ function initializeMobileInteractions() {
 // Initialize mobile interactions
 window.addEventListener('resize', initializeMobileInteractions);
 initializeMobileInteractions();
+
+// ==================== PAYMENT FORM FUNCTIONALITY ==================== //
+
+// Setup Payment Form Functionality
+function setupPaymentForm() {
+    const paymentForm = document.getElementById('payment-form');
+    const networkOptions = document.querySelectorAll('.network-option');
+    const createLinkBtn = document.getElementById('create-link-btn');
+    
+    if (!paymentForm) return;
+    
+    // Network selection functionality
+    networkOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Remove active class from all options
+            networkOptions.forEach(opt => opt.classList.remove('active'));
+            // Add active class to clicked option
+            option.classList.add('active');
+            
+            // Update gas fee based on network
+            const network = option.dataset.network;
+            updateGasFee(network);
+        });
+    });
+    
+    // Form submission
+    paymentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await handlePaymentLinkCreation();
+    });
+    
+    // Paste button functionality
+    const pasteBtn = document.querySelector('.paste-btn');
+    if (pasteBtn) {
+        pasteBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                const walletInput = document.getElementById('wallet-address');
+                if (walletInput) {
+                    walletInput.value = text;
+                }
+            } catch (err) {
+                console.error('Failed to read clipboard:', err);
+            }
+        });
+    }
+}
+
+function updateGasFee(network) {
+    const gasFeeValue = document.getElementById('gas-fee-value');
+    if (!gasFeeValue) return;
+    
+    const fees = {
+        polygon: '~$0.0001',
+        solana: '~$0.00005',
+        tron: '~$0.001'
+    };
+    
+    gasFeeValue.textContent = fees[network] || '~$0.0001';
+}
+
+async function handlePaymentLinkCreation() {
+    const createBtn = document.getElementById('create-link-btn');
+    const btnText = createBtn.querySelector('.btn-text');
+    const btnLoader = createBtn.querySelector('.btn-loader');
+    
+    // Get form data
+    const amount = document.getElementById('usdc-amount').value;
+    const walletAddress = document.getElementById('wallet-address').value;
+    const linkName = document.getElementById('link-name').value;
+    const selectedNetwork = document.querySelector('.network-option.active')?.dataset.network;
+    
+    // Validation
+    if (!amount || !walletAddress || !linkName || !selectedNetwork) {
+        showPaymentNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (parseFloat(amount) <= 0) {
+        showPaymentNotification('Amount must be greater than 0', 'error');
+        return;
+    }
+    
+    // Show loading state
+    createBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline-block';
+    
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            throw new Error('Authentication required');
+        }
+        
+        // Check access control before creating payment link
+        const userId = JSON.parse(localStorage.getItem('user'))?.id;
+        if (userId) {
+            const accessResponse = await fetch(`${BACKEND_URL}/api/access/check-permission`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    action: 'create_payment_link',
+                    data: { network: selectedNetwork, amount: parseFloat(amount) }
+                })
+            });
+            
+            if (accessResponse.ok) {
+                const accessResult = await accessResponse.json();
+                if (!accessResult.allowed) {
+                    throw new Error(accessResult.message || 'Access denied for your current plan');
+                }
+            }
+        }
+        
+        const response = await fetch(`${BACKEND_URL}/api/payment-links/create`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount_usdc: parseFloat(amount),
+                wallet_address: walletAddress,
+                link_name: linkName,
+                network: selectedNetwork
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+            showPaymentNotification('Payment link created successfully!', 'success');
+            displayGeneratedLink(result.payment_link);
+            
+            // Reload payment links to show the new one
+            await reloadPaymentLinks();
+            
+            paymentForm.reset();
+            // Reset network selection to first option
+            document.querySelectorAll('.network-option').forEach((opt, index) => {
+                opt.classList.toggle('active', index === 0);
+            });
+        } else {
+            throw new Error(result.error || 'Failed to create payment link');
+        }
+        
+    } catch (error) {
+        console.error('Payment link creation error:', error);
+        showPaymentNotification(error.message || 'Failed to create payment link', 'error');
+    } finally {
+        // Reset button state
+        createBtn.disabled = false;
+        btnText.style.display = 'inline-block';
+        btnLoader.style.display = 'none';
+    }
+}
+
+function displayGeneratedLink(linkData) {
+    const linkContent = document.getElementById('generated-link-content');
+    if (!linkContent) return;
+    
+    const linkHTML = `
+        <div class="generated-link-success">
+            <div class="link-info">
+                <h4>${linkData.link_name}</h4>
+                <div class="link-details">
+                    <span class="link-amount">$${linkData.amount_usdc} USDC</span>
+                    <span class="link-network">${linkData.network}</span>
+                </div>
+            </div>
+            <div class="link-url-container">
+                <input type="text" class="link-url-input" value="${linkData.payment_url}" readonly>
+                <button class="copy-link-btn" onclick="copyToClipboard('${linkData.payment_url}')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <div class="link-actions">
+                <button class="share-btn" onclick="sharePaymentLink('${linkData.payment_url}')">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="qr-btn" onclick="showQRCode('${linkData.payment_url}')">
+                    <i class="fas fa-qrcode"></i> QR Code
+                </button>
+            </div>
+        </div>
+    `;
+    
+    linkContent.innerHTML = linkHTML;
+}
+
+// Setup Forge Link Button
+function setupForgeLinkButton() {
+    const forgeLinkBtn = document.querySelector('.action-tile.link');
+    if (forgeLinkBtn) {
+        forgeLinkBtn.addEventListener('click', () => {
+            // Navigate to payment link page
+            const paymentLinkNavItem = document.querySelector('[data-page="payment-link-page"]');
+            if (paymentLinkNavItem) {
+                paymentLinkNavItem.click();
+            }
+        });
+    }
+}
+
+// Utility functions
+function showPaymentNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `payment-notification payment-notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info'}-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add styles if not already added
+    if (!document.querySelector('#payment-notification-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'payment-notification-styles';
+        styles.textContent = `
+            .payment-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                max-width: 400px;
+                border-radius: 8px;
+                padding: 16px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: slideInRight 0.3s ease-out;
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .payment-notification-success {
+                background: linear-gradient(135deg, #10B981, #059669);
+                color: white;
+            }
+            
+            .payment-notification-error {
+                background: linear-gradient(135deg, #EF4444, #DC2626);
+                color: white;
+            }
+            
+            .payment-notification-info {
+                background: linear-gradient(135deg, #3B82F6, #2563EB);
+                color: white;
+            }
+            
+            .payment-notification .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showPaymentNotification('Link copied to clipboard!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy:', err);
+        showPaymentNotification('Failed to copy link', 'error');
+    });
+}
+
+function sharePaymentLink(url) {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Halaxa Pay Payment Link',
+            url: url
+        });
+    } else {
+        copyToClipboard(url);
+    }
+}
+
+function showQRCode(url) {
+    // This would integrate with a QR code library
+    showPaymentNotification('QR Code feature coming soon!', 'info');
+}
+
+// Initialize SPA when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSPA();
+    setupPaymentForm();
+    setupForgeLinkButton();
+});

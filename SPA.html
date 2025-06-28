@@ -173,14 +173,14 @@
                             <div class="vault-balance">
                                 <div class="balance-display">
                                     <span class="currency-symbol">$</span>
-                                    <span class="balance-main digital-vault-amount">0</span>
-                                    <span class="balance-decimal">.00</span>
+                                    <span class="balance-main digital-vault-amount" data-balance="usd-main">---</span>
+                                    <span class="balance-decimal" data-balance="usd-decimal">.--</span>
                         </div>
-                                <div class="balance-subtitle">0 USDC</div>
+                                <div class="balance-subtitle" data-balance="usdc-total">--- USDC</div>
                     </div>
                             
                             <div class="treasury-chart-container">
-                                <svg class="treasury-chart" viewBox="0 0 350 80" preserveAspectRatio="none">
+                                <svg class="treasury-chart" viewBox="0 0 350 80" preserveAspectRatio="none" id="treasury-chart-svg">
                                     <defs>
                                         <linearGradient id="treasuryGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                                             <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
@@ -193,27 +193,17 @@
                                             <stop offset="100%" style="stop-color:#34d399" />
                                         </linearGradient>
                                     </defs>
-                                    
-                                    <path class="chart-area" d="M0,80 L0,45 Q30,35 60,40 Q90,30 120,35 Q150,25 180,30 Q210,20 240,25 Q270,15 300,20 Q330,10 350,15 L350,80 Z" 
-                                          fill="url(#treasuryGradient)" />
-                                    
-                                    <path class="chart-line" d="M0,45 Q30,35 60,40 Q90,30 120,35 Q150,25 180,30 Q210,20 240,25 Q270,15 300,20 Q330,10 350,15" 
-                                          fill="none" 
-                                          stroke="url(#treasuryLine)" 
-                                          stroke-width="3" 
-                                          stroke-linecap="round" />
-                                    
-                                    <circle class="chart-dot" cx="350" cy="15" r="4" fill="#10b981" />
-                                    <circle class="chart-glow" cx="350" cy="15" r="8" fill="#10b981" opacity="0.3" />
+                                    <!-- Chart will be populated by JavaScript -->
+                                    <text x="175" y="45" text-anchor="middle" fill="#666" font-size="12">Loading chart data...</text>
                                 </svg>
                 </div>
 
                             <div class="vault-metrics">
                                 <div class="vault-change positive">
                                     <i class="fas fa-trending-up"></i>
-                                    <span>+12.5% Moon Trajectory</span>
+                                    <span data-performance="treasury-change">+--% Loading...</span>
                                 </div>
-                                <div class="vault-period">30-Day Performance</div>
+                                <div class="vault-period" data-performance="treasury-period">--Day Performance</div>
                             </div>
                         </div>
 
@@ -268,8 +258,8 @@
                                         <i class="fab fa-bitcoin"></i>
                                     </div>
                                     <div class="stat-data">
-                                        <div class="stat-value">$67,420</div>
-                                        <div class="stat-change positive">+2.4%</div>
+                                        <div class="stat-value" data-market="btc-price">$--,---</div>
+                                        <div class="stat-change" data-market="btc-change">--%</div>
                                     </div>
                                 </div>
                                 <div class="market-stat">
@@ -277,8 +267,8 @@
                                         <i class="fab fa-ethereum"></i>
                                     </div>
                                     <div class="stat-data">
-                                        <div class="stat-value">$3,840</div>
-                                        <div class="stat-change positive">+1.8%</div>
+                                        <div class="stat-value" data-market="eth-price">$-,---</div>
+                                        <div class="stat-change" data-market="eth-change">--%</div>
                                     </div>
                                 </div>
                                 <div class="market-stat">
@@ -286,8 +276,8 @@
                                         <span class="usdc-icon">USDC</span>
                                     </div>
                                     <div class="stat-data">
-                                        <div class="stat-value">$1.00</div>
-                                        <div class="stat-change neutral">0.0%</div>
+                                        <div class="stat-value" data-market="usdc-price">$1.00</div>
+                                        <div class="stat-change" data-market="usdc-change">0.0%</div>
                                     </div>
                                 </div>
                             </div>
@@ -315,7 +305,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Digital Vault</div>
-                                <div class="metric-value">$0</div>
+                                <div class="metric-value" data-metric="digital-vault">$---</div>
                                 <div class="metric-insight">USDC Accumulated</div>
                             </div>
                         </div>
@@ -329,7 +319,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Transaction Velocity</div>
-                                <div class="metric-value" data-metric="velocity">1,247</div>
+                                <div class="metric-value" data-metric="velocity">---</div>
                                 <div class="metric-insight">Network Executions</div>
                             </div>
                         </div>
@@ -343,7 +333,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Precision Rate</div>
-                                <div class="metric-value" data-metric="flawless_executions">98.5%</div>
+                                <div class="metric-value" data-metric="flawless_executions">--%</div>
                                 <div class="metric-insight">Flawless Execution</div>
                             </div>
                         </div>
@@ -357,7 +347,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Transaction Magnitude</div>
-                                <div class="metric-value">$0.00</div>
+                                <div class="metric-value" data-metric="transaction-magnitude">$--</div>
                                 <div class="metric-insight">Average Flow</div>
                             </div>
                         </div>
@@ -371,7 +361,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Payment Conduits</div>
-                                <div class="metric-value">0</div>
+                                <div class="metric-value" data-metric="payment-conduits">---</div>
                                 <div class="metric-insight">Active Bridges</div>
                             </div>
                         </div>
@@ -385,7 +375,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Monthly Harvest</div>
-                                <div class="metric-value">$0</div>
+                                <div class="metric-value" data-metric="monthly-harvest">$---</div>
                                 <div class="metric-insight">Revenue Stream</div>
                             </div>
                         </div>
@@ -415,83 +405,83 @@
                             <div class="chart-header">
                                 <h3>Monthly Constellation</h3>
                                 <div class="chart-value">
-                                    <span class="current-month">December</span>
-                                    <span class="performance-delta positive">+24.7%</span>
+                                    <span class="current-month" data-chart="current-month">Loading...</span>
+                                    <span class="performance-delta" data-chart="monthly-delta">+--%</span>
                                 </div>
                             </div>
                             
                             <div class="stellar-bars-container">
-                                <div class="stellar-bar" data-month="Jan" data-value="85">
-                                    <div class="bar-core" style="height: 85%"></div>
+                                <div class="stellar-bar" data-month="Jan" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Jan</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="jan">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Feb" data-value="92">
-                                    <div class="bar-core" style="height: 92%"></div>
+                                <div class="stellar-bar" data-month="Feb" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Feb</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="feb">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Mar" data-value="78">
-                                    <div class="bar-core" style="height: 78%"></div>
+                                <div class="stellar-bar" data-month="Mar" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Mar</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="mar">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Apr" data-value="95">
-                                    <div class="bar-core" style="height: 95%"></div>
+                                <div class="stellar-bar" data-month="Apr" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Apr</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="apr">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="May" data-value="88">
-                                    <div class="bar-core" style="height: 88%"></div>
+                                <div class="stellar-bar" data-month="May" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">May</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="may">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Jun" data-value="100">
-                                    <div class="bar-core" style="height: 100%"></div>
+                                <div class="stellar-bar" data-month="Jun" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Jun</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="jun">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Jul" data-value="82">
-                                    <div class="bar-core" style="height: 82%"></div>
+                                <div class="stellar-bar" data-month="Jul" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Jul</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="jul">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Aug" data-value="96">
-                                    <div class="bar-core" style="height: 96%"></div>
+                                <div class="stellar-bar" data-month="Aug" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Aug</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="aug">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Sep" data-value="91">
-                                    <div class="bar-core" style="height: 91%"></div>
+                                <div class="stellar-bar" data-month="Sep" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Sep</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="sep">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Oct" data-value="87">
-                                    <div class="bar-core" style="height: 87%"></div>
+                                <div class="stellar-bar" data-month="Oct" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Oct</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="oct">$---</div>
                                 </div>
-                                <div class="stellar-bar" data-month="Nov" data-value="93">
-                                    <div class="bar-core" style="height: 93%"></div>
+                                <div class="stellar-bar" data-month="Nov" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow"></div>
                                     <div class="bar-label">Nov</div>
-                                    <div class="bar-tooltip">$0</div>
+                                    <div class="bar-tooltip" data-month-value="nov">$---</div>
                                 </div>
-                                <div class="stellar-bar active" data-month="Dec" data-value="98">
-                                    <div class="bar-core" style="height: 98%"></div>
+                                <div class="stellar-bar active" data-month="Dec" data-value="0">
+                                    <div class="bar-core" style="height: 0%"></div>
                                     <div class="bar-glow active"></div>
                                     <div class="bar-label">Dec</div>
-                                    <div class="bar-tooltip active">$0</div>
+                                    <div class="bar-tooltip active" data-month-value="dec">$---</div>
                                 </div>
                             </div>
                         </div>
@@ -510,8 +500,8 @@
                                         <i class="fas fa-rocket"></i>
                                     </div>
                                     <div class="insight-content">
-                                        <div class="insight-title">Velocity Surge Detected</div>
-                                        <div class="insight-desc">Transaction frequency increased 34% this week</div>
+                                        <div class="insight-title" data-insight="title-1">Loading Insights...</div>
+                                        <div class="insight-desc" data-insight="desc-1">Analyzing your patterns...</div>
                                     </div>
                                 </div>
                                 <div class="insight-item">
@@ -519,8 +509,8 @@
                                         <i class="fas fa-shield-alt"></i>
                                     </div>
                                     <div class="insight-content">
-                                        <div class="insight-title">Security Fortress Active</div>
-                                        <div class="insight-desc">Zero threats detected in the last 30 days</div>
+                                        <div class="insight-title" data-insight="title-2">Security Analysis</div>
+                                        <div class="insight-desc" data-insight="desc-2">Checking threat levels...</div>
                                     </div>
                                 </div>
                                 <div class="insight-item">
@@ -528,8 +518,8 @@
                                         <i class="fas fa-chart-line"></i>
                                     </div>
                                     <div class="insight-content">
-                                        <div class="insight-title">Trajectory Optimization</div>
-                                        <div class="insight-desc">Portfolio on track for 145% annual growth</div>
+                                        <div class="insight-title" data-insight="title-3">Growth Projection</div>
+                                        <div class="insight-desc" data-insight="desc-3">Calculating trajectory...</div>
                                     </div>
                                 </div>
                             </div>
@@ -556,10 +546,12 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="chart-container">
-                                <i class="fas fa-chart-area" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                                <p>Interactive chart will be rendered here</p>
+                                                    <div class="chart-container" id="revenue-analytics-chart">
+                            <div class="chart-placeholder">
+                                <i class="fas fa-chart-area" style="font-size: 2rem; margin-bottom: 1rem; color: #ccc;"></i>
+                                <p style="color: #666;">Revenue analytics will load here</p>
                             </div>
+                        </div>
                         </div>
 
                         <!-- Balance Over Time Chart -->
@@ -575,11 +567,11 @@
                             
                             <div class="balance-chart-container">
                                 <div class="chart-value-display">
-                                    <span class="current-value">$0</span>
-                                    <span class="value-change positive">+0.00%</span>
+                                    <span class="current-value" data-balance-chart="current">$---</span>
+                                    <span class="value-change" data-balance-chart="change">+--%</span>
                                 </div>
                                 
-                                <svg class="balance-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+                                <svg class="balance-chart" viewBox="0 0 300 120" preserveAspectRatio="none" id="balance-chart-svg">
                                     <!-- Gradient Definitions -->
                                     <defs>
                                         <linearGradient id="balanceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -594,24 +586,8 @@
                                         </linearGradient>
                                     </defs>
                                     
-                                    <!-- Mountain Area -->
-                                    <path class="chart-area" d="M0,120 L0,80 Q50,60 100,70 T200,50 T300,40 L300,120 Z" 
-                                          fill="url(#balanceGradient)" />
-                                    
-                                    <!-- Mountain Line -->
-                                    <path class="chart-line" d="M0,80 Q50,60 100,70 T200,50 T300,40" 
-                                          fill="none" 
-                                          stroke="url(#lineGradient)" 
-                                          stroke-width="3" 
-                                          stroke-linecap="round" />
-                                    
-                                    <!-- Animated Dots -->
-                                    <circle class="chart-dot" cx="100" cy="70" r="4" fill="#10b981" />
-                                    <circle class="chart-dot" cx="200" cy="50" r="4" fill="#10b981" />
-                                    <circle class="chart-dot" cx="300" cy="40" r="4" fill="#10b981" />
-                                    
-                                    <!-- Glow Effects -->
-                                    <circle class="chart-glow" cx="300" cy="40" r="8" fill="#10b981" opacity="0.3" />
+                                    <!-- Chart will be populated by JavaScript -->
+                                    <text x="150" y="65" text-anchor="middle" fill="#666" font-size="12">Loading balance chart...</text>
                                 </svg>
                                 
                                 <div class="chart-timeline">
@@ -639,32 +615,32 @@
                             
                             <div class="metric-item">
                                 <div class="metric-label">Conversion Rate</div>
-                                <div class="metric-value">0.00%</div>
+                                <div class="metric-value" data-key-metric="conversion-rate">--%</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Avg. Processing Time</div>
-                                <div class="metric-value">0.00s</div>
+                                <div class="metric-value" data-key-metric="processing-time">--s</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Network Fees Saved</div>
-                                <div class="metric-value">$0</div>
+                                <div class="metric-value" data-key-metric="fees-saved">$---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Active Wallets</div>
-                                <div class="metric-value">0</div>
+                                <div class="metric-value" data-key-metric="active-wallets">---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Total Volume (24h)</div>
-                                <div class="metric-value">$0</div>
+                                <div class="metric-value" data-key-metric="daily-volume">$---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Gas Optimization</div>
-                                <div class="metric-value">0.00%</div>
+                                <div class="metric-value" data-key-metric="gas-optimization">--%</div>
                             </div>
                         </div>
 
@@ -679,32 +655,32 @@
                             
                             <div class="metric-item">
                                 <div class="metric-label">Peak Hour Volume</div>
-                                <div class="metric-value">$0</div>
+                                <div class="metric-value" data-tx-insight="peak-volume">$---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Cross-chain Transfers</div>
-                                <div class="metric-value">0</div>
+                                <div class="metric-value" data-tx-insight="cross-chain">---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Smart Contract Calls</div>
-                                <div class="metric-value">0</div>
+                                <div class="metric-value" data-tx-insight="contract-calls">---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">API Response Time</div>
-                                <div class="metric-value">0.00ms</div>
+                                <div class="metric-value" data-tx-insight="response-time">--ms</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Security Score</div>
-                                <div class="metric-value">0.00%</div>
+                                <div class="metric-value" data-tx-insight="security-score">--%</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">User Satisfaction</div>
-                                <div class="metric-value">0.00/5</div>
+                                <div class="metric-value" data-tx-insight="satisfaction">--/5</div>
                             </div>
                         </div>
                     </div>
@@ -727,7 +703,7 @@
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value">0</div>
+                                <div class="stat-value" data-tx-stat="total-transactions">---</div>
                                 <div class="stat-label">Total Transactions</div>
                             </div>
                         </div>
@@ -736,7 +712,7 @@
                                 <i class="fas fa-coins"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value">$0</div>
+                                <div class="stat-value" data-tx-stat="total-volume">$---</div>
                                 <div class="stat-label">Total Volume</div>
                             </div>
                         </div>
@@ -745,7 +721,7 @@
                                 <i class="fas fa-piggy-bank"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value">0.00%</div>
+                                <div class="stat-value" data-tx-stat="fees-saved">--%</div>
                                 <div class="stat-label">Fees Saved</div>
                             </div>
                         </div>
@@ -754,7 +730,7 @@
                                 <i class="fas fa-calendar-week"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value">0</div>
+                                <div class="stat-value" data-tx-stat="weekly-count">---</div>
                                 <div class="stat-label">This Week</div>
                             </div>
                         </div>
@@ -766,52 +742,52 @@
                     <div class="chart-card">
                         <div class="chart-header">
                             <h3 class="chart-title">Transaction Activity</h3>
-                            <div class="chart-subtitle">Last 10 days</div>
+                            <div class="chart-subtitle" data-activity-chart="period">Last -- days</div>
                         </div>
                         <div class="activity-chart">
                             <div class="chart-bars">
-                                <div class="chart-bar" style="height: 60%;" data-value="3">
-                                    <div class="bar-tooltip">3 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="0">
+                                    <div class="bar-tooltip" data-activity-day="0">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 80%;" data-value="4">
-                                    <div class="bar-tooltip">4 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="1">
+                                    <div class="bar-tooltip" data-activity-day="1">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 40%;" data-value="2">
-                                    <div class="bar-tooltip">2 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="2">
+                                    <div class="bar-tooltip" data-activity-day="2">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 100%;" data-value="5">
-                                    <div class="bar-tooltip">5 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="3">
+                                    <div class="bar-tooltip" data-activity-day="3">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 20%;" data-value="1">
-                                    <div class="bar-tooltip">1 transaction</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="4">
+                                    <div class="bar-tooltip" data-activity-day="4">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 90%;" data-value="4">
-                                    <div class="bar-tooltip">4 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="5">
+                                    <div class="bar-tooltip" data-activity-day="5">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 70%;" data-value="3">
-                                    <div class="bar-tooltip">3 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="6">
+                                    <div class="bar-tooltip" data-activity-day="6">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 50%;" data-value="2">
-                                    <div class="bar-tooltip">2 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="7">
+                                    <div class="bar-tooltip" data-activity-day="7">-- transactions</div>
                                 </div>
-                                <div class="chart-bar" style="height: 85%;" data-value="4">
-                                    <div class="bar-tooltip">4 transactions</div>
+                                <div class="chart-bar" style="height: 0%;" data-value="0" data-day="8">
+                                    <div class="bar-tooltip" data-activity-day="8">-- transactions</div>
                                 </div>
-                                <div class="chart-bar active" style="height: 95%;" data-value="5">
-                                    <div class="bar-tooltip">5 transactions (Today)</div>
+                                <div class="chart-bar active" style="height: 0%;" data-value="0" data-day="9">
+                                    <div class="bar-tooltip" data-activity-day="9">-- transactions (Today)</div>
                                 </div>
                             </div>
                             <div class="chart-labels">
-                                <span>Dec 1</span>
-                                <span>Dec 2</span>
-                                <span>Dec 3</span>
-                                <span>Dec 4</span>
-                                <span>Dec 5</span>
-                                <span>Dec 6</span>
-                                <span>Dec 7</span>
-                                <span>Dec 8</span>
-                                <span>Dec 9</span>
-                                <span>Today</span>
+                                <span data-activity-label="0">---</span>
+                                <span data-activity-label="1">---</span>
+                                <span data-activity-label="2">---</span>
+                                <span data-activity-label="3">---</span>
+                                <span data-activity-label="4">---</span>
+                                <span data-activity-label="5">---</span>
+                                <span data-activity-label="6">---</span>
+                                <span data-activity-label="7">---</span>
+                                <span data-activity-label="8">---</span>
+                                <span data-activity-label="9">Today</span>
                             </div>
                         </div>
                     </div>
@@ -838,12 +814,12 @@
                                 </div>
                                 <div class="transaction-info">
                                     <div class="transaction-amount">
-                                        <span class="crypto-amount">0.00 USDC</span>
-                                        <span class="fiat-equivalent">≈ $0.00</span>
+                                        <span class="crypto-amount" data-tx="amount-1">--- USDC</span>
+                                        <span class="fiat-equivalent" data-tx="fiat-1">≈ $---</span>
                                     </div>
                                     <div class="transaction-meta">
-                                        <span class="transaction-date">Dec 10, 2024 • 2:45 PM</span>
-                                        <span class="network-badge polygon">Polygon</span>
+                                        <span class="transaction-date" data-tx="date-1">Loading...</span>
+                                        <span class="network-badge" data-tx="network-1">Loading</span>
                                     </div>
                                 </div>
                             </div>
@@ -867,17 +843,17 @@
                             <div class="detail-row">
                                 <span class="detail-label">Transaction ID</span>
                                 <div class="detail-value">
-                                    <span class="tx-hash">0x7d4a...8f2c</span>
-                                    <a href="#" class="explorer-link" target="_blank">
+                                    <span class="tx-hash" data-tx="hash-1">Loading...</span>
+                                    <a href="#" class="explorer-link" data-tx="explorer-1" target="_blank">
                                         <i class="fas fa-external-link-alt"></i>
-                                        View on PolygonScan
+                                        View on Explorer
                                     </a>
                                 </div>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Fee Savings</span>
                                 <div class="detail-value fee-savings">
-                                    <span class="savings-amount">You saved 0.00% in gas fees!</span>
+                                    <span class="savings-amount" data-tx="savings-1">You saved --% in gas fees!</span>
                                     <span class="savings-comparison">vs Ethereum mainnet</span>
                                 </div>
                             </div>
@@ -885,7 +861,7 @@
                                 <span class="detail-label">Custom Tag</span>
                                 <div class="detail-value">
                                     <div class="tag-input-wrapper">
-                                        <input type="text" class="tag-input" placeholder="Add a tag..." value="Client Payment">
+                                        <input type="text" class="tag-input" placeholder="Add a tag..." data-tx="tag-1">
                                         <button class="tag-save-btn">
                                             <i class="fas fa-check"></i>
                                         </button>
@@ -902,7 +878,7 @@
                                 </div>
                                 <div class="step-info">
                                     <div class="step-title">Initiated</div>
-                                    <div class="step-time">2:45:12 PM</div>
+                                    <div class="step-time" data-tx="time-initiated-1">--:--:-- PM</div>
                                 </div>
                             </div>
                             <div class="timeline-connector completed"></div>
@@ -912,7 +888,7 @@
                                 </div>
                                 <div class="step-info">
                                     <div class="step-title">Broadcasting</div>
-                                    <div class="step-time">2:45:15 PM</div>
+                                    <div class="step-time" data-tx="time-broadcasting-1">--:--:-- PM</div>
                                 </div>
                             </div>
                             <div class="timeline-connector completed"></div>
@@ -922,7 +898,7 @@
                                 </div>
                                 <div class="step-info">
                                     <div class="step-title">First Confirmation</div>
-                                    <div class="step-time">2:45:18 PM</div>
+                                    <div class="step-time" data-tx="time-confirmation-1">--:--:-- PM</div>
                                 </div>
                             </div>
                             <div class="timeline-connector completed"></div>
@@ -932,7 +908,7 @@
                                 </div>
                                 <div class="step-info">
                                     <div class="step-title">Finalized</div>
-                                    <div class="step-time">2:45:21 PM</div>
+                                    <div class="step-time" data-tx="time-finalized-1">--:--:-- PM</div>
                                 </div>
                             </div>
                         </div>
@@ -954,12 +930,12 @@
                                 </div>
                                 <div class="transaction-info">
                                     <div class="transaction-amount">
-                                        <span class="crypto-amount">0.00 USDC</span>
-                                        <span class="fiat-equivalent">≈ $0.00</span>
+                                        <span class="crypto-amount" data-tx="amount-2">--- USDC</span>
+                                        <span class="fiat-equivalent" data-tx="fiat-2">≈ $---</span>
                                     </div>
                                     <div class="transaction-meta">
-                                        <span class="transaction-date">Dec 10, 2024 • 1:30 PM</span>
-                                        <span class="network-badge solana">Solana</span>
+                                        <span class="transaction-date" data-tx="date-2">Loading...</span>
+                                        <span class="network-badge" data-tx="network-2">Loading</span>
                                     </div>
                                 </div>
                             </div>
@@ -1247,7 +1223,7 @@
                             <div class="form-group">
                                 <div class="gas-fee-display">
                                     <div class="gas-fee-label">Estimated Gas Fee</div>
-                                    <div class="gas-fee-value" id="gas-fee-value">~$0.0001</div>
+                                    <div class="gas-fee-value" id="gas-fee-value" data-payment="gas-fee">~$--</div>
                                     <div class="gas-fee-desc">Network processing fee</div>
                                 </div>
                             </div>
@@ -1339,8 +1315,8 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Total USDC Received</div>
-                                <div class="flow-stat-value">$2,847,230</div>
-                                <div class="flow-stat-crypto">1,247,890 USDC Polygon • 1,599,340 USDC Solana</div>
+                                <div class="flow-stat-value" data-capital="total-received">$---,---</div>
+                                <div class="flow-stat-crypto" data-capital="total-received-crypto">--- USDC Polygon • --- USDC Solana</div>
                             </div>
                         </div>
                         
@@ -1350,8 +1326,8 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Total USDC Paid Out</div>
-                                <div class="flow-stat-value">$2,654,180</div>
-                                <div class="flow-stat-crypto">1,156,420 USDC Polygon • 1,497,760 USDC Solana</div>
+                                <div class="flow-stat-value" data-capital="total-paid">$---,---</div>
+                                <div class="flow-stat-crypto" data-capital="total-paid-crypto">--- USDC Polygon • --- USDC Solana</div>
                             </div>
                         </div>
                         
@@ -1361,8 +1337,8 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Net USDC Flow</div>
-                                <div class="flow-stat-value positive">+$193,050</div>
-                                <div class="flow-stat-crypto">+91,470 USDC Polygon • +101,580 USDC Solana</div>
+                                <div class="flow-stat-value" data-capital="net-flow">+$---,---</div>
+                                <div class="flow-stat-crypto" data-capital="net-flow-crypto">+--- USDC Polygon • +--- USDC Solana</div>
                             </div>
                         </div>
                     </div>
@@ -1382,7 +1358,7 @@
                         </div>
                         
                         <div class="dual-bar-chart-container">
-                            <svg class="dual-bar-chart" viewBox="0 0 600 200">
+                            <svg class="dual-bar-chart" viewBox="0 0 600 200" id="usdc-flow-chart-svg">
                                 <!-- Grid Lines -->
                                 <g class="chart-grid">
                                     <line x1="0" y1="40" x2="600" y2="40" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
@@ -1391,37 +1367,8 @@
                                     <line x1="0" y1="160" x2="600" y2="160" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
                                 </g>
                                 
-                                <!-- Inflow Bars (Green) -->
-                                <rect class="bar inflow" x="20" y="60" width="15" height="100" rx="2"/>
-                                <rect class="bar inflow" x="60" y="50" width="15" height="110" rx="2"/>
-                                <rect class="bar inflow" x="100" y="70" width="15" height="90" rx="2"/>
-                                <rect class="bar inflow" x="140" y="40" width="15" height="120" rx="2"/>
-                                <rect class="bar inflow" x="180" y="55" width="15" height="105" rx="2"/>
-                                <rect class="bar inflow" x="220" y="65" width="15" height="95" rx="2"/>
-                                <rect class="bar inflow" x="260" y="45" width="15" height="115" rx="2"/>
-                                <rect class="bar inflow" x="300" y="50" width="15" height="110" rx="2"/>
-                                <rect class="bar inflow" x="340" y="60" width="15" height="100" rx="2"/>
-                                <rect class="bar inflow" x="380" y="35" width="15" height="125" rx="2"/>
-                                <rect class="bar inflow" x="420" y="55" width="15" height="105" rx="2"/>
-                                <rect class="bar inflow" x="460" y="40" width="15" height="120" rx="2"/>
-                                <rect class="bar inflow" x="500" y="50" width="15" height="110" rx="2"/>
-                                <rect class="bar inflow" x="540" y="45" width="15" height="115" rx="2"/>
-                                
-                                <!-- Outflow Bars (Blue) -->
-                                <rect class="bar outflow" x="40" y="80" width="15" height="80" rx="2"/>
-                                <rect class="bar outflow" x="80" y="70" width="15" height="90" rx="2"/>
-                                <rect class="bar outflow" x="120" y="85" width="15" height="75" rx="2"/>
-                                <rect class="bar outflow" x="160" y="60" width="15" height="100" rx="2"/>
-                                <rect class="bar outflow" x="200" y="75" width="15" height="85" rx="2"/>
-                                <rect class="bar outflow" x="240" y="80" width="15" height="80" rx="2"/>
-                                <rect class="bar outflow" x="280" y="65" width="15" height="95" rx="2"/>
-                                <rect class="bar outflow" x="320" y="70" width="15" height="90" rx="2"/>
-                                <rect class="bar outflow" x="360" y="75" width="15" height="85" rx="2"/>
-                                <rect class="bar outflow" x="400" y="55" width="15" height="105" rx="2"/>
-                                <rect class="bar outflow" x="440" y="70" width="15" height="90" rx="2"/>
-                                <rect class="bar outflow" x="480" y="60" width="15" height="100" rx="2"/>
-                                <rect class="bar outflow" x="520" y="65" width="15" height="95" rx="2"/>
-                                <rect class="bar outflow" x="560" y="70" width="15" height="90" rx="2"/>
+                                <!-- Chart data will be populated by JavaScript -->
+                                <text x="300" y="110" text-anchor="middle" fill="#666" font-size="14">Loading USDC flow data...</text>
                             </svg>
                             
                             <div class="chart-legend">
@@ -1449,7 +1396,7 @@
                         </div>
                         
                         <div class="net-flow-chart-container">
-                            <svg class="net-flow-chart" viewBox="0 0 500 150">
+                            <svg class="net-flow-chart" viewBox="0 0 500 150" id="net-flow-chart-svg">
                                 <defs>
                                     <linearGradient id="netFlowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                                         <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3" />
@@ -1461,20 +1408,8 @@
                                 <!-- Zero Line -->
                                 <line x1="0" y1="75" x2="500" y2="75" stroke="rgba(0,0,0,0.3)" stroke-width="2" stroke-dasharray="4,4"/>
                                 
-                                <!-- Net Flow Area -->
-                                <path class="net-flow-area" d="M0,75 L0,65 Q50,55 100,60 T200,50 T300,45 T400,40 T500,35 L500,75 Z" 
-                                      fill="url(#netFlowGradient)" />
-                                
-                                <!-- Net Flow Line -->
-                                <path class="net-flow-line" d="M0,65 Q50,55 100,60 T200,50 T300,45 T400,40 T500,35" 
-                                      fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" />
-                                
-                                <!-- Data Points -->
-                                <circle class="flow-point" cx="100" cy="60" r="4" fill="#10b981" />
-                                <circle class="flow-point" cx="200" cy="50" r="4" fill="#10b981" />
-                                <circle class="flow-point" cx="300" cy="45" r="4" fill="#10b981" />
-                                <circle class="flow-point" cx="400" cy="40" r="4" fill="#10b981" />
-                                <circle class="flow-point" cx="500" cy="35" r="4" fill="#10b981" />
+                                <!-- Chart data will be populated by JavaScript -->
+                                <text x="250" y="80" text-anchor="middle" fill="#666" font-size="12">Loading net flow chart...</text>
                             </svg>
                         </div>
                     </div>
@@ -1505,78 +1440,11 @@
                                 <div class="table-cell">Last Activity</div>
                             </div>
                             
-                            <div class="table-row">
-                                <div class="table-cell user-cell">
-                                    <div class="user-avatar">JD</div>
-                                    <div class="user-info">
-                                        <div class="user-name">John Doe</div>
-                                        <div class="user-status active">Active</div>
-                                    </div>
+                            <!-- User balance table rows will be populated by JavaScript -->
+                            <div class="table-row" id="loading-user-balances">
+                                <div class="table-cell" style="text-align: center; padding: 2rem; color: #666; grid-column: 1 / -1;">
+                                    Loading user balances...
                                 </div>
-                                <div class="table-cell wallet-cell">
-                                    <span class="wallet-address">0x742d...8f2a</span>
-                                    <button class="copy-btn"><i class="fas fa-copy"></i></button>
-                                </div>
-                                <div class="table-cell crypto-cell">
-                                    <div class="crypto-item">
-                                        <span class="crypto-amount">1,250 USDC</span>
-                                        <span class="crypto-network">Polygon</span>
-                                    </div>
-                                    <div class="crypto-item">
-                                        <span class="crypto-amount">1,640 USDC</span>
-                                        <span class="crypto-network">Solana</span>
-                                    </div>
-                                </div>
-                                <div class="table-cell amount-cell">$2,890.00</div>
-                                <div class="table-cell time-cell">2 hours ago</div>
-                            </div>
-                            
-                            <div class="table-row">
-                                <div class="table-cell user-cell">
-                                    <div class="user-avatar">AS</div>
-                                    <div class="user-info">
-                                        <div class="user-name">Alice Smith</div>
-                                        <div class="user-status active">Active</div>
-                                    </div>
-                                </div>
-                                <div class="table-cell wallet-cell">
-                                    <span class="wallet-address">0x8a3b...4c7d</span>
-                                    <button class="copy-btn"><i class="fas fa-copy"></i></button>
-                                </div>
-                                <div class="table-cell crypto-cell">
-                                    <div class="crypto-item">
-                                        <span class="crypto-amount">850 USDC</span>
-                                        <span class="crypto-network">Solana</span>
-                                    </div>
-                                </div>
-                                <div class="table-cell amount-cell">$850.00</div>
-                                <div class="table-cell time-cell">1 day ago</div>
-                            </div>
-                            
-                            <div class="table-row">
-                                <div class="table-cell user-cell">
-                                    <div class="user-avatar">MB</div>
-                                    <div class="user-info">
-                                        <div class="user-name">Mike Brown</div>
-                                        <div class="user-status inactive">Inactive</div>
-                                    </div>
-                                </div>
-                                <div class="table-cell wallet-cell">
-                                    <span class="wallet-address">0x1f2e...9a8b</span>
-                                    <button class="copy-btn"><i class="fas fa-copy"></i></button>
-                                </div>
-                                <div class="table-cell crypto-cell">
-                                    <div class="crypto-item">
-                                        <span class="crypto-amount">500 USDC</span>
-                                        <span class="crypto-network">Polygon</span>
-                                    </div>
-                                    <div class="crypto-item">
-                                        <span class="crypto-amount">880 USDC</span>
-                                        <span class="crypto-network">Solana</span>
-                                    </div>
-                                </div>
-                                <div class="table-cell amount-cell">$1,380.00</div>
-                                <div class="table-cell time-cell">5 days ago</div>
                             </div>
                         </div>
                     </div>
@@ -1597,20 +1465,17 @@
                             <div class="fees-summary">
                                 <div class="fee-stat">
                                     <span class="fee-label">Total Fees</span>
-                                    <span class="fee-value">$12,450</span>
+                                    <span class="fee-value" data-fees="total">$---</span>
                                 </div>
                                 <div class="fee-stat">
                                     <span class="fee-label">Avg Payment Processor Fee</span>
-                                    <span class="fee-value">3.00%</span>
+                                    <span class="fee-value" data-fees="avg-percentage">--%</span>
                                 </div>
                             </div>
                             
-                            <svg class="fees-chart" viewBox="0 0 300 120">
-                                <path class="fees-line" d="M0,100 Q50,85 100,90 T200,70 T300,60" 
-                                      fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" />
-                                <circle class="fee-point" cx="100" cy="90" r="3" fill="#f59e0b" />
-                                <circle class="fee-point" cx="200" cy="70" r="3" fill="#f59e0b" />
-                                <circle class="fee-point" cx="300" cy="60" r="3" fill="#f59e0b" />
+                            <svg class="fees-chart" viewBox="0 0 300 120" id="fees-chart-svg">
+                                <!-- Chart will be populated by JavaScript -->
+                                <text x="150" y="65" text-anchor="middle" fill="#666" font-size="12">Loading fees data...</text>
                             </svg>
                         </div>
                     </div>
@@ -1625,29 +1490,20 @@
                         </div>
                         
                         <div class="crypto-pie-container">
-                            <svg class="crypto-pie-chart" viewBox="0 0 200 200">
-                                <!-- USDC Polygon Segment (70%) -->
-                                <circle class="pie-segment usdc-polygon" cx="100" cy="100" r="60" fill="none" 
-                                        stroke="#10b981" stroke-width="20" 
-                                        stroke-dasharray="264 377" stroke-dashoffset="0" 
-                                        transform="rotate(-90 100 100)"/>
-                                
-                                <!-- USDC TRC20 Segment (30%) -->
-                                <circle class="pie-segment usdc-trc20" cx="100" cy="100" r="60" fill="none" 
-                                        stroke="#3498DB" stroke-width="20" 
-                                        stroke-dasharray="94 377" stroke-dashoffset="-264" 
-                                        transform="rotate(-90 100 100)"/>
-                                
+                            <svg class="crypto-pie-chart" viewBox="0 0 200 200" id="crypto-distribution-chart">
+                                <!-- Chart will be populated by JavaScript -->
+                                <text x="100" y="95" text-anchor="middle" fill="#666" font-size="12">Loading</text>
+                                <text x="100" y="110" text-anchor="middle" fill="#666" font-size="12">distribution...</text>
                             </svg>
                             
                             <div class="crypto-legend">
                                 <div class="crypto-legend-item">
                                     <div class="crypto-color usdc-polygon"></div>
-                                    <span>USDC Polygon (70%)</span>
+                                    <span data-crypto-legend="polygon">USDC Polygon (--)</span>
                                 </div>
                                 <div class="crypto-legend-item">
                                     <div class="crypto-color usdc-trc20"></div>
-                                    <span>USDC Solana (30%)</span>
+                                    <span data-crypto-legend="solana">USDC Solana (--)</span>
                                 </div>
                             </div>
                         </div>
@@ -1673,43 +1529,11 @@
                                 <div class="table-cell">Avg Tx Value</div>
                             </div>
                             
-                            <div class="table-row">
-                                <div class="table-cell">Dec 15, 2024</div>
-                                <div class="table-cell">247</div>
-                                <div class="table-cell">
-                                    <div class="volume-breakdown">
-                                        <span>12,450 USDC Polygon</span>
-                                        <span>16,000 USDC Solana</span>
-                                    </div>
+                            <!-- Volume table rows will be populated by JavaScript -->
+                            <div class="table-row" id="loading-volume-data">
+                                <div class="table-cell" style="text-align: center; padding: 2rem; color: #666; grid-column: 1 / -1;">
+                                    Loading transaction volume data...
                                 </div>
-                                <div class="table-cell">$28,450</div>
-                                <div class="table-cell">$115.24</div>
-                            </div>
-                            
-                            <div class="table-row">
-                                <div class="table-cell">Dec 14, 2024</div>
-                                <div class="table-cell">189</div>
-                                <div class="table-cell">
-                                    <div class="volume-breakdown">
-                                        <span>8,920 USDC Polygon</span>
-                                        <span>12,420 USDC Solana</span>
-                                    </div>
-                                </div>
-                                <div class="table-cell">$21,340</div>
-                                <div class="table-cell">$112.96</div>
-                            </div>
-                            
-                            <div class="table-row">
-                                <div class="table-cell">Dec 13, 2024</div>
-                                <div class="table-cell">312</div>
-                                <div class="table-cell">
-                                    <div class="volume-breakdown">
-                                        <span>15,680 USDC Polygon</span>
-                                        <span>20,210 USDC Solana</span>
-                                    </div>
-                                </div>
-                                <div class="table-cell">$35,890</div>
-                                <div class="table-cell">$115.03</div>
                             </div>
                         </div>
                     </div>
@@ -1727,42 +1551,25 @@
                         </div>
                         
                         <div class="status-donut-container">
-                            <svg class="status-donut" viewBox="0 0 200 200">
-                                <!-- Completed (85%) -->
-                                <circle class="status-segment completed" cx="100" cy="100" r="60" fill="none" 
-                                        stroke="#10b981" stroke-width="20" 
-                                        stroke-dasharray="320 377" stroke-dashoffset="0" 
-                                        transform="rotate(-90 100 100)"/>
-                                
-                                <!-- Pending (12%) -->
-                                <circle class="status-segment pending" cx="100" cy="100" r="60" fill="none" 
-                                        stroke="#f59e0b" stroke-width="20" 
-                                        stroke-dasharray="45 377" stroke-dashoffset="-320" 
-                                        transform="rotate(-90 100 100)"/>
-                                
-                                <!-- Failed (3%) -->
-                                <circle class="status-segment failed" cx="100" cy="100" r="60" fill="none" 
-                                        stroke="#ef4444" stroke-width="20" 
-                                        stroke-dasharray="12 377" stroke-dashoffset="-365" 
-                                        transform="rotate(-90 100 100)"/>
-                                
-                                <!-- Center Stats -->
+                            <svg class="status-donut" viewBox="0 0 200 200" id="payment-status-chart">
+                                <!-- Chart will be populated by JavaScript -->
                                 <text x="100" y="90" text-anchor="middle" class="donut-center-label">Total</text>
-                                <text x="100" y="110" text-anchor="middle" class="donut-center-value">1,247</text>
+                                <text x="100" y="110" text-anchor="middle" class="donut-center-value" data-status-total="total">---</text>
+                                <text x="100" y="130" text-anchor="middle" fill="#666" font-size="10">Loading...</text>
                             </svg>
                             
                             <div class="status-legend">
                                 <div class="status-item">
                                     <div class="status-color completed"></div>
-                                    <span>Completed (85%)</span>
+                                    <span data-status-legend="completed">Completed (--)</span>
                                 </div>
                                 <div class="status-item">
                                     <div class="status-color pending"></div>
-                                    <span>Pending (12%)</span>
+                                    <span data-status-legend="pending">Pending (--)</span>
                                 </div>
                                 <div class="status-item">
                                     <div class="status-color failed"></div>
-                                    <span>Failed (3%)</span>
+                                    <span data-status-legend="failed">Failed (--)</span>
                                 </div>
                             </div>
                         </div>
@@ -1781,24 +1588,19 @@
                             <div class="growth-stats">
                                 <div class="growth-stat">
                                     <span class="growth-label">Active Users</span>
-                                    <span class="growth-value">1,247</span>
-                                    <span class="growth-change positive">+18%</span>
+                                    <span class="growth-value" data-growth="active-users">---</span>
+                                    <span class="growth-change" data-growth="users-change">--%</span>
                                 </div>
                                 <div class="growth-stat">
                                     <span class="growth-label">Avg Volume/User</span>
-                                    <span class="growth-value">$2,284</span>
-                                    <span class="growth-change positive">+12%</span>
+                                    <span class="growth-value" data-growth="avg-volume">$---</span>
+                                    <span class="growth-change" data-growth="volume-change">--%</span>
                                 </div>
                             </div>
                             
-                            <svg class="growth-chart" viewBox="0 0 300 100">
-                                <!-- User Growth Line -->
-                                <path class="growth-line users" d="M0,80 Q50,70 100,65 T200,55 T300,45" 
-                                      fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-                                
-                                <!-- Volume Growth Line -->
-                                <path class="growth-line volume" d="M0,85 Q50,75 100,70 T200,60 T300,50" 
-                                      fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-dasharray="4,4" />
+                            <svg class="growth-chart" viewBox="0 0 300 100" id="user-growth-chart">
+                                <!-- Chart will be populated by JavaScript -->
+                                <text x="150" y="55" text-anchor="middle" fill="#666" font-size="12">Loading growth data...</text>
                             </svg>
                             
                             <div class="growth-legend">
@@ -1826,27 +1628,27 @@
                             </div>
                         </div>
                         
-                        <div class="network-bars-container">
+                        <div class="network-bars-container" id="network-volume-container">
                             <div class="network-bar">
                                 <div class="network-info">
                                     <span class="network-name">Polygon</span>
-                                    <span class="network-volume">$1,247,890</span>
+                                    <span class="network-volume" data-network="polygon-volume">$---</span>
                                 </div>
                                 <div class="network-bar-track">
-                                    <div class="network-bar-fill polygon" style="width: 85%;"></div>
+                                    <div class="network-bar-fill polygon" data-network="polygon-bar" style="width: 0%;"></div>
                                 </div>
-                                <span class="network-percentage">60%</span>
+                                <span class="network-percentage" data-network="polygon-percent">--%</span>
                             </div>
                             
                             <div class="network-bar">
                                 <div class="network-info">
                                     <span class="network-name">Solana</span>
-                                    <span class="network-volume">$700,520</span>
+                                    <span class="network-volume" data-network="solana-volume">$---</span>
                                 </div>
                                 <div class="network-bar-track">
-                                    <div class="network-bar-fill solana" style="width: 12%;"></div>
+                                    <div class="network-bar-fill solana" data-network="solana-bar" style="width: 0%;"></div>
                                 </div>
-                                <span class="network-percentage">40%</span>
+                                <span class="network-percentage" data-network="solana-percent">--%</span>
                             </div>
                         </div>
                     </div>
@@ -1860,56 +1662,10 @@
                             </div>
                         </div>
                         
-                        <div class="payment-links-list">
-                            <div class="payment-link-item">
-                                <div class="link-info">
-                                    <div class="link-name">Product Sales</div>
-                                    <div class="link-url">halaxa.pay/product-sales</div>
-                                </div>
-                                <div class="link-stats">
-                                    <div class="link-stat">
-                                        <span class="stat-label">Payments</span>
-                                        <span class="stat-value">247</span>
-                                    </div>
-                                    <div class="link-stat">
-                                        <span class="stat-label">Volume</span>
-                                        <span class="stat-value">$28,450</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="payment-link-item">
-                                <div class="link-info">
-                                    <div class="link-name">Service Payments</div>
-                                    <div class="link-url">halaxa.pay/services</div>
-                                </div>
-                                <div class="link-stats">
-                                    <div class="link-stat">
-                                        <span class="stat-label">Payments</span>
-                                        <span class="stat-value">189</span>
-                                    </div>
-                                    <div class="link-stat">
-                                        <span class="stat-label">Volume</span>
-                                        <span class="stat-value">$21,340</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="payment-link-item">
-                                <div class="link-info">
-                                    <div class="link-name">Donations</div>
-                                    <div class="link-url">halaxa.pay/donate</div>
-                                </div>
-                                <div class="link-stats">
-                                    <div class="link-stat">
-                                        <span class="stat-label">Payments</span>
-                                        <span class="stat-value">156</span>
-                                    </div>
-                                    <div class="link-stat">
-                                        <span class="stat-label">Volume</span>
-                                        <span class="stat-value">$8,920</span>
-                                    </div>
-                                </div>
+                        <div class="payment-links-list" id="top-payment-links">
+                            <!-- Payment links will be populated by JavaScript -->
+                            <div class="payment-link-item" style="justify-content: center; color: #666;">
+                                Loading top payment links...
                             </div>
                         </div>
                     </div>

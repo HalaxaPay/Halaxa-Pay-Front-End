@@ -162,6 +162,9 @@ async function loadPersonalizedData(user) {
             updateDashboardWithUserData(userData, user);
             updateDashboardWithRealData(dashboardData);
             
+            // Initialize all Engine.js functions for the current user
+            await initializeAllEngineFeatures(user.id);
+            
         } catch (apiError) {
             console.warn('⚠️ API error, using local user data:', apiError);
             // Network error or backend down - continue with local user data
@@ -984,8 +987,8 @@ function initializePlanUpgrades() {
 
 async function handlePlanUpgrade(targetPlan) {
     try {
-        // Check if user is logged in
-        const token = localStorage.getItem('halaxa_token');
+        // Check if user is logged in using the correct token key
+        const token = localStorage.getItem('accessToken');
         if (!token) {
             showUpgradeNotification('Please login first to upgrade your plan', 'warning');
             return;
@@ -1042,7 +1045,7 @@ async function handlePlanUpgrade(targetPlan) {
 
 async function getCurrentUserEmail() {
     try {
-        const token = localStorage.getItem('halaxa_token');
+        const token = localStorage.getItem('accessToken');
         const response = await fetch(`${BACKEND_URL}/api/account/profile`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1067,7 +1070,7 @@ function handleBasicPlan() {
 
 async function loadCurrentPlanStatus() {
     try {
-        const token = localStorage.getItem('halaxa_token');
+        const token = localStorage.getItem('accessToken');
         if (!token) return;
 
         const response = await fetch(`${BACKEND_URL}/api/account/plan-status`, {
@@ -1452,31 +1455,183 @@ function displayGeneratedLink(linkData) {
     
     const linkHTML = `
         <div class="generated-link-success">
+            <div class="link-header">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4>Payment Link Created Successfully!</h4>
+            </div>
             <div class="link-info">
-                <h4>${linkData.link_name}</h4>
+                <div class="link-title">${linkData.link_name}</div>
                 <div class="link-details">
                     <span class="link-amount">$${linkData.amount_usdc} USDC</span>
-                    <span class="link-network">${linkData.network}</span>
+                    <span class="link-network">${linkData.network.charAt(0).toUpperCase() + linkData.network.slice(1)}</span>
                 </div>
             </div>
             <div class="link-url-container">
-                <input type="text" class="link-url-input" value="${linkData.payment_url}" readonly>
-                <button class="copy-link-btn" onclick="copyToClipboard('${linkData.payment_url}')">
-                    <i class="fas fa-copy"></i>
-                </button>
+                <label class="url-label">Your Payment Link:</label>
+                <div class="url-input-wrapper">
+                    <input type="text" class="link-url-input" value="${linkData.payment_url}" readonly>
+                    <button class="copy-link-btn" onclick="copyToClipboard('${linkData.payment_url}')">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
             </div>
             <div class="link-actions">
                 <button class="share-btn" onclick="sharePaymentLink('${linkData.payment_url}')">
-                    <i class="fas fa-share"></i> Share
+                    <i class="fas fa-share-alt"></i>
+                    <span>Share</span>
                 </button>
                 <button class="qr-btn" onclick="showQRCode('${linkData.payment_url}')">
-                    <i class="fas fa-qrcode"></i> QR Code
+                    <i class="fas fa-qrcode"></i>
+                    <span>QR Code</span>
+                </button>
+                <button class="test-btn" onclick="window.open('${linkData.payment_url}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Test Link</span>
                 </button>
             </div>
         </div>
     `;
     
     linkContent.innerHTML = linkHTML;
+    
+    // Add some CSS for better styling
+    if (!document.querySelector('#generated-link-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'generated-link-styles';
+        styles.textContent = `
+            .generated-link-success {
+                background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+                border: 2px solid #22c55e;
+                border-radius: 12px;
+                padding: 24px;
+                text-align: center;
+                animation: slideIn 0.5s ease-out;
+            }
+            
+            .link-header {
+                margin-bottom: 16px;
+            }
+            
+            .success-icon {
+                color: #22c55e;
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+            
+            .link-header h4 {
+                color: #166534;
+                margin: 0;
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+            
+            .link-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 8px;
+            }
+            
+            .link-details {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .link-amount, .link-network {
+                background: rgba(34, 197, 94, 0.1);
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                color: #166534;
+            }
+            
+            .url-label {
+                display: block;
+                text-align: left;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #374151;
+            }
+            
+            .url-input-wrapper {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            
+            .link-url-input {
+                flex: 1;
+                padding: 12px;
+                border: 2px solid #d1d5db;
+                border-radius: 8px;
+                font-family: monospace;
+                font-size: 0.9rem;
+                background: white;
+            }
+            
+            .copy-link-btn {
+                background: #22c55e;
+                color: white;
+                border: none;
+                padding: 12px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                transition: background-color 0.2s;
+            }
+            
+            .copy-link-btn:hover {
+                background: #16a34a;
+            }
+            
+            .link-actions {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            
+            .share-btn, .qr-btn, .test-btn {
+                background: #f3f4f6;
+                border: 2px solid #d1d5db;
+                padding: 10px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-weight: 500;
+                color: #374151;
+                transition: all 0.2s;
+            }
+            
+            .share-btn:hover, .qr-btn:hover, .test-btn:hover {
+                background: #e5e7eb;
+                border-color: #9ca3af;
+            }
+            
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
 }
 
 // Setup Forge Link Button
@@ -1585,9 +1740,245 @@ function showQRCode(url) {
     showPaymentNotification('QR Code feature coming soon!', 'info');
 }
 
+// Initialize all Engine.js features via backend API calls
+async function initializeAllEngineFeatures(userId) {
+    console.log('🚀 Initializing dashboard features for user:', userId);
+    
+    try {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) return;
+        
+        // Call backend APIs to initialize features
+        const initPromises = [
+            // Initialize capital page data
+            fetch(`${BACKEND_URL}/api/account/capital-data`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // Initialize user metrics
+            fetch(`${BACKEND_URL}/api/account/user-metrics`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+        ];
+        
+        const responses = await Promise.allSettled(initPromises);
+        
+        // Process capital data
+        if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
+            const capitalData = await responses[0].value.json();
+            updateCapitalPageWithRealData(capitalData);
+        }
+        
+        // Process user metrics
+        if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
+            const metricsData = await responses[1].value.json();
+            updateMetricsWithRealData(metricsData);
+        }
+        
+        // Initialize interactive buttons
+        initializeInteractiveButtons();
+        
+        console.log('✅ Dashboard features initialized successfully');
+    } catch (error) {
+        console.error('❌ Error initializing dashboard features:', error);
+    }
+}
+
+// Update capital page with real data
+function updateCapitalPageWithRealData(capitalData) {
+    try {
+        // Update Total USDC Received
+        const receivedElement = document.querySelector('.flow-stat-card.received .flow-stat-content .flow-stat-value');
+        if (receivedElement && capitalData.total_received !== undefined) {
+            receivedElement.textContent = `$${capitalData.total_received.toLocaleString()}`;
+        }
+        
+        // Update Total USDC Paid Out
+        const paidOutElement = document.querySelector('.flow-stat-card.paid-out .flow-stat-content .flow-stat-value');
+        if (paidOutElement && capitalData.total_paid_out !== undefined) {
+            paidOutElement.textContent = `$${capitalData.total_paid_out.toLocaleString()}`;
+        }
+        
+        // Update Net Flow
+        const netFlowElement = document.querySelector('.flow-stat-card.net-flow .flow-stat-content .flow-stat-value');
+        if (netFlowElement && capitalData.net_flow !== undefined) {
+            const isPositive = capitalData.net_flow >= 0;
+            netFlowElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(capitalData.net_flow).toLocaleString()}`;
+            netFlowElement.className = `flow-stat-value ${isPositive ? 'positive' : 'negative'}`;
+        }
+        
+        console.log('✅ Capital page updated with real data');
+    } catch (error) {
+        console.error('❌ Error updating capital page:', error);
+    }
+}
+
+// Update metrics with real data
+function updateMetricsWithRealData(metricsData) {
+    try {
+        // Update various metric cards throughout the dashboard
+        if (metricsData.transaction_velocity !== undefined) {
+            const velocityElement = document.querySelector('[data-metric="velocity"]');
+            if (velocityElement) {
+                velocityElement.textContent = metricsData.transaction_velocity.toLocaleString();
+            }
+        }
+        
+        if (metricsData.flawless_executions !== undefined) {
+            const flawlessElement = document.querySelector('[data-metric="flawless_executions"]');
+            if (flawlessElement) {
+                flawlessElement.textContent = `${metricsData.flawless_executions}%`;
+            }
+        }
+        
+        // Update Digital Vault (total volume)
+        if (metricsData.total_volume !== undefined) {
+            const vaultElement = document.querySelector('.metric-card.wealth .metric-value');
+            if (vaultElement) {
+                vaultElement.textContent = `$${metricsData.total_volume.toLocaleString()}`;
+            }
+        }
+        
+        // Update Transaction Magnitude (average processing time)
+        if (metricsData.avg_processing_time !== undefined) {
+            const magnitudeElement = document.querySelector('.metric-card.magnitude .metric-value');
+            if (magnitudeElement) {
+                magnitudeElement.textContent = `${metricsData.avg_processing_time}ms`;
+            }
+        }
+        
+        console.log('✅ Metrics updated with real data');
+    } catch (error) {
+        console.error('❌ Error updating metrics:', error);
+    }
+}
+
+// Initialize interactive buttons and features
+function initializeInteractiveButtons() {
+    try {
+        // Deploy Funds button
+        const deployBtn = document.querySelector('.action-tile.deploy');
+        if (deployBtn) {
+            deployBtn.addEventListener('click', () => {
+                showPaymentNotification('Deploy Funds feature coming soon!', 'info');
+            });
+        }
+        
+        // Summon Assets button
+        const summonBtn = document.querySelector('.action-tile.summon');
+        if (summonBtn) {
+            summonBtn.addEventListener('click', () => {
+                showPaymentNotification('Summon Assets feature coming soon!', 'info');
+            });
+        }
+        
+        // Transmute Value button
+        const transmuteBtn = document.querySelector('.action-tile.transmute');
+        if (transmuteBtn) {
+            transmuteBtn.addEventListener('click', () => {
+                showPaymentNotification('Transmute Value feature coming soon!', 'info');
+            });
+        }
+        
+        console.log('✅ Interactive buttons initialized');
+    } catch (error) {
+        console.error('❌ Error initializing buttons:', error);
+    }
+}
+
+// Fix authentication scope across all SPA pages
+function ensureGlobalAuthentication() {
+    const accessToken = localStorage.getItem('accessToken');
+    const user = localStorage.getItem('user');
+    
+    if (!accessToken || !user) {
+        console.log('🔐 No authentication found, redirecting to login...');
+        redirectToLogin();
+        return false;
+    }
+    
+    // Make authentication data globally available
+    window.halaxaAuth = {
+        accessToken: accessToken,
+        user: JSON.parse(user),
+        isAuthenticated: true
+    };
+    
+    return true;
+}
+
+// Update market heartbeat with real data
+async function updateMarketHeartbeat() {
+    try {
+        // Fetch real crypto prices from a public API
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd&include_24hr_change=true');
+        const data = await response.json();
+        
+        // Update Bitcoin price
+        const btcElement = document.querySelector('.market-stat:nth-child(1) .stat-data');
+        if (btcElement && data.bitcoin) {
+            const valueElement = btcElement.querySelector('.stat-value');
+            const changeElement = btcElement.querySelector('.stat-change');
+            
+            if (valueElement) {
+                valueElement.textContent = `$${data.bitcoin.usd.toLocaleString()}`;
+            }
+            if (changeElement && data.bitcoin.usd_24h_change) {
+                const change = data.bitcoin.usd_24h_change;
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                changeElement.className = `stat-change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+        
+        // Update Ethereum price
+        const ethElement = document.querySelector('.market-stat:nth-child(2) .stat-data');
+        if (ethElement && data.ethereum) {
+            const valueElement = ethElement.querySelector('.stat-value');
+            const changeElement = ethElement.querySelector('.stat-change');
+            
+            if (valueElement) {
+                valueElement.textContent = `$${data.ethereum.usd.toLocaleString()}`;
+            }
+            if (changeElement && data.ethereum.usd_24h_change) {
+                const change = data.ethereum.usd_24h_change;
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                changeElement.className = `stat-change ${change >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+        
+        // Update USDC price (should always be $1.00)
+        const usdcElement = document.querySelector('.market-stat:nth-child(3) .stat-data');
+        if (usdcElement && data['usd-coin']) {
+            const valueElement = usdcElement.querySelector('.stat-value');
+            const changeElement = usdcElement.querySelector('.stat-change');
+            
+            if (valueElement) {
+                valueElement.textContent = `$${data['usd-coin'].usd.toFixed(2)}`;
+            }
+            if (changeElement) {
+                const change = data['usd-coin'].usd_24h_change || 0;
+                changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(3)}%`;
+                changeElement.className = 'stat-change neutral';
+            }
+        }
+        
+        console.log('✅ Market heartbeat updated with real data');
+    } catch (error) {
+        console.error('❌ Error updating market heartbeat:', error);
+    }
+}
+
 // Initialize SPA when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Ensure authentication works across all pages
+    if (!ensureGlobalAuthentication()) {
+        return; // Redirect to login if not authenticated
+    }
+    
     initializeSPA();
     setupPaymentForm();
     setupForgeLinkButton();
+    
+    // Update market data immediately and every 30 seconds
+    updateMarketHeartbeat();
+    setInterval(updateMarketHeartbeat, 30000);
 });

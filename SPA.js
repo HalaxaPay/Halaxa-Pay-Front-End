@@ -64,6 +64,9 @@ async function initializeUserPersonalization() {
                 // Continue anyway with basic user data
                 updateDashboardWithUserData({}, user);
             });
+
+            // Add detection refresh functionality
+            addDetectionRefreshButton();
             
             // Clean up URL (remove any lingering parameters)
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -175,6 +178,98 @@ function updateDashboardWithUserData(userData, user) {
     }
     
     console.log('✅ Dashboard updated with secure user data');
+}
+
+function addDetectionRefreshButton() {
+    // Add a detection refresh button to the dashboard
+    const headerActions = document.querySelector('.header-actions') || document.querySelector('.dashboard-header');
+    
+    if (headerActions && !document.getElementById('detection-refresh-btn')) {
+        const refreshButton = document.createElement('button');
+        refreshButton.id = 'detection-refresh-btn';
+        refreshButton.className = 'detection-refresh-button';
+        refreshButton.innerHTML = '🔍 Refresh Data';
+        refreshButton.title = 'Trigger detection system to refresh your dashboard data';
+        
+        refreshButton.addEventListener('click', async () => {
+            await triggerDetectionRefresh(refreshButton);
+        });
+        
+        // Add some basic styling
+        refreshButton.style.cssText = `
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        `;
+        
+        headerActions.appendChild(refreshButton);
+        console.log('✅ Detection refresh button added');
+    }
+}
+
+async function triggerDetectionRefresh(button) {
+    const originalText = button.innerHTML;
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+        console.error('❌ No access token for detection refresh');
+        return;
+    }
+    
+    try {
+        // Update button state
+        button.innerHTML = '🔄 Refreshing...';
+        button.disabled = true;
+        button.style.opacity = '0.7';
+        
+        console.log('🔍 Triggering detection refresh...');
+        
+        const response = await fetch(`${BACKEND_URL}/api/account/trigger-detection`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('✅ Detection refresh successful:', data.message);
+            
+            // Show success feedback
+            button.innerHTML = '✅ Refreshed!';
+            button.style.background = 'linear-gradient(135deg, #059669, #047857)';
+            
+            // Reload page data after a short delay
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            
+        } else {
+            console.error('❌ Detection refresh failed:', response.status);
+            button.innerHTML = '❌ Failed';
+            button.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
+        }
+        
+    } catch (error) {
+        console.error('❌ Detection refresh error:', error);
+        button.innerHTML = '❌ Error';
+        button.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
+    }
+    
+    // Reset button after delay
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    }, 3000);
 }
 
 // ==================== SPA NAVIGATION WITH SMOOTH TRANSITIONS ==================== //

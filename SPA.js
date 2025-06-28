@@ -112,12 +112,16 @@ async function loadPersonalizedData(user) {
     try {
         console.log('🔄 Loading personalized data securely...');
         
+        // Show loading state immediately
+        showDashboardLoadingState();
+        
         // Get backend authentication token
         const accessToken = localStorage.getItem('accessToken');
         
         if (!accessToken) {
             console.log('❌ No access token found - cannot load personalized data');
             updateDashboardWithUserData({}, user);
+            hideDashboardLoadingState();
             return;
         }
         
@@ -125,8 +129,8 @@ async function loadPersonalizedData(user) {
         try {
             console.log('📡 Attempting to fetch user profile and dashboard data...');
             
-            // Fetch profile and dashboard data in parallel
-            const [profileResponse, dashboardResponse] = await Promise.all([
+            // Fetch profile and dashboard data in parallel for speed
+            const [profileResponse, dashboardResponse, marketUpdate] = await Promise.all([
                 fetch(`${BACKEND_URL}/api/account/profile`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -138,7 +142,8 @@ async function loadPersonalizedData(user) {
                         'Authorization': `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
                     }
-                })
+                }),
+                updateMarketHeartbeat() // Load market data in parallel
             ]);
             
             let userData = {};
@@ -158,18 +163,18 @@ async function loadPersonalizedData(user) {
                 console.warn(`⚠️ Dashboard API call failed with status ${dashboardResponse.status}`);
             }
             
-            // Update dashboard with real data
+            // Update dashboard with real data immediately
             updateDashboardWithUserData(userData, user);
             updateDashboardWithRealData(dashboardData);
             
             // Ensure all hardcoded values are replaced
             replaceAllHardcodedValues(dashboardData);
             
-            // Initialize all Engine.js functions for the current user
-            await initializeAllEngineFeatures(user.id);
-            
-            // Initialize authenticated features (market heartbeat, global auth, etc.)
-            initializeAuthenticatedFeatures();
+            // Initialize features in parallel for speed
+            await Promise.all([
+                initializeAllEngineFeatures(user.id),
+                initializeAuthenticatedFeatures()
+            ]);
             
         } catch (apiError) {
             console.warn('⚠️ API error, using local user data:', apiError);
@@ -177,11 +182,65 @@ async function loadPersonalizedData(user) {
             updateDashboardWithUserData({}, user);
         }
         
+        // Hide loading state
+        hideDashboardLoadingState();
+        
     } catch (error) {
         console.error('❌ Error loading personalized data:', error);
         // Continue with basic user data even if there's an error
         updateDashboardWithUserData({}, user);
+        hideDashboardLoadingState();
     }
+}
+
+// Loading state functions
+function showDashboardLoadingState() {
+    console.log('🔄 Showing dashboard loading state...');
+    
+    // Add loading skeleton to key balance elements
+    const balanceElements = document.querySelectorAll('.crypto-amount, .amount-cell, .metric-value, .balance-amount');
+    balanceElements.forEach(element => {
+        if (element && !element.classList.contains('loading-skeleton')) {
+            element.classList.add('loading-skeleton');
+            element.dataset.originalText = element.textContent;
+            element.textContent = '---';
+        }
+    });
+    
+    // Add loading styles
+    if (!document.querySelector('#loading-skeleton-styles')) {
+        const styles = document.createElement('style');
+        styles.id = 'loading-skeleton-styles';
+        styles.textContent = `
+            .loading-skeleton {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: loading-shimmer 1.5s infinite;
+                border-radius: 4px;
+                color: transparent !important;
+            }
+            
+            @keyframes loading-shimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+        `;
+        document.head.appendChild(styles);
+    }
+}
+
+function hideDashboardLoadingState() {
+    console.log('✅ Hiding dashboard loading state...');
+    
+    // Remove loading skeleton from all elements
+    const loadingElements = document.querySelectorAll('.loading-skeleton');
+    loadingElements.forEach(element => {
+        element.classList.remove('loading-skeleton');
+        if (element.dataset.originalText) {
+            element.textContent = element.dataset.originalText;
+            delete element.dataset.originalText;
+        }
+    });
 }
 
 function updateDashboardWithUserData(userData, user) {
@@ -3372,7 +3431,10 @@ class HalaxaAccessControl {
         document.body.appendChild(modal);
         
         // Add modal event handlers
-        modal.querySelector('.modal-backdrop').addEventListener('click', () => {
+        modal.querySelector('.modal-backdrop').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Modal backdrop clicked - closing modal');
             handleMaybeLater();
         });
         
@@ -3446,7 +3508,10 @@ class HalaxaAccessControl {
         document.body.appendChild(modal);
         
         // Add modal event handlers
-        modal.querySelector('.modal-backdrop').addEventListener('click', () => {
+        modal.querySelector('.modal-backdrop').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Modal backdrop clicked - closing modal');
             handleMaybeLater();
         });
         
@@ -3477,27 +3542,53 @@ async function initializeAccessControl() {
 
 // Global modal handlers
 window.handleModalUpgrade = function(plan) {
-    // Close modal
+    console.log('🚀 Handling modal upgrade to:', plan);
+    
+    // Close modal first
     const modal = document.querySelector('.halaxa-upgrade-modal');
-    if (modal) modal.remove();
+    if (modal) {
+        modal.classList.remove('modal-visible');
+        setTimeout(() => modal.remove(), 300);
+    }
     
     // Navigate to plans page
-    const plansNavItem = document.querySelector('[data-page="plans-page"]');
-    if (plansNavItem) {
-        plansNavItem.click();
-    }
+    setTimeout(() => {
+        console.log('📍 Navigating to plans page...');
+        const plansNavItem = document.querySelector('[data-page="plans-page"]');
+        if (plansNavItem) {
+            plansNavItem.click();
+            console.log('✅ Plans page navigation triggered');
+        } else {
+            console.error('❌ Plans nav item not found');
+            // Fallback: manually trigger navigation
+            navigateToPage('plans-page');
+        }
+    }, 100);
 };
 
 window.handleMaybeLater = function() {
-    // Close modal
+    console.log('⏰ Handling maybe later - going to home');
+    
+    // Close modal first
     const modal = document.querySelector('.halaxa-upgrade-modal');
-    if (modal) modal.remove();
+    if (modal) {
+        modal.classList.remove('modal-visible');
+        setTimeout(() => modal.remove(), 300);
+    }
     
     // Always go to home page
-    const homeNavItem = document.querySelector('[data-page="home-page"]');
-    if (homeNavItem) {
-        homeNavItem.click();
-    }
+    setTimeout(() => {
+        console.log('🏠 Navigating to home page...');
+        const homeNavItem = document.querySelector('[data-page="home-page"]');
+        if (homeNavItem) {
+            homeNavItem.click();
+            console.log('✅ Home page navigation triggered');
+        } else {
+            console.error('❌ Home nav item not found');
+            // Fallback: manually trigger navigation
+            navigateToPage('home-page');
+        }
+    }, 100);
 };
 
 // Add comprehensive access control styles
@@ -3531,8 +3622,9 @@ function addAccessControlStyles() {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: -1;
         }
         
         .upgrade-modal-card {
@@ -3864,9 +3956,40 @@ function addAccessControlStyles() {
 
 // Helper function to navigate to page
 function navigateToPage(pageId) {
+    console.log('🧭 Navigating to page:', pageId);
+    
     const navItem = document.querySelector(`[data-page="${pageId}"]`);
     if (navItem) {
+        console.log('✅ Found nav item, clicking...');
         navItem.click();
+    } else {
+        console.error('❌ Nav item not found for page:', pageId);
+        
+        // Fallback: manually trigger page transition
+        const allPages = document.querySelectorAll('.page');
+        const targetPage = document.getElementById(pageId);
+        
+        if (targetPage) {
+            console.log('🔄 Using fallback navigation...');
+            allPages.forEach(page => page.style.display = 'none');
+            targetPage.style.display = 'block';
+            
+            // Update nav items
+            const allNavItems = document.querySelectorAll('.nav-item');
+            allNavItems.forEach(item => item.classList.remove('active'));
+            
+            // Try to find and activate the correct nav item
+            const correctNavItem = Array.from(allNavItems).find(item => 
+                item.textContent.toLowerCase().includes(pageId.replace('-page', ''))
+            );
+            if (correctNavItem) {
+                correctNavItem.classList.add('active');
+            }
+            
+            console.log('✅ Fallback navigation completed');
+        } else {
+            console.error('❌ Target page not found:', pageId);
+        }
     }
 }
 

@@ -30,63 +30,52 @@ async function initializeUserPersonalization() {
     try {
         console.log('🔄 Initializing user personalization...');
         
-        // Try to import Supabase client for secure session handling
-        let supabase, auth;
-        try {
-            const supabaseModule = await import('./supabase-client.js');
-            supabase = supabaseModule.supabase;
-            auth = supabaseModule.auth;
-            console.log('✅ Supabase client loaded successfully');
-        } catch (importError) {
-            console.error('❌ Failed to import Supabase client:', importError);
-            console.log('🔧 Navigation will work without authentication');
-            return; // Exit gracefully, SPA navigation still works
-        }
+        // Check for backend authentication tokens (our new auth method)
+        const accessToken = localStorage.getItem('accessToken');
+        const userActive = localStorage.getItem('userActive');
+        const userData = localStorage.getItem('user');
         
-        // Check for active Supabase session (secure method)
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-            console.error('Error getting session:', error);
-            // Don't redirect immediately, let user try to navigate
+        if (!accessToken || !userActive || userActive !== 'true') {
+            console.log('❌ No backend authentication found');
             setTimeout(() => {
-                if (!localStorage.getItem('userActive')) {
-                    redirectToLogin();
-                }
-            }, 5000); // Give user 5 seconds to interact with the page
+                console.log('⏰ No authentication - redirecting to login');
+                redirectToLogin();
+            }, 3000);
             return;
         }
         
-        if (session?.user) {
-            const userId = session.user.id;
-            console.log('🔐 Secure session found for user:', userId.substring(0, 4) + '****');
-            
-            // Store minimal data in localStorage (not the full user ID)
-            localStorage.setItem('userActive', 'true');
+        // Parse user data from localStorage
+        let user = null;
+        try {
+            user = userData ? JSON.parse(userData) : null;
+        } catch (parseError) {
+            console.error('❌ Error parsing user data:', parseError);
+        }
+        
+        if (user) {
+            console.log('🔐 Backend authentication found for user:', user.email);
             
             // Update welcome message with user info
-            updateWelcomeMessage(session.user);
+            updateWelcomeMessage(user);
             
             // Load personalized data for this user (non-blocking)
-            loadPersonalizedData(userId, session.user).catch(error => {
+            loadPersonalizedData(user).catch(error => {
                 console.warn('⚠️ Failed to load personalized data:', error);
-                // Continue anyway with basic session data
-                updateDashboardWithUserData({}, session.user);
+                // Continue anyway with basic user data
+                updateDashboardWithUserData({}, user);
             });
             
             // Clean up URL (remove any lingering parameters)
             window.history.replaceState({}, document.title, window.location.pathname);
         } else {
-            console.log('❌ No active session found');
-            // Don't redirect immediately, let user try to navigate first
+            console.log('❌ No user data found');
             setTimeout(() => {
-                console.log('⏰ Session timeout - redirecting to login');
+                console.log('⏰ No user data - redirecting to login');
                 redirectToLogin();
-            }, 3000); // Give user 3 seconds to see the dashboard
+            }, 3000);
         }
     } catch (error) {
         console.error('❌ Session initialization error:', error);
-        // Don't redirect immediately on errors
         console.log('🔧 Continuing with basic functionality...');
         setTimeout(() => {
             if (!localStorage.getItem('userActive')) {
@@ -110,32 +99,21 @@ function updateWelcomeMessage(user) {
     // Update welcome title to be more personalized
     const welcomeTitle = document.querySelector('.welcome-title');
     if (welcomeTitle && user) {
-        const firstName = user.user_metadata?.first_name || user.email?.split('@')[0] || 'User';
+        // Handle both backend user format and Supabase user format
+        const firstName = user.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'User';
         welcomeTitle.textContent = `Welcome back, ${firstName}!`;
     }
 }
 
-async function loadPersonalizedData(userId, user) {
+async function loadPersonalizedData(user) {
     try {
         console.log('🔄 Loading personalized data securely...');
         
-        // Try to use Supabase session token for API calls
-        let supabase;
-        try {
-            const supabaseModule = await import('./supabase-client.js');
-            supabase = supabaseModule.supabase;
-        } catch (importError) {
-            console.warn('⚠️ Could not import Supabase client for data loading:', importError);
-            // Continue with basic user data
-            updateDashboardWithUserData({}, user);
-            return;
-        }
+        // Get backend authentication token
+        const accessToken = localStorage.getItem('accessToken');
         
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-            console.log('❌ No session found - cannot load personalized data');
-            // Don't redirect immediately, just update with basic user data
+        if (!accessToken) {
+            console.log('❌ No access token found - cannot load personalized data');
             updateDashboardWithUserData({}, user);
             return;
         }
@@ -145,7 +123,7 @@ async function loadPersonalizedData(userId, user) {
             console.log('📡 Attempting to fetch user profile...');
             const profileResponse = await fetch(`${BACKEND_URL}/api/account/profile`, {
                 headers: {
-                    'Authorization': `Bearer ${session.access_token}`,
+                    'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -157,12 +135,12 @@ async function loadPersonalizedData(userId, user) {
                 // Update dashboard with user-specific information
                 updateDashboardWithUserData(userData, user);
             } else {
-                console.warn(`⚠️ Profile API call failed with status ${profileResponse.status}, using session data`);
+                console.warn(`⚠️ Profile API call failed with status ${profileResponse.status}, using local user data`);
                 updateDashboardWithUserData({}, user);
             }
         } catch (apiError) {
-            console.warn('⚠️ API error, using session data:', apiError);
-            // Network error or backend down - continue with session data
+            console.warn('⚠️ API error, using local user data:', apiError);
+            // Network error or backend down - continue with local user data
             updateDashboardWithUserData({}, user);
         }
         

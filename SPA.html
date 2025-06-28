@@ -1758,32 +1758,33 @@
                 <!-- Subscription & Financial Intelligence Row -->
                 <div class="subscription-intelligence-row">
                     <!-- Subscription Plan Overview -->
-                    <div class="subscription-card">
+                    <div class="subscription-card" id="subscription-card">
                         <div class="subscription-header">
-                            <div class="plan-badge pro">
-                                <i class="fas fa-crown"></i>
-                                PRO PLAN
+                            <div class="plan-badge" data-user-tier="badge-class">
+                                <i class="fas fa-rocket" data-user-tier="badge-icon"></i>
+                                <span data-user-tier="plan-name">LOADING...</span>
                             </div>
-                            <div class="plan-price">$29/month</div>
+                            <div class="plan-price" data-user-tier="plan-price">$--/month</div>
                         </div>
                         <div class="subscription-details">
                             <div class="detail-item">
                                 <span class="detail-label">Started:</span>
-                                <span class="detail-value">March 15, 2024</span>
+                                <span class="detail-value" data-user-tier="start-date">Loading...</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Next Billing:</span>
-                                <span class="detail-value">December 15, 2024</span>
+                                <span class="detail-value" data-user-tier="next-billing">Loading...</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Auto-Renewal:</span>
-                                <span class="detail-value status-active">Active</span>
+                                <span class="detail-value status-active" data-user-tier="auto-renewal">Loading...</span>
                             </div>
                         </div>
-                        <div class="subscription-actions">
-                            <button class="upgrade-btn">
+                        <div class="subscription-actions" id="subscription-actions">
+                            <!-- Buttons will be dynamically populated based on user tier -->
+                            <button class="upgrade-btn" data-user-tier="upgrade-btn" style="display: none;">
                                 <i class="fas fa-arrow-up"></i>
-                                Upgrade to Elite
+                                <span data-user-tier="upgrade-text">Upgrade</span>
                             </button>
                             <button class="manage-btn">
                                 <i class="fas fa-cog"></i>
@@ -1803,29 +1804,14 @@
                                 <div class="ai-subtitle">Your personal crypto advisor</div>
                             </div>
                         </div>
-                        <div class="ai-insights">
-                            <div class="insight-item">
-                                <div class="insight-icon success">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="insight-text">
-                                    <strong>Excellent!</strong> Your transaction frequency increased 34% this month
-                                </div>
-                            </div>
-                            <div class="insight-item">
-                                <div class="insight-icon warning">
-                                    <i class="fas fa-lightbulb"></i>
-                                </div>
-                                <div class="insight-text">
-                                    <strong>Tip:</strong> Consider upgrading to Elite for 0.1% lower fees
-                                </div>
-                            </div>
+                        <div class="ai-insights" id="ai-insights-container">
+                            <!-- AI insights will be populated by JavaScript from Engine.js -->
                             <div class="insight-item">
                                 <div class="insight-icon info">
-                                    <i class="fas fa-target"></i>
+                                    <i class="fas fa-brain"></i>
                                 </div>
                                 <div class="insight-text">
-                                    <strong>Goal:</strong> You're 12% away from reaching $50K total volume
+                                    Loading personalized AI insights...
                                 </div>
                             </div>
                         </div>
@@ -1844,11 +1830,11 @@
                                 <i class="fas fa-exchange-alt"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-number">0</div>
+                                <div class="stat-number" data-account-stat="total-transactions">---</div>
                                 <div class="stat-label">Total Transactions</div>
-                                <div class="stat-trend positive">
+                                <div class="stat-trend" data-account-stat="transactions-trend">
                                     <i class="fas fa-arrow-up"></i>
-                                    +23% this month
+                                    Loading...
                                 </div>
                             </div>
                         </div>
@@ -1857,11 +1843,11 @@
                                 <i class="fas fa-coins"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-number">$0.00</div>
+                                <div class="stat-number" data-account-stat="total-usdc-received">$---</div>
                                 <div class="stat-label">Total USDC Received</div>
-                                <div class="stat-trend positive">
+                                <div class="stat-trend" data-account-stat="usdc-trend">
                                     <i class="fas fa-arrow-up"></i>
-                                    +18% this month
+                                    Loading...
                                 </div>
                             </div>
                         </div>
@@ -1870,11 +1856,11 @@
                                 <i class="fas fa-trophy"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-number">$0.00</div>
+                                <div class="stat-number" data-account-stat="largest-payment">$---</div>
                                 <div class="stat-label">Largest Payment</div>
-                                <div class="stat-trend neutral">
+                                <div class="stat-trend neutral" data-account-stat="largest-payment-date">
                                     <i class="fas fa-calendar"></i>
-                                    Nov 28, 2024
+                                    Loading...
                                 </div>
                             </div>
                         </div>
@@ -1883,11 +1869,11 @@
                                 <i class="fas fa-chart-bar"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-number">$0.00</div>
+                                <div class="stat-number" data-account-stat="average-payment">$---</div>
                                 <div class="stat-label">Average Payment</div>
-                                <div class="stat-trend positive">
+                                <div class="stat-trend" data-account-stat="average-trend">
                                     <i class="fas fa-arrow-up"></i>
-                                    +12% this month
+                                    Loading...
                                 </div>
                             </div>
                         </div>
@@ -1903,7 +1889,7 @@
                         </div>
                         <div class="total-paid-badge">
                             <div class="total-paid-label">Total Paid to Date</div>
-                            <div class="total-paid-amount">$261.00</div>
+                            <div class="total-paid-amount" data-billing="total-paid">$---</div>
                         </div>
                     </div>
                     <div class="billing-table">
@@ -1914,73 +1900,10 @@
                             <div class="table-cell">Status</div>
                             <div class="table-cell">Invoice</div>
                         </div>
-                        <div class="billing-table-row">
-                            <div class="table-cell date-cell">
-                                <div class="date-main">Nov 15, 2024</div>
-                                <div class="date-time">2:45 PM</div>
-                            </div>
-                            <div class="table-cell description-cell">
-                                <div class="description-main">Pro Plan - Monthly</div>
-                                <div class="description-sub">Subscription renewal</div>
-                            </div>
-                            <div class="table-cell amount-cell">$29.00</div>
-                            <div class="table-cell status-cell">
-                                <span class="status-badge-billing paid">
-                                    <i class="fas fa-check-circle"></i>
-                                    Paid
-                                </span>
-                            </div>
-                            <div class="table-cell invoice-cell">
-                                <button class="download-invoice-btn">
-                                    <i class="fas fa-download"></i>
-                                    Download
-                                </button>
-                            </div>
-                        </div>
-                        <div class="billing-table-row">
-                            <div class="table-cell date-cell">
-                                <div class="date-main">Oct 15, 2024</div>
-                                <div class="date-time">2:45 PM</div>
-                            </div>
-                            <div class="table-cell description-cell">
-                                <div class="description-main">Pro Plan - Monthly</div>
-                                <div class="description-sub">Subscription renewal</div>
-                            </div>
-                            <div class="table-cell amount-cell">$29.00</div>
-                            <div class="table-cell status-cell">
-                                <span class="status-badge-billing paid">
-                                    <i class="fas fa-check-circle"></i>
-                                    Paid
-                                </span>
-                            </div>
-                            <div class="table-cell invoice-cell">
-                                <button class="download-invoice-btn">
-                                    <i class="fas fa-download"></i>
-                                    Download
-                                </button>
-                            </div>
-                        </div>
-                        <div class="billing-table-row">
-                            <div class="table-cell date-cell">
-                                <div class="date-main">Sep 15, 2024</div>
-                                <div class="date-time">2:45 PM</div>
-                            </div>
-                            <div class="table-cell description-cell">
-                                <div class="description-main">Pro Plan - Monthly</div>
-                                <div class="description-sub">Subscription renewal</div>
-                            </div>
-                            <div class="table-cell amount-cell">$29.00</div>
-                            <div class="table-cell status-cell">
-                                <span class="status-badge-billing paid">
-                                    <i class="fas fa-check-circle"></i>
-                                    Paid
-                                </span>
-                            </div>
-                            <div class="table-cell invoice-cell">
-                                <button class="download-invoice-btn">
-                                    <i class="fas fa-download"></i>
-                                    Download
-                                </button>
+                        <!-- Billing table rows will be populated by JavaScript from Engine.js -->
+                        <div class="billing-table-row" id="loading-billing-data">
+                            <div class="table-cell" style="text-align: center; padding: 2rem; color: #666; grid-column: 1 / -1;">
+                                Loading billing history...
                             </div>
                         </div>
                     </div>

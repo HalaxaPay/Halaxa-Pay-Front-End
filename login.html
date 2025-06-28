@@ -1367,40 +1367,31 @@
             console.log('Response data:', data);
             
             if (response.ok) {
-                console.log('✅ Login successful - setting up secure session...');
+                console.log('✅ Login successful - backend authentication complete');
                 
-                // 🔐 SECURE SESSION SETUP
-                try {
-                    // Import Supabase client for secure session
-                    const { supabase, auth } = await import('./supabase-client.js');
-                    
-                    // Sign in with Supabase for secure session management
-                    const { data: signInData, error: signInError } = await auth.signIn(email, password);
-                    
-                    if (signInError) {
-                        console.error('❌ Supabase session error:', signInError);
-                        throw new Error('Session setup failed');
-                    }
-                    
-                    console.log('🔐 Secure Supabase session established');
-                    
-                    // Store minimal authentication data (no user IDs in localStorage)
-                    localStorage.setItem('userActive', 'true');
-                    localStorage.setItem('isPreview', 'false');
-                    
-                    // Clean up any old insecure data
-                    localStorage.removeItem('sellerId');
-                    localStorage.removeItem('halaxa_token');
-                    localStorage.removeItem('token');
-                    
-                    console.log('🧹 Cleaned up insecure authentication data');
-                    
-                } catch (sessionError) {
-                    console.error('❌ Secure session setup failed:', sessionError);
-                    // Fallback: still allow login but warn about session
-                    console.warn('⚠️ Using fallback authentication - some features may be limited');
-                    localStorage.setItem('userActive', 'true');
+                // Store backend authentication tokens
+                if (data.accessToken) {
+                    localStorage.setItem('accessToken', data.accessToken);
                 }
+                if (data.refreshToken) {
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                }
+                
+                // Store user session data
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                }
+                
+                // Set session flags
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('isPreview', 'false');
+                
+                // Clean up any old data
+                localStorage.removeItem('sellerId');
+                localStorage.removeItem('halaxa_token');
+                localStorage.removeItem('token');
+                
+                console.log('🔐 Backend session established successfully');
                 
                 // Success feedback
                 loginButton.textContent = 'Access Granted! 🎉';
@@ -1433,7 +1424,6 @@
 
     // Add event listener to login form
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
-</script> 
-<script type="module" src="./supabase-client.js"></script>
+</script>
 </body>
 </html>

@@ -3324,20 +3324,6 @@ class HalaxaAccessControl {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    // Make sure we don't navigate to the page
-                    const targetPage = document.getElementById(pageId);
-                    if (targetPage) {
-                        targetPage.style.display = 'none';
-                    }
-                    
-                    // Keep user on current page
-                    const currentActivePage = document.querySelector('.page[style*="block"]');
-                    if (!currentActivePage) {
-                        // If no page is visible, show home page
-                        const homePage = document.getElementById('home-page');
-                        if (homePage) homePage.style.display = 'block';
-                    }
-                    
                     const requiredPlanName = pageId === 'capital-page' ? 'Pro' : 'Elite';
                     const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
                     this.showUpgradeModal(`${pageName} page requires ${requiredPlanName} plan.`, requiredPlanName, pageId);
@@ -3372,28 +3358,6 @@ class HalaxaAccessControl {
 
     // Show upgrade modal with dashboard styling
     showUpgradeModal(message, requiredPlan, blockedPageId = null) {
-        // Prevent any navigation that might be in progress
-        if (blockedPageId) {
-            // Hide the blocked page immediately
-            const blockedPage = document.getElementById(blockedPageId);
-            if (blockedPage) {
-                blockedPage.style.display = 'none';
-            }
-            
-            // Ensure home page is visible
-            const homePage = document.getElementById('home-page');
-            if (homePage) {
-                homePage.style.display = 'block';
-            }
-            
-            // Update navigation to show home as active
-            const allNavItems = document.querySelectorAll('.nav-item');
-            allNavItems.forEach(item => item.classList.remove('active'));
-            const homeNavItem = document.querySelector('[data-page="home-page"]');
-            if (homeNavItem) {
-                homeNavItem.classList.add('active');
-            }
-        }
         
         const modal = document.createElement('div');
         modal.className = 'halaxa-upgrade-modal';

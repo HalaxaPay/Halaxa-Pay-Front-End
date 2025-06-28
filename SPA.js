@@ -3192,12 +3192,12 @@ class HalaxaAccessControl {
                 button.classList.add('network-locked');
                 button.disabled = true;
                 
-                // Add lock icon
+                // Add animated Font Awesome lock icon
                 if (!button.querySelector('.lock-icon')) {
-                    const lockIcon = document.createElement('span');
-                    lockIcon.className = 'lock-icon';
-                    lockIcon.innerHTML = ' 🔒';
-                    lockIcon.style.marginLeft = '5px';
+                    const lockIcon = document.createElement('i');
+                    lockIcon.className = 'fas fa-lock lock-icon';
+                    lockIcon.style.marginLeft = '8px';
+                    lockIcon.style.animation = 'lockPulse 2s infinite';
                     button.appendChild(lockIcon);
                 }
                 
@@ -3208,6 +3208,7 @@ class HalaxaAccessControl {
                     
                     const requiredPlan = network === 'solana' ? 'Pro' : 'Elite';
                     this.showUpgradeModal(`${network.toUpperCase()} network requires ${requiredPlan} plan.`, requiredPlan);
+                    return false;
                 });
             }
         });
@@ -3227,23 +3228,28 @@ class HalaxaAccessControl {
             if (limits.blockedPages.includes(pageId)) {
                 navItem.classList.add('nav-locked');
                 
-                // Add lock icon
+                // Add animated Font Awesome lock icon
                 if (!navItem.querySelector('.lock-icon')) {
-                    const lockIcon = document.createElement('span');
-                    lockIcon.className = 'lock-icon';
-                    lockIcon.innerHTML = ' 🔒';
-                    lockIcon.style.marginLeft = '5px';
+                    const lockIcon = document.createElement('i');
+                    lockIcon.className = 'fas fa-lock lock-icon';
+                    lockIcon.style.marginLeft = '8px';
+                    lockIcon.style.animation = 'lockPulse 2s infinite';
                     navItem.appendChild(lockIcon);
                 }
+                
+                // Add animated shine effect based on required plan
+                const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
+                navItem.classList.add(`locked-${requiredPlan}`);
                 
                 // Add click handler to show upgrade message
                 navItem.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    const requiredPlan = pageId === 'capital-page' ? 'Pro' : 'Elite';
+                    const requiredPlanName = pageId === 'capital-page' ? 'Pro' : 'Elite';
                     const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
-                    this.showUpgradeModal(`${pageName} page requires ${requiredPlan} plan.`, requiredPlan);
+                    this.showUpgradeModal(`${pageName} page requires ${requiredPlanName} plan.`, requiredPlanName, pageId);
+                    return false;
                 });
             }
         });
@@ -3272,164 +3278,165 @@ class HalaxaAccessControl {
         }
     }
 
-    // Show upgrade modal
-    showUpgradeModal(message, requiredPlan) {
+    // Show upgrade modal with dashboard styling
+    showUpgradeModal(message, requiredPlan, blockedPageId = null) {
+        // Prevent any navigation that might be in progress
+        if (blockedPageId) {
+            // Make sure we're on home page
+            setTimeout(() => {
+                const homeNavItem = document.querySelector('[data-page="home-page"]');
+                if (homeNavItem && !homeNavItem.classList.contains('active')) {
+                    homeNavItem.click();
+                }
+            }, 100);
+        }
+        
         const modal = document.createElement('div');
-        modal.className = 'access-control-modal';
+        modal.className = 'halaxa-upgrade-modal';
+        
+        const planColor = requiredPlan === 'Pro' ? 'pro' : 'elite';
+        
         modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
+            <div class="modal-backdrop"></div>
+            <div class="upgrade-modal-card ${planColor}-theme">
                 <div class="modal-header">
-                    <h3>🔒 Upgrade Required</h3>
-                    <button class="modal-close" onclick="this.closest('.access-control-modal').remove()">×</button>
+                    <div class="lock-animation">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h2 class="modal-title">Upgrade to ${requiredPlan} Required</h2>
+                    <button class="modal-close-btn" onclick="this.closest('.halaxa-upgrade-modal').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <p>${message}</p>
-                    <div class="upgrade-benefits">
-                        <h4>Upgrade to ${requiredPlan} to unlock:</h4>
-                        <ul>
+                
+                <div class="modal-content">
+                    <div class="restriction-message">
+                        <p>${message}</p>
+                    </div>
+                    
+                    <div class="plan-benefits">
+                        <h3>Unlock ${requiredPlan} Features:</h3>
+                        <div class="benefits-grid">
                             ${requiredPlan === 'Pro' ? `
-                                <li>✅ 30 Payment Links</li>
-                                <li>✅ Solana Network</li>
-                                <li>✅ Advanced Analytics</li>
-                                <li>✅ Priority Support</li>
+                                <div class="benefit-item">
+                                    <i class="fas fa-link"></i>
+                                    <span>30 Payment Links</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-network-wired"></i>
+                                    <span>Solana Network</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Capital Analytics</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-headset"></i>
+                                    <span>Priority Support</span>
+                                </div>
                             ` : `
-                                <li>✅ Unlimited Payment Links</li>
-                                <li>✅ All Networks (Polygon, Solana, Tron)</li>
-                                <li>✅ Custom Branding</li>
-                                <li>✅ 24/7 Support</li>
+                                <div class="benefit-item">
+                                    <i class="fas fa-infinity"></i>
+                                    <span>Unlimited Links</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>All Networks</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    <span>Orders & Shipping</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-crown"></i>
+                                    <span>Custom Branding</span>
+                                </div>
                             `}
-                        </ul>
+                        </div>
                     </div>
                 </div>
+                
                 <div class="modal-actions">
-                    <button class="btn-upgrade" onclick="navigateToPage('plans-page'); this.closest('.access-control-modal').remove();">
+                    <button class="upgrade-btn ${planColor}-gradient" onclick="handleModalUpgrade('${requiredPlan}')">
+                        <i class="fas fa-rocket"></i>
                         Upgrade to ${requiredPlan}
                     </button>
-                    <button class="btn-cancel" onclick="this.closest('.access-control-modal').remove()">
+                    <button class="maybe-later-btn" onclick="handleMaybeLater()">
+                        <i class="fas fa-clock"></i>
                         Maybe Later
                     </button>
                 </div>
             </div>
         `;
         
-        // Add styles
-        if (!document.querySelector('#access-control-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'access-control-styles';
-            styles.textContent = `
-                .access-control-modal {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 10000;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .modal-overlay {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    backdrop-filter: blur(5px);
-                }
-                .access-control-modal .modal-content {
-                    position: relative;
-                    background: white;
-                    border-radius: 12px;
-                    max-width: 500px;
-                    width: 90%;
-                    max-height: 80vh;
-                    overflow-y: auto;
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                }
-                .access-control-modal .modal-header {
-                    padding: 20px;
-                    border-bottom: 1px solid #eee;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-                .access-control-modal .modal-body {
-                    padding: 20px;
-                }
-                .access-control-modal .modal-actions {
-                    padding: 20px;
-                    border-top: 1px solid #eee;
-                    display: flex;
-                    gap: 10px;
-                    justify-content: flex-end;
-                }
-                .access-control-modal .btn-upgrade {
-                    background: linear-gradient(135deg, #10B981, #059669);
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-weight: 600;
-                }
-                .access-control-modal .btn-cancel {
-                    background: #f3f4f6;
-                    color: #6b7280;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    cursor: pointer;
-                }
-                .network-locked, .nav-locked {
-                    opacity: 0.6;
-                    position: relative;
-                }
-                .lock-icon {
-                    color: #f59e0b;
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-        
         document.body.appendChild(modal);
         
-        // Close on overlay click
-        modal.querySelector('.modal-overlay').addEventListener('click', () => {
-            modal.remove();
+        // Add modal event handlers
+        modal.querySelector('.modal-backdrop').addEventListener('click', () => {
+            handleMaybeLater();
         });
+        
+        // Add entrance animation
+        setTimeout(() => {
+            modal.classList.add('modal-visible');
+        }, 10);
     }
 
     // Show access denied modal for payment link limits
     showAccessDeniedModal(restriction) {
         const modal = document.createElement('div');
-        modal.className = 'access-control-modal';
+        modal.className = 'halaxa-upgrade-modal';
         modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
+            <div class="modal-backdrop"></div>
+            <div class="upgrade-modal-card limit-reached-theme">
                 <div class="modal-header">
-                    <h3>🚫 Payment Link Limit Reached</h3>
-                    <button class="modal-close" onclick="this.closest('.access-control-modal').remove()">×</button>
-                </div>
-                <div class="modal-body">
-                    <p>${restriction.message}</p>
-                    <div class="usage-info">
-                        <p><strong>Current usage:</strong> ${restriction.current}/${restriction.limit === Infinity ? '∞' : restriction.limit} payment links</p>
+                    <div class="lock-animation">
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <div class="upgrade-benefits">
-                        <h4>Upgrade to unlock more links:</h4>
-                        <ul>
-                            <li>✅ Pro Plan: 30 payment links</li>
-                            <li>✅ Elite Plan: Unlimited payment links</li>
-                        </ul>
+                    <h2 class="modal-title">Payment Link Limit Reached</h2>
+                    <button class="modal-close-btn" onclick="this.closest('.halaxa-upgrade-modal').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-content">
+                    <div class="restriction-message">
+                        <p>${restriction.message}</p>
+                    </div>
+                    
+                    <div class="usage-display">
+                        <div class="usage-meter">
+                            <div class="usage-bar">
+                                <div class="usage-fill" style="width: ${(restriction.current / restriction.limit) * 100}%"></div>
+                            </div>
+                            <div class="usage-text">
+                                <strong>${restriction.current}/${restriction.limit === Infinity ? '∞' : restriction.limit}</strong> payment links used
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plan-benefits">
+                        <h3>Upgrade Options:</h3>
+                        <div class="benefits-grid">
+                            <div class="benefit-item pro-option">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Pro Plan: 30 Links</span>
+                            </div>
+                            <div class="benefit-item elite-option">
+                                <i class="fas fa-infinity"></i>
+                                <span>Elite Plan: Unlimited</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
                 <div class="modal-actions">
-                    <button class="btn-upgrade" onclick="navigateToPage('plans-page'); this.closest('.access-control-modal').remove();">
+                    <button class="upgrade-btn pro-gradient" onclick="handleModalUpgrade('Pro')">
+                        <i class="fas fa-rocket"></i>
                         Upgrade Plan
                     </button>
-                    <button class="btn-cancel" onclick="this.closest('.access-control-modal').remove()">
+                    <button class="maybe-later-btn" onclick="handleMaybeLater()">
+                        <i class="fas fa-times"></i>
                         Close
                     </button>
                 </div>
@@ -3438,10 +3445,15 @@ class HalaxaAccessControl {
         
         document.body.appendChild(modal);
         
-        // Close on overlay click
-        modal.querySelector('.modal-overlay').addEventListener('click', () => {
-            modal.remove();
+        // Add modal event handlers
+        modal.querySelector('.modal-backdrop').addEventListener('click', () => {
+            handleMaybeLater();
         });
+        
+        // Add entrance animation
+        setTimeout(() => {
+            modal.classList.add('modal-visible');
+        }, 10);
     }
 }
 
@@ -3453,10 +3465,401 @@ async function initializeAccessControl() {
     try {
         accessControl = new HalaxaAccessControl();
         await accessControl.init();
+        
+        // Add comprehensive modal styles
+        addAccessControlStyles();
+        
         console.log('✅ Access control system initialized');
     } catch (error) {
         console.error('❌ Error initializing access control:', error);
     }
+}
+
+// Global modal handlers
+window.handleModalUpgrade = function(plan) {
+    // Close modal
+    const modal = document.querySelector('.halaxa-upgrade-modal');
+    if (modal) modal.remove();
+    
+    // Navigate to plans page
+    const plansNavItem = document.querySelector('[data-page="plans-page"]');
+    if (plansNavItem) {
+        plansNavItem.click();
+    }
+};
+
+window.handleMaybeLater = function() {
+    // Close modal
+    const modal = document.querySelector('.halaxa-upgrade-modal');
+    if (modal) modal.remove();
+    
+    // Always go to home page
+    const homeNavItem = document.querySelector('[data-page="home-page"]');
+    if (homeNavItem) {
+        homeNavItem.click();
+    }
+};
+
+// Add comprehensive access control styles
+function addAccessControlStyles() {
+    if (document.querySelector('#halaxa-access-control-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'halaxa-access-control-styles';
+    styles.textContent = `
+        /* Modal Base Styles */
+        .halaxa-upgrade-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .halaxa-upgrade-modal.modal-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+        
+        .upgrade-modal-card {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 520px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .halaxa-upgrade-modal.modal-visible .upgrade-modal-card {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* Theme Colors */
+        .upgrade-modal-card.pro-theme {
+            border-color: #f59e0b;
+            box-shadow: 0 25px 50px rgba(245, 158, 11, 0.2);
+        }
+        
+        .upgrade-modal-card.elite-theme {
+            border-color: #6B46C1;
+            box-shadow: 0 25px 50px rgba(107, 70, 193, 0.2);
+        }
+        
+        .upgrade-modal-card.limit-reached-theme {
+            border-color: #ef4444;
+            box-shadow: 0 25px 50px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Modal Header */
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+        }
+        
+        .lock-animation {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            animation: lockPulse 2s infinite;
+        }
+        
+        .pro-theme .lock-animation {
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+            color: white;
+        }
+        
+        .elite-theme .lock-animation {
+            background: var(--purple-elite);
+            color: white;
+        }
+        
+        .limit-reached-theme .lock-animation {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+        }
+        
+        .modal-title {
+            flex: 1;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .modal-close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        /* Modal Content */
+        .modal-content {
+            padding: 24px;
+        }
+        
+        .restriction-message {
+            margin-bottom: 24px;
+        }
+        
+        .restriction-message p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Plan Benefits */
+        .plan-benefits h3 {
+            margin: 0 0 16px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+        
+        .benefit-item:hover {
+            background: var(--bg-primary);
+            transform: translateY(-2px);
+        }
+        
+        .benefit-item i {
+            width: 20px;
+            color: var(--accent-primary);
+        }
+        
+        .pro-option i {
+            color: #f59e0b;
+        }
+        
+        .elite-option i {
+            color: var(--purple-primary);
+        }
+        
+        /* Usage Display */
+        .usage-display {
+            margin: 20px 0;
+        }
+        
+        .usage-meter {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        
+        .usage-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .usage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .usage-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Modal Actions */
+        .modal-actions {
+            padding: 24px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .upgrade-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pro-gradient {
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+        }
+        
+        .elite-gradient {
+            background: var(--purple-elite);
+        }
+        
+        .maybe-later-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .maybe-later-btn:hover {
+            border-color: var(--border-primary);
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        
+        /* Lock Animations */
+        @keyframes lockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Locked Element Styles */
+        .network-locked, .nav-locked {
+            opacity: 0.6;
+            position: relative;
+        }
+        
+        .lock-icon {
+            color: #f59e0b;
+            font-size: 0.9rem;
+        }
+        
+        /* Animated Shine Effects for Locked Pages */
+        .locked-pro {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .locked-pro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+            animation: proShine 3s infinite;
+            pointer-events: none;
+        }
+        
+        .locked-elite {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .locked-elite::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(107, 70, 193, 0.3), transparent);
+            animation: eliteShine 3s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes proShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes eliteShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .upgrade-modal-card {
+                top: 40px;
+                width: 95%;
+                margin: 0 auto;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+            
+            .upgrade-btn, .maybe-later-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    `;
+    document.head.appendChild(styles);
 }
 
 // Helper function to navigate to page
@@ -3535,16 +3938,16 @@ function updatePlanStatusDisplay() {
                 font-weight: 600;
             }
             .plan-basic {
-                background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-                color: #374151;
+                background: linear-gradient(135deg, #10B981, #059669);
+                color: white;
             }
             .plan-pro {
-                background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-                color: #1e40af;
+                background: linear-gradient(135deg, #f59e0b, #eab308);
+                color: white;
             }
             .plan-elite {
-                background: linear-gradient(135deg, #fef3c7, #fde68a);
-                color: #92400e;
+                background: linear-gradient(135deg, #4C1D95, #6B46C1, #7C3AED, #8B5CF6);
+                color: white;
             }
             .plan-limits {
                 font-size: 0.8rem;

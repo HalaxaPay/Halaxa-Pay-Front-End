@@ -4,10 +4,7 @@
 const BACKEND_URL = import.meta.env?.VITE_BACKEND_URL || 'https://halaxa-backend.onrender.com';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize user personalization from URL
-    initializeUserPersonalization();
-    
-    // Initialize the SPA
+    // Initialize the SPA navigation FIRST - this should always work
     initializeSPA();
     
     // Add interactive animations
@@ -18,21 +15,45 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add interactive card effects
     initializeCardEffects();
+    
+    // Initialize user personalization AFTER SPA is ready (non-blocking)
+    initializeUserPersonalization().catch(error => {
+        console.warn('⚠️ User personalization failed, but SPA still works:', error);
+        // Don't redirect to login immediately, let user navigate first
+        // They can try to access protected features which will then redirect if needed
+    });
 });
 
 // ==================== USER PERSONALIZATION ==================== //
 
 async function initializeUserPersonalization() {
     try {
-        // Import Supabase client for secure session handling
-        const { supabase, auth } = await import('./supabase-client.js');
+        console.log('🔄 Initializing user personalization...');
+        
+        // Try to import Supabase client for secure session handling
+        let supabase, auth;
+        try {
+            const supabaseModule = await import('./supabase-client.js');
+            supabase = supabaseModule.supabase;
+            auth = supabaseModule.auth;
+            console.log('✅ Supabase client loaded successfully');
+        } catch (importError) {
+            console.error('❌ Failed to import Supabase client:', importError);
+            console.log('🔧 Navigation will work without authentication');
+            return; // Exit gracefully, SPA navigation still works
+        }
         
         // Check for active Supabase session (secure method)
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
             console.error('Error getting session:', error);
-            redirectToLogin();
+            // Don't redirect immediately, let user try to navigate
+            setTimeout(() => {
+                if (!localStorage.getItem('userActive')) {
+                    redirectToLogin();
+                }
+            }, 5000); // Give user 5 seconds to interact with the page
             return;
         }
         
@@ -46,18 +67,32 @@ async function initializeUserPersonalization() {
             // Update welcome message with user info
             updateWelcomeMessage(session.user);
             
-            // Load personalized data for this user
-            await loadPersonalizedData(userId, session.user);
+            // Load personalized data for this user (non-blocking)
+            loadPersonalizedData(userId, session.user).catch(error => {
+                console.warn('⚠️ Failed to load personalized data:', error);
+                // Continue anyway with basic session data
+                updateDashboardWithUserData({}, session.user);
+            });
             
             // Clean up URL (remove any lingering parameters)
             window.history.replaceState({}, document.title, window.location.pathname);
         } else {
-            console.log('❌ No active session found - redirecting to login');
-            redirectToLogin();
+            console.log('❌ No active session found');
+            // Don't redirect immediately, let user try to navigate first
+            setTimeout(() => {
+                console.log('⏰ Session timeout - redirecting to login');
+                redirectToLogin();
+            }, 3000); // Give user 3 seconds to see the dashboard
         }
     } catch (error) {
         console.error('❌ Session initialization error:', error);
-        redirectToLogin();
+        // Don't redirect immediately on errors
+        console.log('🔧 Continuing with basic functionality...');
+        setTimeout(() => {
+            if (!localStorage.getItem('userActive')) {
+                redirectToLogin();
+            }
+        }, 5000);
     }
 }
 
@@ -84,18 +119,30 @@ async function loadPersonalizedData(userId, user) {
     try {
         console.log('🔄 Loading personalized data securely...');
         
-        // Use Supabase session token for API calls
-        const { supabase } = await import('./supabase-client.js');
+        // Try to use Supabase session token for API calls
+        let supabase;
+        try {
+            const supabaseModule = await import('./supabase-client.js');
+            supabase = supabaseModule.supabase;
+        } catch (importError) {
+            console.warn('⚠️ Could not import Supabase client for data loading:', importError);
+            // Continue with basic user data
+            updateDashboardWithUserData({}, user);
+            return;
+        }
+        
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
             console.log('❌ No session found - cannot load personalized data');
-            redirectToLogin();
+            // Don't redirect immediately, just update with basic user data
+            updateDashboardWithUserData({}, user);
             return;
         }
         
         // Load user profile data using secure backend API
         try {
+            console.log('📡 Attempting to fetch user profile...');
             const profileResponse = await fetch(`${BACKEND_URL}/api/account/profile`, {
                 headers: {
                     'Authorization': `Bearer ${session.access_token}`,
@@ -110,16 +157,19 @@ async function loadPersonalizedData(userId, user) {
                 // Update dashboard with user-specific information
                 updateDashboardWithUserData(userData, user);
             } else {
-                console.warn('⚠️ Profile API call failed, using session data');
+                console.warn(`⚠️ Profile API call failed with status ${profileResponse.status}, using session data`);
                 updateDashboardWithUserData({}, user);
             }
         } catch (apiError) {
             console.warn('⚠️ API error, using session data:', apiError);
+            // Network error or backend down - continue with session data
             updateDashboardWithUserData({}, user);
         }
         
     } catch (error) {
         console.error('❌ Error loading personalized data:', error);
+        // Continue with basic user data even if there's an error
+        updateDashboardWithUserData({}, user);
     }
 }
 
@@ -217,6 +267,21 @@ function initializeSPA() {
     if (homePage) {
         homePage.classList.add('active-page');
     }
+    
+    // Add debugging function to global scope for testing
+    window.testNavigation = function(pageId) {
+        console.log('🧪 Testing navigation to:', pageId);
+        const pages = document.querySelectorAll('.page-content');
+        smoothPageTransition(pageId, pages);
+        
+        // Also update nav items
+        const navItems = document.querySelectorAll('.nav-item');
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        animateNavSelection(null, navItems, pageId);
+        animateMobileNavSelection(null, mobileNavItems, pageId);
+    };
+    
+    console.log('🎮 Debug: Use testNavigation("page-id") in console to test navigation');
 }
 
 function animateNavSelection(selectedItem, allItems, targetPageId = null) {

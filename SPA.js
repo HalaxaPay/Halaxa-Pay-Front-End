@@ -753,6 +753,9 @@ function initializeSPA() {
         
     console.log('Initializing SPA with', navItems.length, 'nav items,', mobileNavItems.length, 'mobile nav items and', pages.length, 'pages');
     
+    // Initialize mobile hamburger menu
+    initializeMobileHamburgerMenu();
+    
     // Handle desktop navigation
     navItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
@@ -812,10 +815,14 @@ function initializeSPA() {
                     console.log('🔒 Mobile navigation blocked for page:', targetPageId, 'on plan:', plan);
                     e.preventDefault();
                     e.stopPropagation();
+                    closeMobileSidebar(); // Close sidebar before redirecting
                     navigateToPlansPage();
                     return false;
                 }
             }
+            
+            // Close mobile sidebar
+            closeMobileSidebar();
             
             // Animate mobile navigation item selection
             animateMobileNavSelection(item, mobileNavItems);
@@ -855,6 +862,67 @@ function initializeSPA() {
     };
     
     console.log('🎮 Debug: Use testNavigation("page-id") in console to test navigation');
+}
+
+// ==================== MOBILE HAMBURGER MENU ==================== //
+
+function initializeMobileHamburgerMenu() {
+    const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+    const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+    const sidebarClose = document.getElementById('mobile-sidebar-close');
+
+    if (!hamburgerBtn || !sidebarOverlay || !sidebarClose) {
+        console.log('🍔 Mobile hamburger menu elements not found');
+        return;
+    }
+
+    // Open sidebar when hamburger is clicked
+    hamburgerBtn.addEventListener('click', function() {
+        console.log('🍔 Opening mobile sidebar');
+        openMobileSidebar();
+    });
+
+    // Close sidebar when close button is clicked
+    sidebarClose.addEventListener('click', function() {
+        console.log('🍔 Closing mobile sidebar via close button');
+        closeMobileSidebar();
+    });
+
+    // Close sidebar when overlay is clicked
+    sidebarOverlay.addEventListener('click', function(e) {
+        if (e.target === sidebarOverlay) {
+            console.log('🍔 Closing mobile sidebar via overlay click');
+            closeMobileSidebar();
+        }
+    });
+
+    console.log('🍔 Mobile hamburger menu initialized');
+}
+
+function openMobileSidebar() {
+    const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+    const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+    
+    if (hamburgerBtn && sidebarOverlay) {
+        hamburgerBtn.classList.add('active');
+        sidebarOverlay.classList.add('active');
+        
+        // Prevent body scrolling when sidebar is open
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeMobileSidebar() {
+    const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+    const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+    
+    if (hamburgerBtn && sidebarOverlay) {
+        hamburgerBtn.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        
+        // Restore body scrolling
+        document.body.style.overflow = '';
+    }
 }
 
 function animateNavSelection(selectedItem, allItems, targetPageId = null) {
@@ -3338,7 +3406,7 @@ class HalaxaAccessControl {
             this.setupNavItemAccess(navItem, limits);
         });
         
-        // Setup mobile navigation
+        // Setup mobile navigation (in hamburger sidebar)
         const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
         console.log('🔐 Found', mobileNavItems.length, 'mobile nav items');
         mobileNavItems.forEach(mobileNavItem => {
@@ -3354,16 +3422,7 @@ class HalaxaAccessControl {
         // Determine required plan for this page
         const requiredPlan = pageId === 'capital-page' || pageId === 'automation-page' ? 'pro' : 'elite';
         
-        // Add plan badge for premium pages (always visible for UX)
-        if (pageId === 'capital-page' || pageId === 'automation-page' || pageId === 'orders-page') {
-            if (!navItem.querySelector('.plan-badge')) {
-                const planBadge = document.createElement('span');
-                planBadge.className = `plan-badge ${requiredPlan}-badge`;
-                planBadge.textContent = requiredPlan.toUpperCase();
-                planBadge.style.marginLeft = '8px';
-                navItem.appendChild(planBadge);
-            }
-        }
+        // Plan badges removed from desktop as requested
         
         // If page is blocked, add lock functionality
         if (limits.blockedPages.includes(pageId)) {

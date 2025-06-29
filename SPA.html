@@ -95,33 +95,64 @@
             </ul>
         </div>
 
-        <!-- Mobile Bottom Navigation -->
-        <nav class="mobile-nav">
-            <div class="mobile-nav-item active" data-page="home-page">
-                <i class="fas fa-home mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Home</span>
+        <!-- Mobile Hamburger Menu Button (Top-Left) -->
+        <div class="mobile-hamburger-container">
+            <button class="mobile-hamburger-btn" id="mobile-hamburger-btn">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+
+        <!-- Mobile Sidebar (Hidden by default) -->
+        <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay">
+            <div class="mobile-sidebar" id="mobile-sidebar">
+                <div class="mobile-sidebar-header">
+                    <h2>Halaxa Pay</h2>
+                    <button class="mobile-sidebar-close" id="mobile-sidebar-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <ul class="mobile-nav-menu">
+                    <li class="mobile-nav-item active" data-page="home-page">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="transactions-page">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Transactions</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="payment-link-page">
+                        <i class="fas fa-link"></i>
+                        <span>Payment Link</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="capital-page">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Capital</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="account-page">
+                        <i class="fas fa-building"></i>
+                        <span>Accounts</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="plans-page">
+                        <i class="fas fa-crown"></i>
+                        <span>Plans</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="automation-page">
+                        <i class="fas fa-robot"></i>
+                        <span>Automations</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="orders-page">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Orders & Shipping</span>
+                    </li>
+                    <li class="mobile-nav-item" data-page="help-page">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help</span>
+                    </li>
+                </ul>
             </div>
-            <div class="mobile-nav-item" data-page="transactions-page">
-                <i class="fas fa-list-alt mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Transactions</span>
-            </div>
-            <div class="mobile-nav-item" data-page="payment-link-page">
-                <i class="fas fa-link mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Payment</span>
-            </div>
-            <div class="mobile-nav-item" data-page="capital-page">
-                <i class="fas fa-chart-line mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Capital</span>
-            </div>
-            <div class="mobile-nav-item" data-page="automation-page">
-                <i class="fas fa-robot mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Automations</span>
-            </div>
-            <div class="mobile-nav-item" data-page="account-page">
-                <i class="fas fa-building mobile-nav-icon"></i>
-                <span class="mobile-nav-label">Account</span>
-            </div>
-        </nav>
+        </div>
 
         <div class="main-content-area">
             <div class="page-content active-page" id="home-page">

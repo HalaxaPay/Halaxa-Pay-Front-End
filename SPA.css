@@ -9935,32 +9935,84 @@ body::before {
     animation: slideInRight 0.6s ease-out;
 }
 
-.status-header {
+.account-profile-section {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
 }
 
-.status-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: var(--automation-orange-ultra-light);
+.user-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--automation-orange) 0%, var(--automation-orange-light) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--automation-orange);
-    font-size: 1.25rem;
+    color: white;
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
 }
 
-.status-info h4 {
+.user-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.user-email {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+    opacity: 0.8;
+}
+
+.plan-section {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.plan-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, var(--automation-orange) 0%, var(--automation-orange-light) 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: planBadgeShine 3s ease-in-out infinite;
+}
+
+.plan-badge i {
+    font-size: 1rem;
+    animation: crownFloat 2s ease-in-out infinite;
 }
 
 .automation-stats {
@@ -11015,7 +11067,12 @@ body::before {
         font-size: 0.85rem;
     }
     
-    .status-header,
+    .account-profile-section {
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+    }
+    
     .guide-header,
     .integrations-header,
     .monitor-header {
@@ -11024,8 +11081,26 @@ body::before {
         gap: 1rem;
     }
     
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+    
+    .user-name {
+        font-size: 1rem;
+    }
+    
+    .user-email {
+        font-size: 0.8rem;
+    }
+    
+    .plan-badge {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    
     .header-icon,
-    .status-icon,
     .guide-icon,
     .integrations-icon,
     .monitor-icon {

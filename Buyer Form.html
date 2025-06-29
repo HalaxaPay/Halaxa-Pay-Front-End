@@ -600,7 +600,16 @@
             const currentPayment = JSON.parse(localStorage.getItem('currentPayment') || '{}');
             console.log('Current payment details:', currentPayment); // Debug log
             
-            // First, save buyer details to backend
+            // Save buyer details to localStorage for immediate redirect
+            localStorage.setItem('buyerDetails', JSON.stringify(buyerDetails));
+            
+            // Redirect to payment page with all parameters
+            const baseUrl = window.location.origin;
+            const paymentUrl = `${baseUrl}/Payment Page.html?amount=${currentPayment.amount}&chain=${currentPayment.chain}&link_id=${currentPayment.link_id}&wallet_address=${currentPayment.wallet_address}`;
+            console.log('Redirecting to payment page:', paymentUrl);
+            window.location.href = paymentUrl;
+            
+            // Optional: Also save to backend in background (non-blocking)
             const BACKEND_URL = 'https://halaxa-backend.onrender.com';
             fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/buyer`, {
                 method: 'POST',
@@ -609,19 +618,9 @@
                 },
                 body: JSON.stringify(buyerDetails)
             })
-            .then(response => response.json())
-            .then(data => {
-            if (data.success) {
-                    // Redirect to payment page with all parameters
-                    const paymentUrl = `https://halaxapay.netlify.app/payment-page?amount=${currentPayment.amount}&chain=${currentPayment.chain}&link_id=${currentPayment.link_id}&wallet_address=${currentPayment.wallet_address}`;
-                    window.location.href = paymentUrl;
-            } else {
-                    throw new Error('Failed to save buyer details');
-            }
-            })
             .catch(error => {
-                console.error('Error saving buyer details:', error);
-                alert('Failed to save your information. Please try again.');
+                console.warn('Background save to backend failed:', error);
+                // Don't block the user flow
             });
         }
 

@@ -1766,6 +1766,10 @@ function displayGeneratedLink(linkData) {
     const linkContent = document.getElementById('generated-link-content');
     if (!linkContent) return;
     
+    // Create the proper payment URL with parameters for Buyer Form
+    const baseUrl = window.location.origin;
+    const paymentUrl = `${baseUrl}/Buyer Form.html?amount=${linkData.amount_usdc}&chain=${linkData.network}&link_id=${linkData.link_id}&wallet_address=${linkData.wallet_address}`;
+    
     const linkHTML = `
         <div class="generated-link-success">
             <div class="link-header">
@@ -1784,23 +1788,23 @@ function displayGeneratedLink(linkData) {
             <div class="link-url-container">
                 <label class="url-label">Your Payment Link:</label>
                 <div class="url-input-wrapper">
-                    <input type="text" class="link-url-input" value="${linkData.payment_url}" readonly>
-                    <button class="copy-link-btn" onclick="copyToClipboard('${linkData.payment_url}')">
+                    <input type="text" class="link-url-input" value="${paymentUrl}" readonly>
+                    <button class="copy-link-btn" onclick="copyToClipboard('${paymentUrl}')">
                         <i class="fas fa-copy"></i>
                         <span>Copy</span>
                     </button>
                 </div>
             </div>
             <div class="link-actions">
-                <button class="share-btn" onclick="sharePaymentLink('${linkData.payment_url}')">
+                <button class="share-btn" onclick="sharePaymentLink('${paymentUrl}')">
                     <i class="fas fa-share-alt"></i>
                     <span>Share</span>
                 </button>
-                <button class="qr-btn" onclick="showQRCode('${linkData.payment_url}')">
+                <button class="qr-btn" onclick="showQRCode('${paymentUrl}')">
                     <i class="fas fa-qrcode"></i>
                     <span>QR Code</span>
                 </button>
-                <button class="test-btn" onclick="window.open('${linkData.payment_url}', '_blank')">
+                <button class="test-btn" onclick="window.open('${paymentUrl}', '_blank')">
                     <i class="fas fa-external-link-alt"></i>
                     <span>Test Link</span>
                 </button>

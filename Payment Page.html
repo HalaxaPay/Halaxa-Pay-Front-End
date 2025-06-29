@@ -993,26 +993,59 @@
         }
 
         // Function to handle payment confirmation
-        function handlePaymentConfirmation() {
+        async function handlePaymentConfirmation() {
             const params = getUrlParams();
-            console.log('Handling payment confirmation with params:', params); // Debug log
+            console.log('Handling payment confirmation with params:', params);
             
-            // Here you would typically verify the payment with your backend
-            // For now, we'll simulate a successful payment
-            const isPaymentSuccessful = true; // This should be replaced with actual payment verification
+            const confirmButton = document.getElementById('confirm-payment');
+            const originalText = confirmButton.innerHTML;
             
-            if (isPaymentSuccessful) {
-                // Store payment status
-                localStorage.setItem('paymentStatus', 'success');
-                // Redirect to success page with parameters
-                const successUrl = `https://halaxapay.netlify.app/success?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}`;
-                window.location.href = successUrl;
-            } else {
-                // Store payment status
-                localStorage.setItem('paymentStatus', 'failed');
-                // Redirect to failure page with parameters
-                const failureUrl = `https://halaxapay.netlify.app/failure?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}`;
-                window.location.href = failureUrl;
+            // Show loading state
+            confirmButton.disabled = true;
+            confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Scanning Blockchain...</span>';
+            
+            try {
+                // Call backend to verify payment
+                const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+                const response = await fetch(`${BACKEND_URL}/api/payment-links/${params.link_id}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        wallet_address: params.wallet_address,
+                        amount_usdc: parseFloat(params.amount),
+                        network: params.chain.toLowerCase()
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('Payment verification result:', result);
+                
+                const baseUrl = window.location.origin;
+                
+                if (result.success && result.payment_found) {
+                    // Payment found - redirect to success page
+                    localStorage.setItem('paymentStatus', 'success');
+                    localStorage.setItem('transactionHash', result.transaction_hash || '');
+                    const successUrl = `${baseUrl}/Success Page.html?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}&tx=${result.transaction_hash || ''}`;
+                    window.location.href = successUrl;
+                } else {
+                    // Payment not found - redirect to failure page
+                    localStorage.setItem('paymentStatus', 'failed');
+                    const failureUrl = `${baseUrl}/Failure Page.html?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}`;
+                    window.location.href = failureUrl;
+                }
+                
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                
+                // Network error - show error message but don't redirect yet
+                alert('Failed to verify payment. Please check your connection and try again.');
+                
+                // Reset button state
+                confirmButton.disabled = false;
+                confirmButton.innerHTML = originalText;
             }
         }
 

@@ -570,59 +570,37 @@
             window.open('mailto:Halaxa.inc@gmail.com?subject=Payment Failed - Need Help', '_blank');
         }
 
-        async function fetchFailedTransactionDetails() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search);
-                const paymentId = urlParams.get('paymentId');
-
-                if (!paymentId) {
-                    console.error('No payment ID found in URL');
-                    return;
-                }
-
-                const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-        const response = await fetch(`${BACKEND_URL}/api/payment/status/${paymentId}`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch transaction details');
-                }
-
-                const data = await response.json();
-
-                fullWalletAddress = data.wallet || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-                fullTransactionId = data.txHash || '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
-
-                document.getElementById('amountAttempted').textContent = `${data.amount || '100.00'} USDC`;
-                document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
-                document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
-
-            } catch (error) {
-                console.error('Error fetching transaction details:', error);
-                fullWalletAddress = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-                fullTransactionId = '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
-                
-                document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
-                document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
-            }
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const amount = params.get('amount') || '0.00';
+            const chain = params.get('chain') || 'Polygon';
+            const link_id = params.get('link_id') || 'demo';
+            const wallet_address = params.get('wallet_address') || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+            const error_code = params.get('error_code') || '';
+            const error_message = params.get('error_message') || '';
+            
+            console.log('URL Parameters:', { amount, chain, link_id, wallet_address, error_code, error_message });
+            return { amount, chain, link_id, wallet_address, error_code, error_message };
         }
 
-        function getErrorDetails() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const errorCode = urlParams.get('error_code');
-            const errorMessage = urlParams.get('error_message');
+        function initializeFailurePage() {
+            const params = getUrlParams();
+            
+            // Store full values from URL params
+            fullWalletAddress = params.wallet_address;
+            fullTransactionId = '0x0000000000000000000000000000000000000000000000000000000000000000'; // No transaction for failed payment
 
-            return {
-                code: errorCode || 'UNKNOWN_ERROR',
-                message: errorMessage || 'An unexpected error occurred during payment processing.'
-            };
+            // Update the DOM with payment details
+            document.getElementById('amountAttempted').textContent = `${params.amount} USDC`;
+            document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
+            document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
+            
+            console.log('Failure page initialized with:', params);
         }
 
-        function initializeErrorPage() {
-            const errorDetails = getErrorDetails();
-            fetchFailedTransactionDetails();
-        }
 
-        document.addEventListener('DOMContentLoaded', initializeErrorPage);
+
+        document.addEventListener('DOMContentLoaded', initializeFailurePage);
     </script>
        <script type="module" src="./supabase-client.js"></script>
 </body>

@@ -1728,13 +1728,20 @@ body::before {
         display: none !important;
     }
 
-    /* Mobile Hamburger Menu Container */
+    /* Mobile Hamburger Menu Container - iOS Stable */
     .mobile-hamburger-container {
         display: block !important;
         position: fixed !important;
-        top: 20px !important;
+        top: env(safe-area-inset-top, 20px) !important; /* iOS safe area */
         left: 20px !important;
-        z-index: 1001 !important;
+        z-index: 99999 !important; /* Maximum z-index for stability */
+        pointer-events: auto !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        will-change: transform !important; /* iOS rendering optimization */
+        transform: translateZ(0) !important; /* Force hardware acceleration */
+        -webkit-backface-visibility: hidden !important; /* Prevent flicker on iOS */
+        backface-visibility: hidden !important;
     }
 
     .mobile-hamburger-btn {
@@ -1742,15 +1749,20 @@ body::before {
         flex-direction: column !important;
         justify-content: center !important;
         align-items: center !important;
-        width: 45px !important;
-        height: 45px !important;
+        width: 50px !important; /* Larger for better touch */
+        height: 50px !important;
         background: var(--bg-secondary) !important;
-        border: none !important;
+        border: 2px solid var(--border-light) !important; /* More visible border */
         border-radius: var(--radius-md) !important;
-        box-shadow: var(--shadow-lg) !important;
+        box-shadow: 
+            var(--shadow-lg),
+            0 0 0 1px rgba(255, 255, 255, 0.1) !important; /* Extra definition */
         cursor: pointer !important;
         transition: all 0.3s ease !important;
-        gap: 4px !important;
+        gap: 3px !important;
+        -webkit-tap-highlight-color: transparent !important; /* Remove iOS tap highlight */
+        user-select: none !important;
+        -webkit-user-select: none !important;
     }
 
     .mobile-hamburger-btn:hover {
@@ -1760,11 +1772,12 @@ body::before {
 
     .hamburger-line {
         display: block !important;
-        width: 20px !important;
-        height: 2px !important;
+        width: 22px !important; /* Slightly wider */
+        height: 3px !important; /* Thicker for visibility */
         background: var(--text-primary) !important;
-        border-radius: 1px !important;
+        border-radius: 2px !important;
         transition: all 0.3s ease !important;
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.3) !important; /* Subtle shadow for definition */
     }
 
     .mobile-hamburger-btn.active .hamburger-line:nth-child(1) {
@@ -1797,33 +1810,43 @@ body::before {
         display: block !important;
     }
 
-    /* Mobile Sidebar */
+    /* Mobile Sidebar - iPhone Optimized & Stable */
     .mobile-sidebar {
         position: fixed !important;
         top: 0 !important;
         left: -100% !important;
-        width: 280px !important;
+        width: 320px !important; /* Even wider for better spacing on iPhone */
         max-width: 85vw !important;
-        height: 100% !important;
+        height: 100vh !important; /* Full viewport height */
+        height: 100dvh !important; /* Dynamic viewport height for iOS */
         background: var(--sidebar-bg) !important;
-        box-shadow: var(--shadow-lg) !important;
-        transition: left 0.3s ease !important;
+        box-shadow: 
+            var(--shadow-lg),
+            inset -1px 0 0 rgba(255, 255, 255, 0.1) !important; /* Inner border */
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smoother animation */
         overflow-y: auto !important;
-        z-index: 1001 !important;
+        overflow-x: hidden !important;
+        z-index: 10001 !important; /* High z-index but below hamburger */
+        -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
+        will-change: transform, left !important; /* iOS optimization */
+        transform: translateZ(0) !important; /* Hardware acceleration */
+        -webkit-backface-visibility: hidden !important;
+        backface-visibility: hidden !important;
     }
 
     .mobile-sidebar-overlay.active .mobile-sidebar {
         left: 0 !important;
     }
 
-    /* Mobile Sidebar Header */
+    /* Mobile Sidebar Header - iPhone Safe Area */
     .mobile-sidebar-header {
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
-        padding: var(--space-6) var(--space-4) !important;
+        padding: calc(env(safe-area-inset-top, 20px) + var(--space-4)) var(--space-5) var(--space-5) var(--space-5) !important; /* iOS safe area + padding */
         border-bottom: 1px solid var(--border-light) !important;
         background: var(--gradient-secondary) !important;
+        min-height: 80px !important; /* Ensure adequate height */
     }
 
     .mobile-sidebar-header h2 {
@@ -1853,18 +1876,21 @@ body::before {
         transform: scale(1.1) !important;
     }
 
-    /* Mobile Navigation Menu */
+    /* Mobile Navigation Menu - Better Spacing for iPhone */
     .mobile-nav-menu {
         list-style: none !important;
-        padding: var(--space-4) 0 !important;
+        padding: 24px 0 32px 0 !important; /* More top/bottom padding */
         margin: 0 !important;
+        min-height: calc(100vh - 160px) !important; /* Ensure proper height */
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important; /* Smooth iOS scrolling */
     }
 
     .mobile-nav-item {
         display: flex !important;
         align-items: center !important;
-        padding: var(--space-4) var(--space-6) !important;
-        margin: 0 var(--space-4) !important;
+        padding: 18px 24px !important; /* Increased padding for better touch targets */
+        margin: 4px 16px !important; /* Better spacing between items */
         border-radius: var(--radius-md) !important;
         color: var(--sidebar-text) !important;
         cursor: pointer !important;
@@ -1872,6 +1898,10 @@ body::before {
         position: relative !important;
         font-weight: 500 !important;
         text-decoration: none !important;
+        min-height: 56px !important; /* Ensure adequate touch target size */
+        -webkit-tap-highlight-color: transparent !important; /* Remove iOS tap highlight */
+        user-select: none !important;
+        -webkit-user-select: none !important;
     }
 
     .mobile-nav-item:hover {
@@ -1899,10 +1929,21 @@ body::before {
     }
 
     .mobile-nav-item i {
-        font-size: 1.2rem !important;
-        margin-right: var(--space-3) !important;
-        min-width: 20px !important;
+        font-size: 1.3rem !important; /* Slightly larger for better visibility */
+        margin-right: 16px !important; /* Better spacing */
+        min-width: 24px !important; /* Wider to accommodate larger icons */
         transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Improved lock icon visibility on mobile */
+    .mobile-nav-item.locked i.fa-lock {
+        font-size: 1.4rem !important; /* Even larger for lock icons */
+        color: var(--accent-secondary) !important;
+        opacity: 0.8 !important;
+        text-shadow: 0 0 2px rgba(245, 158, 11, 0.5) !important; /* Yellow glow for visibility */
     }
 
     .mobile-nav-item:hover i,
@@ -1912,8 +1953,26 @@ body::before {
     }
 
     .mobile-nav-item span {
-        font-size: 0.95rem !important;
+        font-size: 0.95rem !important; /* Slightly larger text for better readability */
         transition: all 0.3s ease !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.01em !important; /* Better text rendering on iPhone */
+    }
+    
+    /* Additional iPhone stability fixes */
+    @supports (-webkit-appearance: none) {
+        .mobile-hamburger-container {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+        }
+        
+        .mobile-sidebar {
+            -webkit-transform: translateZ(0) !important;
+        }
+        
+        .mobile-nav-item {
+            -webkit-transform: translateZ(0) !important;
+        }
     }
 
     .main-content-area {
@@ -2054,12 +2113,28 @@ body::before {
     }
 
     body {
-        padding-bottom: 70px !important;
+        padding-bottom: 0px !important; /* Remove bottom padding since no bottom nav */
     }
 
     .main-content-area {
-        padding-bottom: 100px !important; /* Adjusted for smaller nav height */
-        min-height: calc(100vh - 100px) !important;
+        padding-bottom: 20px !important; /* Minimal padding for small screens */
+        min-height: 100vh !important;
+    }
+    
+    /* Enhanced mobile hamburger menu for small screens */
+    .mobile-hamburger-container {
+        top: max(env(safe-area-inset-top), 15px) !important; /* Ensure adequate top spacing */
+        left: 15px !important; /* Slightly closer to edge on small screens */
+    }
+    
+    .mobile-hamburger-btn {
+        width: 48px !important; /* Slightly smaller but still accessible */
+        height: 48px !important;
+    }
+    
+    .mobile-sidebar {
+        width: 280px !important; /* Adjusted width for small screens */
+        max-width: 90vw !important; /* Allow more screen usage */
     }
 }
 

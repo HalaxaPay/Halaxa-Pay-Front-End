@@ -595,49 +595,35 @@
             return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
         }
 
-        async function fetchTransactionDetails() {
-            try {
-                // Get payment ID from URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const paymentId = urlParams.get('paymentId');
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const amount = params.get('amount') || '0.00';
+            const chain = params.get('chain') || 'Polygon';
+            const link_id = params.get('link_id') || 'demo';
+            const wallet_address = params.get('wallet_address') || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+            const tx = params.get('tx') || '';
+            
+            console.log('URL Parameters:', { amount, chain, link_id, wallet_address, tx });
+            return { amount, chain, link_id, wallet_address, tx };
+        }
 
-                if (!paymentId) {
-                    console.error('No payment ID found in URL');
-                    return;
-                }
+        function initializeSuccessPage() {
+            const params = getUrlParams();
+            
+            // Store full values from URL params
+            fullWalletAddress = params.wallet_address;
+            fullTransactionId = params.tx || localStorage.getItem('transactionHash') || '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
 
-                // Fetch transaction details from backend
-                const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-        const response = await fetch(`${BACKEND_URL}/api/payment/status/${paymentId}`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch transaction details');
-                }
-
-                const data = await response.json();
-
-                // Store full values
-                fullWalletAddress = data.wallet || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-                fullTransactionId = data.txHash || '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
-
-                // Update the DOM with transaction details
-                document.getElementById('amountPaid').textContent = `${data.amount || '100.00'} USDC`;
-                document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
-                document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
-
-            } catch (error) {
-                console.error('Error fetching transaction details:', error);
-                // Set default values if fetch fails
-                fullWalletAddress = '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-                fullTransactionId = '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
-                
-                document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
-                document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
-            }
+            // Update the DOM with payment details
+            document.getElementById('amountPaid').textContent = `${params.amount} USDC`;
+            document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
+            document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
+            
+            console.log('Success page initialized with:', params);
         }
 
         // Run the function when the page loads
-        document.addEventListener('DOMContentLoaded', fetchTransactionDetails);
+        document.addEventListener('DOMContentLoaded', initializeSuccessPage);
     </script>
 </body>
 </html>

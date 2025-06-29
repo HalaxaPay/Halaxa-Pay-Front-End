@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the SPA navigation FIRST - this should always work
     initializeSPA();
     
+    // Initialize payment form functionality
+    setupPaymentForm();
+    
     // Add interactive animations
     initializeAnimations();
     

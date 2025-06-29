@@ -1708,14 +1708,20 @@ async function handlePaymentLinkCreation() {
         if (accessControl) {
             const permission = await accessControl.canCreatePaymentLink();
             if (!permission.allowed) {
-                accessControl.showAccessDeniedModal(permission);
+                showPaymentNotification(permission.message || 'Payment link limit reached. Upgrade your plan for more links.', 'error');
+                setTimeout(() => {
+                    navigateToPlansPage();
+                }, 2000);
                 return;
             }
             
             // Check network access
             if (!accessControl.isNetworkAllowed(selectedNetwork)) {
                 const requiredPlan = selectedNetwork === 'solana' ? 'Pro' : 'Elite';
-                accessControl.showUpgradeModal(`${selectedNetwork.toUpperCase()} network requires ${requiredPlan} plan.`, requiredPlan);
+                showPaymentNotification(`${selectedNetwork.toUpperCase()} network requires ${requiredPlan} plan. Redirecting to upgrade...`, 'error');
+                setTimeout(() => {
+                    navigateToPlansPage();
+                }, 2000);
                 return;
             }
         }

@@ -3329,7 +3329,7 @@ class HalaxaAccessControl {
                 maxPaymentLinks: Infinity,
                 maxMonthlyVolume: Infinity,
                 allowedNetworks: ['polygon', 'solana', 'tron'],
-                blockedPages: [],
+                blockedPages: [], // 🎯 NO BLOCKED PAGES FOR ELITE!
                 features: {
                     advancedAnalytics: true,
                     multipleWallets: true,
@@ -3361,15 +3361,21 @@ class HalaxaAccessControl {
 
             this.currentUser = JSON.parse(userData);
             
-            // Fetch user plan from backend
-            const response = await fetch(`${BACKEND_URL}/api/account/plan-status`, {
+            // 🎯 GET REAL PLAN FROM DATABASE (user_plans table)
+            console.log('🔍 Fetching user plan from database for user:', this.currentUser.id);
+            const response = await fetch(`${BACKEND_URL}/api/account/profile`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             });
             
             if (response.ok) {
-                const data = await response.json();
-                this.userPlan = data.currentPlan || 'basic';
+                const profileData = await response.json();
+                this.userPlan = profileData.plan || 'basic'; // Will get 'elite' from your database
+                console.log('✅ Database plan retrieved:', this.userPlan);
+                
+                // Update localStorage with real plan
+                localStorage.setItem('userPlan', this.userPlan);
             } else {
+                console.warn('⚠️ Could not fetch plan from database, using fallback');
                 this.userPlan = 'basic';
             }
             

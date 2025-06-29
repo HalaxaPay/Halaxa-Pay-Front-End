@@ -3120,12 +3120,13 @@ class HalaxaAccessControl {
                 maxPaymentLinks: 1,
                 maxMonthlyVolume: 500,
                 allowedNetworks: ['polygon'],
-                blockedPages: ['capital-page', 'orders-page'],
+                blockedPages: ['capital-page', 'orders-page', 'automation-page'],
                 features: {
                     advancedAnalytics: false,
                     multipleWallets: false,
                     customBranding: false,
-                    prioritySupport: false
+                    prioritySupport: false,
+                    automations: false
                 }
             },
             pro: {
@@ -3137,7 +3138,8 @@ class HalaxaAccessControl {
                     advancedAnalytics: true,
                     multipleWallets: true,
                     customBranding: false,
-                    prioritySupport: true
+                    prioritySupport: true,
+                    automations: true
                 }
             },
             elite: {
@@ -3149,7 +3151,8 @@ class HalaxaAccessControl {
                     advancedAnalytics: true,
                     multipleWallets: true,
                     customBranding: true,
-                    prioritySupport: true
+                    prioritySupport: true,
+                    automations: true
                 }
             }
         };

@@ -3074,89 +3074,37 @@
             
             <!-- Automation Page -->
             <div class="page-content" id="automation-page">
-                <!-- Automation Header -->
+                <!-- Clean Header -->
                 <div class="automation-header">
                     <div class="automation-hero">
                         <div class="automation-hero-content">
                             <h1 class="automation-title">
-                                <i class="fas fa-robot"></i>
-                                🔗 Automations with Zapier / Make
+                                <i class="fas fa-bolt"></i>
+                                Automations
                             </h1>
-                            <p class="automation-subtitle">Connect your Halaxa Pay account to Zapier or Make.com to unlock full automation capabilities for your incoming payments.</p>
-                            
-                            <div class="automation-metrics">
-                                <div class="automation-metric">
-                                    <i class="fab fa-hubspot"></i>
-                                    <span>5,000+ Apps</span>
-                                </div>
-                                <div class="automation-metric">
-                                    <i class="fas fa-lightning-bolt"></i>
-                                    <span>Instant Triggers</span>
-                                </div>
-                                <div class="automation-metric">
-                                    <i class="fas fa-shield-alt"></i>
-                                    <span>Secure Webhooks</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="automation-visual">
-                            <div class="automation-flow">
-                                <div class="flow-node payment-node">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>Payment</span>
-                                </div>
-                                <div class="flow-arrow">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                                <div class="flow-node webhook-node">
-                                    <i class="fas fa-webhook"></i>
-                                    <span>Webhook</span>
-                                </div>
-                                <div class="flow-arrow">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                                <div class="flow-node automation-node">
-                                    <i class="fab fa-zapier"></i>
-                                    <span>Zapier</span>
-                                </div>
-                            </div>
+                            <p class="automation-subtitle">Connect your Halaxa Pay to Zapier or Make.com for seamless payment automation</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Account Overview & Webhook Setup Row -->
+                <!-- Main Content Grid -->
                 <div class="automation-main-section">
-                    <!-- Account Overview Card -->
-                    <div class="account-overview-card">
-                        <div class="overview-header">
-                            <div class="account-avatar">
-                                <div class="avatar-circle" data-user-avatar>
-                                    <i class="fas fa-user"></i>
-                                </div>
-                            </div>
-                            <div class="account-info">
-                                <div class="account-name" data-user-name>Loading...</div>
-                                <div class="plan-badge" data-user-plan>
-                                    <i class="fas fa-crown"></i>
-                                    <span>Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="webhook-status">
-                            <div class="status-indicator" data-webhook-status>
-                                <div class="status-dot"></div>
-                                <span class="status-text">Checking...</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Main Webhook Integration Card -->
+                    <!-- Webhook Integration Card -->
                     <div class="webhook-integration-card">
                         <div class="integration-header">
-                            <h3>🔧 Your Webhook Integration</h3>
-                            <p>Enter your Zapier or Make.com webhook URL below to connect your automations</p>
+                            <div class="header-icon">
+                                <i class="fas fa-plug"></i>
+                            </div>
+                            <div class="header-content">
+                                <h3>Webhook Integration</h3>
+                                <p>Connect your payment automation endpoint</p>
+                            </div>
+                            <div class="webhook-status">
+                                <div class="status-indicator" data-webhook-status>
+                                    <div class="status-dot"></div>
+                                    <span class="status-text">Disconnected</span>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="webhook-form">
@@ -3179,8 +3127,8 @@
                             <div class="webhook-actions">
                                 <button class="connect-webhook-btn" id="connect-webhook-btn">
                                     <div class="btn-content">
-                                        <i class="fas fa-check"></i>
-                                        <span>✅ Connect Webhook</span>
+                                        <i class="fas fa-plug"></i>
+                                        <span>Connect Webhook</span>
                                     </div>
                                     <div class="btn-loader">
                                         <div class="spinner"></div>
@@ -3188,8 +3136,8 @@
                                 </button>
                                 
                                 <button class="test-webhook-btn" id="test-webhook-btn">
-                                    <i class="fas fa-flask"></i>
-                                    🧪 Send Test Payment
+                                    <i class="fas fa-vial"></i>
+                                    Send Test
                                 </button>
                             </div>
                         </div>
@@ -3204,132 +3152,192 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Account Status Card -->
+                    <div class="account-status-card">
+                        <div class="status-header">
+                            <div class="status-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="status-info">
+                                <h4 data-user-name>Account Status</h4>
+                                <div class="plan-badge" data-user-plan>
+                                    <i class="fas fa-crown"></i>
+                                    <span>Pro Plan</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="automation-stats">
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Active Automations</span>
+                                    <span class="stat-value" data-automation-count>0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-icon">
+                                    <i class="fas fa-paper-plane"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <span class="stat-label">Webhooks Sent</span>
+                                    <span class="stat-value" data-webhook-count>0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Tips and Help Section -->
+                <!-- Setup Guide and Examples -->
                 <div class="automation-tips-section">
-                    <div class="tips-card">
-                        <div class="tips-header">
-                            <h3>💡 How to Use</h3>
+                    <!-- Setup Guide -->
+                    <div class="setup-guide-card">
+                        <div class="guide-header">
+                            <div class="guide-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <div class="guide-content">
+                                <h3>Quick Setup Guide</h3>
+                                <p>Get your automations running in minutes</p>
+                            </div>
                         </div>
-                        <div class="tips-content">
-                            <div class="tip-step">
+                        
+                        <div class="setup-steps">
+                            <div class="setup-step">
                                 <div class="step-number">1</div>
                                 <div class="step-content">
-                                    <h4>Create a Zap with Webhook trigger</h4>
-                                    <p>Go to Zapier.com and create a new Zap. Choose "Webhooks by Zapier" as your trigger app.</p>
+                                    <h4>Create Webhook Trigger</h4>
+                                    <p>Set up a new webhook trigger in Zapier or Make.com</p>
                                 </div>
                             </div>
                             
-                            <div class="tip-step">
+                            <div class="setup-step">
                                 <div class="step-number">2</div>
                                 <div class="step-content">
-                                    <h4>Paste the URL above</h4>
-                                    <p>Copy the webhook URL from Zapier and paste it in the field above, then click Connect.</p>
+                                    <h4>Connect Your URL</h4>
+                                    <p>Paste the webhook URL into the field above</p>
                                 </div>
                             </div>
                             
-                            <div class="tip-step">
+                            <div class="setup-step">
                                 <div class="step-number">3</div>
                                 <div class="step-content">
-                                    <h4>Choose what happens when a payment is received</h4>
-                                    <p>Set up actions like send email, update Airtable, trigger SMS, Slack notifications, and more!</p>
+                                    <h4>Configure Actions</h4>
+                                    <p>Choose what happens when payments are received</p>
                                 </div>
                             </div>
-                            
-                            <div class="help-links">
-                                <p class="help-text">Need help? <a href="#" class="help-link">Check our docs</a> or <a href="#" class="help-link">contact support</a>.</p>
-                            </div>
+                        </div>
+                        
+                        <div class="guide-footer">
+                            <a href="#" class="help-link">
+                                <i class="fas fa-book"></i>
+                                View Documentation
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Popular Automations Examples -->
-                    <div class="popular-automations-card">
-                        <div class="automations-header">
-                            <h3>🚀 Popular Automations</h3>
-                            <p>Inspire your workflow with these popular automation ideas</p>
+                    <!-- Popular Integrations -->
+                    <div class="integrations-card">
+                        <div class="integrations-header">
+                            <div class="integrations-icon">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div class="integrations-content">
+                                <h3>Popular Integrations</h3>
+                                <p>Connect with your favorite tools</p>
+                            </div>
                         </div>
                         
-                        <div class="automation-examples">
-                            <div class="automation-example">
-                                <div class="example-icon email">
+                        <div class="integration-grid">
+                            <div class="integration-item">
+                                <div class="integration-icon email">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <div class="example-content">
-                                    <h4>Email Notifications</h4>
-                                    <p>Send instant email alerts when payments are received</p>
+                                <div class="integration-details">
+                                    <h4>Email Alerts</h4>
+                                    <p>Instant notifications</p>
                                 </div>
-                                <div class="example-apps">
-                                    <span class="app-badge">Gmail</span>
-                                    <span class="app-badge">Outlook</span>
+                                <div class="integration-badge">
+                                    <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
                             
-                            <div class="automation-example">
-                                <div class="example-icon spreadsheet">
+                            <div class="integration-item">
+                                <div class="integration-icon spreadsheet">
                                     <i class="fas fa-table"></i>
                                 </div>
-                                <div class="example-content">
-                                    <h4>Spreadsheet Tracking</h4>
-                                    <p>Automatically log payments to Google Sheets or Airtable</p>
+                                <div class="integration-details">
+                                    <h4>Spreadsheets</h4>
+                                    <p>Automatic logging</p>
                                 </div>
-                                <div class="example-apps">
-                                    <span class="app-badge">Sheets</span>
-                                    <span class="app-badge">Airtable</span>
+                                <div class="integration-badge">
+                                    <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
                             
-                            <div class="automation-example">
-                                <div class="example-icon messaging">
+                            <div class="integration-item">
+                                <div class="integration-icon messaging">
                                     <i class="fab fa-slack"></i>
                                 </div>
-                                <div class="example-content">
-                                    <h4>Team Notifications</h4>
-                                    <p>Alert your team in Slack or Discord about new payments</p>
+                                <div class="integration-details">
+                                    <h4>Team Chat</h4>
+                                    <p>Real-time updates</p>
                                 </div>
-                                <div class="example-apps">
-                                    <span class="app-badge">Slack</span>
-                                    <span class="app-badge">Discord</span>
+                                <div class="integration-badge">
+                                    <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
                             
-                            <div class="automation-example">
-                                <div class="example-icon crm">
+                            <div class="integration-item">
+                                <div class="integration-icon crm">
                                     <i class="fas fa-users"></i>
                                 </div>
-                                <div class="example-content">
-                                    <h4>CRM Updates</h4>
-                                    <p>Update customer records in HubSpot or Salesforce</p>
+                                <div class="integration-details">
+                                    <h4>CRM Systems</h4>
+                                    <p>Customer updates</p>
                                 </div>
-                                <div class="example-apps">
-                                    <span class="app-badge">HubSpot</span>
-                                    <span class="app-badge">Salesforce</span>
+                                <div class="integration-badge">
+                                    <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Webhook History -->
-                <div class="webhook-history-section">
-                    <div class="history-header">
-                        <h3>📊 Recent Webhook Activity</h3>
-                        <p>Monitor your automation triggers and their status</p>
+                <!-- Activity Monitor -->
+                <div class="activity-monitor-section">
+                    <div class="monitor-header">
+                        <div class="monitor-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="monitor-content">
+                            <h3>Webhook Activity</h3>
+                            <p>Monitor your automation triggers and responses</p>
+                        </div>
                     </div>
                     
-                    <div class="webhook-history-table">
+                    <div class="activity-table">
                         <div class="table-header">
                             <div class="table-cell">Timestamp</div>
-                            <div class="table-cell">Event Type</div>
+                            <div class="table-cell">Event</div>
                             <div class="table-cell">Amount</div>
                             <div class="table-cell">Status</div>
-                            <div class="table-cell">Response Time</div>
+                            <div class="table-cell">Response</div>
                         </div>
                         
-                        <div class="webhook-history-list" id="webhook-history-list">
-                            <div class="no-history-message">
-                                <i class="fas fa-history"></i>
-                                <p>No webhook activity yet. Connect your webhook to start seeing automation triggers here.</p>
+                        <div class="activity-list" id="webhook-history-list">
+                            <div class="no-activity-message">
+                                <div class="no-activity-icon">
+                                    <i class="fas fa-satellite-dish"></i>
+                                </div>
+                                <div class="no-activity-content">
+                                    <h4>No Activity Yet</h4>
+                                    <p>Connect your webhook to start monitoring automation triggers</p>
+                                </div>
                             </div>
                         </div>
                     </div>

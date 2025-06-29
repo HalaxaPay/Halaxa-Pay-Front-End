@@ -281,8 +281,8 @@ class HalaxaAccessControl {
   }
 
   redirectToPlans() {
-    console.log('🔒 Redirecting to plans page for upgrade...');
-    window.location.href = '/plans.html';
+    console.log('🔒 Redirecting to plans page within SPA...');
+    navigateToPlansPage();
   }
 
   // ==================== VISUAL LOCKS AND BADGES ==================== //
@@ -710,6 +710,56 @@ const accessControlStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = accessControlStyles;
 document.head.appendChild(styleSheet);
+
+// ==================== NAVIGATION HELPERS ==================== //
+
+// Navigate to plans page within SPA
+function navigateToPlansPage() {
+  console.log('🚀 Navigating to plans page within SPA...');
+  
+  // Find the plans navigation item and click it
+  const plansNavItem = document.querySelector('[data-page="plans-page"]');
+  if (plansNavItem) {
+    plansNavItem.click();
+    console.log('✅ Plans page navigation triggered');
+  } else {
+    console.error('❌ Plans nav item not found - triggering manual navigation');
+    
+    // Fallback: manually trigger page transition
+    const allPages = document.querySelectorAll('.page-content');
+    const plansPage = document.getElementById('plans-page');
+    
+    if (plansPage) {
+      // Hide all pages
+      allPages.forEach(page => {
+        page.style.display = 'none';
+        page.classList.remove('active-page');
+      });
+      
+      // Show plans page
+      plansPage.style.display = 'block';
+      plansPage.classList.add('active-page');
+      
+      // Update nav items
+      const allNavItems = document.querySelectorAll('.nav-item');
+      allNavItems.forEach(item => item.classList.remove('active'));
+      
+      // Try to find and activate the plans nav item
+      const plansNavItems = document.querySelectorAll('.nav-item');
+      const correctNavItem = Array.from(plansNavItems).find(item => 
+        item.textContent.toLowerCase().includes('plan') || 
+        item.dataset.page === 'plans-page'
+      );
+      if (correctNavItem) {
+        correctNavItem.classList.add('active');
+      }
+      
+      console.log('✅ Manual plans page navigation completed');
+    } else {
+      console.error('❌ Plans page not found in SPA');
+    }
+  }
+}
 
 // ==================== GLOBAL INSTANCE ==================== //
 

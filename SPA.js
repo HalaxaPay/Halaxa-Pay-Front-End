@@ -755,9 +755,23 @@ function initializeSPA() {
     
     // Handle desktop navigation
     navItems.forEach((item, index) => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
             console.log('Desktop navigation clicked:', targetPageId);
+            
+            // **NEW: Check access control before navigation**
+            if (accessControl) {
+                const plan = accessControl.getCurrentPlan();
+                const limits = accessControl.getPlanLimits(plan);
+                
+                if (limits.blockedPages.includes(targetPageId)) {
+                    console.log('🔒 Desktop navigation blocked for page:', targetPageId, 'on plan:', plan);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateToPlansPage();
+                    return false;
+                }
+            }
             
             // Animate navigation item selection
             animateNavSelection(item, navItems);
@@ -785,9 +799,23 @@ function initializeSPA() {
 
     // Handle mobile navigation
     mobileNavItems.forEach((item, index) => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
             console.log('Mobile navigation clicked:', targetPageId);
+            
+            // **NEW: Check access control before navigation**
+            if (accessControl) {
+                const plan = accessControl.getCurrentPlan();
+                const limits = accessControl.getPlanLimits(plan);
+                
+                if (limits.blockedPages.includes(targetPageId)) {
+                    console.log('🔒 Mobile navigation blocked for page:', targetPageId, 'on plan:', plan);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateToPlansPage();
+                    return false;
+                }
+            }
             
             // Animate mobile navigation item selection
             animateMobileNavSelection(item, mobileNavItems);
@@ -3288,7 +3316,7 @@ class HalaxaAccessControl {
                     e.stopPropagation();
                     
                     console.log('🔒 Network restricted - redirecting to plans page');
-                    window.location.href = '/plans.html';
+                    navigateToPlansPage();
                     return false;
                 });
             }
@@ -3300,39 +3328,69 @@ class HalaxaAccessControl {
         const plan = this.getCurrentPlan();
         const limits = this.getPlanLimits(plan);
         
-        // Check current page
-        const navItems = document.querySelectorAll('.nav-item');
+        console.log('🔐 Setting up page access control for plan:', plan);
+        console.log('🔐 Blocked pages:', limits.blockedPages);
         
+        // Setup desktop navigation
+        const navItems = document.querySelectorAll('.nav-item');
+        console.log('🔐 Found', navItems.length, 'desktop nav items');
         navItems.forEach(navItem => {
-            const pageId = navItem.dataset.page;
-            
-            if (limits.blockedPages.includes(pageId)) {
-                navItem.classList.add('nav-locked');
-                
-                // Add animated Font Awesome lock icon
-                if (!navItem.querySelector('.lock-icon')) {
-                    const lockIcon = document.createElement('i');
-                    lockIcon.className = 'fas fa-lock lock-icon';
-                    lockIcon.style.marginLeft = '8px';
-                    lockIcon.style.animation = 'lockPulse 2s infinite';
-                    navItem.appendChild(lockIcon);
-                }
-                
-                // Add animated shine effect based on required plan
-                const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
-                navItem.classList.add(`locked-${requiredPlan}`);
-                
-                // Add click handler to redirect to plans page
-                navItem.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('🔒 Page restricted - redirecting to plans page');
-                    window.location.href = '/plans.html';
-                    return false;
-                });
-            }
+            this.setupNavItemAccess(navItem, limits);
         });
+        
+        // Setup mobile navigation
+        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+        console.log('🔐 Found', mobileNavItems.length, 'mobile nav items');
+        mobileNavItems.forEach(mobileNavItem => {
+            console.log('🔐 Setting up mobile nav item:', mobileNavItem.dataset.page);
+            this.setupNavItemAccess(mobileNavItem, limits);
+        });
+    }
+    
+    // Setup individual nav item with badges and access control
+    setupNavItemAccess(navItem, limits) {
+        const pageId = navItem.dataset.page;
+        
+        // Determine required plan for this page
+        const requiredPlan = pageId === 'capital-page' || pageId === 'automation-page' ? 'pro' : 'elite';
+        
+        // Add plan badge for premium pages (always visible for UX)
+        if (pageId === 'capital-page' || pageId === 'automation-page' || pageId === 'orders-page') {
+            if (!navItem.querySelector('.plan-badge')) {
+                const planBadge = document.createElement('span');
+                planBadge.className = `plan-badge ${requiredPlan}-badge`;
+                planBadge.textContent = requiredPlan.toUpperCase();
+                planBadge.style.marginLeft = '8px';
+                navItem.appendChild(planBadge);
+            }
+        }
+        
+        // If page is blocked, add lock functionality
+        if (limits.blockedPages.includes(pageId)) {
+            navItem.classList.add('nav-locked');
+            
+            // Add animated Font Awesome lock icon
+            if (!navItem.querySelector('.lock-icon')) {
+                const lockIcon = document.createElement('i');
+                lockIcon.className = 'fas fa-lock lock-icon';
+                lockIcon.style.marginLeft = '4px';
+                lockIcon.style.animation = 'lockPulse 2s infinite';
+                navItem.appendChild(lockIcon);
+            }
+            
+            // Add animated shine effect based on required plan
+            navItem.classList.add(`locked-${requiredPlan}`);
+            
+            // Add click handler to redirect to plans page
+            navItem.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('🔒 Page restricted - redirecting to plans page');
+                navigateToPlansPage();
+                return false;
+            });
+        }
     }
 
     // Setup payment link creation restrictions
@@ -3349,7 +3407,7 @@ class HalaxaAccessControl {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('🔒 Payment link limit reached - redirecting to plans page');
-                    window.location.href = '/plans.html';
+                    navigateToPlansPage();
                     return false;
                 }
                 
@@ -3359,10 +3417,10 @@ class HalaxaAccessControl {
         }
     }
 
-    // Redirect to plans page instead of showing modals
+    // Redirect to plans page within SPA
     redirectToPlans() {
-        console.log('🔒 Redirecting to plans page for upgrade...');
-        window.location.href = '/plans.html';
+        console.log('🔒 Redirecting to plans page within SPA...');
+        navigateToPlansPage();
     }
 }
 
@@ -3429,6 +3487,74 @@ function addAccessControlStyles() {
         
         .network-locked:hover {
             opacity: 0.7;
+        }
+        
+        /* Plan Badges */
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pro-badge {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+        }
+        
+        .pro-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: badgeShine 3s ease-in-out infinite;
+        }
+        
+        .elite-badge {
+            background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(107, 70, 193, 0.3);
+        }
+        
+        .elite-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: badgeShine 3s ease-in-out infinite;
+        }
+        
+        @keyframes badgeShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Badge hover effects */
+        .plan-badge:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+        
+        /* Mobile navigation badges */
+        .mobile-nav .plan-badge {
+            font-size: 0.6rem;
+            padding: 1px 4px;
+            margin-left: 4px;
         }
         
         /* Animated Shine Effects for Locked Pages */
@@ -3514,7 +3640,7 @@ function navigateToPage(pageId) {
         
         if (limits.blockedPages.includes(pageId)) {
             console.log('🔒 Page access denied, redirecting to plans...');
-            window.location.href = '/plans.html';
+            navigateToPlansPage();
             return;
         }
     }
@@ -3554,11 +3680,61 @@ function navigateToPage(pageId) {
     }
 }
 
+// Navigate to plans page within SPA
+function navigateToPlansPage() {
+    console.log('🚀 Navigating to plans page within SPA...');
+    
+    // Find the plans navigation item and click it
+    const plansNavItem = document.querySelector('[data-page="plans-page"]');
+    if (plansNavItem) {
+        plansNavItem.click();
+        console.log('✅ Plans page navigation triggered');
+    } else {
+        console.error('❌ Plans nav item not found - triggering manual navigation');
+        
+        // Fallback: manually trigger page transition
+        const allPages = document.querySelectorAll('.page-content');
+        const plansPage = document.getElementById('plans-page');
+        
+        if (plansPage) {
+            // Hide all pages
+            allPages.forEach(page => {
+                page.style.display = 'none';
+                page.classList.remove('active-page');
+            });
+            
+            // Show plans page
+            plansPage.style.display = 'block';
+            plansPage.classList.add('active-page');
+            
+            // Update nav items
+            const allNavItems = document.querySelectorAll('.nav-item');
+            allNavItems.forEach(item => item.classList.remove('active'));
+            
+            // Try to find and activate the plans nav item
+            const plansNavItems = document.querySelectorAll('.nav-item');
+            const correctNavItem = Array.from(plansNavItems).find(item => 
+                item.textContent.toLowerCase().includes('plan') || 
+                item.dataset.page === 'plans-page'
+            );
+            if (correctNavItem) {
+                correctNavItem.classList.add('active');
+            }
+            
+            console.log('✅ Manual plans page navigation completed');
+        } else {
+            console.error('❌ Plans page not found in SPA');
+        }
+    }
+}
+
 // Reinitialize access control after page navigation
 function reinitializeAccessControlForPage() {
     if (accessControl) {
         // Re-setup restrictions for the current page
         setTimeout(() => {
+            console.log('🔄 Reinitializing access control for current page');
+            accessControl.setupPageAccessControl(); // Re-apply nav restrictions
             accessControl.setupNetworkRestrictions();
             accessControl.setupPaymentLinkRestrictions();
             updatePlanStatusDisplay();

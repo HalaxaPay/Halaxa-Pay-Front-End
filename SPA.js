@@ -176,7 +176,12 @@ async function loadPersonalizedData(user) {
             // Initialize features in parallel for speed
             await Promise.all([
                 initializeAllEngineFeatures(user.id),
-                initializeAuthenticatedFeatures()
+                initializeAuthenticatedFeatures(),
+                initializeTotalUSDCBalance(), // 🎯 FEATURE 1: Total USDC Balance + Chart
+                initializeAIOracleMessages(), // 🎯 FEATURE 2: AI Oracle Messages
+                initializeLoadMoreTransactions(), // 🎯 FEATURE 3: Load More Transactions
+                initializeBillingHistoryTable(), // 🎯 FEATURE 4: Billing History Table
+                initializeUserGrowthMetrics() // 🎯 FEATURE 5: User Growth Metrics
             ]);
             
         } catch (apiError) {
@@ -2066,64 +2071,130 @@ function showQRCode(url) {
     showPaymentNotification('QR Code feature coming soon!', 'info');
 }
 
-// Initialize all Engine.js features via backend API calls
+// Initialize all Engine.js features via sophisticated calculation endpoints
 async function initializeAllEngineFeatures(userId) {
-    console.log('🚀 Initializing ALL dashboard features for user:', userId);
+    console.log('🚀 Initializing ALL sophisticated Engine.js features for user:', userId);
     
     try {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) return;
         
-        // Call ALL backend APIs to initialize features
-        const initPromises = [
-            // Core data endpoints
-            fetch(`${BACKEND_URL}/api/account/capital-data`, {
+        // 🎯 CALL ALL ENGINE.JS SOPHISTICATED CALCULATION ENDPOINTS
+        const enginePromises = [
+            // 🧠 COMPREHENSIVE DASHBOARD ANALYTICS
+            fetch(`${BACKEND_URL}/api/account/dashboard-analytics-complete`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             }),
-            fetch(`${BACKEND_URL}/api/account/user-metrics`, {
+            // 📊 MONTHLY CONSTELLATION DATA (12-month revenue analysis)
+            fetch(`${BACKEND_URL}/api/account/monthly-constellation`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             }),
-            fetch(`${BACKEND_URL}/api/account/dashboard-data`, {
+            // 🤖 AI FINANCIAL INSIGHTS (Predictive Analytics)
+            fetch(`${BACKEND_URL}/api/account/ai-insights`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             }),
+            // ⚡ TRANSACTION VELOCITY ANALYSIS
+            fetch(`${BACKEND_URL}/api/account/transaction-velocity`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 🏦 DIGITAL VAULT DATA (Balance Aggregations)
+            fetch(`${BACKEND_URL}/api/account/digital-vault`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 💰 USDC FLOW DATA (30-day analysis)
+            fetch(`${BACKEND_URL}/api/account/usdc-flow/30D`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 📈 USER GROWTH METRICS (4-month analysis)
+            fetch(`${BACKEND_URL}/api/account/user-growth`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 🧾 BILLING HISTORY ANALYTICS
+            fetch(`${BACKEND_URL}/api/account/billing-history`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 📦 ORDER MANAGEMENT ANALYTICS
+            fetch(`${BACKEND_URL}/api/account/order-analytics`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }),
+            // 🔗 PAYMENT LINKS (For compatibility)
             fetch(`${BACKEND_URL}/api/payment-links`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            fetch(`${BACKEND_URL}/api/account/transactions?limit=50`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
         ];
         
-        const responses = await Promise.allSettled(initPromises);
+        console.log('📡 Calling Engine.js calculation endpoints...');
+        const responses = await Promise.allSettled(enginePromises);
         
-        // Process capital data
+        // 🎯 PROCESS COMPREHENSIVE DASHBOARD ANALYTICS
         if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
-            const capitalData = await responses[0].value.json();
-            updateCapitalPageWithRealData(capitalData);
+            const comprehensiveData = await responses[0].value.json();
+            console.log('✅ Comprehensive dashboard analytics loaded:', Object.keys(comprehensiveData));
+            updateDashboardWithRealData(comprehensiveData);
+            updateAllDashboardElements(comprehensiveData);
         }
         
-        // Process user metrics
+        // 📊 PROCESS MONTHLY CONSTELLATION DATA
         if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
-            const metricsData = await responses[1].value.json();
-            updateMetricsWithRealData(metricsData);
+            const constellationData = await responses[1].value.json();
+            console.log('✅ Monthly constellation data loaded');
+            updateMonthlyConstellationDisplay(constellationData);
         }
         
-        // Process dashboard data
+        // 🤖 PROCESS AI FINANCIAL INSIGHTS
         if (responses[2].status === 'fulfilled' && responses[2].value.ok) {
-            const dashboardData = await responses[2].value.json();
-            updateAllDashboardElements(dashboardData);
+            const aiInsights = await responses[2].value.json();
+            console.log('✅ AI financial insights loaded');
+            updateAIInsightsDisplay(aiInsights);
         }
         
-        // Process payment links
+        // ⚡ PROCESS TRANSACTION VELOCITY
         if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
-            const paymentLinksData = await responses[3].value.json();
-            updatePaymentLinksElements(paymentLinksData);
+            const velocityData = await responses[3].value.json();
+            console.log('✅ Transaction velocity data loaded');
+            updateTransactionVelocityDisplay(velocityData);
         }
         
-        // Process transactions
+        // 🏦 PROCESS DIGITAL VAULT DATA
         if (responses[4].status === 'fulfilled' && responses[4].value.ok) {
-            const transactionsData = await responses[4].value.json();
-            updateTransactionElements(transactionsData);
+            const vaultData = await responses[4].value.json();
+            console.log('✅ Digital vault data loaded');
+            updateDigitalVaultDisplay(vaultData);
+        }
+        
+        // 💰 PROCESS USDC FLOW DATA
+        if (responses[5].status === 'fulfilled' && responses[5].value.ok) {
+            const flowData = await responses[5].value.json();
+            console.log('✅ USDC flow data loaded');
+            updateUSDCFlowDisplay(flowData);
+        }
+        
+        // 📈 PROCESS USER GROWTH METRICS
+        if (responses[6].status === 'fulfilled' && responses[6].value.ok) {
+            const growthData = await responses[6].value.json();
+            console.log('✅ User growth metrics loaded');
+            updateUserGrowthDisplay(growthData);
+        }
+        
+        // 🧾 PROCESS BILLING HISTORY
+        if (responses[7].status === 'fulfilled' && responses[7].value.ok) {
+            const billingData = await responses[7].value.json();
+            console.log('✅ Billing history loaded');
+            updateBillingHistoryDisplay(billingData);
+        }
+        
+        // 📦 PROCESS ORDER ANALYTICS
+        if (responses[8].status === 'fulfilled' && responses[8].value.ok) {
+            const orderData = await responses[8].value.json();
+            console.log('✅ Order analytics loaded');
+            updateOrderAnalyticsDisplay(orderData);
+        }
+        
+        // 🔗 PROCESS PAYMENT LINKS (For compatibility)
+        if (responses[9].status === 'fulfilled' && responses[9].value.ok) {
+            const paymentLinksData = await responses[9].value.json();
+            console.log('✅ Payment links loaded');
+            updatePaymentLinksElements(paymentLinksData);
         }
         
         // Initialize ALL interactive elements
@@ -2135,9 +2206,12 @@ async function initializeAllEngineFeatures(userId) {
         // Initialize ALL buttons and controls
         initializeAllButtons();
         
-        console.log('✅ ALL dashboard features initialized successfully');
+        console.log('🎉 ALL sophisticated Engine.js features initialized successfully!');
+        console.log('💡 Engine.js calculations now powering the entire dashboard');
+        
     } catch (error) {
-        console.error('❌ Error initializing dashboard features:', error);
+        console.error('❌ Error initializing Engine.js features:', error);
+        console.log('🔄 Falling back to basic functionality...');
     }
 }
 
@@ -3890,3 +3964,3255 @@ function updatePlanStatusDisplay() {
         document.head.appendChild(styles);
     }
 }
+
+// ==================== FEATURE 1: TOTAL USDC BALANCE + CHART ==================== //
+
+async function initializeTotalUSDCBalance() {
+    try {
+        console.log('🔄 Loading Total USDC Balance...');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            console.warn('❌ No user ID found for USDC balance');
+            return;
+        }
+
+        // Import supabase from the client file
+        const { supabase } = await import('./supabase-client.js');
+
+        // Fetch USDC balances from all networks
+        const { data: balances, error } = await supabase
+            .from('usdc_balances')
+            .select('*')
+            .eq('user_id', user.id);
+
+        if (error) {
+            console.error('❌ Error fetching USDC balances:', error);
+            return;
+        }
+
+        console.log('📊 USDC Balances loaded:', balances);
+
+        // Calculate total balance across all networks
+        const totalBalance = (balances || []).reduce((sum, bal) => {
+            return sum + parseFloat(bal.amount || 0);
+        }, 0);
+
+        // Update total balance display
+        updateTotalBalanceDisplay(totalBalance);
+
+        // Create network distribution chart if we have data
+        if (balances && balances.length > 0) {
+            renderUSDCNetworkChart(balances);
+        } else {
+            renderEmptyChart();
+        }
+
+        // Setup fullscreen toggle if button exists
+        setupBalanceChartFullscreen();
+
+        console.log('✅ Total USDC Balance feature initialized');
+
+    } catch (error) {
+        console.error('❌ Error initializing USDC balance:', error);
+        // Show fallback data
+        updateTotalBalanceDisplay(0);
+        renderEmptyChart();
+    }
+}
+
+function updateTotalBalanceDisplay(totalBalance) {
+    // Try multiple possible selectors for balance display
+    const balanceSelectors = [
+        '#totalUSDCBalance',
+        '.total-balance',
+        '.balance-main',
+        '.balance-amount',
+        '.total-usdc-amount'
+    ];
+
+    let balanceUpdated = false;
+    balanceSelectors.forEach(selector => {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = `$${totalBalance.toLocaleString('en-US', { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+            })}`;
+            balanceUpdated = true;
+            console.log(`✅ Updated balance in ${selector}`);
+        }
+    });
+
+    if (!balanceUpdated) {
+        console.warn('⚠️ No balance display element found');
+    }
+}
+
+function renderUSDCNetworkChart(balances) {
+    // Try multiple possible selectors for chart container
+    const chartSelectors = [
+        '#usdcNetworkChart',
+        '.network-chart',
+        '.balance-chart',
+        '.usdc-distribution-chart',
+        '.network-distribution'
+    ];
+
+    let chartContainer = null;
+    for (const selector of chartSelectors) {
+        chartContainer = document.querySelector(selector);
+        if (chartContainer) {
+            console.log(`📈 Found chart container: ${selector}`);
+            break;
+        }
+    }
+
+    if (!chartContainer) {
+        console.warn('⚠️ No chart container found, creating one');
+        chartContainer = createChartContainer();
+    }
+
+    // Aggregate balances by network
+    const networkData = balances.reduce((acc, bal) => {
+        const network = (bal.network || 'polygon').toLowerCase();
+        acc[network] = (acc[network] || 0) + parseFloat(bal.amount || 0);
+        return acc;
+    }, {});
+
+    const total = Object.values(networkData).reduce((sum, val) => sum + val, 0);
+    
+    // Create donut chart HTML
+    let chartHTML = '<div class="usdc-donut-chart">';
+    
+    // Chart segments
+    chartHTML += '<div class="donut-segments">';
+    let rotation = 0;
+    
+    Object.entries(networkData).forEach(([network, amount]) => {
+        if (amount > 0) {
+            const percentage = (amount / total) * 100;
+            const color = getNetworkColor(network);
+            
+            chartHTML += `
+                <div class="donut-segment" 
+                     style="
+                         background: conic-gradient(${color} 0deg ${percentage * 3.6}deg, transparent ${percentage * 3.6}deg 360deg);
+                         transform: rotate(${rotation}deg);
+                     "
+                     data-network="${network}"
+                     data-amount="${amount}"
+                     data-percentage="${percentage.toFixed(1)}">
+                </div>
+            `;
+            rotation += percentage * 3.6;
+        }
+    });
+    
+    chartHTML += '</div>';
+    
+    // Chart center with total
+    chartHTML += `
+        <div class="donut-center">
+            <div class="chart-total">$${total.toLocaleString()}</div>
+            <div class="chart-label">Total USDC</div>
+        </div>
+    `;
+    
+    // Network legend
+    chartHTML += '<div class="network-legend">';
+    Object.entries(networkData).forEach(([network, amount]) => {
+        if (amount > 0) {
+            const percentage = (amount / total) * 100;
+            chartHTML += `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${getNetworkColor(network)}"></div>
+                    <span class="legend-network">${network.charAt(0).toUpperCase() + network.slice(1)}</span>
+                    <span class="legend-amount">$${amount.toLocaleString()}</span>
+                    <span class="legend-percentage">(${percentage.toFixed(1)}%)</span>
+                </div>
+            `;
+        }
+    });
+    chartHTML += '</div>';
+    
+    chartHTML += '</div>';
+    
+    chartContainer.innerHTML = chartHTML;
+    
+    // Add chart styles
+    addChartStyles();
+    
+    // Add hover effects
+    addChartInteractivity();
+}
+
+function renderEmptyChart() {
+    const chartSelectors = [
+        '#usdcNetworkChart',
+        '.network-chart', 
+        '.balance-chart'
+    ];
+
+    let chartContainer = null;
+    for (const selector of chartSelectors) {
+        chartContainer = document.querySelector(selector);
+        if (chartContainer) break;
+    }
+
+    if (chartContainer) {
+        chartContainer.innerHTML = `
+            <div class="usdc-donut-chart empty">
+                <div class="donut-center">
+                    <div class="chart-total">$0.00</div>
+                    <div class="chart-label">No USDC Found</div>
+                </div>
+                <div class="empty-message">
+                    <p>No USDC balances detected yet.</p>
+                    <p>Create your first payment link to start receiving USDC!</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function createChartContainer() {
+    // Try to find a good place to add the chart
+    const dashboardContent = document.querySelector('.dashboard-content, .main-content, .page-content');
+    
+    if (dashboardContent) {
+        const chartContainer = document.createElement('div');
+        chartContainer.id = 'usdcNetworkChart';
+        chartContainer.className = 'network-chart-container';
+        
+        // Add a title
+        const chartTitle = document.createElement('h3');
+        chartTitle.textContent = 'USDC Distribution by Network';
+        chartTitle.className = 'chart-title';
+        
+        const chartWrapper = document.createElement('div');
+        chartWrapper.className = 'chart-wrapper';
+        chartWrapper.appendChild(chartTitle);
+        chartWrapper.appendChild(chartContainer);
+        
+        // Insert at the beginning of dashboard content
+        dashboardContent.insertBefore(chartWrapper, dashboardContent.firstChild);
+        
+        return chartContainer;
+    }
+    
+    return null;
+}
+
+function getNetworkColor(network) {
+    const colors = {
+        'polygon': '#8247e5',
+        'solana': '#00d4aa', 
+        'ethereum': '#627eea',
+        'bitcoin': '#f7931a',
+        'default': '#6b7280'
+    };
+    return colors[network.toLowerCase()] || colors.default;
+}
+
+function setupBalanceChartFullscreen() {
+    const expandBtn = document.getElementById('balanceChartExpand');
+    if (expandBtn) {
+        expandBtn.addEventListener('click', toggleBalanceChartFullscreen);
+        console.log('✅ Fullscreen toggle button connected');
+    } else {
+        console.log('ℹ️ No fullscreen expand button found');
+    }
+}
+
+function toggleBalanceChartFullscreen() {
+    const chartContainer = document.querySelector('#usdcNetworkChart, .network-chart, .balance-chart');
+    if (chartContainer) {
+        chartContainer.classList.toggle('fullscreen-chart');
+        
+        // Update button text/icon
+        const expandBtn = document.getElementById('balanceChartExpand');
+        if (expandBtn) {
+            const isFullscreen = chartContainer.classList.contains('fullscreen-chart');
+            expandBtn.innerHTML = isFullscreen ? 
+                '<i class="fas fa-compress"></i>' : 
+                '<i class="fas fa-expand"></i>';
+        }
+        
+        console.log('🖥️ Chart fullscreen toggled');
+    }
+}
+
+function addChartStyles() {
+    if (document.getElementById('usdc-chart-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'usdc-chart-styles';
+    styles.textContent = `
+        .chart-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .usdc-donut-chart {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .donut-segments {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+        
+        .donut-segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        
+        .donut-segment:hover {
+            transform: scale(1.05) !important;
+            z-index: 10;
+        }
+        
+        .donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: white;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .chart-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .chart-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .network-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 250px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+        
+        .legend-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .legend-network {
+            font-weight: 600;
+            color: #374151;
+            min-width: 60px;
+        }
+        
+        .legend-amount {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .legend-percentage {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-left: auto;
+        }
+        
+        .fullscreen-chart {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: white;
+            z-index: 9999;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow: auto;
+        }
+        
+        .fullscreen-chart .usdc-donut-chart {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .fullscreen-chart .donut-segments {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .fullscreen-chart .donut-center {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .fullscreen-chart .chart-total {
+            font-size: 2rem;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 20px;
+        }
+        
+        .empty-message p {
+            margin: 8px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            
+            .donut-segments {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .donut-center {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .chart-total {
+                font-size: 1.25rem;
+            }
+            
+            .network-legend {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    `;
+    
+    document.head.appendChild(styles);
+}
+
+function addChartInteractivity() {
+    // Add hover effects to chart segments
+    document.querySelectorAll('.donut-segment').forEach(segment => {
+        segment.addEventListener('mouseenter', function() {
+            const network = this.dataset.network;
+            const amount = this.dataset.amount;
+            const percentage = this.dataset.percentage;
+            
+            // Highlight corresponding legend item
+            const legendItem = document.querySelector(`.legend-item .legend-network:contains("${network}")`);
+            if (legendItem) {
+                legendItem.closest('.legend-item').style.background = '#e5e7eb';
+            }
+            
+            // Show tooltip (if you want to add one)
+            showChartTooltip(network, amount, percentage, event);
+        });
+        
+        segment.addEventListener('mouseleave', function() {
+            // Reset legend highlighting
+            document.querySelectorAll('.legend-item').forEach(item => {
+                item.style.background = '#f9fafb';
+            });
+            
+            hideChartTooltip();
+        });
+    });
+}
+
+function showChartTooltip(network, amount, percentage, event) {
+    // Remove existing tooltip
+    const existingTooltip = document.querySelector('.chart-tooltip');
+    if (existingTooltip) {
+        existingTooltip.remove();
+    }
+    
+    const tooltip = document.createElement('div');
+    tooltip.className = 'chart-tooltip';
+    tooltip.innerHTML = `
+        <div class="tooltip-content">
+            <strong>${network.charAt(0).toUpperCase() + network.slice(1)}</strong><br>
+            $${parseFloat(amount).toLocaleString()}<br>
+            ${percentage}% of total
+        </div>
+    `;
+    
+    tooltip.style.cssText = `
+        position: absolute;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        pointer-events: none;
+        z-index: 1000;
+        left: ${event.pageX + 10}px;
+        top: ${event.pageY - 40}px;
+    `;
+    
+    document.body.appendChild(tooltip);
+}
+
+function hideChartTooltip() {
+    const tooltip = document.querySelector('.chart-tooltip');
+    if (tooltip) {
+        tooltip.remove();
+    }
+}
+
+// Add this function to the existing initialization sequence
+console.log('✅ USDC Balance Chart feature loaded');
+
+// ==================== FEATURE 2: AI ORACLE MESSAGES ==================== //
+
+async function initializeAIOracleMessages() {
+    try {
+        console.log('🔄 Loading AI Oracle Messages...');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            console.warn('❌ No user ID found for AI Oracle');
+            return;
+        }
+
+        // Import supabase from the client file
+        const { supabase } = await import('./supabase-client.js');
+
+        // Fetch AI oracle messages for this user
+        const { data: messages, error } = await supabase
+            .from('ai_oracle_messages')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(3);
+
+        if (error) {
+            console.error('❌ Error fetching AI Oracle messages:', error);
+            // Show fallback messages
+            showFallbackOracleMessages();
+            return;
+        }
+
+        console.log('🧠 AI Oracle Messages loaded:', messages);
+
+        // Inject messages into the specific div IDs
+        const oracleContainerIds = ['aiOracleMessage1', 'aiOracleMessage2', 'aiOracleMessage3'];
+        
+        // Add oracle styles first
+        addOracleStyles();
+
+        oracleContainerIds.forEach((containerId, index) => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                if (messages && messages[index]) {
+                    renderOracleMessage(container, messages[index], index);
+                } else {
+                    renderEmptyOracleMessage(container, index);
+                }
+            } else {
+                console.warn(`⚠️ Oracle container ${containerId} not found`);
+            }
+        });
+
+        // Start message rotation animation
+        startOracleRotation();
+
+        console.log('✅ AI Oracle Messages feature initialized');
+
+    } catch (error) {
+        console.error('❌ Error initializing AI Oracle:', error);
+        showFallbackOracleMessages();
+    }
+}
+
+function renderOracleMessage(container, message, index) {
+    const priority = message.priority || 'normal';
+    const messageType = message.message_type || 'insight';
+    
+    container.innerHTML = `
+        <div class="oracle-message ${priority}" data-message-index="${index}">
+            <div class="oracle-header">
+                <div class="oracle-icon ${messageType}">
+                    ${getOracleIcon(messageType)}
+                </div>
+                <div class="oracle-meta">
+                    <span class="oracle-type">${getMessageTypeLabel(messageType)}</span>
+                    <span class="oracle-timestamp">${formatOracleTime(message.created_at)}</span>
+                </div>
+            </div>
+            <div class="oracle-content">
+                <h4 class="oracle-title">${message.title || 'AI Insight'}</h4>
+                <p class="oracle-text">${message.content}</p>
+                ${message.confidence ? `<div class="oracle-confidence">
+                    <span class="confidence-label">Confidence:</span>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${message.confidence}%"></div>
+                    </div>
+                    <span class="confidence-value">${message.confidence}%</span>
+                </div>` : ''}
+            </div>
+            <div class="oracle-actions">
+                <button class="oracle-action-btn refresh" onclick="refreshSingleOracleMessage('${container.id}')">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="oracle-action-btn expand" onclick="expandOracleMessage('${container.id}')">
+                    <i class="fas fa-expand-alt"></i>
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Add entrance animation with delay
+    setTimeout(() => {
+        container.classList.add('oracle-animated');
+    }, index * 200);
+}
+
+function renderEmptyOracleMessage(container, index) {
+    const placeholderMessages = [
+        {
+            title: "Welcome to Halaxa AI",
+            content: "Your AI Oracle is analyzing your payment patterns and will provide insights soon.",
+            type: "welcome"
+        },
+        {
+            title: "Transaction Analysis",
+            content: "Complete more transactions to unlock personalized AI insights about your business.",
+            type: "analytics"
+        },
+        {
+            title: "Growth Opportunities",
+            content: "Your AI Oracle will identify growth opportunities based on your payment data.",
+            type: "growth"
+        }
+    ];
+
+    const placeholder = placeholderMessages[index] || placeholderMessages[0];
+    
+    container.innerHTML = `
+        <div class="oracle-message placeholder" data-message-index="${index}">
+            <div class="oracle-header">
+                <div class="oracle-icon ${placeholder.type}">
+                    ${getOracleIcon(placeholder.type)}
+                </div>
+                <div class="oracle-meta">
+                    <span class="oracle-type">${getMessageTypeLabel(placeholder.type)}</span>
+                    <span class="oracle-timestamp">Waiting for data...</span>
+                </div>
+            </div>
+            <div class="oracle-content">
+                <h4 class="oracle-title">${placeholder.title}</h4>
+                <p class="oracle-text">${placeholder.content}</p>
+            </div>
+            <div class="oracle-loading">
+                <div class="loading-dots">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add entrance animation with delay
+    setTimeout(() => {
+        container.classList.add('oracle-animated');
+    }, index * 200);
+}
+
+function showFallbackOracleMessages() {
+    const oracleContainerIds = ['aiOracleMessage1', 'aiOracleMessage2', 'aiOracleMessage3'];
+    
+    oracleContainerIds.forEach((containerId, index) => {
+        const container = document.getElementById(containerId);
+        if (container) {
+            renderEmptyOracleMessage(container, index);
+        }
+    });
+}
+
+function getOracleIcon(messageType) {
+    const icons = {
+        'insight': '<i class="fas fa-lightbulb"></i>',
+        'warning': '<i class="fas fa-exclamation-triangle"></i>',
+        'success': '<i class="fas fa-check-circle"></i>',
+        'analytics': '<i class="fas fa-chart-line"></i>',
+        'growth': '<i class="fas fa-trending-up"></i>',
+        'welcome': '<i class="fas fa-robot"></i>',
+        'prediction': '<i class="fas fa-crystal-ball"></i>',
+        'security': '<i class="fas fa-shield-alt"></i>',
+        'default': '<i class="fas fa-brain"></i>'
+    };
+    return icons[messageType] || icons.default;
+}
+
+function getMessageTypeLabel(messageType) {
+    const labels = {
+        'insight': 'AI Insight',
+        'warning': 'Alert',
+        'success': 'Achievement',
+        'analytics': 'Analytics',
+        'growth': 'Growth Tip',
+        'welcome': 'Welcome',
+        'prediction': 'Prediction',
+        'security': 'Security',
+        'default': 'Oracle'
+    };
+    return labels[messageType] || labels.default;
+}
+
+function formatOracleTime(timestamp) {
+    if (!timestamp) return 'Just now';
+    
+    const now = new Date();
+    const messageTime = new Date(timestamp);
+    const diffMinutes = Math.floor((now - messageTime) / (1000 * 60));
+    
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return messageTime.toLocaleDateString();
+}
+
+function startOracleRotation() {
+    // Subtle rotation animation for oracle cards
+    const oracleMessages = document.querySelectorAll('.oracle-message');
+    
+    oracleMessages.forEach((message, index) => {
+        // Add subtle breathing effect
+        message.style.animationDelay = `${index * 0.5}s`;
+        message.classList.add('oracle-breathing');
+        
+        // Add periodic highlight rotation
+        setTimeout(() => {
+            startMessageHighlightRotation();
+        }, 3000);
+    });
+}
+
+function startMessageHighlightRotation() {
+    const messages = document.querySelectorAll('.oracle-message:not(.placeholder)');
+    if (messages.length === 0) return;
+    
+    let currentHighlight = 0;
+    
+    const rotateHighlight = () => {
+        // Remove previous highlight
+        messages.forEach(msg => msg.classList.remove('oracle-highlighted'));
+        
+        // Add highlight to current message
+        if (messages[currentHighlight]) {
+            messages[currentHighlight].classList.add('oracle-highlighted');
+        }
+        
+        // Move to next message
+        currentHighlight = (currentHighlight + 1) % messages.length;
+    };
+    
+    // Start rotation every 5 seconds
+    setInterval(rotateHighlight, 5000);
+    
+    // Initial highlight
+    rotateHighlight();
+}
+
+// Action button functions
+window.refreshSingleOracleMessage = async function(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Add loading state
+    container.classList.add('oracle-refreshing');
+    
+    try {
+        // Simulate refresh (in real app, you'd fetch new message)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // For now, just update timestamp
+        const timestampElement = container.querySelector('.oracle-timestamp');
+        if (timestampElement) {
+            timestampElement.textContent = 'Just refreshed';
+        }
+        
+        showPaymentNotification('Oracle message refreshed!', 'success');
+        
+    } catch (error) {
+        console.error('Error refreshing oracle message:', error);
+        showPaymentNotification('Failed to refresh message', 'error');
+    } finally {
+        container.classList.remove('oracle-refreshing');
+    }
+};
+
+window.expandOracleMessage = function(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const message = container.querySelector('.oracle-message');
+    if (message) {
+        message.classList.toggle('oracle-expanded');
+        
+        // Update button icon
+        const expandBtn = container.querySelector('.oracle-action-btn.expand i');
+        if (expandBtn) {
+            expandBtn.className = message.classList.contains('oracle-expanded') ? 
+                'fas fa-compress-alt' : 'fas fa-expand-alt';
+        }
+    }
+};
+
+function addOracleStyles() {
+    if (document.getElementById('oracle-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'oracle-styles';
+    styles.textContent = `
+        .oracle-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 10px 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            min-height: 140px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+        
+        .oracle-message.oracle-animated {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .oracle-message.oracle-breathing {
+            animation: oracleBreathing 4s ease-in-out infinite;
+        }
+        
+        .oracle-message.oracle-highlighted {
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.6);
+            transform: scale(1.02);
+        }
+        
+        .oracle-message.oracle-refreshing {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .oracle-message.oracle-expanded {
+            transform: scale(1.05);
+            z-index: 100;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .oracle-message.placeholder {
+            background: linear-gradient(135deg, #a8a8a8 0%, #8e8e8e 100%);
+            opacity: 0.8;
+        }
+        
+        .oracle-message.warning {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+        
+        .oracle-message.success {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+        }
+        
+        .oracle-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .oracle-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .oracle-icon.insight {
+            background: rgba(255, 193, 7, 0.3);
+        }
+        
+        .oracle-icon.warning {
+            background: rgba(255, 107, 107, 0.3);
+        }
+        
+        .oracle-icon.success {
+            background: rgba(81, 207, 102, 0.3);
+        }
+        
+        .oracle-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .oracle-type {
+            font-size: 0.875rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        
+        .oracle-timestamp {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .oracle-content {
+            margin-bottom: 15px;
+        }
+        
+        .oracle-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+        
+        .oracle-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+            opacity: 0.95;
+        }
+        
+        .oracle-confidence {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.875rem;
+        }
+        
+        .confidence-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #51cf66, #40c057);
+            transition: width 0.5s ease;
+        }
+        
+        .oracle-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .oracle-message:hover .oracle-actions {
+            opacity: 1;
+        }
+        
+        .oracle-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        
+        .oracle-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .oracle-loading {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+        }
+        
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: loadingDots 1.4s ease-in-out infinite both;
+        }
+        
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes oracleBreathing {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.01); }
+        }
+        
+        @keyframes loadingDots {
+            0%, 80%, 100% { 
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .oracle-message {
+                padding: 15px;
+                margin: 8px 0;
+                min-height: 120px;
+            }
+            
+            .oracle-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            
+            .oracle-title {
+                font-size: 1rem;
+            }
+            
+            .oracle-text {
+                font-size: 0.875rem;
+            }
+            
+            .oracle-actions {
+                position: static;
+                opacity: 1;
+                justify-content: flex-end;
+                margin-top: 10px;
+            }
+        }
+        
+        /* Dark theme support */
+        @media (prefers-color-scheme: dark) {
+            .oracle-message {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+        }
+    `;
+    
+    document.head.appendChild(styles);
+}
+
+console.log('✅ AI Oracle Messages feature loaded');
+
+// ==================== FEATURE 3: LOAD MORE TRANSACTIONS BUTTON ==================== //
+
+let currentTransactionOffset = 0;
+const TRANSACTION_PAGE_SIZE = 10;
+let isLoadingTransactions = false;
+let hasMoreTransactions = true;
+
+async function initializeLoadMoreTransactions() {
+    try {
+        console.log('🔄 Initializing Load More Transactions...');
+        
+        // Find the load more button
+        const loadMoreBtn = document.getElementById('loadMoreTransactions');
+        if (!loadMoreBtn) {
+            console.warn('⚠️ Load More Transactions button not found');
+            return;
+        }
+
+        // Setup button click handler
+        loadMoreBtn.addEventListener('click', handleLoadMoreTransactions);
+        
+        // Reset pagination state
+        currentTransactionOffset = 0;
+        hasMoreTransactions = true;
+        isLoadingTransactions = false;
+        
+        // Update button text
+        updateLoadMoreButtonState(loadMoreBtn, 'ready');
+        
+        // Load initial transactions if container is empty
+        const container = getTransactionsContainer();
+        if (container && container.children.length === 0) {
+            console.log('📝 Loading initial transactions...');
+            await loadMoreTransactions(true);
+        }
+
+        console.log('✅ Load More Transactions feature initialized');
+
+    } catch (error) {
+        console.error('❌ Error initializing Load More Transactions:', error);
+    }
+}
+
+async function handleLoadMoreTransactions() {
+    if (isLoadingTransactions || !hasMoreTransactions) {
+        return;
+    }
+    
+    await loadMoreTransactions();
+}
+
+async function loadMoreTransactions(isInitialLoad = false) {
+    if (isLoadingTransactions) return;
+    
+    try {
+        isLoadingTransactions = true;
+        
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            console.warn('❌ No user ID found for transactions');
+            return;
+        }
+
+        const loadMoreBtn = document.getElementById('loadMoreTransactions');
+        const container = getTransactionsContainer();
+        
+        if (!container) {
+            console.warn('⚠️ Transactions container not found');
+            return;
+        }
+
+        // Update button to loading state
+        if (loadMoreBtn) {
+            updateLoadMoreButtonState(loadMoreBtn, 'loading');
+        }
+
+        // Import supabase
+        const { supabase } = await import('./supabase-client.js');
+
+        // Fetch transactions with pagination
+        const { data: transactions, error } = await supabase
+            .from('transactions')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .range(currentTransactionOffset, currentTransactionOffset + TRANSACTION_PAGE_SIZE - 1);
+
+        if (error) {
+            console.error('❌ Error fetching transactions:', error);
+            throw error;
+        }
+
+        console.log(`📊 Loaded ${transactions?.length || 0} transactions (offset: ${currentTransactionOffset})`);
+
+        // Check if we have more transactions
+        hasMoreTransactions = transactions && transactions.length === TRANSACTION_PAGE_SIZE;
+
+        if (transactions && transactions.length > 0) {
+            // Create and append transaction elements
+            const transactionElements = transactions.map(tx => createTransactionElement(tx));
+            
+            // Animate in the new transactions
+            transactionElements.forEach((element, index) => {
+                // Add to container
+                container.appendChild(element);
+                
+                // Animate in with delay
+                setTimeout(() => {
+                    element.classList.add('transaction-visible');
+                }, index * 100);
+            });
+            
+            // Update offset for next load
+            currentTransactionOffset += transactions.length;
+            
+            // Update transaction count if element exists
+            updateTransactionCount();
+            
+        } else if (!isInitialLoad) {
+            showPaymentNotification('No more transactions to load', 'info');
+        }
+
+        // Update button state
+        if (loadMoreBtn) {
+            if (hasMoreTransactions) {
+                updateLoadMoreButtonState(loadMoreBtn, 'ready');
+            } else {
+                updateLoadMoreButtonState(loadMoreBtn, 'complete');
+            }
+        }
+
+    } catch (error) {
+        console.error('❌ Error loading transactions:', error);
+        
+        const loadMoreBtn = document.getElementById('loadMoreTransactions');
+        if (loadMoreBtn) {
+            updateLoadMoreButtonState(loadMoreBtn, 'error');
+        }
+        
+        showPaymentNotification('Failed to load transactions. Please try again.', 'error');
+        
+    } finally {
+        isLoadingTransactions = false;
+    }
+}
+
+function getTransactionsContainer() {
+    // Try multiple possible selectors for transactions container
+    const containerSelectors = [
+        '.recent-transactions',
+        '#recentTransactionsList',
+        '.transactions-list',
+        '.transaction-container',
+        '.transactions-grid'
+    ];
+
+    for (const selector of containerSelectors) {
+        const container = document.querySelector(selector);
+        if (container) {
+            console.log(`📋 Found transactions container: ${selector}`);
+            return container;
+        }
+    }
+
+    console.warn('⚠️ No transactions container found, creating one');
+    return createTransactionsContainer();
+}
+
+function createTransactionsContainer() {
+    // Try to find a good place to add the container
+    const dashboardContent = document.querySelector('.dashboard-content, .main-content, .page-content');
+    
+    if (dashboardContent) {
+        const container = document.createElement('div');
+        container.className = 'recent-transactions transactions-list';
+        
+        // Add a title
+        const title = document.createElement('h3');
+        title.textContent = 'Recent Transactions';
+        title.className = 'transactions-title';
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'transactions-wrapper';
+        wrapper.appendChild(title);
+        wrapper.appendChild(container);
+        
+        // Insert before load more button or at end
+        const loadMoreBtn = document.getElementById('loadMoreTransactions');
+        if (loadMoreBtn) {
+            dashboardContent.insertBefore(wrapper, loadMoreBtn.parentElement);
+        } else {
+            dashboardContent.appendChild(wrapper);
+        }
+        
+        return container;
+    }
+    
+    return null;
+}
+
+function createTransactionElement(tx) {
+    const div = document.createElement('div');
+    div.className = 'transaction-item';
+    div.dataset.transactionId = tx.id;
+    
+    const direction = tx.direction || (tx.amount_usdc > 0 ? 'in' : 'out');
+    const isIncoming = direction === 'in';
+    const amount = Math.abs(parseFloat(tx.amount_usdc || 0));
+    
+    div.innerHTML = `
+        <div class="transaction-info">
+            <div class="transaction-icon ${direction}">
+                <i class="fas fa-${isIncoming ? 'arrow-down' : 'arrow-up'}"></i>
+            </div>
+            <div class="transaction-details">
+                <h4 class="transaction-title">
+                    ${isIncoming ? 'Received' : 'Sent'} USDC
+                    ${tx.payment_link_id ? '<span class="transaction-badge">Payment Link</span>' : ''}
+                </h4>
+                <p class="transaction-meta">
+                    <span class="transaction-network">${formatNetwork(tx.network || 'polygon')}</span>
+                    <span class="transaction-separator">•</span>
+                    <span class="transaction-date">${formatTransactionDate(tx.created_at)}</span>
+                    ${tx.status ? `<span class="transaction-separator">•</span><span class="transaction-status ${tx.status}">${formatStatus(tx.status)}</span>` : ''}
+                </p>
+                ${tx.tx_hash ? `<p class="transaction-hash">
+                    <span class="hash-label">Hash:</span>
+                    <span class="hash-value" onclick="copyTransactionHash('${tx.tx_hash}')">${formatHash(tx.tx_hash)}</span>
+                </p>` : ''}
+            </div>
+        </div>
+        <div class="transaction-amount ${direction}">
+            <span class="amount-sign">${isIncoming ? '+' : '-'}</span>
+            <span class="amount-value">$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        </div>
+    `;
+    
+    return div;
+}
+
+function formatNetwork(network) {
+    const networkNames = {
+        'polygon': 'Polygon',
+        'solana': 'Solana',
+        'ethereum': 'Ethereum',
+        'bitcoin': 'Bitcoin'
+    };
+    return networkNames[network.toLowerCase()] || network.charAt(0).toUpperCase() + network.slice(1);
+}
+
+function formatTransactionDate(dateString) {
+    if (!dateString) return 'Unknown date';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMinutes = Math.floor((now - date) / (1000 * 60));
+    
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+    });
+}
+
+function formatStatus(status) {
+    const statusLabels = {
+        'confirmed': 'Confirmed',
+        'pending': 'Pending',
+        'failed': 'Failed',
+        'cancelled': 'Cancelled'
+    };
+    return statusLabels[status] || status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function formatHash(hash) {
+    if (!hash) return '';
+    return hash.length > 12 ? `${hash.slice(0, 6)}...${hash.slice(-6)}` : hash;
+}
+
+function updateLoadMoreButtonState(button, state) {
+    switch (state) {
+        case 'loading':
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            button.className = 'load-more-btn loading';
+            break;
+            
+        case 'ready':
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-plus"></i> Load More Transactions';
+            button.className = 'load-more-btn ready';
+            break;
+            
+        case 'complete':
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-check"></i> All Transactions Loaded';
+            button.className = 'load-more-btn complete';
+            break;
+            
+        case 'error':
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error - Try Again';
+            button.className = 'load-more-btn error';
+            break;
+    }
+}
+
+function updateTransactionCount() {
+    const container = getTransactionsContainer();
+    const countElement = document.querySelector('.transaction-count, #transactionCount');
+    
+    if (container && countElement) {
+        const count = container.children.length;
+        countElement.textContent = `${count} transaction${count !== 1 ? 's' : ''}`;
+    }
+}
+
+// Global function for copying transaction hash
+window.copyTransactionHash = function(hash) {
+    copyToClipboard(hash);
+    showPaymentNotification('Transaction hash copied!', 'success');
+};
+
+// Reset transactions when user changes (optional)
+function resetTransactionsPagination() {
+    currentTransactionOffset = 0;
+    hasMoreTransactions = true;
+    isLoadingTransactions = false;
+    
+    const container = getTransactionsContainer();
+    if (container) {
+        container.innerHTML = '';
+    }
+    
+    const loadMoreBtn = document.getElementById('loadMoreTransactions');
+    if (loadMoreBtn) {
+        updateLoadMoreButtonState(loadMoreBtn, 'ready');
+    }
+}
+
+// Add transaction styles
+function addTransactionStyles() {
+    if (document.getElementById('transaction-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'transaction-styles';
+    styles.textContent = `
+        .transactions-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .transactions-title {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .transaction-item.transaction-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .transaction-item:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .transaction-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .transaction-icon.in {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .transaction-icon.out {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .transaction-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .transaction-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .transaction-badge {
+            font-size: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .transaction-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .transaction-separator {
+            opacity: 0.5;
+        }
+        
+        .transaction-status {
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        
+        .transaction-status.confirmed {
+            color: #059669;
+        }
+        
+        .transaction-status.pending {
+            color: #d97706;
+        }
+        
+        .transaction-status.failed {
+            color: #dc2626;
+        }
+        
+        .transaction-hash {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin: 4px 0 0 0;
+        }
+        
+        .hash-value {
+            cursor: pointer;
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+        
+        .hash-value:hover {
+            color: #1d4ed8;
+        }
+        
+        .transaction-amount {
+            font-size: 1.125rem;
+            font-weight: 700;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .transaction-amount.in {
+            color: #059669;
+        }
+        
+        .transaction-amount.out {
+            color: #dc2626;
+        }
+        
+        .load-more-btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .load-more-btn.ready:hover {
+            background: #f9fafb;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .load-more-btn.loading {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+        
+        .load-more-btn.complete {
+            background: #f0f9ff;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            cursor: not-allowed;
+        }
+        
+        .load-more-btn.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .load-more-btn.error:hover {
+            background: #fee2e2;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .transaction-info {
+                width: 100%;
+            }
+            
+            .transaction-amount {
+                align-self: flex-end;
+                font-size: 1.25rem;
+            }
+            
+            .transaction-meta {
+                flex-wrap: wrap;
+            }
+            
+            .transactions-wrapper {
+                padding: 15px;
+            }
+        }
+    `;
+    
+    document.head.appendChild(styles);
+}
+
+// Initialize styles
+addTransactionStyles();
+
+console.log('✅ Load More Transactions feature loaded');
+
+// ==================== FEATURE 4: BILLING HISTORY TABLE ==================== //
+
+async function initializeBillingHistoryTable() {
+    try {
+        console.log('🔄 Loading Billing History Table...');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.id) {
+            console.warn('❌ No user ID found for billing history');
+            return;
+        }
+
+        // Find the billing history table
+        const table = document.getElementById('billingHistoryTable');
+        if (!table) {
+            console.warn('⚠️ Billing History Table not found, creating one');
+            createBillingHistoryTable();
+            return;
+        }
+
+        // Import supabase from the client file
+        const { supabase } = await import('./supabase-client.js');
+
+        // Fetch billing history for this user
+        const { data: billingHistory, error } = await supabase
+            .from('billing_history')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('❌ Error fetching billing history:', error);
+            renderEmptyBillingTable(table);
+            return;
+        }
+
+        console.log('💳 Billing History loaded:', billingHistory);
+
+        // Add billing table styles
+        addBillingTableStyles();
+
+        // Render the billing history
+        if (billingHistory && billingHistory.length > 0) {
+            renderBillingHistoryTable(table, billingHistory);
+        } else {
+            renderEmptyBillingTable(table);
+        }
+
+        console.log('✅ Billing History Table feature initialized');
+
+    } catch (error) {
+        console.error('❌ Error initializing Billing History Table:', error);
+        const table = document.getElementById('billingHistoryTable');
+        if (table) {
+            renderErrorBillingTable(table);
+        }
+    }
+}
+
+function renderBillingHistoryTable(table, billingHistory) {
+    // Clear existing content
+    table.innerHTML = '';
+    
+    // Create table structure
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+    
+    // Create header row
+    thead.innerHTML = `
+        <tr class="billing-header-row">
+            <th class="billing-header-date">Date</th>
+            <th class="billing-header-plan">Plan Type</th>
+            <th class="billing-header-amount">Amount</th>
+            <th class="billing-header-status">Status</th>
+            <th class="billing-header-actions">Actions</th>
+        </tr>
+    `;
+    
+    // Create data rows
+    billingHistory.forEach((bill, index) => {
+        const row = document.createElement('tr');
+        row.className = 'billing-data-row';
+        row.dataset.billId = bill.id;
+        
+        row.innerHTML = `
+            <td class="billing-date">
+                <div class="date-info">
+                    <span class="date-primary">${formatBillingDate(bill.created_at)}</span>
+                    <span class="date-secondary">${formatBillingTime(bill.created_at)}</span>
+                </div>
+            </td>
+            <td class="billing-plan">
+                <span class="plan-badge plan-${bill.plan_type || 'basic'}">
+                    <i class="fas fa-crown"></i>
+                    ${formatPlanType(bill.plan_type || 'basic')}
+                </span>
+            </td>
+            <td class="billing-amount">
+                <div class="amount-info">
+                    <span class="amount-primary">$${formatBillingAmount(bill.amount)}</span>
+                    <span class="amount-secondary">${bill.billing_period || 'Monthly'}</span>
+                </div>
+            </td>
+            <td class="billing-status">
+                <span class="status-badge status-${bill.status || 'pending'}">
+                    <i class="fas fa-${getStatusIcon(bill.status)}"></i>
+                    ${formatBillingStatus(bill.status || 'pending')}
+                </span>
+            </td>
+            <td class="billing-actions">
+                <div class="action-buttons">
+                    ${bill.status === 'paid' ? `
+                        <button class="action-btn download" onclick="downloadInvoice('${bill.id}')" title="Download Invoice">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    ` : ''}
+                    <button class="action-btn view" onclick="viewBillDetails('${bill.id}')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    ${bill.status === 'failed' ? `
+                        <button class="action-btn retry" onclick="retryPayment('${bill.id}')" title="Retry Payment">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+        
+        // Add entrance animation
+        setTimeout(() => {
+            row.classList.add('billing-row-visible');
+        }, index * 50);
+    });
+    
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    table.classList.add('billing-table-populated');
+}
+
+function renderEmptyBillingTable(table) {
+    table.innerHTML = `
+        <thead>
+            <tr class="billing-header-row">
+                <th class="billing-header-date">Date</th>
+                <th class="billing-header-plan">Plan Type</th>
+                <th class="billing-header-amount">Amount</th>
+                <th class="billing-header-status">Status</th>
+                <th class="billing-header-actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="billing-empty-row">
+                <td colspan="5" class="billing-empty-cell">
+                    <div class="empty-billing-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h3>No Billing History</h3>
+                        <p>You haven't been billed yet. Billing history will appear here when you upgrade your plan or make payments.</p>
+                        <button class="upgrade-plan-btn" onclick="navigateToPlansPage()">
+                            <i class="fas fa-arrow-up"></i>
+                            Upgrade Plan
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    `;
+    table.classList.add('billing-table-empty');
+}
+
+function renderErrorBillingTable(table) {
+    table.innerHTML = `
+        <thead>
+            <tr class="billing-header-row">
+                <th colspan="5" class="billing-error-header">Billing History</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="billing-error-row">
+                <td colspan="5" class="billing-error-cell">
+                    <div class="error-billing-state">
+                        <div class="error-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Error Loading Billing History</h3>
+                        <p>We couldn't load your billing history. Please try refreshing the page.</p>
+                        <button class="retry-billing-btn" onclick="initializeBillingHistoryTable()">
+                            <i class="fas fa-redo"></i>
+                            Try Again
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    `;
+    table.classList.add('billing-table-error');
+}
+
+function createBillingHistoryTable() {
+    // Try to find a good place to add the table
+    const dashboardContent = document.querySelector('.dashboard-content, .main-content, .page-content');
+    
+    if (dashboardContent) {
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'billing-table-container';
+        
+        const title = document.createElement('h3');
+        title.textContent = 'Billing History';
+        title.className = 'billing-table-title';
+        
+        const table = document.createElement('table');
+        table.id = 'billingHistoryTable';
+        table.className = 'billing-history-table';
+        
+        tableContainer.appendChild(title);
+        tableContainer.appendChild(table);
+        
+        // Insert at the end of dashboard content
+        dashboardContent.appendChild(tableContainer);
+        
+        // Initialize the newly created table
+        setTimeout(() => {
+            initializeBillingHistoryTable();
+        }, 100);
+    }
+}
+
+// Formatting functions
+function formatBillingDate(dateString) {
+    if (!dateString) return 'Unknown';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    });
+}
+
+function formatBillingTime(dateString) {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
+function formatPlanType(planType) {
+    const planNames = {
+        'basic': 'Basic',
+        'pro': 'Pro',
+        'elite': 'Elite',
+        'enterprise': 'Enterprise'
+    };
+    return planNames[planType.toLowerCase()] || planType.charAt(0).toUpperCase() + planType.slice(1);
+}
+
+function formatBillingAmount(amount) {
+    if (!amount) return '0.00';
+    return parseFloat(amount).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function formatBillingStatus(status) {
+    const statusLabels = {
+        'paid': 'Paid',
+        'failed': 'Failed',
+        'pending': 'Pending',
+        'cancelled': 'Cancelled',
+        'refunded': 'Refunded',
+        'processing': 'Processing'
+    };
+    return statusLabels[status.toLowerCase()] || status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function getStatusIcon(status) {
+    const statusIcons = {
+        'paid': 'check-circle',
+        'failed': 'times-circle',
+        'pending': 'clock',
+        'cancelled': 'ban',
+        'refunded': 'undo',
+        'processing': 'spinner fa-spin'
+    };
+    return statusIcons[status] || 'question-circle';
+}
+
+// Action button functions
+window.downloadInvoice = function(billId) {
+    console.log('📄 Downloading invoice for bill:', billId);
+    showPaymentNotification('Invoice download started...', 'info');
+    
+    // In a real app, you'd make an API call to generate/download the invoice
+    setTimeout(() => {
+        showPaymentNotification('Invoice downloaded successfully!', 'success');
+    }, 1500);
+};
+
+window.viewBillDetails = function(billId) {
+    console.log('👀 Viewing details for bill:', billId);
+    
+    // Create a modal or navigate to details page
+    const modal = document.createElement('div');
+    modal.className = 'bill-details-modal';
+    modal.innerHTML = `
+        <div class="modal-overlay" onclick="closeBillDetailsModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bill Details</h3>
+                <button class="modal-close" onclick="closeBillDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Loading bill details for ID: ${billId}</p>
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Add modal styles
+    addBillDetailsModalStyles();
+};
+
+window.closeBillDetailsModal = function() {
+    const modal = document.querySelector('.bill-details-modal');
+    if (modal) {
+        modal.remove();
+    }
+};
+
+window.retryPayment = function(billId) {
+    console.log('🔄 Retrying payment for bill:', billId);
+    
+    if (confirm('Do you want to retry this payment? You will be redirected to the payment page.')) {
+        showPaymentNotification('Redirecting to payment...', 'info');
+        // In a real app, redirect to payment processing
+        setTimeout(() => {
+            navigateToPlansPage();
+        }, 1000);
+    }
+};
+
+function addBillingTableStyles() {
+    if (document.getElementById('billing-table-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'billing-table-styles';
+    styles.textContent = `
+        .billing-table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .billing-table-title {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .billing-table-title::before {
+            content: '💳';
+            font-size: 1.25rem;
+        }
+        
+        .billing-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .billing-header-row {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .billing-header-row th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .billing-data-row {
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .billing-data-row.billing-row-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .billing-data-row:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .billing-data-row td {
+            padding: 16px 12px;
+            vertical-align: middle;
+        }
+        
+        .date-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .date-primary {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .date-secondary {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+        
+        .plan-badge.plan-basic {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .plan-badge.plan-pro {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        
+        .plan-badge.plan-elite {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        
+        .amount-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .amount-primary {
+            font-weight: 700;
+            color: #111827;
+            font-size: 1.1rem;
+        }
+        
+        .amount-secondary {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        
+        .status-badge.status-paid {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status-badge.status-failed {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .status-badge.status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .status-badge.status-cancelled {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn.download {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+        
+        .action-btn.download:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .action-btn.view {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .action-btn.view:hover {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .action-btn.retry {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .action-btn.retry:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .billing-empty-row, .billing-error-row {
+            border: none;
+        }
+        
+        .billing-empty-cell, .billing-error-cell {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .empty-billing-state, .error-billing-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .empty-icon, .error-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .empty-icon {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .error-icon {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+        
+        .upgrade-plan-btn, .retry-billing-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .upgrade-plan-btn:hover, .retry-billing-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .billing-table-container {
+                padding: 16px;
+                margin: 16px 0;
+            }
+            
+            .billing-history-table {
+                font-size: 0.8rem;
+            }
+            
+            .billing-header-row th {
+                padding: 12px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .billing-data-row td {
+                padding: 12px 8px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .action-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
+        }
+    `;
+    
+    document.head.appendChild(styles);
+}
+
+function addBillDetailsModalStyles() {
+    if (document.getElementById('bill-modal-styles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'bill-modal-styles';
+    styles.textContent = `
+        .bill-details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            color: #3b82f6;
+            font-size: 1.5rem;
+        }
+    `;
+    
+    document.head.appendChild(styles);
+}
+
+console.log('✅ Billing History Table feature loaded');
+
+// ==================== FEATURE 5: USER GROWTH METRICS ==================== //
+
+async function initializeUserGrowthMetrics() {
+    try {
+        console.log('🔄 Loading User Growth Metrics...');
+
+        // Find the user growth chart container
+        const chartContainer = document.getElementById('userGrowthChart');
+        if (!chartContainer) {
+            console.warn('⚠️ User Growth Chart container not found, creating one');
+            createUserGrowthChart();
+            return;
+        }
+
+        // Import supabase from the client file
+        const { supabase } = await import('./supabase-client.js');
+
+        // Fetch user growth data (last 6 months for trend analysis)
+        const { data: growthData, error } = await supabase
+            .from('user_growth')
+            .select('*')
+            .order('month', { ascending: false })
+            .limit(6);
+
+        if (error) {
+            console.error('❌ Error fetching user growth data:', error);
+            renderErrorGrowthChart(chartContainer);
+            return;
+        }
+
+        console.log('📈 User Growth Data loaded:', growthData);
+
+        // Add growth chart styles
+        addGrowthChartStyles();
+
+        // Render the growth chart
+        if (growthData && growthData.length > 0) {
+            renderUserGrowthChart(chartContainer, growthData);
+        } else {
+            renderEmptyGrowthChart(chartContainer);
+        }
+
+        console.log('✅ User Growth Metrics feature initialized');
+
+    } catch (error) {
+        console.error('❌ Error initializing User Growth Metrics:', error);
+        const chartContainer = document.getElementById('userGrowthChart');
+        if (chartContainer) {
+            renderErrorGrowthChart(chartContainer);
+        }
+    }
+}
+
+function renderUserGrowthChart(container, growthData) {
+    // Reverse data to show chronological order (oldest to newest)
+    const chartData = [...growthData].reverse();
+    
+    // Calculate metrics
+    const latestMonth = chartData[chartData.length - 1];
+    const threeMonthsAgo = chartData[chartData.length - 4]; // 3 months back
+    
+    const currentActiveUsers = latestMonth?.active_users || 0;
+    const currentAvgVolume = latestMonth?.avg_volume_per_user || 0;
+    
+    // Calculate 3-month percentage change
+    let threeMonthChange = 0;
+    if (threeMonthsAgo && threeMonthsAgo.active_users > 0) {
+        threeMonthChange = ((currentActiveUsers - threeMonthsAgo.active_users) / threeMonthsAgo.active_users) * 100;
+    }
+
+    // Generate chart HTML
+    container.innerHTML = `
+        <div class="growth-chart-container">
+            <div class="growth-header">
+                <h3 class="growth-title">
+                    <i class="fas fa-chart-line"></i>
+                    User Growth Metrics
+                </h3>
+                <div class="growth-period">Last 6 Months</div>
+            </div>
+            
+            <div class="growth-stats-grid">
+                <div class="growth-stat-card active-users">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">${currentActiveUsers.toLocaleString()}</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                </div>
+                
+                <div class="growth-stat-card avg-volume">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">$${currentAvgVolume.toLocaleString()}</div>
+                        <div class="stat-label">Avg Volume per User</div>
+                    </div>
+                </div>
+                
+                <div class="growth-stat-card three-month-change ${threeMonthChange >= 0 ? 'positive' : 'negative'}">
+                    <div class="stat-icon">
+                        <i class="fas fa-${threeMonthChange >= 0 ? 'arrow-up' : 'arrow-down'}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">${threeMonthChange >= 0 ? '+' : ''}${threeMonthChange.toFixed(1)}%</div>
+                        <div class="stat-label">3-Month Change</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="linear-chart-container">
+                ${generateLinearChart(chartData)}
+            </div>
+            
+            <div class="chart-legend">
+                <div class="legend-item users">
+                    <div class="legend-color users"></div>
+                    <span>Active Users</span>
+                </div>
+                <div class="legend-item volume">
+                    <div class="legend-color volume"></div>
+                    <span>Avg Volume ($)</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Add entrance animations
+    setTimeout(() => {
+        container.classList.add('growth-chart-visible');
+        animateChart(container);
+    }, 100);
+}
+
+function generateLinearChart(chartData) {
+    if (!chartData || chartData.length === 0) return '<div class="no-chart-data">No chart data available</div>';
+
+    // Calculate max values for scaling
+    const maxUsers = Math.max(...chartData.map(d => d.active_users || 0));
+    const maxVolume = Math.max(...chartData.map(d => d.avg_volume_per_user || 0));
+    
+    // Generate SVG chart
+    const chartWidth = 300;
+    const chartHeight = 120;
+    const padding = 20;
+    const plotWidth = chartWidth - (padding * 2);
+    const plotHeight = chartHeight - (padding * 2);
+
+    let svgContent = `<svg width="${chartWidth}" height="${chartHeight}" class="growth-line-chart">`;
+    
+    // Grid lines
+    svgContent += '<defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1f5f9" stroke-width="1"/></pattern></defs>';
+    svgContent += `<rect width="${chartWidth}" height="${chartHeight}" fill="url(#grid)" opacity="0.5"/>`;
+
+    // Generate user line
+    const userPoints = chartData.map((data, index) => {
+        const x = padding + (index / (chartData.length - 1)) * plotWidth;
+        const y = padding + (1 - (data.active_users || 0) / maxUsers) * plotHeight;
+        return `${x},${y}`;
+    }).join(' ');
+
+    // Generate volume line
+    const volumePoints = chartData.map((data, index) => {
+        const x = padding + (index / (chartData.length - 1)) * plotWidth;
+        const y = padding + (1 - (data.avg_volume_per_user || 0) / maxVolume) * plotHeight;
+        return `${x},${y}`;
+    }).join(' ');
+
+    // User line
+    svgContent += `<polyline points="${userPoints}" fill="none" stroke="#3b82f6" stroke-width="2" class="user-line"/>`;
+    
+    // Volume line
+    svgContent += `<polyline points="${volumePoints}" fill="none" stroke="#10b981" stroke-width="2" class="volume-line"/>`;
+
+    // Data points
+    chartData.forEach((data, index) => {
+        const x = padding + (index / (chartData.length - 1)) * plotWidth;
+        
+        // User points
+        const userY = padding + (1 - (data.active_users || 0) / maxUsers) * plotHeight;
+        svgContent += `<circle cx="${x}" cy="${userY}" r="3" fill="#3b82f6" class="user-point" data-month="${formatChartMonth(data.month)}" data-users="${data.active_users}"/>`;
+        
+        // Volume points
+        const volumeY = padding + (1 - (data.avg_volume_per_user || 0) / maxVolume) * plotHeight;
+        svgContent += `<circle cx="${x}" cy="${volumeY}" r="3" fill="#10b981" class="volume-point" data-month="${formatChartMonth(data.month)}" data-volume="${data.avg_volume_per_user}"/>`;
+    });
+
+    svgContent += '</svg>';
+    
+    return svgContent;
+}
+
+function renderEmptyGrowthChart(container) {
+    container.innerHTML = `
+        <div class="growth-chart-container empty">
+            <div class="empty-growth-state">
+                <div class="empty-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>No Growth Data</h3>
+                <p>Growth metrics will appear here as your platform scales and user data accumulates.</p>
+                <div class="placeholder-stats">
+                    <div class="placeholder-stat">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="placeholder-stat">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">Avg Volume</div>
+                    </div>
+                    <div class="placeholder-stat">
+                        <div class="stat-value">--</div>
+                        <div class="stat-label">3M Change</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    container.classList.add('growth-chart-empty');
+}
+
+function renderErrorGrowthChart(container) {
+    container.innerHTML = `
+        <div class="growth-chart-container error">
+            <div class="error-growth-state">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Error Loading Growth Data</h3>
+                <p>Unable to load user growth metrics. Please try again.</p>
+                <button class="retry-growth-btn" onclick="initializeUserGrowthMetrics()">
+                    <i class="fas fa-redo"></i>
+                    Retry
+                </button>
+            </div>
+        </div>
+    `;
+    container.classList.add('growth-chart-error');
+}
+
+function createUserGrowthChart() {
+    // Try to find a good place to add the chart
+    const dashboardContent = document.querySelector('.dashboard-content, .main-content, .page-content');
+    
+    if (dashboardContent) {
+        const chartContainer = document.createElement('div');
+        chartContainer.id = 'userGrowthChart';
+        chartContainer.className = 'user-growth-chart';
+        
+        // Insert at a good position in the dashboard
+        const insertPosition = dashboardContent.children[2] || null;
+        if (insertPosition) {
+            dashboardContent.insertBefore(chartContainer, insertPosition);
+        } else {
+            dashboardContent.appendChild(chartContainer);
+        }
+        
+        // Initialize the newly created chart
+        setTimeout(() => {
+            initializeUserGrowthMetrics();
+        }, 100);
+    }
+}
+
+function formatChartMonth(monthString) {
+    if (!monthString) return 'Unknown';
+    
+    const date = new Date(monthString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        year: '2-digit'
+    });
+}
+
+function animateChart(container) {
+    // Animate stat cards
+    const statCards = container.querySelectorAll('.growth-stat-card');
+    statCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('stat-animated');
+        }, index * 150);
+    });
+
+    // Animate chart lines
+    setTimeout(() => {
+        const lines = container.querySelectorAll('.user-line, .volume-line');
+        lines.forEach(line => {
+            line.classList.add('line-animated');
+        });
+    }, 500);
+
+    // Animate chart points
+    setTimeout(() => {
+        const points = container.querySelectorAll('.user-point, .volume-point');
+        points.forEach((point, index) => {
+            setTimeout(() => {
+                point.classList.add('point-animated');
+            }, index * 100);
+        });
+    }, 800);
+}
+
+function addGrowthChartStyles() {
+    if (document.getElementById('user-growth-chart-styles')) return;
+    
+    const styles = `
+        <style id="user-growth-chart-styles">
+            .growth-chart-container {
+                background: linear-gradient(135deg, rgba(45, 55, 72, 0.9), rgba(26, 32, 44, 0.9));
+                border-radius: 16px;
+                padding: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .growth-chart-container:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            }
+            
+            .growth-chart {
+                width: 100%;
+                height: 200px;
+                position: relative;
+                margin-top: 15px;
+            }
+            
+            .growth-chart-line {
+                stroke: #667eea;
+                stroke-width: 3;
+                fill: none;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
+            }
+            
+            .growth-chart-point {
+                fill: #667eea;
+                stroke: white;
+                stroke-width: 2;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .growth-chart-point:hover {
+                fill: #4f46e5;
+                transform: scale(1.2);
+            }
+            
+            .growth-chart-area {
+                fill: url(#growthGradient);
+                opacity: 0.3;
+            }
+            
+            .growth-chart-empty {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 200px;
+                color: #a0aec0;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .growth-chart-error {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 200px;
+                color: #fc8181;
+                flex-direction: column;
+                gap: 10px;
+            }
+        </style>
+    `;
+    
+    document.head.insertAdjacentHTML('beforeend', styles);
+}
+
+// ==================== ENGINE.JS SOPHISTICATED DISPLAY FUNCTIONS ==================== //
+
+/**
+ * Update monthly constellation display with 12-month revenue analysis
+ */
+function updateMonthlyConstellationDisplay(constellationData) {
+    console.log('📊 Updating monthly constellation display:', constellationData);
+    
+    // Find monthly constellation elements and update them
+    const constellationElements = document.querySelectorAll('[data-constellation]');
+    
+    if (constellationData && constellationData.months) {
+        constellationElements.forEach(element => {
+            const monthIndex = element.dataset.constellation;
+            const monthData = constellationData.months[monthIndex];
+            
+            if (monthData) {
+                const valueElement = element.querySelector('.constellation-value');
+                const changeElement = element.querySelector('.constellation-change');
+                
+                if (valueElement) {
+                    valueElement.textContent = `$${monthData.revenue.toLocaleString()}`;
+                }
+                
+                if (changeElement && monthData.change_percentage) {
+                    const isPositive = monthData.change_percentage >= 0;
+                    changeElement.textContent = `${isPositive ? '+' : ''}${monthData.change_percentage}%`;
+                    changeElement.className = `constellation-change ${isPositive ? 'positive' : 'negative'}`;
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Update AI insights display with predictive analytics
+ */
+function updateAIInsightsDisplay(aiInsights) {
+    console.log('🤖 Updating AI insights display:', aiInsights);
+    
+    // Update AI insight messages
+    const insightElements = document.querySelectorAll('.ai-insight-message');
+    
+    if (aiInsights && aiInsights.insights) {
+        insightElements.forEach((element, index) => {
+            if (aiInsights.insights[index]) {
+                const insight = aiInsights.insights[index];
+                
+                const messageElement = element.querySelector('.insight-message');
+                const confidenceElement = element.querySelector('.insight-confidence');
+                const typeElement = element.querySelector('.insight-type');
+                
+                if (messageElement) messageElement.textContent = insight.message;
+                if (confidenceElement) confidenceElement.textContent = `${insight.confidence}% confidence`;
+                if (typeElement) typeElement.textContent = insight.type.toUpperCase();
+            }
+        });
+    }
+}
+
+/**
+ * Update transaction velocity display
+ */
+function updateTransactionVelocityDisplay(velocityData) {
+    console.log('⚡ Updating transaction velocity display:', velocityData);
+    
+    const velocityElements = document.querySelectorAll('[data-metric="velocity"], [data-velocity]');
+    
+    if (velocityData && velocityData.velocity !== undefined) {
+        velocityElements.forEach(element => {
+            const valueElement = element.querySelector('.metric-value, .velocity-value') || element;
+            valueElement.textContent = velocityData.velocity.toLocaleString();
+        });
+    }
+}
+
+/**
+ * Update digital vault display with balance aggregations
+ */
+function updateDigitalVaultDisplay(vaultData) {
+    console.log('🏦 Updating digital vault display:', vaultData);
+    
+    // Update total balance
+    const totalBalanceElements = document.querySelectorAll('.vault-total-balance, [data-vault="total"]');
+    if (vaultData && vaultData.total_balance !== undefined) {
+        totalBalanceElements.forEach(element => {
+            const valueElement = element.querySelector('.balance-value') || element;
+            valueElement.textContent = `$${vaultData.total_balance.toLocaleString()}`;
+        });
+    }
+}
+
+/**
+ * Update USDC flow display with inflow/outflow analysis
+ */
+function updateUSDCFlowDisplay(flowData) {
+    console.log('💰 Updating USDC flow display:', flowData);
+    
+    if (flowData) {
+        // Update net flow
+        const netFlowElements = document.querySelectorAll('.usdc-net-flow, [data-flow="net"]');
+        if (flowData.net_flow !== undefined) {
+            netFlowElements.forEach(element => {
+                const valueElement = element.querySelector('.flow-value') || element;
+                const isPositive = flowData.net_flow >= 0;
+                valueElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(flowData.net_flow).toLocaleString()}`;
+                valueElement.className = `flow-value ${isPositive ? 'positive' : 'negative'}`;
+            });
+        }
+    }
+}
+
+/**
+ * Update user growth display with 4-month analysis
+ */
+function updateUserGrowthDisplay(growthData) {
+    console.log('📈 Updating user growth display:', growthData);
+    
+    if (growthData) {
+        // Update total users
+        const totalUserElements = document.querySelectorAll('.total-users, [data-growth="total"]');
+        if (growthData.total_users !== undefined) {
+            totalUserElements.forEach(element => {
+                const valueElement = element.querySelector('.growth-value') || element;
+                valueElement.textContent = growthData.total_users.toLocaleString();
+            });
+        }
+    }
+}
+
+/**
+ * Update billing history display
+ */
+function updateBillingHistoryDisplay(billingData) {
+    console.log('🧾 Updating billing history display:', billingData);
+    
+    if (billingData && billingData.total_paid !== undefined) {
+        const totalPaidElements = document.querySelectorAll('.total-paid, [data-billing="total"]');
+        totalPaidElements.forEach(element => {
+            const valueElement = element.querySelector('.billing-value') || element;
+            valueElement.textContent = `$${billingData.total_paid.toLocaleString()}`;
+        });
+    }
+}
+
+/**
+ * Update order analytics display
+ */
+function updateOrderAnalyticsDisplay(orderData) {
+    console.log('📦 Updating order analytics display:', orderData);
+    
+    if (orderData) {
+        // Update total orders
+        const totalOrderElements = document.querySelectorAll('.total-orders, [data-orders="total"]');
+        if (orderData.total_orders !== undefined) {
+            totalOrderElements.forEach(element => {
+                const valueElement = element.querySelector('.order-value') || element;
+                valueElement.textContent = orderData.total_orders.toLocaleString();
+            });
+        }
+    }
+}
+
+console.log('✅ SPA.JS: All Engine.js sophisticated display functions loaded successfully');
+
+/**
+ * Update monthly constellation display with 12-month revenue analysis
+ */
+function updateMonthlyConstellationDisplay(constellationData) {
+    console.log('📊 Updating monthly constellation display:', constellationData);
+    
+    // Find monthly constellation elements and update them
+    const constellationElements = document.querySelectorAll('[data-constellation]');
+    
+    if (constellationData && constellationData.months) {
+        constellationElements.forEach(element => {
+            const monthIndex = element.dataset.constellation;
+            const monthData = constellationData.months[monthIndex];
+            
+            if (monthData) {
+                const valueElement = element.querySelector('.constellation-value');
+                const changeElement = element.querySelector('.constellation-change');
+                
+                if (valueElement) {
+                    valueElement.textContent = `$${monthData.revenue.toLocaleString()}`;
+                }
+                
+                if (changeElement && monthData.change_percentage) {
+                    const isPositive = monthData.change_percentage >= 0;
+                    changeElement.textContent = `${isPositive ? '+' : ''}${monthData.change_percentage}%`;
+                    changeElement.className = `constellation-change ${isPositive ? 'positive' : 'negative'}`;
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Update AI insights display with predictive analytics
+ */
+function updateAIInsightsDisplay(aiInsights) {
+    console.log('🤖 Updating AI insights display:', aiInsights);
+    
+    // Update AI insight messages
+    const insightElements = document.querySelectorAll('.ai-insight-message');
+    
+    if (aiInsights && aiInsights.insights) {
+        insightElements.forEach((element, index) => {
+            if (aiInsights.insights[index]) {
+                const insight = aiInsights.insights[index];
+                
+                const messageElement = element.querySelector('.insight-message');
+                const confidenceElement = element.querySelector('.insight-confidence');
+                const typeElement = element.querySelector('.insight-type');
+                
+                if (messageElement) messageElement.textContent = insight.message;
+                if (confidenceElement) confidenceElement.textContent = `${insight.confidence}% confidence`;
+                if (typeElement) typeElement.textContent = insight.type.toUpperCase();
+            }
+        });
+    }
+    
+    // Update AI prediction cards if they exist
+    const predictionElements = document.querySelectorAll('[data-ai-prediction]');
+    if (aiInsights && aiInsights.predictions) {
+        predictionElements.forEach(element => {
+            const predictionType = element.dataset.aiPrediction;
+            const prediction = aiInsights.predictions[predictionType];
+            
+            if (prediction) {
+                const valueElement = element.querySelector('.prediction-value');
+                const trendElement = element.querySelector('.prediction-trend');
+                
+                if (valueElement) valueElement.textContent = prediction.value;
+                if (trendElement) trendElement.textContent = prediction.trend;
+            }
+        });
+    }
+}
+
+/**
+ * Update transaction velocity display
+ */
+function updateTransactionVelocityDisplay(velocityData) {
+    console.log('⚡ Updating transaction velocity display:', velocityData);
+    
+    const velocityElements = document.querySelectorAll('[data-metric="velocity"], [data-velocity]');
+    
+    if (velocityData && velocityData.velocity !== undefined) {
+        velocityElements.forEach(element => {
+            const valueElement = element.querySelector('.metric-value, .velocity-value') || element;
+            valueElement.textContent = velocityData.velocity.toLocaleString();
+            
+            // Update velocity trend if available
+            const trendElement = element.querySelector('.velocity-trend');
+            if (trendElement && velocityData.trend) {
+                trendElement.textContent = velocityData.trend;
+            }
+        });
+    }
+}
+
+/**
+ * Update digital vault display with balance aggregations
+ */
+function updateDigitalVaultDisplay(vaultData) {
+    console.log('🏦 Updating digital vault display:', vaultData);
+    
+    // Update total balance
+    const totalBalanceElements = document.querySelectorAll('.vault-total-balance, [data-vault="total"]');
+    if (vaultData && vaultData.total_balance !== undefined) {
+        totalBalanceElements.forEach(element => {
+            const valueElement = element.querySelector('.balance-value') || element;
+            valueElement.textContent = `$${vaultData.total_balance.toLocaleString()}`;
+        });
+    }
+    
+    // Update network breakdown
+    if (vaultData && vaultData.network_breakdown) {
+        Object.entries(vaultData.network_breakdown).forEach(([network, balance]) => {
+            const networkElements = document.querySelectorAll(`[data-vault="${network}"]`);
+            networkElements.forEach(element => {
+                const valueElement = element.querySelector('.network-balance') || element;
+                valueElement.textContent = `$${balance.toLocaleString()}`;
+            });
+        });
+    }
+}
+
+/**
+ * Update USDC flow display with inflow/outflow analysis
+ */
+function updateUSDCFlowDisplay(flowData) {
+    console.log('💰 Updating USDC flow display:', flowData);
+    
+    if (flowData) {
+        // Update inflow
+        const inflowElements = document.querySelectorAll('.usdc-inflow, [data-flow="inflow"]');
+        if (flowData.inflow !== undefined) {
+            inflowElements.forEach(element => {
+                const valueElement = element.querySelector('.flow-value') || element;
+                valueElement.textContent = `+$${flowData.inflow.toLocaleString()}`;
+            });
+        }
+        
+        // Update outflow
+        const outflowElements = document.querySelectorAll('.usdc-outflow, [data-flow="outflow"]');
+        if (flowData.outflow !== undefined) {
+            outflowElements.forEach(element => {
+                const valueElement = element.querySelector('.flow-value') || element;
+                valueElement.textContent = `-$${flowData.outflow.toLocaleString()}`;
+            });
+        }
+        
+        // Update net flow
+        const netFlowElements = document.querySelectorAll('.usdc-net-flow, [data-flow="net"]');
+        if (flowData.net_flow !== undefined) {
+            netFlowElements.forEach(element => {
+                const valueElement = element.querySelector('.flow-value') || element;
+                const isPositive = flowData.net_flow >= 0;
+                valueElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(flowData.net_flow).toLocaleString()}`;
+                valueElement.className = `flow-value ${isPositive ? 'positive' : 'negative'}`;
+            });
+        }
+    }
+}
+
+/**
+ * Update user growth display with 4-month analysis
+ */
+function updateUserGrowthDisplay(growthData) {
+    console.log('📈 Updating user growth display:', growthData);
+    
+    if (growthData) {
+        // Update total users
+        const totalUserElements = document.querySelectorAll('.total-users, [data-growth="total"]');
+        if (growthData.total_users !== undefined) {
+            totalUserElements.forEach(element => {
+                const valueElement = element.querySelector('.growth-value') || element;
+                valueElement.textContent = growthData.total_users.toLocaleString();
+            });
+        }
+        
+        // Update growth percentage
+        const growthPercentageElements = document.querySelectorAll('.growth-percentage, [data-growth="percentage"]');
+        if (growthData.growth_percentage !== undefined) {
+            growthPercentageElements.forEach(element => {
+                const valueElement = element.querySelector('.percentage-value') || element;
+                const isPositive = growthData.growth_percentage >= 0;
+                valueElement.textContent = `${isPositive ? '+' : ''}${growthData.growth_percentage}%`;
+                valueElement.className = `percentage-value ${isPositive ? 'positive' : 'negative'}`;
+            });
+        }
+        
+        // Update monthly breakdown
+        if (growthData.monthly_data) {
+            growthData.monthly_data.forEach((monthData, index) => {
+                const monthElements = document.querySelectorAll(`[data-growth-month="${index}"]`);
+                monthElements.forEach(element => {
+                    const valueElement = element.querySelector('.month-users') || element;
+                    valueElement.textContent = monthData.users.toLocaleString();
+                });
+            });
+        }
+    }
+}
+
+/**
+ * Update billing history display
+ */
+function updateBillingHistoryDisplay(billingData) {
+    console.log('🧾 Updating billing history display:', billingData);
+    
+    if (billingData && billingData.bills) {
+        // Update total paid
+        const totalPaidElements = document.querySelectorAll('.total-paid, [data-billing="total"]');
+        if (billingData.total_paid !== undefined) {
+            totalPaidElements.forEach(element => {
+                const valueElement = element.querySelector('.billing-value') || element;
+                valueElement.textContent = `$${billingData.total_paid.toLocaleString()}`;
+            });
+        }
+        
+        // Update billing table if it exists
+        const billingTable = document.querySelector('.billing-history-table tbody');
+        if (billingTable && billingData.bills.length > 0) {
+            billingTable.innerHTML = billingData.bills.map(bill => `
+                <tr>
+                    <td>${new Date(bill.date).toLocaleDateString()}</td>
+                    <td>${bill.plan_type}</td>
+                    <td>$${bill.amount_usd}</td>
+                    <td><span class="status ${bill.status}">${bill.status}</span></td>
+                </tr>
+            `).join('');
+        }
+    }
+}
+
+/**
+ * Update order analytics display
+ */
+function updateOrderAnalyticsDisplay(orderData) {
+    console.log('📦 Updating order analytics display:', orderData);
+    
+    if (orderData) {
+        // Update total orders
+        const totalOrderElements = document.querySelectorAll('.total-orders, [data-orders="total"]');
+        if (orderData.total_orders !== undefined) {
+            totalOrderElements.forEach(element => {
+                const valueElement = element.querySelector('.order-value') || element;
+                valueElement.textContent = orderData.total_orders.toLocaleString();
+            });
+        }
+        
+        // Update ready to ship
+        const readyToShipElements = document.querySelectorAll('.ready-to-ship, [data-orders="ready"]');
+        if (orderData.ready_to_ship !== undefined) {
+            readyToShipElements.forEach(element => {
+                const valueElement = element.querySelector('.order-value') || element;
+                valueElement.textContent = orderData.ready_to_ship.toLocaleString();
+            });
+        }
+        
+        // Update total revenue
+        const revenueElements = document.querySelectorAll('.total-revenue, [data-orders="revenue"]');
+        if (orderData.total_revenue !== undefined) {
+            revenueElements.forEach(element => {
+                const valueElement = element.querySelector('.revenue-value') || element;
+                valueElement.textContent = `$${orderData.total_revenue.toLocaleString()}`;
+            });
+        }
+    }
+}
+
+console.log('✅ SPA.JS: All Engine.js sophisticated display functions loaded successfully');

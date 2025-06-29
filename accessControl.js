@@ -16,12 +16,13 @@ class HalaxaAccessControl {
         maxPaymentLinks: 1,
         maxMonthlyVolume: 500,
         allowedNetworks: ['polygon'],
-        blockedPages: ['/capital', '/orders', '/shipping'],
+        blockedPages: ['/capital', '/orders', '/shipping', '/automation'],
         features: {
           advancedAnalytics: false,
           multipleWallets: false,
           customBranding: false,
-          prioritySupport: false
+          prioritySupport: false,
+          automations: false
         }
       },
       pro: {
@@ -33,7 +34,8 @@ class HalaxaAccessControl {
           advancedAnalytics: true,
           multipleWallets: true,
           customBranding: false,
-          prioritySupport: true
+          prioritySupport: true,
+          automations: true
         }
       },
       elite: {
@@ -45,7 +47,8 @@ class HalaxaAccessControl {
           advancedAnalytics: true,
           multipleWallets: true,
           customBranding: true,
-          prioritySupport: true
+          prioritySupport: true,
+          automations: true
         }
       }
     };
@@ -255,7 +258,7 @@ class HalaxaAccessControl {
 
     // Check if current page is blocked
     if (!this.isPageAllowed(currentPath)) {
-      this.redirectToUpgrade();
+      this.redirectToPlans();
       return;
     }
 
@@ -268,7 +271,7 @@ class HalaxaAccessControl {
       if (href && !this.isPageAllowed(href)) {
         link.addEventListener('click', (e) => {
           e.preventDefault();
-          this.showUpgradeModal(href);
+          this.redirectToPlans();
         });
         
         // Add visual indicator
@@ -277,44 +280,9 @@ class HalaxaAccessControl {
     });
   }
 
-  redirectToUpgrade() {
-    const plan = this.getCurrentPlan();
-    const message = `This feature requires ${plan === 'basic' ? 'Pro or Elite' : 'Elite'} plan. Redirecting to upgrade...`;
-    
-    console.log(message);
-    setTimeout(() => {
-      window.location.href = '/plans.html';
-    }, 2000);
-  }
-
-  showUpgradeModal(targetPage) {
-    const plan = this.getCurrentPlan();
-    const requiredPlan = targetPage.includes('/orders') || targetPage.includes('/shipping') ? 'Elite' : 'Pro';
-    
-    const modal = document.createElement('div');
-    modal.className = 'upgrade-modal-overlay';
-    modal.innerHTML = `
-      <div class="upgrade-modal">
-        <div class="upgrade-modal-header">
-          <h3>🚀 Upgrade Required</h3>
-          <button class="close-modal" onclick="this.closest('.upgrade-modal-overlay').remove()">&times;</button>
-        </div>
-        <div class="upgrade-modal-body">
-          <p>This feature requires <strong>${requiredPlan}</strong> plan.</p>
-          <p>Current plan: <span class="current-plan-badge plan-${plan}">${plan.toUpperCase()}</span></p>
-        </div>
-        <div class="upgrade-modal-footer">
-          <button class="btn-upgrade" onclick="window.location.href='/plans.html'">
-            Upgrade to ${requiredPlan}
-          </button>
-          <button class="btn-cancel" onclick="this.closest('.upgrade-modal-overlay').remove()">
-            Cancel
-          </button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
+  redirectToPlans() {
+    console.log('🔒 Redirecting to plans page for upgrade...');
+    window.location.href = '/plans.html';
   }
 
   // ==================== VISUAL LOCKS AND BADGES ==================== //

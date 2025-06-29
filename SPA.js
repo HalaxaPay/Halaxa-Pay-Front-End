@@ -3282,13 +3282,13 @@ class HalaxaAccessControl {
                     button.appendChild(lockIcon);
                 }
                 
-                // Add click handler to show upgrade message
+                // Add click handler to redirect to plans
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    const requiredPlan = network === 'solana' ? 'Pro' : 'Elite';
-                    this.showUpgradeModal(`${network.toUpperCase()} network requires ${requiredPlan} plan.`, requiredPlan);
+                    console.log('🔒 Network restricted - redirecting to plans page');
+                    window.location.href = '/plans.html';
                     return false;
                 });
             }
@@ -3322,14 +3322,13 @@ class HalaxaAccessControl {
                 const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
                 navItem.classList.add(`locked-${requiredPlan}`);
                 
-                // Add click handler to show upgrade message and prevent navigation
+                // Add click handler to redirect to plans page
                 navItem.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     
-                    const requiredPlanName = pageId === 'capital-page' ? 'Pro' : 'Elite';
-                    const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
-                    this.showUpgradeModal(`${pageName} page requires ${requiredPlanName} plan.`, requiredPlanName, pageId);
+                    console.log('🔒 Page restricted - redirecting to plans page');
+                    window.location.href = '/plans.html';
                     return false;
                 });
             }
@@ -3349,7 +3348,8 @@ class HalaxaAccessControl {
                 if (!permission.allowed) {
                     e.preventDefault();
                     e.stopPropagation();
-                    this.showAccessDeniedModal(permission);
+                    console.log('🔒 Payment link limit reached - redirecting to plans page');
+                    window.location.href = '/plans.html';
                     return false;
                 }
                 
@@ -3359,178 +3359,10 @@ class HalaxaAccessControl {
         }
     }
 
-    // Show upgrade modal with dashboard styling
-    showUpgradeModal(message, requiredPlan, blockedPageId = null) {
-        
-        const modal = document.createElement('div');
-        modal.className = 'halaxa-upgrade-modal';
-        
-        const planColor = requiredPlan === 'Pro' ? 'pro' : 'elite';
-        
-        modal.innerHTML = `
-            <div class="modal-backdrop"></div>
-            <div class="upgrade-modal-card ${planColor}-theme">
-                <div class="modal-header">
-                    <div class="lock-animation">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <h2 class="modal-title">Upgrade to ${requiredPlan} Required</h2>
-                    <button class="modal-close-btn" onclick="this.closest('.halaxa-upgrade-modal').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="modal-content">
-                    <div class="restriction-message">
-                        <p>${message}</p>
-                    </div>
-                    
-                    <div class="plan-benefits">
-                        <h3>Unlock ${requiredPlan} Features:</h3>
-                        <div class="benefits-grid">
-                            ${requiredPlan === 'Pro' ? `
-                                <div class="benefit-item">
-                                    <i class="fas fa-link"></i>
-                                    <span>30 Payment Links</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-network-wired"></i>
-                                    <span>Solana Network</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span>Capital Analytics</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-headset"></i>
-                                    <span>Priority Support</span>
-                                </div>
-                            ` : `
-                                <div class="benefit-item">
-                                    <i class="fas fa-infinity"></i>
-                                    <span>Unlimited Links</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-globe"></i>
-                                    <span>All Networks</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-shipping-fast"></i>
-                                    <span>Orders & Shipping</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fas fa-crown"></i>
-                                    <span>Custom Branding</span>
-                                </div>
-                            `}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="modal-actions">
-                    <button class="upgrade-btn ${planColor}-gradient" onclick="handleModalUpgrade('${requiredPlan}')">
-                        <i class="fas fa-rocket"></i>
-                        Upgrade to ${requiredPlan}
-                    </button>
-                    <button class="maybe-later-btn" onclick="handleMaybeLater()">
-                        <i class="fas fa-clock"></i>
-                        Maybe Later
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Add modal event handlers
-        modal.querySelector('.modal-backdrop').addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🖱️ Modal backdrop clicked - closing modal');
-            handleMaybeLater();
-        });
-        
-        // Add entrance animation
-        setTimeout(() => {
-            modal.classList.add('modal-visible');
-        }, 10);
-    }
-
-    // Show access denied modal for payment link limits
-    showAccessDeniedModal(restriction) {
-        const modal = document.createElement('div');
-        modal.className = 'halaxa-upgrade-modal';
-        modal.innerHTML = `
-            <div class="modal-backdrop"></div>
-            <div class="upgrade-modal-card limit-reached-theme">
-                <div class="modal-header">
-                    <div class="lock-animation">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h2 class="modal-title">Payment Link Limit Reached</h2>
-                    <button class="modal-close-btn" onclick="this.closest('.halaxa-upgrade-modal').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="modal-content">
-                    <div class="restriction-message">
-                        <p>${restriction.message}</p>
-                    </div>
-                    
-                    <div class="usage-display">
-                        <div class="usage-meter">
-                            <div class="usage-bar">
-                                <div class="usage-fill" style="width: ${(restriction.current / restriction.limit) * 100}%"></div>
-                            </div>
-                            <div class="usage-text">
-                                <strong>${restriction.current}/${restriction.limit === Infinity ? '∞' : restriction.limit}</strong> payment links used
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="plan-benefits">
-                        <h3>Upgrade Options:</h3>
-                        <div class="benefits-grid">
-                            <div class="benefit-item pro-option">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>Pro Plan: 30 Links</span>
-                            </div>
-                            <div class="benefit-item elite-option">
-                                <i class="fas fa-infinity"></i>
-                                <span>Elite Plan: Unlimited</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="modal-actions">
-                    <button class="upgrade-btn pro-gradient" onclick="handleModalUpgrade('Pro')">
-                        <i class="fas fa-rocket"></i>
-                        Upgrade Plan
-                    </button>
-                    <button class="maybe-later-btn" onclick="handleMaybeLater()">
-                        <i class="fas fa-times"></i>
-                        Close
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Add modal event handlers
-        modal.querySelector('.modal-backdrop').addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🖱️ Modal backdrop clicked - closing modal');
-            handleMaybeLater();
-        });
-        
-        // Add entrance animation
-        setTimeout(() => {
-            modal.classList.add('modal-visible');
-        }, 10);
+    // Redirect to plans page instead of showing modals
+    redirectToPlans() {
+        console.log('🔒 Redirecting to plans page for upgrade...');
+        window.location.href = '/plans.html';
     }
 }
 
@@ -3552,346 +3384,51 @@ async function initializeAccessControl() {
     }
 }
 
-// Global modal handlers
-window.handleModalUpgrade = function(plan) {
-    console.log('🚀 Handling modal upgrade to:', plan);
-    
-    // Close modal first
-    const modal = document.querySelector('.halaxa-upgrade-modal');
-    if (modal) {
-        modal.classList.remove('modal-visible');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    // Navigate to plans page
-    setTimeout(() => {
-        console.log('📍 Navigating to plans page...');
-        const plansNavItem = document.querySelector('[data-page="plans-page"]');
-        if (plansNavItem) {
-            plansNavItem.click();
-            console.log('✅ Plans page navigation triggered');
-        } else {
-            console.error('❌ Plans nav item not found');
-            // Fallback: manually trigger navigation
-            navigateToPage('plans-page');
-        }
-    }, 100);
-};
+// No longer needed - all access control redirects directly to plans page
 
-window.handleMaybeLater = function() {
-    console.log('⏰ Handling maybe later - going to home');
-    
-    // Close modal first
-    const modal = document.querySelector('.halaxa-upgrade-modal');
-    if (modal) {
-        modal.classList.remove('modal-visible');
-        setTimeout(() => modal.remove(), 300);
-    }
-    
-    // Always go to home page
-    setTimeout(() => {
-        console.log('🏠 Navigating to home page...');
-        const homeNavItem = document.querySelector('[data-page="home-page"]');
-        if (homeNavItem) {
-            homeNavItem.click();
-            console.log('✅ Home page navigation triggered');
-        } else {
-            console.error('❌ Home nav item not found');
-            // Fallback: manually trigger navigation
-            navigateToPage('home-page');
-        }
-    }, 100);
-};
-
-// Add comprehensive access control styles
+// Add minimal access control styles for lock icons
 function addAccessControlStyles() {
     if (document.querySelector('#halaxa-access-control-styles')) return;
     
     const styles = document.createElement('style');
     styles.id = 'halaxa-access-control-styles';
     styles.textContent = `
-        /* Modal Base Styles */
-        .halaxa-upgrade-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .halaxa-upgrade-modal.modal-visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            z-index: -1;
-        }
-        
-        .upgrade-modal-card {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 520px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            transition: transform 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .halaxa-upgrade-modal.modal-visible .upgrade-modal-card {
-            transform: translateX(-50%) translateY(0);
-        }
-        
-        /* Theme Colors */
-        .upgrade-modal-card.pro-theme {
-            border-color: #f59e0b;
-            box-shadow: 0 25px 50px rgba(245, 158, 11, 0.2);
-        }
-        
-        .upgrade-modal-card.elite-theme {
-            border-color: #6B46C1;
-            box-shadow: 0 25px 50px rgba(107, 70, 193, 0.2);
-        }
-        
-        .upgrade-modal-card.limit-reached-theme {
-            border-color: #ef4444;
-            box-shadow: 0 25px 50px rgba(239, 68, 68, 0.2);
-        }
-        
-        /* Modal Header */
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            position: relative;
-        }
-        
-        .lock-animation {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            animation: lockPulse 2s infinite;
-        }
-        
-        .pro-theme .lock-animation {
-            background: linear-gradient(135deg, #f59e0b, #eab308);
-            color: white;
-        }
-        
-        .elite-theme .lock-animation {
-            background: var(--purple-elite);
-            color: white;
-        }
-        
-        .limit-reached-theme .lock-animation {
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            color: white;
-        }
-        
-        .modal-title {
-            flex: 1;
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .modal-close-btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .modal-close-btn:hover {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        /* Modal Content */
-        .modal-content {
-            padding: 24px;
-        }
-        
-        .restriction-message {
-            margin-bottom: 24px;
-        }
-        
-        .restriction-message p {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        
-        /* Plan Benefits */
-        .plan-benefits h3 {
-            margin: 0 0 16px 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            transition: all 0.2s ease;
-        }
-        
-        .benefit-item:hover {
-            background: var(--bg-primary);
-            transform: translateY(-2px);
-        }
-        
-        .benefit-item i {
-            width: 20px;
-            color: var(--accent-primary);
-        }
-        
-        .pro-option i {
-            color: #f59e0b;
-        }
-        
-        .elite-option i {
-            color: var(--purple-primary);
-        }
-        
-        /* Usage Display */
-        .usage-display {
-            margin: 20px 0;
-        }
-        
-        .usage-meter {
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            padding: 16px;
-        }
-        
-        .usage-bar {
-            height: 8px;
-            background: var(--bg-primary);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-        
-        .usage-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ef4444, #f97316);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        .usage-text {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        /* Modal Actions */
-        .modal-actions {
-            padding: 24px;
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-        
-        .upgrade-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .upgrade-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .pro-gradient {
-            background: linear-gradient(135deg, #f59e0b, #eab308);
-        }
-        
-        .elite-gradient {
-            background: var(--purple-elite);
-        }
-        
-        .maybe-later-btn {
-            padding: 12px 24px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .maybe-later-btn:hover {
-            border-color: var(--border-primary);
-            color: var(--text-primary);
-            background: var(--bg-tertiary);
-        }
-        
-        /* Lock Animations */
+        /* Lock Icon Animations */
         @keyframes lockPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            50% { 
+                opacity: 0.7; 
+                transform: scale(1.1); 
+            }
         }
         
-        /* Locked Element Styles */
-        .network-locked, .nav-locked {
+        /* Locked Navigation Items */
+        .nav-locked {
             opacity: 0.6;
-            position: relative;
+            cursor: not-allowed;
+        }
+        
+        .nav-locked:hover {
+            opacity: 0.8;
         }
         
         .lock-icon {
             color: #f59e0b;
-            font-size: 0.9rem;
+            margin-left: 8px;
+            animation: lockPulse 2s infinite;
+        }
+        
+        /* Network Restrictions */
+        .network-locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .network-locked:hover {
+            opacity: 0.7;
         }
         
         /* Animated Shine Effects for Locked Pages */
@@ -3966,9 +3503,21 @@ function addAccessControlStyles() {
     document.head.appendChild(styles);
 }
 
-// Helper function to navigate to page
+// Helper function to navigate to page with access control
 function navigateToPage(pageId) {
     console.log('🧭 Navigating to page:', pageId);
+    
+    // Check access control first
+    if (accessControl) {
+        const plan = accessControl.getCurrentPlan();
+        const limits = accessControl.getPlanLimits(plan);
+        
+        if (limits.blockedPages.includes(pageId)) {
+            console.log('🔒 Page access denied, redirecting to plans...');
+            window.location.href = '/plans.html';
+            return;
+        }
+    }
     
     const navItem = document.querySelector(`[data-page="${pageId}"]`);
     if (navItem) {

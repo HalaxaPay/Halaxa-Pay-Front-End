@@ -9814,14 +9814,14 @@ body::before {
 
 /* Webhook Integration Card */
 .webhook-integration-card {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-xl);
-    padding: var(--space-8);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-light);
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
-    animation: cardSlideIn 0.6s ease-out 0.2s both;
+    animation: slideInLeft 0.6s ease-out;
 }
 
 .webhook-integration-card::before {
@@ -9830,34 +9830,166 @@ body::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--automation-orange), var(--automation-zapier-orange), var(--automation-make-purple));
-    animation: webhookGradientFlow 3s ease-in-out infinite;
-}
-
-@keyframes webhookGradientFlow {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+    height: 3px;
+    background: linear-gradient(135deg, var(--automation-orange) 0%, var(--automation-orange-light) 100%);
 }
 
 .integration-header {
-    margin-bottom: var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.integration-header h3 {
-    font-size: 1.5rem;
+.header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--automation-orange-ultra-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--automation-orange);
+    font-size: 1.25rem;
+}
+
+.header-content h3 {
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.25rem;
 }
 
-.integration-header p {
+.header-content p {
     color: var(--text-secondary);
-    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+.webhook-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-color);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+    background: #10b981;
+}
+
+.status-text {
+    color: var(--text-secondary);
+}
+
+/* Account Status Card */
+.account-status-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    animation: slideInRight 0.6s ease-out;
+}
+
+.status-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.status-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--automation-orange-ultra-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--automation-orange);
+    font-size: 1.25rem;
+}
+
+.status-info h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.automation-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateX(4px);
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--automation-orange-ultra-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--automation-orange);
+    font-size: 1rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
 .webhook-form {
-    margin-bottom: var(--space-6);
+    margin-bottom: 1.5rem;
 }
 
 .form-group {
@@ -9866,7 +9998,10 @@ body::before {
 
 .form-group label {
     display: block;
-    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: var(--space-2);
@@ -9930,8 +10065,8 @@ body::before {
 }
 
 .connect-webhook-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
 }
 
 .connect-webhook-btn:active {
@@ -9975,6 +10110,48 @@ body::before {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 .test-webhook-btn {
@@ -10046,11 +10223,187 @@ body::before {
 }
 
 /* Tips Section */
+/* Setup Guide and Popular Integrations */
 .automation-tips-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
-    margin-bottom: var(--space-8);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.setup-guide-card,
+.integrations-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.guide-header,
+.integrations-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.guide-icon,
+.integrations-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--automation-orange-ultra-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--automation-orange);
+    font-size: 1.25rem;
+}
+
+.guide-content h3,
+.integrations-content h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.guide-content p,
+.integrations-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.setup-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--automation-orange);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.step-content p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.guide-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--automation-orange);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.help-link:hover {
+    text-decoration: underline;
+}
+
+.integration-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.integration-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.integration-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.integration-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: white;
+}
+
+.integration-icon.email {
+    background: linear-gradient(135deg, #EA4335 0%, #FBBC04 100%);
+}
+
+.integration-icon.spreadsheet {
+    background: linear-gradient(135deg, #0F9D58 0%, #16A085 100%);
+}
+
+.integration-icon.messaging {
+    background: linear-gradient(135deg, #4A154B 0%, #7209B7 100%);
+}
+
+.integration-icon.crm {
+    background: linear-gradient(135deg, #FF7A59 0%, #FF4438 100%);
+}
+
+.integration-details {
+    flex: 1;
+}
+
+.integration-details h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.integration-details p {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.integration-badge {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
 }
 
 .tips-card, .popular-automations-card {
@@ -10252,6 +10605,87 @@ body::before {
 }
 
 /* Webhook History */
+/* Activity Monitor */
+.activity-monitor-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.monitor-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.monitor-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--automation-orange-ultra-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--automation-orange);
+    font-size: 1.25rem;
+}
+
+.monitor-content h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.monitor-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.activity-table {
+    background: var(--bg-color);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.activity-list {
+    padding: 1rem;
+}
+
+.no-activity-message {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.no-activity-icon {
+    margin-bottom: 1rem;
+}
+
+.no-activity-icon i {
+    font-size: 2.5rem;
+    color: var(--automation-orange-light);
+}
+
+.no-activity-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.no-activity-content p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
 .webhook-history-section {
     background: var(--bg-secondary);
     border-radius: var(--radius-xl);

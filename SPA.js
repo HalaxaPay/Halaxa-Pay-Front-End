@@ -3962,14 +3962,7 @@ class HalaxaAccessControl {
                 button.classList.add('network-locked');
                 button.disabled = true;
                 
-                // Add animated Font Awesome lock icon
-                if (!button.querySelector('.lock-icon')) {
-                    const lockIcon = document.createElement('i');
-                    lockIcon.className = 'fas fa-lock lock-icon';
-                    lockIcon.style.marginLeft = '8px';
-                    lockIcon.style.animation = 'lockPulse 2s infinite';
-                    button.appendChild(lockIcon);
-                }
+
                 
                 // Add click handler to redirect to plans
                 button.addEventListener('click', (e) => {
@@ -4021,14 +4014,7 @@ class HalaxaAccessControl {
         if (limits.blockedPages.includes(pageId)) {
             navItem.classList.add('nav-locked');
             
-            // Add animated Font Awesome lock icon
-            if (!navItem.querySelector('.lock-icon')) {
-                const lockIcon = document.createElement('i');
-                lockIcon.className = 'fas fa-lock lock-icon';
-                lockIcon.style.marginLeft = '4px';
-                lockIcon.style.animation = 'lockPulse 2s infinite';
-                navItem.appendChild(lockIcon);
-            }
+
             
             // Add animated shine effect based on required plan
             navItem.classList.add(`locked-${requiredPlan}`);
@@ -4103,18 +4089,6 @@ function addAccessControlStyles() {
     const styles = document.createElement('style');
     styles.id = 'halaxa-access-control-styles';
     styles.textContent = `
-        /* Lock Icon Animations */
-        @keyframes lockPulse {
-            0%, 100% { 
-                opacity: 1; 
-                transform: scale(1); 
-            }
-            50% { 
-                opacity: 0.7; 
-                transform: scale(1.1); 
-            }
-        }
-        
         /* Locked Navigation Items */
         .nav-locked {
             opacity: 0.6;
@@ -4123,12 +4097,6 @@ function addAccessControlStyles() {
         
         .nav-locked:hover {
             opacity: 0.8;
-        }
-        
-        .lock-icon {
-            color: #f59e0b;
-            margin-left: 8px;
-            animation: lockPulse 2s infinite;
         }
         
         /* Network Restrictions */
@@ -4408,8 +4376,8 @@ function showAccessDeniedModal(pageId, requiredPlans) {
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             border: 3px solid #f59e0b;
         ">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-            <h3 style="color: #f59e0b; margin-bottom: 1rem; font-size: 1.5rem;">Premium Feature Required</h3>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+            <h3 style="color: #f59e0b; margin-bottom: 1rem; font-size: 1.5rem;">Upgrade Required</h3>
             <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5;">
                 The <strong>${pageName}</strong> page requires a <strong>${planName}</strong> plan or higher.
             </p>

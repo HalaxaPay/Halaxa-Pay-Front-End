@@ -59,7 +59,6 @@ class HalaxaAccessControl {
   async init() {
     await this.getCurrentUser();
     this.setupPageAccessControl();
-    this.setupVisualLocks();
     this.setupNetworkRestrictions();
   }
 
@@ -227,13 +226,8 @@ class HalaxaAccessControl {
         selector.classList.add('network-locked');
         selector.setAttribute('disabled', 'true');
         
-        // Add lock icon and tooltip
-        if (!selector.querySelector('.lock-icon')) {
-          const lockIcon = document.createElement('div');
-          lockIcon.className = 'lock-icon';
-          lockIcon.innerHTML = '🔒';
-          selector.appendChild(lockIcon);
-          
+        // Add tooltip only
+        if (!selector.querySelector('.network-tooltip')) {
           const tooltip = document.createElement('div');
           tooltip.className = 'network-tooltip';
           tooltip.textContent = network === 'solana' 
@@ -287,72 +281,7 @@ class HalaxaAccessControl {
 
   // ==================== VISUAL LOCKS AND BADGES ==================== //
 
-  setupVisualLocks() {
-    const plan = this.getCurrentPlan();
-    
-    // Apply page-specific locks
-    this.applyCapitalPageLocks(plan);
-    this.applyOrdersPageLocks(plan);
-    this.applyShippingPageLocks(plan);
-    this.applyPlanBadges(plan);
-  }
 
-  applyCapitalPageLocks(plan) {
-    const capitalPage = document.querySelector('[data-page="capital"], .capital-page');
-    
-    if (capitalPage) {
-      if (plan === 'basic') {
-        capitalPage.classList.add('page-locked', 'blurred');
-        this.addPageBadge(capitalPage, 'PRO', 'pro');
-      } else {
-        capitalPage.classList.remove('page-locked', 'blurred');
-        if (plan === 'pro') {
-          this.addPageBadge(capitalPage, 'PRO', 'pro');
-        }
-      }
-    }
-  }
-
-  applyOrdersPageLocks(plan) {
-    const ordersPage = document.querySelector('[data-page="orders"], .orders-page');
-    
-    if (ordersPage) {
-      if (plan !== 'elite') {
-        ordersPage.classList.add('page-locked', 'blurred');
-        this.addPageBadge(ordersPage, 'ELITE', 'elite');
-      } else {
-        ordersPage.classList.remove('page-locked', 'blurred');
-        this.addPageBadge(ordersPage, 'ELITE', 'elite');
-      }
-    }
-  }
-
-  applyShippingPageLocks(plan) {
-    const shippingPage = document.querySelector('[data-page="shipping"], .shipping-page');
-    
-    if (shippingPage) {
-      if (plan !== 'elite') {
-        shippingPage.classList.add('page-locked', 'blurred');
-        this.addPageBadge(shippingPage, 'ELITE', 'elite');
-      } else {
-        shippingPage.classList.remove('page-locked', 'blurred');
-        this.addPageBadge(shippingPage, 'ELITE', 'elite');
-      }
-    }
-  }
-
-  addPageBadge(element, badgeText, badgeType) {
-    // Remove existing badge
-    const existingBadge = element.querySelector('.plan-badge');
-    if (existingBadge) existingBadge.remove();
-    
-    const badge = document.createElement('div');
-    badge.className = `plan-badge badge-${badgeType}`;
-    badge.textContent = badgeText;
-    
-    element.style.position = 'relative';
-    element.appendChild(badge);
-  }
 
   applyPlanBadges(plan) {
     // Add current plan badge to header or profile
@@ -425,8 +354,8 @@ class HalaxaAccessControl {
     messageDiv.className = 'access-denied-message';
     messageDiv.innerHTML = `
       <div class="access-denied-content">
-        <div class="access-denied-icon">🔒</div>
-        <h4>Access Restricted</h4>
+        <div class="access-denied-icon">⚡</div>
+        <h4>Upgrade Required</h4>
         <p>${restriction.message}</p>
         <button class="btn-upgrade-inline" onclick="window.location.href='/plans.html'">
           Upgrade Plan
@@ -565,14 +494,7 @@ const accessControlStyles = `
     cursor: not-allowed;
   }
   
-  .lock-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 20px;
-    z-index: 10;
-  }
+
   
   .network-tooltip {
     position: absolute;
@@ -697,12 +619,6 @@ const accessControlStyles = `
   .locked-page-link {
     position: relative;
     opacity: 0.6;
-  }
-  
-  .locked-page-link::after {
-    content: "🔒";
-    margin-left: 5px;
-    font-size: 12px;
   }
 `;
 

@@ -136,11 +136,8 @@ function renderNetworkOptions() {
       <div class="network-name">${network.name}</div>
       
       ${!network.available ? `
-        <div class="lock-overlay">
-          <div class="lock-icon">🔒</div>
-          <div class="upgrade-hint">
-            Upgrade to ${network.requiredPlan.toUpperCase()}
-          </div>
+        <div class="upgrade-hint">
+          Upgrade to ${network.requiredPlan.toUpperCase()}
         </div>
       ` : ''}
     </div>
@@ -212,8 +209,8 @@ function showRestrictionModal(restriction) {
   modal.className = 'access-restriction-modal';
   modal.innerHTML = `
     <div class="modal-content">
-      <div class="restriction-icon">🚫</div>
-      <h3>Access Restricted</h3>
+      <div class="restriction-icon">⚡</div>
+      <h3>Upgrade Required</h3>
       <p>${restriction.message}</p>
       
       ${restriction.reason === 'payment_link_limit' ? `
@@ -345,9 +342,9 @@ function setupAdvancedAnalytics() {
     if (!planInfo.features.advancedAnalytics) {
       analyticsSection.classList.add('feature-locked');
       analyticsSection.innerHTML = `
-        <div class="feature-lock-overlay">
-          <div class="lock-content">
-            <h3>🔒 Advanced Analytics</h3>
+        <div class="feature-upgrade-overlay">
+          <div class="upgrade-content">
+            <h3>⚡ Advanced Analytics</h3>
             <p>Unlock detailed insights and reporting</p>
             <p>Available in Pro and Elite plans</p>
             <button class="btn-unlock-feature" onclick="window.location.href='/plans.html'">

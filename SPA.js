@@ -227,6 +227,10 @@ function applyPlanRestrictionsImmediately(userPlan) {
             opacity: 0.8 !important;
             cursor: pointer !important;
             overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
         }
         
         /* Subtle shine effect */
@@ -255,19 +259,32 @@ function applyPlanRestrictionsImmediately(userPlan) {
             opacity: 1 !important;
             transform: translateX(3px) !important;
             transition: all 0.2s ease !important;
+            background: rgba(16, 185, 129, 0.05) !important;
+            border-radius: 8px !important;
         }
         
-        /* Plan badges with original brand colors */
+        /* Badge hover glow effect */
+        .nav-item.locked-feature:hover .plan-badge,
+        .mobile-nav-item.locked-feature:hover .plan-badge {
+            transform: scale(1.05) !important;
+            transition: transform 0.2s ease !important;
+        }
+        
+        /* Plan badges with original brand colors - positioned to the right */
         .nav-item.locked-feature .plan-badge,
         .mobile-nav-item.locked-feature .plan-badge {
             display: inline-block !important;
-            padding: 1px 6px !important;
-            border-radius: 8px !important;
-            font-size: 0.6rem !important;
+            padding: 3px 8px !important;
+            border-radius: 10px !important;
+            font-size: 0.65rem !important;
             font-weight: 600 !important;
             text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
             color: white !important;
             border: none !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            margin-left: auto !important;
+            flex-shrink: 0 !important;
         }
         
         /* PRO badge - Orange gradient */
@@ -364,15 +381,26 @@ function applyFOMOLockedStyling(userPlan) {
         if (navItem) {
             navItem.classList.add('locked-feature');
             
-            // Clean layout: Page name + plan badge only
+            // Create beautiful flex layout with badge to the right
             const span = navItem.querySelector('span');
             if (span && !span.querySelector('.plan-badge')) {
-                // Add only the colored badge
+                // Make the nav item a flex container for perfect alignment
+                navItem.style.display = 'flex';
+                navItem.style.alignItems = 'center';
+                navItem.style.justifyContent = 'space-between';
+                navItem.style.width = '100%';
+                
+                // Create the badge with proper positioning
                 const badge = document.createElement('span');
                 badge.className = `plan-badge ${feature.requiredPlan}-badge`;
                 badge.textContent = feature.badge;
-                badge.style.marginLeft = '8px';
-                span.appendChild(badge);
+                
+                // Position badge to the far right
+                badge.style.marginLeft = 'auto';
+                badge.style.flexShrink = '0';
+                
+                // Append badge to nav item (not span) for better layout
+                navItem.appendChild(badge);
             }
         }
     });
@@ -383,15 +411,26 @@ function applyFOMOLockedStyling(userPlan) {
         if (mobileNavItem) {
             mobileNavItem.classList.add('locked-feature');
             
-            // Clean layout: Page name + plan badge only
+            // Create beautiful flex layout with badge to the right
             const span = mobileNavItem.querySelector('span');
             if (span && !span.querySelector('.plan-badge')) {
-                // Add only the colored badge
+                // Make the mobile nav item a flex container for perfect alignment
+                mobileNavItem.style.display = 'flex';
+                mobileNavItem.style.alignItems = 'center';
+                mobileNavItem.style.justifyContent = 'space-between';
+                mobileNavItem.style.width = '100%';
+                
+                // Create the badge with proper positioning
                 const badge = document.createElement('span');
                 badge.className = `plan-badge ${feature.requiredPlan}-badge`;
                 badge.textContent = feature.badge;
-                badge.style.marginLeft = '8px';
-                span.appendChild(badge);
+                
+                // Position badge to the far right
+                badge.style.marginLeft = 'auto';
+                badge.style.flexShrink = '0';
+                
+                // Append badge to mobile nav item (not span) for better layout
+                mobileNavItem.appendChild(badge);
             }
         }
     });
@@ -1267,8 +1306,8 @@ function initializeSPA() {
             // ENHANCED SECURITY: Check access control with our new system
             if (!window.accessControl) {
                 console.error('🚨 SECURITY BREACH: Access control not initialized during mobile navigation!');
-                e.preventDefault();
-                e.stopPropagation();
+                    e.preventDefault();
+                    e.stopPropagation();
                 closeMobileSidebar();
                 showEmergencyAccessDenied();
                 return false;

@@ -1257,7 +1257,7 @@ async function triggerDetectionRefresh(button) {
     }, 3000);
 }
 
-// ==================== SPA NAVIGATION - MINIMAL, ROBUST ==================== //
+// ==================== SPA NAVIGATION - FINAL ROBUST VERSION ==================== //
 
 function showPage(pageId) {
     // Only toggle .active-page class, do not set display:none
@@ -1275,6 +1275,23 @@ function showPage(pageId) {
             nav.classList.add('active');
         }
     });
+    // Debug: Log visible/hidden pages
+    logPageVisibility();
+}
+
+function logPageVisibility() {
+    const allPages = document.querySelectorAll('.page-content');
+    const visible = [];
+    const hidden = [];
+    allPages.forEach(page => {
+        if (page.classList.contains('active-page')) {
+            visible.push(page.id);
+        } else {
+            hidden.push(page.id);
+        }
+    });
+    console.log('🔎 Visible pages:', visible);
+    console.log('🔎 Hidden pages:', hidden);
 }
 
 function initializeSPA() {
@@ -1297,8 +1314,7 @@ function initializeSPA() {
     showPage('home-page');
 }
 
-// ==================== SIDEBAR HEIGHT FIX ==================== //
-// Ensure sidebar and main layout always have min-height: 100vh
+// ==================== SIDEBAR HEIGHT & PAGE VISIBILITY FIX ==================== //
 (function fixSidebarHeight() {
     const style = document.createElement('style');
     style.textContent = `

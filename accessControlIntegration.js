@@ -82,8 +82,8 @@ function setupNetworkSelection() {
         e.stopPropagation();
         
         const restriction = {
-          message: `${network.toUpperCase()} network requires ${network === 'solana' ? 'Pro' : 'Elite'} plan.`,
-          requiredPlan: network === 'solana' ? 'Pro' : 'Elite'
+          message: `${network.toUpperCase()} network requires ${network === 'solana' ? 'Pro or Elite' : 'Elite'} plan.`,
+          requiredPlan: network === 'solana' ? 'Pro or Elite' : 'Elite'
         };
         
         showUpgradePrompt(restriction);

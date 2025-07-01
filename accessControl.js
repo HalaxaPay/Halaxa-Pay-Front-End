@@ -16,7 +16,7 @@ class HalaxaAccessControl {
         maxPaymentLinks: 1,
         maxMonthlyVolume: 500,
         allowedNetworks: ['polygon'],
-        blockedPages: ['/capital', '/orders', '/shipping', '/automation'],
+        blockedPages: ['capital-page', 'orders-page', 'automation-page'],
         features: {
           advancedAnalytics: false,
           multipleWallets: false,
@@ -29,7 +29,7 @@ class HalaxaAccessControl {
         maxPaymentLinks: 30,
         maxMonthlyVolume: 30000,
         allowedNetworks: ['polygon', 'solana'],
-        blockedPages: ['/orders', '/shipping', '/automation'],
+        blockedPages: ['orders-page', 'automation-page'],
         features: {
           advancedAnalytics: true,
           multipleWallets: true,
@@ -231,7 +231,7 @@ class HalaxaAccessControl {
           const tooltip = document.createElement('div');
           tooltip.className = 'network-tooltip';
           tooltip.textContent = network === 'solana' 
-            ? 'Upgrade to Pro to enable Solana network.' 
+            ? 'Upgrade to Pro or Elite to enable Solana network.' 
             : 'Upgrade to Elite to enable Tron network.';
           selector.appendChild(tooltip);
         }
@@ -338,7 +338,7 @@ class HalaxaAccessControl {
       checks.push({
         allowed: false,
         reason: 'network_restricted',
-        message: `${paymentData.network.toUpperCase()} network requires ${paymentData.network === 'solana' ? 'Pro' : 'Elite'} plan.`
+        message: `${paymentData.network.toUpperCase()} network requires ${paymentData.network === 'solana' ? 'Pro or Elite' : 'Elite'} plan.`
       });
     }
     

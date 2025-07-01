@@ -220,37 +220,95 @@ function applyPlanRestrictionsImmediately(userPlan) {
             display: none !important;
         }
         
-        /* Locked navigation item styles with CLEAN DESIGN */
+        /* Locked navigation item styles with STRONG SHINE EFFECTS */
         .nav-item.locked-feature,
         .mobile-nav-item.locked-feature {
             position: relative !important;
-            opacity: 0.8 !important;
+            opacity: 0.9 !important;
             cursor: pointer !important;
             overflow: hidden !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            width: 100% !important;
         }
         
-        /* Subtle shine effect */
-        .nav-item.locked-feature::before,
-        .mobile-nav-item.locked-feature::before {
+        /* STRONG Pro Plan Shine (Orange) for Capital & Automation pages */
+        .nav-item.locked-pro::before,
+        .mobile-nav-item.locked-pro::before {
             content: '' !important;
             position: absolute !important;
             top: 0 !important;
             left: -100% !important;
             width: 100% !important;
             height: 100% !important;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
-            animation: lockedShine 4s infinite !important;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 97, 0.8), rgba(255, 107, 53, 0.9), rgba(255, 140, 97, 0.8), transparent) !important;
+            animation: strongProShine 3s ease-in-out infinite !important;
             pointer-events: none !important;
+            z-index: 1 !important;
         }
         
-        @keyframes lockedShine {
-            0% { left: -100%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
+        /* STRONG Elite Plan Shine (Purple) for Orders page */
+        .nav-item.locked-elite::before,
+        .mobile-nav-item.locked-elite::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), rgba(107, 70, 193, 0.9), rgba(139, 92, 246, 0.8), transparent) !important;
+            animation: strongEliteShine 3s ease-in-out infinite !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+        }
+        
+        @keyframes strongProShine {
+            0% { 
+                left: -100%; 
+                transform: translateX(0) skewX(-15deg);
+                opacity: 0;
+            }
+            20% { 
+                opacity: 1;
+                transform: translateX(0) skewX(-15deg);
+            }
+            50% { 
+                left: 50%; 
+                transform: translateX(-50%) skewX(-15deg);
+                opacity: 1;
+            }
+            80% { 
+                opacity: 1;
+                transform: translateX(-100%) skewX(-15deg);
+            }
+            100% { 
+                left: 100%; 
+                transform: translateX(-100%) skewX(-15deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes strongEliteShine {
+            0% { 
+                left: -100%; 
+                transform: translateX(0) skewX(-15deg);
+                opacity: 0;
+            }
+            20% { 
+                opacity: 1;
+                transform: translateX(0) skewX(-15deg);
+            }
+            50% { 
+                left: 50%; 
+                transform: translateX(-50%) skewX(-15deg);
+                opacity: 1;
+            }
+            80% { 
+                opacity: 1;
+                transform: translateX(-100%) skewX(-15deg);
+            }
+            100% { 
+                left: 100%; 
+                transform: translateX(-100%) skewX(-15deg);
+                opacity: 0;
+            }
         }
         
         /* Clean hover effects */
@@ -263,41 +321,9 @@ function applyPlanRestrictionsImmediately(userPlan) {
             border-radius: 8px !important;
         }
         
-        /* Badge hover glow effect */
-        .nav-item.locked-feature:hover .plan-badge,
-        .mobile-nav-item.locked-feature:hover .plan-badge {
-            transform: scale(1.05) !important;
-            transition: transform 0.2s ease !important;
-        }
+
         
-        /* Plan badges with original brand colors - positioned to the right */
-        .nav-item.locked-feature .plan-badge,
-        .mobile-nav-item.locked-feature .plan-badge {
-            display: inline-block !important;
-            padding: 3px 8px !important;
-            border-radius: 10px !important;
-            font-size: 0.65rem !important;
-            font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-            margin-left: auto !important;
-            flex-shrink: 0 !important;
-        }
-        
-        /* PRO badge - Orange gradient */
-        .nav-item.locked-feature .plan-badge.pro-badge,
-        .mobile-nav-item.locked-feature .plan-badge.pro-badge {
-            background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%) !important;
-        }
-        
-        /* ELITE badge - Purple gradient */
-        .nav-item.locked-feature .plan-badge.elite-badge,
-        .mobile-nav-item.locked-feature .plan-badge.elite-badge {
-            background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%) !important;
-        }
+
     `;
     
     // Add plan-specific locked features styling
@@ -363,12 +389,12 @@ function applyFOMOLockedStyling(userPlan) {
     // Define what features are locked for each plan
     const lockedFeatures = {
         'basic': [
-            { page: 'capital-page', requiredPlan: 'pro', badge: 'PRO' },
-            { page: 'automation-page', requiredPlan: 'pro', badge: 'PRO' },
-            { page: 'orders-page', requiredPlan: 'elite', badge: 'ELITE' }
+            { page: 'capital-page', requiredPlan: 'pro' },
+            { page: 'automation-page', requiredPlan: 'pro' },
+            { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'pro': [
-            { page: 'orders-page', requiredPlan: 'elite', badge: 'ELITE' }
+            { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'elite': [] // Elite users see no locked features
     };
@@ -381,27 +407,33 @@ function applyFOMOLockedStyling(userPlan) {
         if (navItem) {
             navItem.classList.add('locked-feature');
             
-            // Create beautiful flex layout with badge to the right
-            const span = navItem.querySelector('span');
-            if (span && !span.querySelector('.plan-badge')) {
-                // Make the nav item a flex container for perfect alignment
-                navItem.style.display = 'flex';
-                navItem.style.alignItems = 'center';
-                navItem.style.justifyContent = 'space-between';
-                navItem.style.width = '100%';
-                
-                // Create the badge with proper positioning
-                const badge = document.createElement('span');
-                badge.className = `plan-badge ${feature.requiredPlan}-badge`;
-                badge.textContent = feature.badge;
-                
-                // Position badge to the far right
-                badge.style.marginLeft = 'auto';
-                badge.style.flexShrink = '0';
-                
-                // Append badge to nav item (not span) for better layout
-                navItem.appendChild(badge);
+            // Add plan-specific shine class
+            if (feature.requiredPlan === 'pro') {
+                navItem.classList.add('locked-pro');
+            } else if (feature.requiredPlan === 'elite') {
+                navItem.classList.add('locked-elite');
             }
+            
+            // Add Font Awesome lock icon
+            const span = navItem.querySelector('span');
+            if (span && !span.querySelector('.lock-icon')) {
+                // Create lock icon
+                const lockIcon = document.createElement('i');
+                lockIcon.className = 'fas fa-lock lock-icon';
+                lockIcon.style.cssText = `
+                    margin-left: 8px;
+                    color: ${feature.requiredPlan === 'pro' ? '#FF6B35' : '#6B46C1'};
+                    font-size: 0.85rem;
+                    opacity: 0.9;
+                    position: relative;
+                    z-index: 2;
+                `;
+                
+                // Insert lock icon after the text
+                span.appendChild(lockIcon);
+            }
+            
+
         }
     });
     
@@ -411,27 +443,33 @@ function applyFOMOLockedStyling(userPlan) {
         if (mobileNavItem) {
             mobileNavItem.classList.add('locked-feature');
             
-            // Create beautiful flex layout with badge to the right
-            const span = mobileNavItem.querySelector('span');
-            if (span && !span.querySelector('.plan-badge')) {
-                // Make the mobile nav item a flex container for perfect alignment
-                mobileNavItem.style.display = 'flex';
-                mobileNavItem.style.alignItems = 'center';
-                mobileNavItem.style.justifyContent = 'space-between';
-                mobileNavItem.style.width = '100%';
-                
-                // Create the badge with proper positioning
-                const badge = document.createElement('span');
-                badge.className = `plan-badge ${feature.requiredPlan}-badge`;
-                badge.textContent = feature.badge;
-                
-                // Position badge to the far right
-                badge.style.marginLeft = 'auto';
-                badge.style.flexShrink = '0';
-                
-                // Append badge to mobile nav item (not span) for better layout
-                mobileNavItem.appendChild(badge);
+            // Add plan-specific shine class
+            if (feature.requiredPlan === 'pro') {
+                mobileNavItem.classList.add('locked-pro');
+            } else if (feature.requiredPlan === 'elite') {
+                mobileNavItem.classList.add('locked-elite');
             }
+            
+            // Add Font Awesome lock icon
+            const span = mobileNavItem.querySelector('span');
+            if (span && !span.querySelector('.lock-icon')) {
+                // Create lock icon
+                const lockIcon = document.createElement('i');
+                lockIcon.className = 'fas fa-lock lock-icon';
+                lockIcon.style.cssText = `
+                    margin-left: 8px;
+                    color: ${feature.requiredPlan === 'pro' ? '#FF6B35' : '#6B46C1'};
+                    font-size: 0.85rem;
+                    opacity: 0.9;
+                    position: relative;
+                    z-index: 2;
+                `;
+                
+                // Insert lock icon after the text
+                span.appendChild(lockIcon);
+            }
+            
+
         }
     });
     

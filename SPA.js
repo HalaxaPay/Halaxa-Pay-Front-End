@@ -387,6 +387,18 @@ function applyPlanRestrictionsImmediately(userPlan) {
 function applyFOMOLockedStyling(userPlan) {
     console.log('✨ Applying FOMO locked styling for plan:', userPlan);
     
+    // FIRST: Clear all existing locks for fresh start
+    const allNavItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    allNavItems.forEach(item => {
+        item.classList.remove('locked-feature', 'locked-pro', 'locked-elite', 'nav-locked');
+        
+        // Remove any existing lock icons
+        const existingLockIcon = item.querySelector('.lock-icon');
+        if (existingLockIcon) {
+            existingLockIcon.remove();
+        }
+    });
+    
     // Define what features are locked for each plan
     const lockedFeatures = {
         'basic': [
@@ -402,6 +414,12 @@ function applyFOMOLockedStyling(userPlan) {
     };
     
     const userLockedFeatures = lockedFeatures[userPlan] || [];
+    
+    // For Elite users, ensure all navigation is clean and exit early
+    if (userPlan === 'elite') {
+        console.log('✅ Elite user detected - all pages unlocked, no restrictions applied');
+        return;
+    }
     
     // Apply locked styling to desktop navigation
     userLockedFeatures.forEach(feature => {
@@ -4297,6 +4315,16 @@ async function initializeAccessControl() {
         
         // Add comprehensive modal styles
         addAccessControlStyles();
+        
+        // For Elite users, disable all access control restrictions
+        const userPlan = localStorage.getItem('userPlan') || 'basic';
+        if (userPlan === 'elite') {
+            console.log('🎯 Elite user detected - bypassing all access control restrictions');
+            // Override the setupPageAccessControl method to do nothing for Elite users
+            accessControl.setupPageAccessControl = function() {
+                console.log('✅ Elite user - page access control bypassed');
+            };
+        }
         
         console.log('✅ Access control system initialized');
     } catch (error) {

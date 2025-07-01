@@ -247,31 +247,11 @@ class HalaxaAccessControl {
   }
 
   setupPageAccessControl() {
-    const currentPath = window.location.pathname;
-    const limits = this.getPlanLimits();
-
-    // Check if current page is blocked
-    if (!this.isPageAllowed(currentPath)) {
-      this.redirectToPlans();
-      return;
-    }
-
-    // Set up click handlers for navigation links
-    const navLinks = document.querySelectorAll('a[href*="/"], [data-page]');
-    
-    navLinks.forEach(link => {
-      const href = link.getAttribute('href') || link.dataset.page;
-      
-      if (href && !this.isPageAllowed(href)) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          this.redirectToPlans();
-        });
-        
-        // Add visual indicator
-        link.classList.add('locked-page-link');
-      }
-    });
+    // DISABLED: This method was interfering with Elite user navigation
+    // Access control is now handled by the locked-feature class system in SPA.js
+    const plan = this.getCurrentPlan();
+    console.log(`🔐 Page access control disabled for ${plan} users - using SPA.js navigation system`);
+    return;
   }
 
   redirectToPlans() {

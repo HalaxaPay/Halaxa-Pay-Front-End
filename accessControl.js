@@ -317,17 +317,45 @@ class HalaxaAccessControl {
     // Show target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
-      targetPage.style.display = 'block';
+      // Remove any inline display:none that might have been added
+      targetPage.style.removeProperty('display');
       targetPage.classList.add('active-page');
-      console.log(`✅ Page ${pageId} is now active`);
+      
+      // Force visibility in case CSS is overriding
+      targetPage.style.display = 'block';
+      targetPage.style.visibility = 'visible';
+      targetPage.style.opacity = '1';
+      
+      console.log(`✅ Page ${pageId} is now active and visible`);
       
       // Update navigation indicators
       this.updateNavigationIndicators(pageId);
       
       // Initialize page-specific features
       this.initializePageFeatures(pageId);
+      
+      // Ensure sidebar extends properly
+      this.fixSidebarHeight();
     } else {
       console.error(`❌ Page ${pageId} not found in DOM`);
+    }
+  }
+  
+  fixSidebarHeight() {
+    // Force sidebar to recalculate height
+    const sidebar = document.querySelector('.sidebar');
+    const mainLayout = document.querySelector('.main-layout');
+    
+    if (sidebar && mainLayout) {
+      // Force a reflow to ensure proper height calculation
+      const height = mainLayout.offsetHeight;
+      sidebar.style.minHeight = `${height}px`;
+      
+      // Also ensure the active page fills the space
+      const activePage = document.querySelector('.page-content.active-page');
+      if (activePage) {
+        activePage.style.minHeight = '100vh';
+      }
     }
   }
   

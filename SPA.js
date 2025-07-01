@@ -408,12 +408,7 @@ function applyPlanRestrictionsImmediately(userPlan) {
     restrictionStyle.id = 'halaxa-plan-restrictions';
     
     let restrictions = `
-        /* ALWAYS hide the actual premium pages - no real pages exist for locked features */
-        #capital-page, #automation-page, #orders-page {
-            display: none !important;
-        }
-        
-        /* Locked navigation item styles with STRONG SHINE EFFECTS */
+        /* Base styles for navigation locks */
         .nav-item.locked-feature,
         .mobile-nav-item.locked-feature {
             position: relative !important;
@@ -522,7 +517,14 @@ function applyPlanRestrictionsImmediately(userPlan) {
     // Add plan-specific locked features styling
     if (userPlan === 'basic') {
         restrictions += `
-            /* Basic plan: Lock capital, automation, and orders with FOMO effect */
+            /* Basic plan: Hide capital, automation, and orders pages */
+            #capital-page,
+            #automation-page,
+            #orders-page {
+                display: none !important;
+            }
+            
+            /* Basic plan: Lock network options */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
                 display: none !important;
@@ -530,7 +532,18 @@ function applyPlanRestrictionsImmediately(userPlan) {
         `;
     } else if (userPlan === 'pro') {
         restrictions += `
-            /* Pro plan: Lock only orders (elite feature) */
+            /* Pro plan: Show capital page, hide automation and orders */
+            #automation-page,
+            #orders-page {
+                display: none !important;
+            }
+            
+            /* Pro plan: Capital page is visible */
+            #capital-page {
+                display: block !important;
+            }
+            
+            /* Pro plan: Lock only tron network */
             .network-option[data-network="tron"] {
                 display: none !important;
             }
@@ -542,6 +555,13 @@ function applyPlanRestrictionsImmediately(userPlan) {
         `;
     } else if (userPlan === 'elite') {
         restrictions += `
+            /* Elite plan: Show ALL pages */
+            #capital-page,
+            #automation-page,
+            #orders-page {
+                display: block !important;
+            }
+            
             /* Elite plan: Show everything, no locks */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
@@ -1499,26 +1519,51 @@ function initializeSPA() {
 (function fixSidebarHeight() {
     const style = document.createElement('style');
     style.textContent = `
-        .main-layout, .sidebar, body, html {
+        /* Ensure full height for main layout */
+        .main-layout {
             min-height: 100vh !important;
+            display: flex !important;
         }
+        
+        /* Fix sidebar to always extend full height */
+        .sidebar {
+            min-height: 100vh !important;
+            height: 100% !important;
+            position: sticky !important;
+            top: 0 !important;
+            align-self: stretch !important;
+        }
+        
+        /* Ensure body and html have proper height */
+        body, html {
+            min-height: 100vh !important;
+            height: 100% !important;
+        }
+        
+        /* Page content visibility management */
         .page-content {
+            display: none; /* Default hidden */
+            width: 100%;
+            min-height: 100vh;
+        }
+        
+        /* Active page is visible */
+        .page-content.active-page {
             display: block !important;
         }
-        .page-content:not(.active-page) {
-            /* Hide inactive pages visually but keep layout stable */
-            position: absolute !important;
-            left: -9999px !important;
-            top: 0 !important;
-            width: 1px !important;
-            height: 1px !important;
-            overflow: hidden !important;
+        
+        /* Main content area should fill available space */
+        .main-content {
+            flex: 1;
+            min-height: 100vh !important;
+            display: flex;
+            flex-direction: column;
         }
-        .page-content.active-page {
-            position: static !important;
-            width: auto !important;
-            height: auto !important;
-            overflow: visible !important;
+        
+        /* Ensure content wrapper stretches */
+        .content-wrapper {
+            flex: 1;
+            width: 100%;
         }
     `;
     document.head.appendChild(style);

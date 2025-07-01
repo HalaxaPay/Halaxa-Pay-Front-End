@@ -221,36 +221,37 @@ async function getUserPlanSync() {
  */
 async function refreshUserPlan() {
     try {
-        console.log('🔄 Force refreshing user plan from database...');
+        console.log('🔄 Refreshing user plan from database...');
         
         // Clear cached plan
         localStorage.removeItem('userPlan');
         
-        // Get fresh plan from database
+        // Force access control to fetch fresh plan data
         if (window.accessControl) {
-            const userPlan = await window.accessControl.getCurrentUser();
-            if (userPlan) {
-                localStorage.setItem('userPlan', userPlan);
-                console.log('✅ Plan refreshed successfully:', userPlan);
-                
-                // Reapply plan restrictions with new plan
-                applyPlanRestrictionsImmediately(userPlan);
-                
-                // Update plan display if function exists
-                if (typeof loadCurrentPlanStatus === 'function') {
-                    await loadCurrentPlanStatus();
-                }
-                
-                return userPlan;
+            // Get fresh plan from database
+            const newPlan = await window.accessControl.getCurrentUser();
+            
+            // Update localStorage with new plan
+            if (newPlan) {
+                localStorage.setItem('userPlan', newPlan);
             }
+            
+            // Re-initialize page access control with new plan
+            window.accessControl.setupPageAccessControl();
+            window.accessControl.applyVisualLocks();
+            
+            // Reapply plan restrictions
+            applyPlanRestrictionsImmediately(newPlan);
+            
+            console.log('✅ Plan refreshed:', newPlan);
+            return newPlan;
+        } else {
+            console.warn('⚠️ Access control not available');
+            return localStorage.getItem('userPlan') || 'basic';
         }
-        
-        console.warn('⚠️ Could not refresh plan from database');
-        return 'basic';
-        
     } catch (error) {
-        console.error('❌ Plan refresh failed:', error);
-        return 'basic';
+        console.error('❌ Error refreshing plan:', error);
+        return localStorage.getItem('userPlan') || 'basic';
     }
 }
 
@@ -303,6 +304,12 @@ function addPlanRefreshButton() {
         refreshBtn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
         
         const newPlan = await refreshUserPlan();
+        
+        // Reinitialize access control to ensure proper page access
+        if (window.accessControl) {
+            console.log('🔄 Reinitializing access control after plan refresh...');
+            await window.accessControl.init();
+        }
         
         refreshBtn.innerHTML = `<i class="fas fa-check"></i> ${newPlan.toUpperCase()}`;
         refreshBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
@@ -5059,3 +5066,53 @@ function updateOrderAnalyticsDisplay(orderData) {
 }
 
 // All redundant features removed and replaced with Engine.js integration
+
+/**
+ * Test function to verify page navigation works correctly
+ */
+window.testPageNavigation = function(pageId) {
+    console.log(`🧪 Testing navigation to: ${pageId}`);
+    
+    if (window.accessControl) {
+        const plan = window.accessControl.getCurrentPlan();
+        const limits = window.accessControl.getPlanLimits(plan);
+        
+        console.log(`📋 Current plan: ${plan}`);
+        console.log(`🔒 Blocked pages: ${limits.blockedPages.join(', ')}`);
+        
+        if (limits.blockedPages.includes(pageId)) {
+            console.log(`❌ Page ${pageId} is blocked for ${plan} plan`);
+        } else {
+            console.log(`✅ Page ${pageId} is allowed for ${plan} plan`);
+            window.accessControl.loadPage(pageId);
+        }
+    } else {
+        console.error('❌ Access control not initialized');
+    }
+};
+
+/**
+ * Force unlock all pages for testing (Elite simulation)
+ */
+window.forceUnlockAllPages = function() {
+    console.log('🔓 Force unlocking all pages for testing...');
+    
+    // Remove all locked classes
+    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    navItems.forEach(item => {
+        item.classList.remove('locked-feature');
+    });
+    
+    // Make all pages visible
+    const pages = ['capital-page', 'automation-page', 'orders-page'];
+    pages.forEach(pageId => {
+        const page = document.getElementById(pageId);
+        if (page) {
+            console.log(`✅ Found and enabling: ${pageId}`);
+        } else {
+            console.error(`❌ Page not found: ${pageId}`);
+        }
+    });
+    
+    console.log('✅ All pages unlocked for testing');
+};

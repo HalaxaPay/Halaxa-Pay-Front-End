@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
         
+        // Add plan refresh button for testing/debugging
+        addPlanRefreshButton();
+        
     } catch (error) {
         console.error('🚨 CRITICAL: Access control initialization failed:', error);
         showEmergencyAccessDenied();
@@ -168,29 +171,28 @@ async function verifyUserAuthenticationSync() {
 }
 
 /**
- * SYNCHRONOUS user plan detection
+ * SYNCHRONOUS user plan detection - Always fetches fresh from database
  */
 async function getUserPlanSync() {
     try {
         console.log('📋 Detecting user plan...');
         
-        // Try to get plan from localStorage first (fast)
-        let userPlan = localStorage.getItem('userPlan');
-        
-        if (userPlan) {
-            console.log('✅ Plan found in localStorage:', userPlan);
-            return userPlan;
-        }
-        
-        // If not in localStorage, get from access control
+        // Always get fresh plan from access control (database)
         if (window.accessControl) {
-            userPlan = await window.accessControl.getCurrentUser();
+            const userPlan = await window.accessControl.getCurrentUser();
             if (userPlan) {
-                // Cache it for future use
+                // Update cache with fresh data
                 localStorage.setItem('userPlan', userPlan);
-                console.log('✅ Plan detected and cached:', userPlan);
+                console.log('✅ Fresh plan detected from database and cached:', userPlan);
                 return userPlan;
             }
+        }
+        
+        // Fallback: Try cached version if database is unavailable
+        let cachedPlan = localStorage.getItem('userPlan');
+        if (cachedPlan) {
+            console.log('⚠️ Using cached plan (database unavailable):', cachedPlan);
+            return cachedPlan;
         }
         
         // Default to basic if no plan found
@@ -199,10 +201,100 @@ async function getUserPlanSync() {
         return 'basic';
         
     } catch (error) {
-        console.error('❌ Plan detection failed, defaulting to basic:', error);
+        console.error('❌ Plan detection failed, trying cached version:', error);
+        
+        // Try cached version on error
+        let cachedPlan = localStorage.getItem('userPlan');
+        if (cachedPlan) {
+            console.log('✅ Using cached plan due to error:', cachedPlan);
+            return cachedPlan;
+        }
+        
+        // Final fallback
         localStorage.setItem('userPlan', 'basic');
         return 'basic';
     }
+}
+
+/**
+ * Force refresh user plan from database (clears cache)
+ */
+async function refreshUserPlan() {
+    try {
+        console.log('🔄 Force refreshing user plan from database...');
+        
+        // Clear cached plan
+        localStorage.removeItem('userPlan');
+        
+        // Get fresh plan from database
+        if (window.accessControl) {
+            const userPlan = await window.accessControl.getCurrentUser();
+            if (userPlan) {
+                localStorage.setItem('userPlan', userPlan);
+                console.log('✅ Plan refreshed successfully:', userPlan);
+                
+                // Reapply plan restrictions with new plan
+                applyPlanRestrictionsImmediately(userPlan);
+                
+                // Update plan display if function exists
+                if (typeof loadCurrentPlanStatus === 'function') {
+                    await loadCurrentPlanStatus();
+                }
+                
+                return userPlan;
+            }
+        }
+        
+        console.warn('⚠️ Could not refresh plan from database');
+        return 'basic';
+        
+    } catch (error) {
+        console.error('❌ Plan refresh failed:', error);
+        return 'basic';
+    }
+}
+
+/**
+ * Add refresh plan button for debugging/testing
+ */
+function addPlanRefreshButton() {
+    // Check if button already exists
+    if (document.getElementById('refresh-plan-btn')) return;
+    
+    // Create refresh button
+    const refreshBtn = document.createElement('button');
+    refreshBtn.id = 'refresh-plan-btn';
+    refreshBtn.innerHTML = '🔄 Refresh Plan';
+    refreshBtn.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 10000;
+        padding: 8px 12px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    `;
+    
+    refreshBtn.onclick = async () => {
+        refreshBtn.innerHTML = '🔄 Refreshing...';
+        refreshBtn.disabled = true;
+        
+        const newPlan = await refreshUserPlan();
+        
+        refreshBtn.innerHTML = `✅ ${newPlan.toUpperCase()}`;
+        setTimeout(() => {
+            refreshBtn.innerHTML = '🔄 Refresh Plan';
+            refreshBtn.disabled = false;
+        }, 2000);
+    };
+    
+    document.body.appendChild(refreshBtn);
+    console.log('✅ Plan refresh button added');
 }
 
 /**

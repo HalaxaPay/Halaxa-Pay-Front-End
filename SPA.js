@@ -1268,36 +1268,8 @@ function initializeSPA() {
                 return false;
             }
             
-            // ENHANCED SECURITY: Check access control with our new system
-            if (!window.accessControl) {
-                console.error('🚨 SECURITY BREACH: Access control not initialized during navigation!');
-                e.preventDefault();
-                e.stopPropagation();
-                showEmergencyAccessDenied();
-                return false;
-            }
-            
-            // Get current user plan for security check
-            const currentPlan = localStorage.getItem('userPlan') || 'basic';
-            
-            // Define premium pages that require access control (backup check)
-            const premiumPages = {
-                'capital-page': ['pro', 'elite'],
-                'automation-page': ['elite'], 
-                'orders-page': ['elite']
-            };
-            
-            // SECURITY CHECK: Verify access to premium pages (backup)
-            if (premiumPages[targetPageId]) {
-                const requiredPlans = premiumPages[targetPageId];
-                if (!requiredPlans.includes(currentPlan)) {
-                    console.log('🔒 SECURITY: Desktop navigation blocked for page:', targetPageId, 'plan:', currentPlan);
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigateToPlansPage();
-                    return false;
-                }
-            }
+            // Note: Access control is handled by the locked-feature class check above
+            // No additional navigation blocking needed for Elite users
             
             console.log('✅ SECURITY: Desktop navigation approved for:', targetPageId);
             
@@ -1343,38 +1315,8 @@ function initializeSPA() {
                 return false;
             }
             
-            // ENHANCED SECURITY: Check access control with our new system
-            if (!window.accessControl) {
-                console.error('🚨 SECURITY BREACH: Access control not initialized during mobile navigation!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                closeMobileSidebar();
-                showEmergencyAccessDenied();
-                return false;
-            }
-            
-            // Get current user plan for security check
-            const currentPlan = localStorage.getItem('userPlan') || 'basic';
-            
-            // Define premium pages that require access control (backup check)
-            const premiumPages = {
-                'capital-page': ['pro', 'elite'],
-                'automation-page': ['elite'], 
-                'orders-page': ['elite']
-            };
-            
-            // SECURITY CHECK: Verify access to premium pages (backup)
-            if (premiumPages[targetPageId]) {
-                const requiredPlans = premiumPages[targetPageId];
-                if (!requiredPlans.includes(currentPlan)) {
-                    console.log('🔒 SECURITY: Mobile navigation blocked for page:', targetPageId, 'plan:', currentPlan);
-                    e.preventDefault();
-                    e.stopPropagation();
-                    closeMobileSidebar(); // Close sidebar first
-                    navigateToPlansPage();
-                    return false;
-                }
-            }
+            // Note: Access control is handled by the locked-feature class check above
+            // No additional navigation blocking needed for Elite users
             
             console.log('✅ SECURITY: Mobile navigation approved for:', targetPageId);
             
@@ -4294,29 +4236,22 @@ class HalaxaAccessControl {
     setupNavItemAccess(navItem, limits) {
         const pageId = navItem.dataset.page;
         
-        // Determine required plan for this page
-        const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
-        
-        // Plan badges removed from desktop as requested
-        
-        // If page is blocked, add lock functionality
+        // Check if this page is blocked for the current user's plan
         if (limits.blockedPages.includes(pageId)) {
-            navItem.classList.add('nav-locked');
+            // Determine required plan for this page
+            const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
             
-
+            navItem.classList.add('nav-locked');
+            navItem.classList.add('locked-feature'); // This class is used by the main navigation logic
             
             // Add animated shine effect based on required plan
             navItem.classList.add(`locked-${requiredPlan}`);
             
-            // Add click handler to redirect to plans page
-            navItem.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('🔒 Page restricted - redirecting to plans page');
-                navigateToPlansPage();
-                return false;
-            });
+            console.log(`🔒 Page ${pageId} is blocked for current plan`);
+        } else {
+            // Ensure nav item is not locked for users who have access
+            navItem.classList.remove('nav-locked', 'locked-feature', 'locked-pro', 'locked-elite');
+            console.log(`✅ Page ${pageId} is accessible for current plan`);
         }
     }
 

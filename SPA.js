@@ -3,29 +3,388 @@
 // BACKEND URL CONFIGURATION - Use environment variable or fallback
 const BACKEND_URL = import.meta.env?.VITE_BACKEND_URL || 'https://halaxa-backend.onrender.com';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the SPA navigation FIRST - this should always work
-    initializeSPA();
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Starting Halaxa Dashboard with PRIORITY ACCESS CONTROL...');
     
-    // Initialize payment form functionality
-    setupPaymentForm();
-    
-    // Add interactive animations
-    initializeAnimations();
-    
-    // Add floating particles animation
-    initializeParticles();
-    
-    // Add interactive card effects
-    initializeCardEffects();
-    
-    // Initialize user personalization AFTER SPA is ready (non-blocking)
-    initializeUserPersonalization().catch(error => {
-        console.warn('⚠️ User personalization failed, but SPA still works:', error);
-        // Don't redirect to login immediately, let user navigate first
-        // They can try to access protected features which will then redirect if needed
-    });
+    // CRITICAL SECURITY: Initialize access control FIRST and SYNCHRONOUSLY
+    // This prevents the race condition where users can access premium content
+    try {
+        console.log('🔐 PRIORITY: Initializing access control system...');
+        
+        // Hide ALL premium content immediately until verification completes
+        hideAllPremiumContentImmediately();
+        
+        // Show security verification loading
+        showAccessControlVerification();
+        
+        // Initialize access control synchronously and wait for completion
+        await initializeCriticalAccessControl();
+        
+        // Verify user authentication BEFORE any UI initialization
+        const authenticationValid = await verifyUserAuthenticationSync();
+        
+        if (!authenticationValid) {
+            console.log('❌ Authentication failed - redirecting to login');
+            redirectToLogin();
+            return;
+        }
+        
+        // Get user plan and apply restrictions BEFORE showing UI
+        const userPlan = await getUserPlanSync();
+        applyPlanRestrictionsImmediately(userPlan);
+        
+        console.log('✅ Access control verification complete - UI safe to initialize');
+        
+        // Hide security verification overlay
+        hideAccessControlVerification();
+        
+        // NOW initialize the UI - access control is already in place
+        initializeSPA();
+        
+        // Initialize other functionality
+        setupPaymentForm();
+        initializeAnimations();
+        initializeParticles();
+        initializeCardEffects();
+        
+        // Initialize user personalization (now safe since access control is active)
+        initializeUserPersonalization().catch(error => {
+            console.warn('⚠️ User personalization failed, but access control is active:', error);
+        });
+        
+    } catch (error) {
+        console.error('🚨 CRITICAL: Access control initialization failed:', error);
+        showEmergencyAccessDenied();
+    }
 });
+
+// ==================== CRITICAL SECURITY FUNCTIONS ==================== //
+
+/**
+ * SECURITY CRITICAL: Hide all premium content immediately on page load
+ * This prevents the race condition vulnerability
+ */
+function hideAllPremiumContentImmediately() {
+    console.log('🔒 SECURITY: Hiding premium content immediately...');
+    
+    // Create a style element to hide premium content
+    const securityStyle = document.createElement('style');
+    securityStyle.id = 'halaxa-security-protection';
+    securityStyle.textContent = `
+        /* SECURITY: Hide premium navigation items by default */
+        .nav-item[data-page="capital-page"],
+        .nav-item[data-page="automation-page"], 
+        .nav-item[data-page="orders-page"],
+        .mobile-nav-item[data-page="capital-page"],
+        .mobile-nav-item[data-page="automation-page"],
+        .mobile-nav-item[data-page="orders-page"] {
+            display: none !important;
+        }
+        
+        /* SECURITY: Hide premium pages by default */
+        #capital-page,
+        #automation-page,
+        #orders-page {
+            display: none !important;
+        }
+        
+        /* SECURITY: Hide restricted networks by default */
+        .network-option[data-network="solana"],
+        .network-option[data-network="tron"] {
+            display: none !important;
+        }
+        
+        /* SECURITY: Block interactions until verification */
+        .payment-form-section {
+            pointer-events: none !important;
+            opacity: 0.5 !important;
+        }
+    `;
+    document.head.appendChild(securityStyle);
+}
+
+/**
+ * Show access control verification loading overlay
+ */
+function showAccessControlVerification() {
+    const overlay = document.createElement('div');
+    overlay.id = 'access-control-verification';
+    overlay.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 10000 !important;
+        backdrop-filter: blur(5px) !important;
+    `;
+    
+    overlay.innerHTML = `
+        <div style="text-align: center; padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #10b981;">
+            <div style="width: 40px; height: 40px; border: 3px solid #e5e7eb; border-top: 3px solid #10b981; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+            <h3 style="color: #10b981; margin-bottom: 0.5rem; font-size: 1.2rem;">Verifying Access Permissions</h3>
+            <p style="color: #6b7280; font-size: 0.9rem;">Securing your dashboard experience...</p>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+/**
+ * Hide access control verification overlay
+ */
+function hideAccessControlVerification() {
+    const overlay = document.getElementById('access-control-verification');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+/**
+ * CRITICAL: Initialize access control with enhanced security
+ */
+async function initializeCriticalAccessControl() {
+    try {
+        console.log('🔐 Initializing critical access control...');
+        
+        // Initialize the access control system
+        if (typeof HalaxaAccessControl === 'undefined') {
+            throw new Error('HalaxaAccessControl class not found');
+        }
+        
+        window.accessControl = new HalaxaAccessControl();
+        await window.accessControl.init();
+        
+        console.log('✅ Critical access control initialized');
+        return true;
+    } catch (error) {
+        console.error('❌ Critical access control initialization failed:', error);
+        throw error;
+    }
+}
+
+/**
+ * SYNCHRONOUS authentication verification
+ */
+async function verifyUserAuthenticationSync() {
+    try {
+        console.log('🔍 Verifying user authentication...');
+        
+        // Check for backend authentication tokens
+        const accessToken = localStorage.getItem('accessToken');
+        const userActive = localStorage.getItem('userActive');
+        const userData = localStorage.getItem('user');
+        
+        if (!accessToken || !userActive || userActive !== 'true') {
+            console.log('❌ No valid authentication found');
+            return false;
+        }
+        
+        // Validate user data
+        let user = null;
+        try {
+            user = userData ? JSON.parse(userData) : null;
+        } catch (parseError) {
+            console.error('❌ Invalid user data:', parseError);
+            return false;
+        }
+        
+        if (!user || !user.email) {
+            console.log('❌ Invalid user data structure');
+            return false;
+        }
+        
+        console.log('✅ Authentication verified for:', user.email);
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Authentication verification failed:', error);
+        return false;
+    }
+}
+
+/**
+ * SYNCHRONOUS user plan detection
+ */
+async function getUserPlanSync() {
+    try {
+        console.log('📋 Detecting user plan...');
+        
+        // Try to get plan from localStorage first (fast)
+        let userPlan = localStorage.getItem('userPlan');
+        
+        if (userPlan) {
+            console.log('✅ Plan found in localStorage:', userPlan);
+            return userPlan;
+        }
+        
+        // If not in localStorage, get from access control
+        if (window.accessControl) {
+            userPlan = await window.accessControl.getCurrentUser();
+            if (userPlan) {
+                // Cache it for future use
+                localStorage.setItem('userPlan', userPlan);
+                console.log('✅ Plan detected and cached:', userPlan);
+                return userPlan;
+            }
+        }
+        
+        // Default to basic if no plan found
+        console.log('⚠️ No plan found, defaulting to basic');
+        localStorage.setItem('userPlan', 'basic');
+        return 'basic';
+        
+    } catch (error) {
+        console.error('❌ Plan detection failed, defaulting to basic:', error);
+        localStorage.setItem('userPlan', 'basic');
+        return 'basic';
+    }
+}
+
+/**
+ * Apply plan restrictions immediately BEFORE UI shows
+ */
+function applyPlanRestrictionsImmediately(userPlan) {
+    console.log('🚫 Applying plan restrictions for:', userPlan);
+    
+    // Remove the temporary security protection style
+    const securityStyle = document.getElementById('halaxa-security-protection');
+    if (securityStyle) {
+        securityStyle.remove();
+    }
+    
+    // Apply plan-specific restrictions
+    const restrictionStyle = document.createElement('style');
+    restrictionStyle.id = 'halaxa-plan-restrictions';
+    
+    let restrictions = '';
+    
+    if (userPlan === 'basic') {
+        restrictions = `
+            /* Basic plan: Hide capital, automation, and orders */
+            .nav-item[data-page="capital-page"],
+            .nav-item[data-page="automation-page"], 
+            .nav-item[data-page="orders-page"],
+            .mobile-nav-item[data-page="capital-page"],
+            .mobile-nav-item[data-page="automation-page"],
+            .mobile-nav-item[data-page="orders-page"] {
+                display: none !important;
+            }
+            
+            #capital-page, #automation-page, #orders-page {
+                display: none !important;
+            }
+            
+            .network-option[data-network="solana"],
+            .network-option[data-network="tron"] {
+                display: none !important;
+            }
+        `;
+    } else if (userPlan === 'pro') {
+        restrictions = `
+            /* Pro plan: Hide orders and shipping, show automation */
+            .nav-item[data-page="orders-page"],
+            .mobile-nav-item[data-page="orders-page"] {
+                display: none !important;
+            }
+            
+            #orders-page {
+                display: none !important;
+            }
+            
+            .network-option[data-network="tron"] {
+                display: none !important;
+            }
+            
+            /* Show automation and capital for pro */
+            .nav-item[data-page="automation-page"],
+            .mobile-nav-item[data-page="automation-page"] {
+                display: flex !important;
+            }
+            
+            .network-option[data-network="solana"] {
+                display: flex !important;
+            }
+        `;
+    } else if (userPlan === 'elite') {
+        restrictions = `
+            /* Elite plan: Show everything */
+            .nav-item[data-page="capital-page"],
+            .nav-item[data-page="automation-page"], 
+            .nav-item[data-page="orders-page"],
+            .mobile-nav-item[data-page="capital-page"],
+            .mobile-nav-item[data-page="automation-page"],
+            .mobile-nav-item[data-page="orders-page"] {
+                display: flex !important;
+            }
+            
+            .network-option[data-network="solana"],
+            .network-option[data-network="tron"] {
+                display: flex !important;
+            }
+        `;
+    }
+    
+    restrictionStyle.textContent = restrictions;
+    document.head.appendChild(restrictionStyle);
+    
+    // Enable payment form now that restrictions are applied
+    const paymentForm = document.querySelector('.payment-form-section');
+    if (paymentForm) {
+        paymentForm.style.pointerEvents = 'auto';
+        paymentForm.style.opacity = '1';
+    }
+    
+    console.log('✅ Plan restrictions applied for:', userPlan);
+}
+
+/**
+ * Emergency access denied fallback
+ */
+function showEmergencyAccessDenied() {
+    document.body.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            z-index: 10000;
+        ">
+            <div>
+                <h1 style="font-size: 3rem; margin-bottom: 1rem;">🚨 Security Error</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">Access control system failed to initialize</p>
+                <button onclick="window.location.reload()" style="
+                    background: white;
+                    color: #dc2626;
+                    border: none;
+                    padding: 1rem 2rem;
+                    border-radius: 0.5rem;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                ">Reload Page</button>
+            </div>
+        </div>
+    `;
+}
 
 // ==================== USER PERSONALIZATION ==================== //
 
@@ -762,25 +1121,59 @@ function initializeSPA() {
     // Initialize mobile hamburger menu
     initializeMobileHamburgerMenu();
     
-    // Handle desktop navigation
+    // Handle desktop navigation with ENHANCED SECURITY
     navItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
-            console.log('Desktop navigation clicked:', targetPageId);
+            console.log('🖥️ SECURITY: Desktop navigation clicked:', targetPageId);
             
-            // **NEW: Check access control before navigation**
-            if (accessControl) {
-                const plan = accessControl.getCurrentPlan();
-                const limits = accessControl.getPlanLimits(plan);
-                
-                if (limits.blockedPages.includes(targetPageId)) {
-                    console.log('🔒 Desktop navigation blocked for page:', targetPageId, 'on plan:', plan);
+            // ENHANCED SECURITY: Check access control with our new system
+            if (!window.accessControl) {
+                console.error('🚨 SECURITY BREACH: Access control not initialized during navigation!');
+                e.preventDefault();
+                e.stopPropagation();
+                showEmergencyAccessDenied();
+                return false;
+            }
+            
+            // Get current user plan for security check
+            const currentPlan = localStorage.getItem('userPlan') || 'basic';
+            
+            // Define premium pages that require access control
+            const premiumPages = {
+                'capital-page': ['pro', 'elite'],
+                'automation-page': ['pro', 'elite'], 
+                'orders-page': ['elite']
+            };
+            
+            // SECURITY CHECK: Verify access to premium pages
+            if (premiumPages[targetPageId]) {
+                const requiredPlans = premiumPages[targetPageId];
+                if (!requiredPlans.includes(currentPlan)) {
+                    console.log('🔒 SECURITY: Desktop navigation blocked for page:', targetPageId, 'plan:', currentPlan);
                     e.preventDefault();
                     e.stopPropagation();
-                    navigateToPlansPage();
+                    showAccessDeniedModal(targetPageId, requiredPlans);
                     return false;
                 }
             }
+            
+            // ADDITIONAL: Check with access control system
+            if (window.accessControl) {
+                const plan = window.accessControl.getCurrentPlan();
+                const limits = window.accessControl.getPlanLimits(plan);
+                
+                const pageRoute = `/${targetPageId.replace('-page', '')}`;
+                if (limits.blockedPages.includes(pageRoute)) {
+                    console.log('🔒 SECURITY: Desktop navigation blocked by access control:', pageRoute);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showAccessDeniedModal(targetPageId, premiumPages[targetPageId] || ['pro']);
+                    return false;
+                }
+            }
+            
+            console.log('✅ SECURITY: Desktop navigation approved for:', targetPageId);
             
             // Animate navigation item selection
             animateNavSelection(item, navItems);
@@ -806,26 +1199,62 @@ function initializeSPA() {
         });
     });
 
-    // Handle mobile navigation
+    // Handle mobile navigation with ENHANCED SECURITY
     mobileNavItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
-            console.log('Mobile navigation clicked:', targetPageId);
+            console.log('📱 SECURITY: Mobile navigation clicked:', targetPageId);
             
-            // **NEW: Check access control before navigation**
-            if (accessControl) {
-                const plan = accessControl.getCurrentPlan();
-                const limits = accessControl.getPlanLimits(plan);
-                
-                if (limits.blockedPages.includes(targetPageId)) {
-                    console.log('🔒 Mobile navigation blocked for page:', targetPageId, 'on plan:', plan);
+            // ENHANCED SECURITY: Check access control with our new system
+            if (!window.accessControl) {
+                console.error('🚨 SECURITY BREACH: Access control not initialized during mobile navigation!');
+                e.preventDefault();
+                e.stopPropagation();
+                closeMobileSidebar();
+                showEmergencyAccessDenied();
+                return false;
+            }
+            
+            // Get current user plan for security check
+            const currentPlan = localStorage.getItem('userPlan') || 'basic';
+            
+            // Define premium pages that require access control
+            const premiumPages = {
+                'capital-page': ['pro', 'elite'],
+                'automation-page': ['pro', 'elite'], 
+                'orders-page': ['elite']
+            };
+            
+            // SECURITY CHECK: Verify access to premium pages
+            if (premiumPages[targetPageId]) {
+                const requiredPlans = premiumPages[targetPageId];
+                if (!requiredPlans.includes(currentPlan)) {
+                    console.log('🔒 SECURITY: Mobile navigation blocked for page:', targetPageId, 'plan:', currentPlan);
                     e.preventDefault();
                     e.stopPropagation();
-                    closeMobileSidebar(); // Close sidebar before redirecting
-                    navigateToPlansPage();
+                    closeMobileSidebar(); // Close sidebar before showing modal
+                    showAccessDeniedModal(targetPageId, requiredPlans);
                     return false;
                 }
             }
+            
+            // ADDITIONAL: Check with access control system
+            if (window.accessControl) {
+                const plan = window.accessControl.getCurrentPlan();
+                const limits = window.accessControl.getPlanLimits(plan);
+                
+                const pageRoute = `/${targetPageId.replace('-page', '')}`;
+                if (limits.blockedPages.includes(pageRoute)) {
+                    console.log('🔒 SECURITY: Mobile navigation blocked by access control:', pageRoute);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeMobileSidebar(); // Close sidebar before showing modal
+                    showAccessDeniedModal(targetPageId, premiumPages[targetPageId] || ['pro']);
+                    return false;
+                }
+            }
+            
+            console.log('✅ SECURITY: Mobile navigation approved for:', targetPageId);
             
             // Close mobile sidebar
             closeMobileSidebar();
@@ -3809,22 +4238,55 @@ function addAccessControlStyles() {
     document.head.appendChild(styles);
 }
 
-// Helper function to navigate to page with access control
+// SECURITY ENHANCED: Navigate to page with comprehensive access control
 function navigateToPage(pageId) {
-    console.log('🧭 Navigating to page:', pageId);
+    console.log('🧭 SECURITY CHECK: Navigating to page:', pageId);
     
-    // Check access control first
-    if (accessControl) {
-        const plan = accessControl.getCurrentPlan();
-        const limits = accessControl.getPlanLimits(plan);
-        
-        if (limits.blockedPages.includes(pageId)) {
-            console.log('🔒 Page access denied, redirecting to plans...');
-            navigateToPlansPage();
+    // CRITICAL: Verify access control is active
+    if (!window.accessControl) {
+        console.error('🚨 SECURITY BREACH: Access control not initialized!');
+        showEmergencyAccessDenied();
+        return;
+    }
+    
+    // Get current user plan
+    const currentPlan = localStorage.getItem('userPlan') || 'basic';
+    console.log('🔍 User plan for navigation:', currentPlan);
+    
+    // Define premium pages that require access control
+    const premiumPages = {
+        'capital-page': ['pro', 'elite'],
+        'automation-page': ['pro', 'elite'], 
+        'orders-page': ['elite']
+    };
+    
+    // Check if page requires premium access
+    if (premiumPages[pageId]) {
+        const requiredPlans = premiumPages[pageId];
+        if (!requiredPlans.includes(currentPlan)) {
+            console.log('🔒 SECURITY: Page access denied for plan:', currentPlan);
+            showAccessDeniedModal(pageId, requiredPlans);
             return;
         }
     }
     
+    // ADDITIONAL: Check with access control system
+    if (window.accessControl) {
+        const plan = window.accessControl.getCurrentPlan();
+        const limits = window.accessControl.getPlanLimits(plan);
+        
+        // Check if page is in blocked pages list
+        const pageRoute = `/${pageId.replace('-page', '')}`;
+        if (limits.blockedPages.includes(pageRoute)) {
+            console.log('🔒 SECURITY: Page blocked by access control:', pageRoute);
+            showAccessDeniedModal(pageId, premiumPages[pageId] || ['pro']);
+            return;
+        }
+    }
+    
+    console.log('✅ SECURITY: Page access granted for:', pageId);
+    
+    // Proceed with navigation
     const navItem = document.querySelector(`[data-page="${pageId}"]`);
     if (navItem) {
         console.log('✅ Found nav item, clicking...');
@@ -3833,13 +4295,17 @@ function navigateToPage(pageId) {
         console.error('❌ Nav item not found for page:', pageId);
         
         // Fallback: manually trigger page transition
-        const allPages = document.querySelectorAll('.page');
+        const allPages = document.querySelectorAll('.page-content');
         const targetPage = document.getElementById(pageId);
         
         if (targetPage) {
             console.log('🔄 Using fallback navigation...');
-            allPages.forEach(page => page.style.display = 'none');
+            allPages.forEach(page => {
+                page.style.display = 'none';
+                page.classList.remove('active-page');
+            });
             targetPage.style.display = 'block';
+            targetPage.classList.add('active-page');
             
             // Update nav items
             const allNavItems = document.querySelectorAll('.nav-item');
@@ -3847,7 +4313,7 @@ function navigateToPage(pageId) {
             
             // Try to find and activate the correct nav item
             const correctNavItem = Array.from(allNavItems).find(item => 
-                item.textContent.toLowerCase().includes(pageId.replace('-page', ''))
+                item.dataset.page === pageId
             );
             if (correctNavItem) {
                 correctNavItem.classList.add('active');
@@ -3858,6 +4324,85 @@ function navigateToPage(pageId) {
             console.error('❌ Target page not found:', pageId);
         }
     }
+}
+
+// Show access denied modal for premium pages
+function showAccessDeniedModal(pageId, requiredPlans) {
+    const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
+    const planName = requiredPlans[0].charAt(0).toUpperCase() + requiredPlans[0].slice(1);
+    
+    // Remove existing modal
+    const existingModal = document.getElementById('access-denied-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create access denied modal
+    const modal = document.createElement('div');
+    modal.id = 'access-denied-modal';
+    modal.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(0, 0, 0, 0.7) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 10001 !important;
+        backdrop-filter: blur(5px) !important;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border: 3px solid #f59e0b;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+            <h3 style="color: #f59e0b; margin-bottom: 1rem; font-size: 1.5rem;">Premium Feature Required</h3>
+            <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5;">
+                The <strong>${pageName}</strong> page requires a <strong>${planName}</strong> plan or higher.
+            </p>
+            <div style="display: flex; gap: 1rem; flex-direction: column;">
+                <button onclick="navigateToPlansPage(); document.getElementById('access-denied-modal').remove();" style="
+                    background: linear-gradient(135deg, #f59e0b, #d97706);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.5rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-size: 1rem;
+                ">Upgrade to ${planName}</button>
+                <button onclick="document.getElementById('access-denied-modal').remove();" style="
+                    background: transparent;
+                    color: #6b7280;
+                    border: 1px solid #d1d5db;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.5rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                ">Maybe Later</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => {
+        if (modal && modal.parentNode) {
+            modal.remove();
+        }
+    }, 10000);
 }
 
 // Navigate to plans page within SPA

@@ -1260,125 +1260,85 @@ async function triggerDetectionRefresh(button) {
 // ==================== SPA NAVIGATION WITH SMOOTH TRANSITIONS ==================== //
 
 function initializeSPA() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-    const pages = document.querySelectorAll('.page-content');
+    console.log('🚀 EMERGENCY FIX: Initializing SIMPLE navigation system');
+    
+    // EMERGENCY SIMPLE NAVIGATION - NO COMPLEX LOGIC
+    function showPage(pageId) {
+        console.log('📄 DIRECT: Showing page:', pageId);
         
-    console.log('Initializing SPA with', navItems.length, 'nav items,', mobileNavItems.length, 'mobile nav items and', pages.length, 'pages');
+        // Hide ALL pages
+        const allPages = document.querySelectorAll('.page-content');
+        allPages.forEach(page => {
+            page.style.display = 'none';
+            page.classList.remove('active-page');
+        });
+        
+        // Show target page
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.style.display = 'block';
+            targetPage.classList.add('active-page');
+            console.log('✅ DIRECT: Page shown successfully:', pageId);
+        } else {
+            console.error('❌ DIRECT: Page not found:', pageId);
+        }
+        
+        // Update nav active states
+        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
+            nav.classList.remove('active');
+            if (nav.getAttribute('data-page') === pageId) {
+                nav.classList.add('active');
+            }
+        });
+    }
+    
+    // Add click handlers to ALL navigation items
+    document.addEventListener('click', function(e) {
+        // Check if clicked element or its parent has data-page attribute
+        let navElement = e.target;
+        let pageId = null;
+        
+        // Look up the DOM tree for data-page attribute
+        while (navElement && !pageId) {
+            pageId = navElement.getAttribute('data-page');
+            if (pageId) break;
+            navElement = navElement.parentElement;
+        }
+        
+        if (pageId) {
+            console.log('🔗 DIRECT: Navigation clicked for:', pageId);
+            
+            // FOR ELITE USERS - ALLOW ALL PAGES
+            const userPlan = localStorage.getItem('userPlan') || 'basic';
+            if (userPlan === 'elite') {
+                console.log('👑 ELITE: Full access granted to:', pageId);
+                showPage(pageId);
+                return;
+            }
+            
+            // FOR NON-ELITE - Check if locked
+            if (navElement.classList.contains('locked-feature')) {
+                console.log('🔒 LOCKED: Redirecting to plans');
+                showPage('plans-page');
+                return;
+            }
+            
+            // Show the page
+            showPage(pageId);
+        }
+    });
     
     // Initialize mobile hamburger menu
     initializeMobileHamburgerMenu();
     
-    // Handle desktop navigation with ENHANCED SECURITY
-    navItems.forEach((item, index) => {
-        item.addEventListener('click', function(e) {
-            const targetPageId = this.getAttribute('data-page');
-            console.log('🖥️ FOMO: Desktop navigation clicked:', targetPageId);
-            
-            // FOMO STRATEGY: Check if this is a locked feature first
-            if (this.classList.contains('locked-feature')) {
-                console.log('🔒 FOMO: Locked feature clicked, redirecting to plans page');
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Direct redirect to plans page - no modal
-                navigateToPlansPage();
-                return false;
-            }
-            
-            // Note: Access control is handled by the locked-feature class check above
-            // No additional navigation blocking needed for Elite users
-            
-            console.log('✅ SECURITY: Desktop navigation approved for:', targetPageId);
-            
-            // Animate navigation item selection
-            animateNavSelection(item, navItems);
-            animateMobileNavSelection(null, mobileNavItems, targetPageId);
-            
-            // Smooth page transition
-            smoothPageTransition(targetPageId, pages);
-        });
-        
-        // Add hover effect for desktop
-        item.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateX(8px)';
-                this.style.background = 'rgba(16, 185, 129, 0.1)';
-            }
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateX(0)';
-                this.style.background = 'transparent';
-            }
-        });
-    });
-
-    // Handle mobile navigation with ENHANCED SECURITY
-    mobileNavItems.forEach((item, index) => {
-        item.addEventListener('click', function(e) {
-            const targetPageId = this.getAttribute('data-page');
-            console.log('📱 FOMO: Mobile navigation clicked:', targetPageId);
-            
-            // FOMO STRATEGY: Check if this is a locked feature first
-            if (this.classList.contains('locked-feature')) {
-                console.log('🔒 FOMO: Mobile locked feature clicked, redirecting to plans page');
-                e.preventDefault();
-                e.stopPropagation();
-                closeMobileSidebar(); // Close sidebar first
-                
-                // Direct redirect to plans page - no modal
-                navigateToPlansPage();
-                return false;
-            }
-            
-            // Note: Access control is handled by the locked-feature class check above
-            // No additional navigation blocking needed for Elite users
-            
-            console.log('✅ SECURITY: Mobile navigation approved for:', targetPageId);
-            
-            // Close mobile sidebar
-            closeMobileSidebar();
-            
-            // Animate mobile navigation item selection
-            animateMobileNavSelection(item, mobileNavItems);
-            animateNavSelection(null, navItems, targetPageId);
-            
-            // Smooth page transition
-            smoothPageTransition(targetPageId, pages);
-        });
-
-        // Add touch feedback for mobile
-        item.addEventListener('touchstart', function() {
-            this.style.transform = 'translateY(-1px) scale(0.98)';
-        });
-
-        item.addEventListener('touchend', function() {
-            this.style.transform = '';
-        });
-    });
+    // Show home page on load
+    showPage('home-page');
     
-    // Make sure home page is active on load
-    const homePage = document.getElementById('home-page');
-    if (homePage) {
-        homePage.classList.add('active-page');
-    }
+    // Add debug function
+    window.directShowPage = showPage;
     
-    // Add debugging function to global scope for testing
-    window.testNavigation = function(pageId) {
-        console.log('🧪 Testing navigation to:', pageId);
-        const pages = document.querySelectorAll('.page-content');
-        smoothPageTransition(pageId, pages);
-        
-        // Also update nav items
-        const navItems = document.querySelectorAll('.nav-item');
-        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-        animateNavSelection(null, navItems, pageId);
-        animateMobileNavSelection(null, mobileNavItems, pageId);
-    };
-    
-    console.log('🎮 Debug: Use testNavigation("page-id") in console to test navigation');
+    console.log('✅ EMERGENCY: Simple navigation system ready');
+    console.log('🧪 DEBUG: Use directShowPage("page-id") to test');
 }
 
 // ==================== MOBILE HAMBURGER MENU ==================== //

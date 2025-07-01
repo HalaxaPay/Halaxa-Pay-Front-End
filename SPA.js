@@ -308,25 +308,18 @@ function applyPlanRestrictionsImmediately(userPlan) {
             transition: all 0.2s ease !important;
         }
         
-        /* FontAwesome lock icon */
-        .nav-item.locked-feature .lock-icon,
-        .mobile-nav-item.locked-feature .lock-icon {
-            color: #9ca3af !important;
-            margin-left: 8px !important;
-            font-size: 0.75rem !important;
-        }
+
         
-        /* Clean plan badges - SAME DESIGN for both PRO and ELITE */
+        /* Simple plan badges */
         .nav-item.locked-feature .plan-badge,
         .mobile-nav-item.locked-feature .plan-badge {
             display: inline-block !important;
-            margin-left: 6px !important;
-            padding: 2px 8px !important;
-            border-radius: 12px !important;
-            font-size: 0.65rem !important;
+            margin-left: 4px !important;
+            padding: 1px 6px !important;
+            border-radius: 8px !important;
+            font-size: 0.6rem !important;
             font-weight: 600 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
             background: #f3f4f6 !important;
             color: #6b7280 !important;
             border: 1px solid #e5e7eb !important;
@@ -414,19 +407,13 @@ function applyFOMOLockedStyling(userPlan) {
         if (navItem) {
             navItem.classList.add('locked-feature');
             
-            // Clean layout: Page name, FontAwesome lock, Plan badge
+            // Simple clean layout: Page name, lock, plan badge
             const span = navItem.querySelector('span');
-            if (span && !span.querySelector('.lock-icon')) {
-                // Add FontAwesome lock icon
-                const lockIcon = document.createElement('i');
-                lockIcon.className = 'fas fa-lock lock-icon';
-                span.appendChild(lockIcon);
-                
-                // Add clean plan badge
-                const badge = document.createElement('span');
-                badge.className = 'plan-badge';
-                badge.textContent = feature.badge;
-                span.appendChild(badge);
+            if (span && !span.querySelector('.plan-badge')) {
+                // Add simple lock and badge together
+                const lockAndBadge = document.createElement('span');
+                lockAndBadge.innerHTML = ` 🔒 <span class="plan-badge">${feature.badge}</span>`;
+                span.appendChild(lockAndBadge);
             }
         }
     });
@@ -437,19 +424,13 @@ function applyFOMOLockedStyling(userPlan) {
         if (mobileNavItem) {
             mobileNavItem.classList.add('locked-feature');
             
-            // Clean layout: Page name, FontAwesome lock, Plan badge
+            // Simple clean layout: Page name, lock, plan badge
             const span = mobileNavItem.querySelector('span');
-            if (span && !span.querySelector('.lock-icon')) {
-                // Add FontAwesome lock icon
-                const lockIcon = document.createElement('i');
-                lockIcon.className = 'fas fa-lock lock-icon';
-                span.appendChild(lockIcon);
-                
-                // Add clean plan badge
-                const badge = document.createElement('span');
-                badge.className = 'plan-badge';
-                badge.textContent = feature.badge;
-                span.appendChild(badge);
+            if (span && !span.querySelector('.plan-badge')) {
+                // Add simple lock and badge together
+                const lockAndBadge = document.createElement('span');
+                lockAndBadge.innerHTML = ` 🔒 <span class="plan-badge">${feature.badge}</span>`;
+                span.appendChild(lockAndBadge);
             }
         }
     });

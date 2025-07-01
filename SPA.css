@@ -9,9 +9,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-.page-content {
-    display: none;
-  }
 :root {
     /* Light Color Palette with Green and Blue Accents */
     --bg-primary: #fafbfc;
@@ -193,6 +190,7 @@ body::before {
     display: flex;
     min-height: 100vh;
     background: transparent;
+    position: relative;
 }
 
 /* Hide mobile navigation and hamburger menu on desktop by default */
@@ -241,12 +239,14 @@ body::before {
     flex-direction: column;
     position: fixed;
     min-height: 100vh;
-    height: 100%;
+    height: 100vh;
     left: 0;
     top: 0;
+    bottom: 0;
     z-index: 100;
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-lg);
+    overflow-y: auto;
 }
 
 .logo-section {
@@ -382,20 +382,27 @@ body::before {
     background: transparent;
     min-height: 100vh;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .page-content {
     display: none;
     padding: var(--space-8) var(--space-10) var(--space-12);
+    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
     opacity: 0;
     transform: translateY(20px);
     transition: all var(--duration-slow) ease;
+    flex: 1;
 }
 
 .page-content.active-page {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     opacity: 1;
     transform: translateY(0);
     animation: pageSlideIn var(--duration-slow) ease;

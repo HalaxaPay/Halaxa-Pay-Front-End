@@ -282,21 +282,22 @@ class HalaxaAccessControl {
       const newNavItem = navItem.cloneNode(true);
       navItem.parentNode.replaceChild(newNavItem, navItem);
       
-      // Add new click listener with access control
+      // Add new click listener - ALWAYS allow navigation, just show lock modal for blocked pages
       newNavItem.addEventListener('click', (e) => {
         e.preventDefault();
         
-        // Check if page is blocked for current plan
-        if (limits.blockedPages.includes(pageId)) {
-          console.log(`🔒 Page ${pageId} is blocked for ${plan} plan`);
-          // Instantly redirect to plans page instead of showing modal
-          this.redirectToPlans();
-          return;
-        }
-        
-        // Page is allowed - load it
+        // ALWAYS load the page first
         console.log(`✅ Loading page: ${pageId}`);
         this.loadPage(pageId);
+        
+        // Then check if page is blocked and show redirect modal AFTER loading
+        if (limits.blockedPages.includes(pageId)) {
+          console.log(`🔒 Page ${pageId} is locked for ${plan} plan - showing upgrade modal`);
+          // Show the lock modal after a short delay so user sees the page briefly
+          setTimeout(() => {
+            this.redirectToPlans();
+          }, 100);
+        }
       });
     });
     
@@ -317,14 +318,19 @@ class HalaxaAccessControl {
     // Show target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
-      // Remove any inline display:none that might have been added
+      // Remove any inline styles that might hide it
       targetPage.style.removeProperty('display');
+      targetPage.style.removeProperty('visibility');
+      targetPage.style.removeProperty('opacity');
+      
+      // Force display with important to override any CSS
+      targetPage.setAttribute('style', 'display: block !important; visibility: visible !important; opacity: 1 !important;');
       targetPage.classList.add('active-page');
       
-      // Force visibility in case CSS is overriding
-      targetPage.style.display = 'block';
-      targetPage.style.visibility = 'visible';
-      targetPage.style.opacity = '1';
+      // Use the forceShowPage function if available
+      if (window.forceShowPage) {
+        window.forceShowPage(pageId);
+      }
       
       console.log(`✅ Page ${pageId} is now active and visible`);
       

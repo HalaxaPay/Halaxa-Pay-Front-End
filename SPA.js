@@ -1520,18 +1520,31 @@ function initializeSPA() {
     const style = document.createElement('style');
     style.textContent = `
         /* Ensure full height for main layout */
-        .main-layout {
+        .dashboard-wrapper {
             min-height: 100vh !important;
             display: flex !important;
+            position: relative !important;
         }
         
         /* Fix sidebar to always extend full height */
         .sidebar {
-            min-height: 100vh !important;
-            height: 100% !important;
-            position: sticky !important;
+            position: fixed !important;
             top: 0 !important;
-            align-self: stretch !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            z-index: 100 !important;
+        }
+        
+        /* Main content area should be properly positioned */
+        .main-content-area {
+            margin-left: var(--sidebar-width) !important;
+            min-height: 100vh !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
         
         /* Ensure body and html have proper height */
@@ -1540,30 +1553,62 @@ function initializeSPA() {
             height: 100% !important;
         }
         
-        /* Page content visibility management */
+        /* Page content visibility management and centering */
         .page-content {
             display: none; /* Default hidden */
             width: 100%;
             min-height: 100vh;
+            padding: var(--space-8) var(--space-10) var(--space-12);
         }
         
-        /* Active page is visible */
+        /* Active page is visible and centered */
         .page-content.active-page {
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
         }
         
-        /* Main content area should fill available space */
-        .main-content {
-            flex: 1;
-            min-height: 100vh !important;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* Ensure content wrapper stretches */
-        .content-wrapper {
-            flex: 1;
+        /* Center all content inside pages */
+        .page-content > * {
             width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Fix for Capital page specific centering */
+        #capital-page .crypto-flow-overview,
+        #capital-page .flow-stats-row,
+        #capital-page .crypto-flow-chart-panel,
+        #capital-page section {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Fix for Orders page specific centering */
+        #orders-page .orders-header,
+        #orders-page .orders-stats-section,
+        #orders-page .orders-management-section,
+        #orders-page section {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Fix for Automation page specific centering */
+        #automation-page .automation-header,
+        #automation-page .automation-main-section,
+        #automation-page .automation-tips-section,
+        #automation-page section {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
         }
     `;
     document.head.appendChild(style);
@@ -1712,6 +1757,29 @@ function smoothPageTransition(targetPageId, allPages) {
     targetPage.classList.add('active-page');
     
     console.log('✅ Page transition completed to:', targetPageId);
+}
+
+// Enhanced page show function that ensures visibility
+function forceShowPage(pageId) {
+    const page = document.getElementById(pageId);
+    if (page) {
+        // Remove any inline styles that might hide it
+        page.style.removeProperty('display');
+        page.style.removeProperty('visibility');
+        page.style.removeProperty('opacity');
+        
+        // Force display
+        page.style.display = 'block';
+        page.style.visibility = 'visible';
+        page.style.opacity = '1';
+        
+        // Add active class
+        page.classList.add('active-page');
+        
+        console.log(`✅ Force showed page: ${pageId}`);
+    } else {
+        console.error(`❌ Page not found: ${pageId}`);
+    }
 }
 
 // ==================== INTERACTIVE ANIMATIONS ==================== //

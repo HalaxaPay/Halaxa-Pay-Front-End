@@ -61,10 +61,34 @@ class HalaxaAccessControl {
     this.setupPageAccessControl();
     this.setupNetworkRestrictions();
     
+    // Apply visual locks based on plan
+    this.applyVisualLocks();
+    
     // Load home page by default
     this.loadPage('home-page');
     
     console.log('🔐 Access control initialized for plan:', this.userPlan);
+  }
+  
+  applyVisualLocks() {
+    const plan = this.getCurrentPlan();
+    const limits = this.getPlanLimits(plan);
+    
+    console.log(`🎨 Applying visual locks for ${plan} plan`);
+    
+    // Add locked class to nav items for blocked pages
+    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    navItems.forEach(navItem => {
+      const pageId = navItem.dataset.page;
+      
+      if (limits.blockedPages.includes(pageId)) {
+        navItem.classList.add('locked-feature');
+        console.log(`🔒 Locked nav item: ${pageId}`);
+      } else {
+        navItem.classList.remove('locked-feature');
+        console.log(`✅ Unlocked nav item: ${pageId}`);
+      }
+    });
   }
 
   // ==================== USER PLAN DETECTION ==================== //
@@ -282,22 +306,21 @@ class HalaxaAccessControl {
       const newNavItem = navItem.cloneNode(true);
       navItem.parentNode.replaceChild(newNavItem, navItem);
       
-      // Add new click listener - ALWAYS allow navigation, just show lock modal for blocked pages
+      // Add new click listener with proper plan-based access control
       newNavItem.addEventListener('click', (e) => {
         e.preventDefault();
         
-        // ALWAYS load the page first
-        console.log(`✅ Loading page: ${pageId}`);
-        this.loadPage(pageId);
-        
-        // Then check if page is blocked and show redirect modal AFTER loading
+        // Check if page is blocked for current plan
         if (limits.blockedPages.includes(pageId)) {
-          console.log(`🔒 Page ${pageId} is locked for ${plan} plan - showing upgrade modal`);
-          // Show the lock modal after a short delay so user sees the page briefly
-          setTimeout(() => {
-            this.redirectToPlans();
-          }, 100);
+          console.log(`🔒 Page ${pageId} is locked for ${plan} plan - redirecting to plans`);
+          // For locked pages, immediately redirect to plans page
+          this.redirectToPlans();
+          return;
         }
+        
+        // Page is allowed - load it normally
+        console.log(`✅ Loading allowed page: ${pageId} for ${plan} plan`);
+        this.loadPage(pageId);
       });
     });
     
@@ -307,30 +330,35 @@ class HalaxaAccessControl {
   
   loadPage(pageId) {
     console.log(`🔄 Loading page content for: ${pageId}`);
+    console.log(`📋 Current plan: ${this.getCurrentPlan()}`);
     
-    // Hide all pages
+    // Get all pages
     const allPages = document.querySelectorAll('.page-content');
-    allPages.forEach(page => {
-      page.classList.remove('active-page');
-      page.style.display = 'none';
-    });
+    console.log(`📄 Total pages found: ${allPages.length}`);
     
     // Show target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
-      // Remove any inline styles that might hide it
-      targetPage.style.removeProperty('display');
-      targetPage.style.removeProperty('visibility');
-      targetPage.style.removeProperty('opacity');
+      console.log(`✅ Found target page: ${pageId}`);
       
-      // Force display with important to override any CSS
-      targetPage.setAttribute('style', 'display: block !important; visibility: visible !important; opacity: 1 !important;');
+      // Hide all pages first
+      allPages.forEach(page => {
+        page.classList.remove('active-page');
+        page.style.display = 'none';
+      });
+      
+      // Force show the target page
+      targetPage.style.display = 'block';
+      targetPage.style.visibility = 'visible';
+      targetPage.style.opacity = '1';
       targetPage.classList.add('active-page');
       
-      // Use the forceShowPage function if available
-      if (window.forceShowPage) {
-        window.forceShowPage(pageId);
-      }
+      // Double-check it's visible
+      const computedStyle = window.getComputedStyle(targetPage);
+      console.log(`🔍 Page display: ${computedStyle.display}, visibility: ${computedStyle.visibility}`);
+      
+      // Force a reflow to ensure styles are applied
+      void targetPage.offsetHeight;
       
       console.log(`✅ Page ${pageId} is now active and visible`);
       

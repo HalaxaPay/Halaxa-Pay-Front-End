@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     initializeAnimations();
     initializeParticles();
     initializeCardEffects();
+    initializePricingToggle();
     
         // Initialize user personalization (now safe since access control is active)
     initializeUserPersonalization().catch(error => {
@@ -1832,6 +1833,216 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.transform = 'translateY(0)';
     }, 100);
 });
+
+// ==================== PRICING TOGGLE FUNCTIONALITY ==================== //
+
+function initializePricingToggle() {
+    console.log('🎯 Initializing pricing toggle functionality...');
+    
+    // Get billing toggle buttons
+    const monthlyBtn = document.querySelector('[data-billing="monthly"]');
+    const annualBtn = document.querySelector('[data-billing="annual"]');
+    
+    if (!monthlyBtn || !annualBtn) {
+        console.log('⚠️ Billing toggle buttons not found');
+        return;
+    }
+    
+    // Add enhanced interactive styles
+    addPricingToggleStyles();
+    
+    // Add click event listeners with enhanced feedback
+    monthlyBtn.addEventListener('click', () => {
+        setMonthlyPricing();
+        addButtonClickEffect(monthlyBtn);
+    });
+    
+    annualBtn.addEventListener('click', () => {
+        setAnnualPricing();
+        addButtonClickEffect(annualBtn);
+    });
+    
+    console.log('✅ Pricing toggle initialized');
+}
+
+function addPricingToggleStyles() {
+    if (document.querySelector('#pricing-toggle-enhancements')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'pricing-toggle-enhancements';
+    styles.textContent = `
+        /* Enhanced billing toggle interactivity */
+        .billing-option {
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+        
+        .billing-option:hover {
+            color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+        }
+        
+        .billing-option.active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Smooth price transition animations */
+        .price-amount, .price-note {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .price-amount {
+            transform-origin: center;
+        }
+        
+        /* Price change animation */
+        @keyframes priceUpdate {
+            0% {
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1) rotateY(90deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+        
+        .price-updating {
+            animation: priceUpdate 0.6s ease-in-out;
+        }
+        
+        /* Button click effect */
+        @keyframes buttonClick {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .button-clicked {
+            animation: buttonClick 0.2s ease-in-out;
+        }
+        
+        /* Enhanced hover effects for plan cards during pricing changes */
+        .plan-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .pricing-changing .plan-card {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+    `;
+    document.head.appendChild(styles);
+}
+
+function addButtonClickEffect(button) {
+    button.classList.add('button-clicked');
+    setTimeout(() => {
+        button.classList.remove('button-clicked');
+    }, 200);
+}
+
+function setMonthlyPricing() {
+    console.log('💰 Setting monthly pricing...');
+    
+    // Add pricing change class for animations
+    const plansGrid = document.querySelector('.plans-grid');
+    if (plansGrid) plansGrid.classList.add('pricing-changing');
+    
+    // Update toggle button states
+    const monthlyBtn = document.querySelector('[data-billing="monthly"]');
+    const annualBtn = document.querySelector('[data-billing="annual"]');
+    
+    monthlyBtn.classList.add('active');
+    annualBtn.classList.remove('active');
+    
+    // Get pricing elements
+    const proPrice = document.getElementById('pro-price');
+    const proBillingNote = document.getElementById('pro-billing-note');
+    const elitePrice = document.getElementById('elite-price');
+    const eliteBillingNote = document.getElementById('elite-billing-note');
+    
+    // Add animation class
+    if (proPrice) proPrice.classList.add('price-updating');
+    if (elitePrice) elitePrice.classList.add('price-updating');
+    
+    // Update pricing with animation delay
+    setTimeout(() => {
+        // Update Pro plan pricing
+        if (proPrice) proPrice.textContent = '29';
+        if (proBillingNote) proBillingNote.textContent = 'Billed monthly';
+        
+        // Update Elite plan pricing
+        if (elitePrice) elitePrice.textContent = '59';
+        if (eliteBillingNote) eliteBillingNote.textContent = 'Billed monthly';
+    }, 200);
+    
+    // Remove animation classes
+    setTimeout(() => {
+        if (proPrice) proPrice.classList.remove('price-updating');
+        if (elitePrice) elitePrice.classList.remove('price-updating');
+        if (plansGrid) plansGrid.classList.remove('pricing-changing');
+    }, 800);
+    
+    console.log('✅ Monthly pricing set');
+}
+
+function setAnnualPricing() {
+    console.log('💰 Setting annual pricing...');
+    
+    // Add pricing change class for animations
+    const plansGrid = document.querySelector('.plans-grid');
+    if (plansGrid) plansGrid.classList.add('pricing-changing');
+    
+    // Update toggle button states
+    const monthlyBtn = document.querySelector('[data-billing="monthly"]');
+    const annualBtn = document.querySelector('[data-billing="annual"]');
+    
+    monthlyBtn.classList.remove('active');
+    annualBtn.classList.add('active');
+    
+    // Get pricing elements
+    const proPrice = document.getElementById('pro-price');
+    const proBillingNote = document.getElementById('pro-billing-note');
+    const elitePrice = document.getElementById('elite-price');
+    const eliteBillingNote = document.getElementById('elite-billing-note');
+    
+    // Add animation class
+    if (proPrice) proPrice.classList.add('price-updating');
+    if (elitePrice) elitePrice.classList.add('price-updating');
+    
+    // Update pricing with animation delay
+    setTimeout(() => {
+        // Update Pro plan pricing - $20/month billed annually ($240)
+        if (proPrice) proPrice.textContent = '20';
+        if (proBillingNote) proBillingNote.textContent = 'Billed annually ($240)';
+        
+        // Update Elite plan pricing - $49/month billed annually ($588)
+        if (elitePrice) elitePrice.textContent = '49';
+        if (eliteBillingNote) eliteBillingNote.textContent = 'Billed annually ($588)';
+    }, 200);
+    
+    // Remove animation classes
+    setTimeout(() => {
+        if (proPrice) proPrice.classList.remove('price-updating');
+        if (elitePrice) elitePrice.classList.remove('price-updating');
+        if (plansGrid) plansGrid.classList.remove('pricing-changing');
+    }, 800);
+    
+    console.log('✅ Annual pricing set - Pro: $20/month ($240/year), Elite: $49/month ($588/year)');
+}
 
 // ==================== PLAN UPGRADE FUNCTIONALITY ==================== //
 

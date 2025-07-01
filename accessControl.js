@@ -625,14 +625,12 @@ function navigateToPlansPage() {
     const plansPage = document.getElementById('plans-page');
     
     if (plansPage) {
-      // Hide all pages
+      // Hide all pages by removing .active-page only
       allPages.forEach(page => {
-        page.style.display = 'none';
         page.classList.remove('active-page');
       });
       
       // Show plans page
-      plansPage.style.display = 'block';
       plansPage.classList.add('active-page');
       
       // Update nav items

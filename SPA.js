@@ -39,16 +39,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         hideAccessControlVerification();
         
         // NOW initialize the UI - access control is already in place
-        initializeSPA();
-        
+    initializeSPA();
+    
         // Initialize other functionality
-        setupPaymentForm();
-        initializeAnimations();
-        initializeParticles();
-        initializeCardEffects();
-        
+    setupPaymentForm();
+    initializeAnimations();
+    initializeParticles();
+    initializeCardEffects();
+    
         // Initialize user personalization (now safe since access control is active)
-        initializeUserPersonalization().catch(error => {
+    initializeUserPersonalization().catch(error => {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
         
@@ -71,17 +71,7 @@ function hideAllPremiumContentImmediately() {
     const securityStyle = document.createElement('style');
     securityStyle.id = 'halaxa-security-protection';
     securityStyle.textContent = `
-        /* SECURITY: Hide premium navigation items by default */
-        .nav-item[data-page="capital-page"],
-        .nav-item[data-page="automation-page"], 
-        .nav-item[data-page="orders-page"],
-        .mobile-nav-item[data-page="capital-page"],
-        .mobile-nav-item[data-page="automation-page"],
-        .mobile-nav-item[data-page="orders-page"] {
-            display: none !important;
-        }
-        
-        /* SECURITY: Hide premium pages by default */
+        /* SECURITY: Hide premium PAGES by default (but keep nav items visible for FOMO) */
         #capital-page,
         #automation-page,
         #orders-page {
@@ -98,6 +88,13 @@ function hideAllPremiumContentImmediately() {
         .payment-form-section {
             pointer-events: none !important;
             opacity: 0.5 !important;
+        }
+        
+        /* SECURITY: Disable navigation temporarily until access control loads */
+        .nav-item,
+        .mobile-nav-item {
+            pointer-events: none !important;
+            opacity: 0.7 !important;
         }
     `;
     document.head.appendChild(securityStyle);
@@ -253,9 +250,10 @@ async function getUserPlanSync() {
 
 /**
  * Apply plan restrictions immediately BEFORE UI shows
+ * FOMO STRATEGY: Show locked features to encourage upgrades
  */
 function applyPlanRestrictionsImmediately(userPlan) {
-    console.log('🚫 Applying plan restrictions for:', userPlan);
+    console.log('🚫 Applying FOMO plan restrictions for:', userPlan);
     
     // Remove the temporary security protection style
     const securityStyle = document.getElementById('halaxa-security-protection');
@@ -263,71 +261,118 @@ function applyPlanRestrictionsImmediately(userPlan) {
         securityStyle.remove();
     }
     
-    // Apply plan-specific restrictions
+    // Apply plan-specific restrictions with FOMO locked nav items
     const restrictionStyle = document.createElement('style');
     restrictionStyle.id = 'halaxa-plan-restrictions';
     
-    let restrictions = '';
+    let restrictions = `
+        /* ALWAYS hide the actual premium pages - no real pages exist for locked features */
+        #capital-page, #automation-page, #orders-page {
+            display: none !important;
+        }
+        
+        /* Locked navigation item styles with SHINE EFFECT */
+        .nav-item.locked-feature,
+        .mobile-nav-item.locked-feature {
+            position: relative !important;
+            opacity: 0.7 !important;
+            cursor: pointer !important;
+            overflow: hidden !important;
+        }
+        
+        .nav-item.locked-feature::before,
+        .mobile-nav-item.locked-feature::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.4), transparent) !important;
+            animation: lockedShine 3s infinite !important;
+            pointer-events: none !important;
+        }
+        
+        .nav-item.locked-feature.elite-locked::before,
+        .mobile-nav-item.locked-feature.elite-locked::before {
+            background: linear-gradient(90deg, transparent, rgba(107, 70, 193, 0.4), transparent) !important;
+        }
+        
+        @keyframes lockedShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Lock icon for locked features */
+        .nav-item.locked-feature::after,
+        .mobile-nav-item.locked-feature::after {
+            content: '🔒' !important;
+            position: absolute !important;
+            right: 10px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            font-size: 0.8rem !important;
+            opacity: 0.8 !important;
+        }
+        
+        /* Hover effects for locked items */
+        .nav-item.locked-feature:hover,
+        .mobile-nav-item.locked-feature:hover {
+            opacity: 0.9 !important;
+            transform: translateX(5px) !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        /* Plan badges for locked items */
+        .nav-item.locked-feature .plan-badge,
+        .mobile-nav-item.locked-feature .plan-badge {
+            display: inline-block !important;
+            margin-left: 8px !important;
+            padding: 2px 6px !important;
+            border-radius: 4px !important;
+            font-size: 0.6rem !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+        }
+        
+        .nav-item.locked-feature .plan-badge.pro-required,
+        .mobile-nav-item.locked-feature .plan-badge.pro-required {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%) !important;
+            color: white !important;
+        }
+        
+        .nav-item.locked-feature .plan-badge.elite-required,
+        .mobile-nav-item.locked-feature .plan-badge.elite-required {
+            background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%) !important;
+            color: white !important;
+        }
+    `;
     
+    // Add plan-specific locked features styling
     if (userPlan === 'basic') {
-        restrictions = `
-            /* Basic plan: Hide capital, automation, and orders */
-            .nav-item[data-page="capital-page"],
-            .nav-item[data-page="automation-page"], 
-            .nav-item[data-page="orders-page"],
-            .mobile-nav-item[data-page="capital-page"],
-            .mobile-nav-item[data-page="automation-page"],
-            .mobile-nav-item[data-page="orders-page"] {
-                display: none !important;
-            }
-            
-            #capital-page, #automation-page, #orders-page {
-                display: none !important;
-            }
-            
+        restrictions += `
+            /* Basic plan: Lock capital, automation, and orders with FOMO effect */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
                 display: none !important;
             }
         `;
     } else if (userPlan === 'pro') {
-        restrictions = `
-            /* Pro plan: Hide orders and shipping, show automation */
-            .nav-item[data-page="orders-page"],
-            .mobile-nav-item[data-page="orders-page"] {
-                display: none !important;
-            }
-            
-            #orders-page {
-                display: none !important;
-            }
-            
+        restrictions += `
+            /* Pro plan: Lock only orders (elite feature) */
             .network-option[data-network="tron"] {
                 display: none !important;
             }
             
-            /* Show automation and capital for pro */
-            .nav-item[data-page="automation-page"],
-            .mobile-nav-item[data-page="automation-page"] {
-                display: flex !important;
-            }
-            
+            /* Show solana for pro plan */
             .network-option[data-network="solana"] {
                 display: flex !important;
             }
         `;
     } else if (userPlan === 'elite') {
-        restrictions = `
-            /* Elite plan: Show everything */
-            .nav-item[data-page="capital-page"],
-            .nav-item[data-page="automation-page"], 
-            .nav-item[data-page="orders-page"],
-            .mobile-nav-item[data-page="capital-page"],
-            .mobile-nav-item[data-page="automation-page"],
-            .mobile-nav-item[data-page="orders-page"] {
-                display: flex !important;
-            }
-            
+        restrictions += `
+            /* Elite plan: Show everything, no locks */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
                 display: flex !important;
@@ -338,6 +383,9 @@ function applyPlanRestrictionsImmediately(userPlan) {
     restrictionStyle.textContent = restrictions;
     document.head.appendChild(restrictionStyle);
     
+    // Apply FOMO locked styling to navigation items
+    applyFOMOLockedStyling(userPlan);
+    
     // Enable payment form now that restrictions are applied
     const paymentForm = document.querySelector('.payment-form-section');
     if (paymentForm) {
@@ -345,7 +393,78 @@ function applyPlanRestrictionsImmediately(userPlan) {
         paymentForm.style.opacity = '1';
     }
     
-    console.log('✅ Plan restrictions applied for:', userPlan);
+    // Re-enable navigation after access control is applied
+    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    navItems.forEach(item => {
+        item.style.pointerEvents = 'auto';
+        item.style.opacity = '1';
+    });
+    
+    console.log('✅ FOMO plan restrictions applied for:', userPlan);
+}
+
+/**
+ * Apply FOMO locked styling to navigation items based on plan
+ */
+function applyFOMOLockedStyling(userPlan) {
+    console.log('✨ Applying FOMO locked styling for plan:', userPlan);
+    
+    // Define what features are locked for each plan
+    const lockedFeatures = {
+        'basic': [
+            { page: 'capital-page', requiredPlan: 'pro', badge: 'PRO' },
+            { page: 'automation-page', requiredPlan: 'pro', badge: 'PRO' },
+            { page: 'orders-page', requiredPlan: 'elite', badge: 'ELITE' }
+        ],
+        'pro': [
+            { page: 'orders-page', requiredPlan: 'elite', badge: 'ELITE' }
+        ],
+        'elite': [] // Elite users see no locked features
+    };
+    
+    const userLockedFeatures = lockedFeatures[userPlan] || [];
+    
+    // Apply locked styling to desktop navigation
+    userLockedFeatures.forEach(feature => {
+        const navItem = document.querySelector(`.nav-item[data-page="${feature.page}"]`);
+        if (navItem) {
+            navItem.classList.add('locked-feature');
+            if (feature.requiredPlan === 'elite') {
+                navItem.classList.add('elite-locked');
+            }
+            
+            // Add plan badge
+            const span = navItem.querySelector('span');
+            if (span && !span.querySelector('.plan-badge')) {
+                const badge = document.createElement('span');
+                badge.className = `plan-badge ${feature.requiredPlan}-required`;
+                badge.textContent = feature.badge;
+                span.appendChild(badge);
+            }
+        }
+    });
+    
+    // Apply locked styling to mobile navigation
+    userLockedFeatures.forEach(feature => {
+        const mobileNavItem = document.querySelector(`.mobile-nav-item[data-page="${feature.page}"]`);
+        if (mobileNavItem) {
+            mobileNavItem.classList.add('locked-feature');
+            if (feature.requiredPlan === 'elite') {
+                mobileNavItem.classList.add('elite-locked');
+            }
+            
+            // Add plan badge
+            const span = mobileNavItem.querySelector('span');
+            if (span && !span.querySelector('.plan-badge')) {
+                const badge = document.createElement('span');
+                badge.className = `plan-badge ${feature.requiredPlan}-required`;
+                badge.textContent = feature.badge;
+                span.appendChild(badge);
+            }
+        }
+    });
+    
+    console.log('✨ FOMO locked styling applied to', userLockedFeatures.length, 'features');
 }
 
 /**
@@ -1125,7 +1244,22 @@ function initializeSPA() {
     navItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
-            console.log('🖥️ SECURITY: Desktop navigation clicked:', targetPageId);
+            console.log('🖥️ FOMO: Desktop navigation clicked:', targetPageId);
+            
+            // FOMO STRATEGY: Check if this is a locked feature first
+            if (this.classList.contains('locked-feature')) {
+                console.log('🔒 FOMO: Locked feature clicked, redirecting to plans page');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get the required plan from the badge
+                const badge = this.querySelector('.plan-badge');
+                const requiredPlan = badge ? badge.textContent : 'PRO';
+                
+                // Show FOMO upgrade modal
+                showFOMOUpgradeModal(targetPageId, requiredPlan);
+                return false;
+            }
             
             // ENHANCED SECURITY: Check access control with our new system
             if (!window.accessControl) {
@@ -1139,36 +1273,21 @@ function initializeSPA() {
             // Get current user plan for security check
             const currentPlan = localStorage.getItem('userPlan') || 'basic';
             
-            // Define premium pages that require access control
+            // Define premium pages that require access control (backup check)
             const premiumPages = {
                 'capital-page': ['pro', 'elite'],
                 'automation-page': ['pro', 'elite'], 
                 'orders-page': ['elite']
             };
             
-            // SECURITY CHECK: Verify access to premium pages
+            // SECURITY CHECK: Verify access to premium pages (backup)
             if (premiumPages[targetPageId]) {
                 const requiredPlans = premiumPages[targetPageId];
                 if (!requiredPlans.includes(currentPlan)) {
                     console.log('🔒 SECURITY: Desktop navigation blocked for page:', targetPageId, 'plan:', currentPlan);
                     e.preventDefault();
                     e.stopPropagation();
-                    showAccessDeniedModal(targetPageId, requiredPlans);
-                    return false;
-                }
-            }
-            
-            // ADDITIONAL: Check with access control system
-            if (window.accessControl) {
-                const plan = window.accessControl.getCurrentPlan();
-                const limits = window.accessControl.getPlanLimits(plan);
-                
-                const pageRoute = `/${targetPageId.replace('-page', '')}`;
-                if (limits.blockedPages.includes(pageRoute)) {
-                    console.log('🔒 SECURITY: Desktop navigation blocked by access control:', pageRoute);
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showAccessDeniedModal(targetPageId, premiumPages[targetPageId] || ['pro']);
+                    showFOMOUpgradeModal(targetPageId, requiredPlans[0].toUpperCase());
                     return false;
                 }
             }
@@ -1203,7 +1322,23 @@ function initializeSPA() {
     mobileNavItems.forEach((item, index) => {
         item.addEventListener('click', function(e) {
             const targetPageId = this.getAttribute('data-page');
-            console.log('📱 SECURITY: Mobile navigation clicked:', targetPageId);
+            console.log('📱 FOMO: Mobile navigation clicked:', targetPageId);
+            
+            // FOMO STRATEGY: Check if this is a locked feature first
+            if (this.classList.contains('locked-feature')) {
+                console.log('🔒 FOMO: Mobile locked feature clicked, redirecting to plans page');
+                e.preventDefault();
+                e.stopPropagation();
+                closeMobileSidebar(); // Close sidebar first
+                
+                // Get the required plan from the badge
+                const badge = this.querySelector('.plan-badge');
+                const requiredPlan = badge ? badge.textContent : 'PRO';
+                
+                // Show FOMO upgrade modal
+                showFOMOUpgradeModal(targetPageId, requiredPlan);
+                return false;
+            }
             
             // ENHANCED SECURITY: Check access control with our new system
             if (!window.accessControl) {
@@ -1218,14 +1353,14 @@ function initializeSPA() {
             // Get current user plan for security check
             const currentPlan = localStorage.getItem('userPlan') || 'basic';
             
-            // Define premium pages that require access control
+            // Define premium pages that require access control (backup check)
             const premiumPages = {
                 'capital-page': ['pro', 'elite'],
                 'automation-page': ['pro', 'elite'], 
                 'orders-page': ['elite']
             };
             
-            // SECURITY CHECK: Verify access to premium pages
+            // SECURITY CHECK: Verify access to premium pages (backup)
             if (premiumPages[targetPageId]) {
                 const requiredPlans = premiumPages[targetPageId];
                 if (!requiredPlans.includes(currentPlan)) {
@@ -1233,23 +1368,7 @@ function initializeSPA() {
                     e.preventDefault();
                     e.stopPropagation();
                     closeMobileSidebar(); // Close sidebar before showing modal
-                    showAccessDeniedModal(targetPageId, requiredPlans);
-                    return false;
-                }
-            }
-            
-            // ADDITIONAL: Check with access control system
-            if (window.accessControl) {
-                const plan = window.accessControl.getCurrentPlan();
-                const limits = window.accessControl.getPlanLimits(plan);
-                
-                const pageRoute = `/${targetPageId.replace('-page', '')}`;
-                if (limits.blockedPages.includes(pageRoute)) {
-                    console.log('🔒 SECURITY: Mobile navigation blocked by access control:', pageRoute);
-                    e.preventDefault();
-                    e.stopPropagation();
-                    closeMobileSidebar(); // Close sidebar before showing modal
-                    showAccessDeniedModal(targetPageId, premiumPages[targetPageId] || ['pro']);
+                    showFOMOUpgradeModal(targetPageId, requiredPlans[0].toUpperCase());
                     return false;
                 }
             }
@@ -4403,6 +4522,172 @@ function showAccessDeniedModal(pageId, requiredPlans) {
             modal.remove();
         }
     }, 10000);
+}
+
+// Show FOMO upgrade modal for locked features
+function showFOMOUpgradeModal(pageId, requiredPlan) {
+    const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
+    
+    // Remove existing modal
+    const existingModal = document.getElementById('fomo-upgrade-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Get plan-specific styling
+    const isElite = requiredPlan === 'ELITE';
+    const borderColor = isElite ? '#6B46C1' : '#FF6B35';
+    const gradientColor = isElite ? 'linear-gradient(135deg, #6B46C1, #8B5CF6)' : 'linear-gradient(135deg, #FF6B35, #FF8C61)';
+    const emoji = isElite ? '💎' : '🔥';
+    
+    // Create FOMO upgrade modal
+    const modal = document.createElement('div');
+    modal.id = 'fomo-upgrade-modal';
+    modal.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 10001 !important;
+        backdrop-filter: blur(8px) !important;
+        animation: modalFadeIn 0.3s ease-out !important;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border: 3px solid ${borderColor};
+            position: relative;
+            overflow: hidden;
+            animation: modalSlideIn 0.4s ease-out !important;
+        ">
+            <div style="
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: fomoShine 2s infinite;
+            "></div>
+            
+            <div style="font-size: 4rem; margin-bottom: 1rem; animation: bounceIn 0.6s ease-out;">${emoji}</div>
+            
+            <h3 style="
+                color: ${borderColor}; 
+                margin-bottom: 1rem; 
+                font-size: 1.8rem; 
+                font-weight: 700;
+                background: ${gradientColor};
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            ">Unlock ${pageName}!</h3>
+            
+            <p style="
+                color: #374151; 
+                margin-bottom: 2rem; 
+                line-height: 1.6; 
+                font-size: 1.1rem;
+                font-weight: 500;
+            ">
+                🚀 Ready to level up? The <strong>${pageName}</strong> feature is part of our <strong>${requiredPlan}</strong> plan.
+                <br><br>
+                <span style="color: #6b7280; font-size: 0.95rem;">
+                    Join thousands of users already using these premium features!
+                </span>
+            </p>
+            
+            <div style="display: flex; gap: 1rem; flex-direction: column;">
+                <button onclick="navigateToPlansPage(); document.getElementById('fomo-upgrade-modal').remove();" style="
+                    background: ${gradientColor};
+                    color: white;
+                    border: none;
+                    padding: 1rem 2rem;
+                    border-radius: 0.75rem;
+                    font-weight: 700;
+                    cursor: pointer;
+                    font-size: 1.1rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                    🎯 Upgrade to ${requiredPlan}
+                </button>
+                
+                <button onclick="document.getElementById('fomo-upgrade-modal').remove();" style="
+                    background: transparent;
+                    color: #6b7280;
+                    border: 2px solid #e5e7eb;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.75rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-size: 0.95rem;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.borderColor='#d1d5db'; this.style.color='#374151';" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280';">
+                    Maybe Later
+                </button>
+            </div>
+            
+            <div style="
+                margin-top: 2rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid #f3f4f6;
+                color: #9ca3af;
+                font-size: 0.8rem;
+            ">
+                💡 <strong>Quick tip:</strong> You can upgrade or downgrade anytime!
+            </div>
+        </div>
+        
+        <style>
+            @keyframes modalFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes modalSlideIn {
+                from { transform: translateY(-30px) scale(0.9); opacity: 0; }
+                to { transform: translateY(0) scale(1); opacity: 1; }
+            }
+            
+            @keyframes bounceIn {
+                0% { transform: scale(0.3); opacity: 0; }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            
+            @keyframes fomoShine {
+                0% { left: -100%; }
+                50% { left: 100%; }
+                100% { left: 100%; }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-remove after 15 seconds
+    setTimeout(() => {
+        if (modal && modal.parentNode) {
+            modal.remove();
+        }
+    }, 15000);
+    
+    console.log('✨ FOMO upgrade modal shown for:', pageName, 'requiring:', requiredPlan);
 }
 
 // Navigate to plans page within SPA

@@ -275,9 +275,8 @@ class HalaxaAccessControl {
         // Check if page is blocked for current plan
         if (limits.blockedPages.includes(pageId)) {
           console.log(`🔒 Page ${pageId} is blocked for ${plan} plan`);
-          
-          // Show access denied modal
-          this.showPageAccessDeniedModal(pageId, plan);
+          // Instantly redirect to plans page instead of showing modal
+          this.redirectToPlans();
           return;
         }
         
@@ -474,92 +473,13 @@ class HalaxaAccessControl {
       
       if (limits.blockedPages.includes(pageId)) {
         console.log(`🔒 Direct navigation blocked to ${pageId} for ${plan} plan`);
-        this.showPageAccessDeniedModal(pageId, plan);
-        
-        // Redirect to home page
-        this.loadPage('home-page');
+        // Instantly redirect to plans page instead of showing modal
+        this.redirectToPlans();
+        return;
       }
     }
   }
   
-  showPageAccessDeniedModal(pageId, currentPlan) {
-    const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
-    const requiredPlan = pageId === 'capital-page' ? 'Pro' : 'Elite';
-    
-    // Remove existing modal
-    const existingModal = document.getElementById('access-denied-modal');
-    if (existingModal) {
-      existingModal.remove();
-    }
-    
-    // Create access denied modal
-    const modal = document.createElement('div');
-    modal.id = 'access-denied-modal';
-    modal.style.cssText = `
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      background: rgba(0, 0, 0, 0.7) !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      z-index: 10001 !important;
-      backdrop-filter: blur(5px) !important;
-    `;
-    
-    modal.innerHTML = `
-      <div style="
-        background: white;
-        border-radius: 1rem;
-        padding: 2rem;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        border: 3px solid #f59e0b;
-      ">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
-        <h3 style="color: #f59e0b; margin-bottom: 1rem; font-size: 1.5rem;">Upgrade Required</h3>
-        <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5;">
-          The <strong>${pageName}</strong> page requires a <strong>${requiredPlan}</strong> plan or higher.
-        </p>
-        <div style="display: flex; gap: 1rem; flex-direction: column;">
-          <button onclick="this.closest('#access-denied-modal').remove(); window.location.href='#plans-page';" style="
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-          ">Upgrade to ${requiredPlan}</button>
-          <button onclick="document.getElementById('access-denied-modal').remove();" style="
-            background: transparent;
-            color: #6b7280;
-            border: 1px solid #d1d5db;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 0.9rem;
-          ">Maybe Later</button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Auto-remove after 10 seconds
-    setTimeout(() => {
-      if (modal && modal.parentNode) {
-        modal.remove();
-      }
-    }, 10000);
-  }
-
   // ==================== VISUAL LOCKS AND BADGES ==================== //
 
 

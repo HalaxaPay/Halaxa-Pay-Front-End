@@ -432,6 +432,10 @@ class HalaxaAccessControl {
         console.log('🏠 Initializing Home page features');
         this.initializeHomePage();
         break;
+      case 'plans-page':
+        console.log('💳 Initializing Plans page features');
+        this.initializePlansPage();
+        break;
       default:
         console.log(`📄 Initializing ${pageId} features`);
     }
@@ -492,6 +496,26 @@ class HalaxaAccessControl {
   initializeCapitalCharts() {
     // Initialize any charts on the capital page
     console.log('📊 Initializing capital charts...');
+  }
+  
+  initializePlansPage() {
+    console.log('💳 Loading plans page...');
+    
+    // Initialize pricing toggle if it exists
+    if (window.initializePricingToggle) {
+      window.initializePricingToggle();
+    }
+    
+    // Initialize plan upgrade buttons if they exist
+    if (window.initializePlanUpgrades) {
+      window.initializePlanUpgrades();
+    }
+    
+    // Update current plan display
+    const currentPlan = this.getCurrentPlan();
+    if (window.updatePlanDisplay) {
+      window.updatePlanDisplay(currentPlan);
+    }
   }
   
   updateOrdersMetrics(data) {
@@ -705,7 +729,8 @@ class HalaxaAccessControl {
 
   redirectToPlans() {
     console.log('🔒 Redirecting to plans page within SPA...');
-    navigateToPlansPage();
+    // Load the plans page directly using our loadPage method
+    this.loadPage('plans-page');
   }
 }
 
@@ -914,39 +939,39 @@ document.head.appendChild(styleSheet);
 function navigateToPlansPage() {
   console.log('🚀 Navigating to plans page within SPA...');
   
-  // Find the plans navigation item and click it
-  const plansNavItem = document.querySelector('[data-page="plans-page"]');
-  if (plansNavItem) {
-    plansNavItem.click();
-    console.log('✅ Plans page navigation triggered');
+  // Use the access control instance to properly load the plans page
+  if (window.accessControl) {
+    // This will properly hide current page and show plans page
+    window.accessControl.loadPage('plans-page');
+    console.log('✅ Plans page loaded via access control');
   } else {
-    console.error('❌ Plans nav item not found - triggering manual navigation');
+    console.error('❌ Access control not available - trying fallback');
     
     // Fallback: manually trigger page transition
     const allPages = document.querySelectorAll('.page-content');
     const plansPage = document.getElementById('plans-page');
     
     if (plansPage) {
-      // Hide all pages by removing .active-page only
+      // Hide all pages properly
       allPages.forEach(page => {
         page.classList.remove('active-page');
+        page.style.display = 'none';
       });
       
       // Show plans page
+      plansPage.style.display = 'block';
+      plansPage.style.visibility = 'visible';
+      plansPage.style.opacity = '1';
       plansPage.classList.add('active-page');
       
       // Update nav items
-      const allNavItems = document.querySelectorAll('.nav-item');
+      const allNavItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
       allNavItems.forEach(item => item.classList.remove('active'));
       
-      // Try to find and activate the plans nav item
-      const plansNavItems = document.querySelectorAll('.nav-item');
-      const correctNavItem = Array.from(plansNavItems).find(item => 
-        item.textContent.toLowerCase().includes('plan') || 
-        item.dataset.page === 'plans-page'
-      );
-      if (correctNavItem) {
-        correctNavItem.classList.add('active');
+      // Find and activate the plans nav item
+      const plansNavItem = document.querySelector('[data-page="plans-page"]');
+      if (plansNavItem) {
+        plansNavItem.classList.add('active');
       }
       
       console.log('✅ Manual plans page navigation completed');

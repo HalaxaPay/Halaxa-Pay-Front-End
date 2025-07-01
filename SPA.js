@@ -1575,6 +1575,15 @@ function initializeSPA() {
             align-items: center !important;
             justify-content: flex-start !important;
             width: 100% !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Ensure non-active pages are hidden */
+        .page-content:not(.active-page) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
         
         /* Center all content inside pages */

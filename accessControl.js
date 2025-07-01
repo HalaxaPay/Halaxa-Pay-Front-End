@@ -344,21 +344,26 @@ class HalaxaAccessControl {
       // Hide all pages first
       allPages.forEach(page => {
         page.classList.remove('active-page');
-        page.style.display = 'none';
+        // Remove inline styles to let CSS handle visibility
+        page.style.removeProperty('display');
+        page.style.removeProperty('visibility');
+        page.style.removeProperty('opacity');
       });
       
-      // Force show the target page
-      targetPage.style.display = 'block';
-      targetPage.style.visibility = 'visible';
-      targetPage.style.opacity = '1';
+      // Show the target page by adding active class
       targetPage.classList.add('active-page');
       
-      // Double-check it's visible
-      const computedStyle = window.getComputedStyle(targetPage);
-      console.log(`🔍 Page display: ${computedStyle.display}, visibility: ${computedStyle.visibility}`);
+      // Remove any inline styles that might override CSS
+      targetPage.style.removeProperty('display');
+      targetPage.style.removeProperty('visibility');
+      targetPage.style.removeProperty('opacity');
       
       // Force a reflow to ensure styles are applied
       void targetPage.offsetHeight;
+      
+      // Verify it's visible
+      const computedStyle = window.getComputedStyle(targetPage);
+      console.log(`🔍 Page display: ${computedStyle.display}, visibility: ${computedStyle.visibility}`);
       
       console.log(`✅ Page ${pageId} is now active and visible`);
       

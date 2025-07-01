@@ -521,16 +521,9 @@ function applyPlanRestrictionsImmediately(userPlan) {
 
     `;
     
-    // Add plan-specific locked features styling
+    // Add plan-specific network restrictions only
     if (userPlan === 'basic') {
         restrictions += `
-            /* Basic plan: Hide capital, automation, and orders pages */
-            #capital-page,
-            #automation-page,
-            #orders-page {
-                display: none !important;
-            }
-            
             /* Basic plan: Lock network options */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
@@ -539,17 +532,6 @@ function applyPlanRestrictionsImmediately(userPlan) {
         `;
     } else if (userPlan === 'pro') {
         restrictions += `
-            /* Pro plan: Show capital page, hide automation and orders */
-            #automation-page,
-            #orders-page {
-                display: none !important;
-            }
-            
-            /* Pro plan: Capital page is visible */
-            #capital-page {
-                display: block !important;
-            }
-            
             /* Pro plan: Lock only tron network */
             .network-option[data-network="tron"] {
                 display: none !important;
@@ -562,13 +544,6 @@ function applyPlanRestrictionsImmediately(userPlan) {
         `;
     } else if (userPlan === 'elite') {
         restrictions += `
-            /* Elite plan: Show ALL pages */
-            #capital-page,
-            #automation-page,
-            #orders-page {
-                display: block !important;
-            }
-            
             /* Elite plan: Show everything, no locks */
             .network-option[data-network="solana"],
             .network-option[data-network="tron"] {
@@ -1575,15 +1550,6 @@ function initializeSPA() {
             align-items: center !important;
             justify-content: flex-start !important;
             width: 100% !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        /* Ensure non-active pages are hidden */
-        .page-content:not(.active-page) {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
         }
         
         /* Center all content inside pages */
@@ -5124,4 +5090,74 @@ window.forceUnlockAllPages = function() {
     });
     
     console.log('✅ All pages unlocked for testing');
+};
+
+/**
+ * Debug function to check Plans page visibility
+ */
+window.debugPlansPage = function() {
+    console.log('🔍 Debugging Plans page...');
+    
+    const plansPage = document.getElementById('plans-page');
+    if (plansPage) {
+        console.log('✅ Plans page found in DOM');
+        
+        const computedStyle = window.getComputedStyle(plansPage);
+        console.log('📋 Current styles:');
+        console.log('- Display:', computedStyle.display);
+        console.log('- Visibility:', computedStyle.visibility);
+        console.log('- Opacity:', computedStyle.opacity);
+        console.log('- Classes:', plansPage.className);
+        console.log('- Has active-page class:', plansPage.classList.contains('active-page'));
+        
+        // Try to force show it
+        console.log('🔧 Forcing plans page to show...');
+        
+        // Remove all active-page classes first
+        document.querySelectorAll('.page-content').forEach(page => {
+            page.classList.remove('active-page');
+        });
+        
+        // Add active-page class to plans page
+        plansPage.classList.add('active-page');
+        
+        // Remove any inline styles
+        plansPage.style.removeProperty('display');
+        plansPage.style.removeProperty('visibility');
+        plansPage.style.removeProperty('opacity');
+        
+        console.log('✅ Plans page should now be visible');
+    } else {
+        console.error('❌ Plans page not found in DOM!');
+    }
+};
+
+/**
+ * Show plans page directly (emergency fix)
+ */
+window.showPlansPageDirectly = function() {
+    console.log('🚨 Emergency: Showing plans page directly...');
+    
+    // Hide all pages
+    document.querySelectorAll('.page-content').forEach(page => {
+        page.classList.remove('active-page');
+    });
+    
+    // Show plans page
+    const plansPage = document.getElementById('plans-page');
+    if (plansPage) {
+        plansPage.classList.add('active-page');
+        
+        // Update navigation
+        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const plansNavItem = document.querySelector('[data-page="plans-page"]');
+        if (plansNavItem) {
+            plansNavItem.classList.add('active');
+        }
+        
+        console.log('✅ Plans page forced to show');
+    }
 };

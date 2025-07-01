@@ -264,37 +264,130 @@ function addPlanRefreshButton() {
     // Create refresh button
     const refreshBtn = document.createElement('button');
     refreshBtn.id = 'refresh-plan-btn';
-    refreshBtn.innerHTML = '🔄 Refresh Plan';
+    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Plan';
     refreshBtn.style.cssText = `
         position: fixed;
-        top: 10px;
-        right: 10px;
+        top: 15px;
+        right: 15px;
         z-index: 10000;
-        padding: 8px 12px;
-        background: #10b981;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        border-radius: 6px;
-        font-size: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
     
+    // Add hover effect
+    refreshBtn.addEventListener('mouseenter', () => {
+        refreshBtn.style.transform = 'translateY(-2px)';
+        refreshBtn.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.4)';
+    });
+    
+    refreshBtn.addEventListener('mouseleave', () => {
+        refreshBtn.style.transform = 'translateY(0)';
+        refreshBtn.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+    });
+    
     refreshBtn.onclick = async () => {
-        refreshBtn.innerHTML = '🔄 Refreshing...';
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
         refreshBtn.disabled = true;
+        refreshBtn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
         
         const newPlan = await refreshUserPlan();
         
-        refreshBtn.innerHTML = `✅ ${newPlan.toUpperCase()}`;
+        refreshBtn.innerHTML = `<i class="fas fa-check"></i> ${newPlan.toUpperCase()}`;
+        refreshBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        
         setTimeout(() => {
-            refreshBtn.innerHTML = '🔄 Refresh Plan';
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Plan';
+            refreshBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             refreshBtn.disabled = false;
-        }, 2000);
+        }, 2500);
     };
     
     document.body.appendChild(refreshBtn);
-    console.log('✅ Plan refresh button added');
+    console.log('✅ Beautiful plan refresh button added');
+    
+    // Add database info button right next to refresh button
+    addDatabaseInfoButton();
+}
+
+/**
+ * Add database info button to show current connection details
+ */
+function addDatabaseInfoButton() {
+    // Check if button already exists
+    if (document.getElementById('db-info-btn')) return;
+    
+    // Create database info button
+    const dbInfoBtn = document.createElement('button');
+    dbInfoBtn.id = 'db-info-btn';
+    dbInfoBtn.innerHTML = '<i class="fas fa-database"></i>';
+    dbInfoBtn.title = 'Show Database Connection Info';
+    dbInfoBtn.style.cssText = `
+        position: fixed;
+        top: 15px;
+        right: 180px;
+        z-index: 10000;
+        padding: 10px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        transition: all 0.3s ease;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    // Add hover effect
+    dbInfoBtn.addEventListener('mouseenter', () => {
+        dbInfoBtn.style.transform = 'translateY(-2px)';
+        dbInfoBtn.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
+    });
+    
+    dbInfoBtn.addEventListener('mouseleave', () => {
+        dbInfoBtn.style.transform = 'translateY(0)';
+        dbInfoBtn.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.3)';
+    });
+    
+    dbInfoBtn.onclick = () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const supabaseUrl = window.accessControl?.supabase?.supabaseUrl || 'Unknown';
+        
+        alert(`🔍 DATABASE CONNECTION INFO:
+        
+📍 Supabase URL: ${supabaseUrl}
+👤 Current User ID: ${user.id || 'Not logged in'}
+📧 Email: ${user.email || 'Not logged in'}
+📋 Cached Plan: ${localStorage.getItem('userPlan') || 'None'}
+
+💡 Check your Supabase dashboard with this exact URL to verify you're looking at the right database!`);
+        
+        console.log('🔍 DATABASE CONNECTION INFO:');
+        console.log('📍 Supabase URL:', supabaseUrl);
+        console.log('👤 Current User ID:', user.id);
+        console.log('📧 Email:', user.email);
+        console.log('📋 Cached Plan:', localStorage.getItem('userPlan'));
+    };
+    
+    document.body.appendChild(dbInfoBtn);
+    console.log('✅ Database info button added');
 }
 
 /**

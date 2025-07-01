@@ -9,7 +9,7 @@
 import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
 
 // Frontend Configuration - Use environment variables for production
-const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || 'https://srdznitapqlulldlkqsk.supabase.co';
+const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL || 'https://srdznitapqluldldkqsk.supabase.co';
 const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZHpuaXRhcHFsdWxkbGRrcXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2NjgxNzMsImV4cCI6MjA2NTI0NDE3M30.lJpWHGG8OXJOcFBEVo1T8kRF3_SN_fYGxBkJJk9O3lc';
 
 // Validate configuration

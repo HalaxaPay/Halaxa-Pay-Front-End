@@ -77,6 +77,12 @@ class HalaxaAccessControl {
 
       this.currentUser = JSON.parse(userData);
       
+      // 🔍 DEBUG: Show exactly what we're querying
+      console.log('🔍 DEBUG: Supabase connection details:');
+      console.log('📍 Database URL:', supabase.supabaseUrl);
+      console.log('👤 User ID being queried:', this.currentUser.id);
+      console.log('📧 User email:', this.currentUser.email);
+      
       // Fetch user plan from Supabase
       const { data: userPlan, error } = await supabase
         .from('user_plans')
@@ -84,17 +90,25 @@ class HalaxaAccessControl {
         .eq('user_id', this.currentUser.id)
         .single();
 
+      // 🔍 DEBUG: Show raw database response
+      console.log('🔍 DEBUG: Raw database response:');
+      console.log('📄 Data:', userPlan);
+      console.log('❌ Error:', error);
+
       if (error || !userPlan) {
+        console.warn('⚠️ No plan found or error occurred, defaulting to basic');
+        if (error) console.warn('⚠️ Database error:', error.message);
         this.userPlan = 'basic'; // Default to basic
       } else {
         this.userPlan = userPlan.plan_type || 'basic';
+        console.log('✅ Plan found in database:', this.userPlan);
       }
 
-      console.log(`🔐 User plan detected: ${this.userPlan}`);
+      console.log(`🔐 Final user plan detected: ${this.userPlan}`);
       return this.userPlan;
 
     } catch (error) {
-      console.error('Error fetching user plan:', error);
+      console.error('❌ Error fetching user plan:', error);
       this.userPlan = 'basic';
       return 'basic';
     }

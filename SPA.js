@@ -1257,89 +1257,75 @@ async function triggerDetectionRefresh(button) {
     }, 3000);
 }
 
-// ==================== SPA NAVIGATION WITH SMOOTH TRANSITIONS ==================== //
+// ==================== SPA NAVIGATION - MINIMAL, ROBUST ==================== //
 
-function initializeSPA() {
-    console.log('🚀 EMERGENCY FIX: Initializing SIMPLE navigation system');
-    
-    // EMERGENCY SIMPLE NAVIGATION - NO COMPLEX LOGIC
-    function showPage(pageId) {
-        console.log('📄 DIRECT: Showing page:', pageId);
-        
-        // Hide ALL pages
-        const allPages = document.querySelectorAll('.page-content');
-        allPages.forEach(page => {
-            page.style.display = 'none';
-            page.classList.remove('active-page');
-        });
-        
-        // Show target page
-        const targetPage = document.getElementById(pageId);
-        if (targetPage) {
-            targetPage.style.display = 'block';
-            targetPage.classList.add('active-page');
-            console.log('✅ DIRECT: Page shown successfully:', pageId);
-        } else {
-            console.error('❌ DIRECT: Page not found:', pageId);
-        }
-        
-        // Update nav active states
-        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
-            nav.classList.remove('active');
-            if (nav.getAttribute('data-page') === pageId) {
-                nav.classList.add('active');
-            }
-        });
+function showPage(pageId) {
+    // Only toggle .active-page class, do not set display:none
+    document.querySelectorAll('.page-content').forEach(page => {
+        page.classList.remove('active-page');
+    });
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active-page');
     }
-    
-    // Add click handlers to ALL navigation items
-    document.addEventListener('click', function(e) {
-        // Check if clicked element or its parent has data-page attribute
-        let navElement = e.target;
-        let pageId = null;
-        
-        // Look up the DOM tree for data-page attribute
-        while (navElement && !pageId) {
-            pageId = navElement.getAttribute('data-page');
-            if (pageId) break;
-            navElement = navElement.parentElement;
-        }
-        
-        if (pageId) {
-            console.log('🔗 DIRECT: Navigation clicked for:', pageId);
-            
-            // FOR ELITE USERS - ALLOW ALL PAGES
-            const userPlan = localStorage.getItem('userPlan') || 'basic';
-            if (userPlan === 'elite') {
-                console.log('👑 ELITE: Full access granted to:', pageId);
-                showPage(pageId);
-                return;
-            }
-            
-            // FOR NON-ELITE - Check if locked
-            if (navElement.classList.contains('locked-feature')) {
-                console.log('🔒 LOCKED: Redirecting to plans');
-                showPage('plans-page');
-                return;
-            }
-            
-            // Show the page
-            showPage(pageId);
+    // Update nav active state
+    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
+        nav.classList.remove('active');
+        if (nav.getAttribute('data-page') === pageId) {
+            nav.classList.add('active');
         }
     });
-    
-    // Initialize mobile hamburger menu
-    initializeMobileHamburgerMenu();
-    
+}
+
+function initializeSPA() {
+    // Attach click handlers to nav items
+    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
+        nav.addEventListener('click', function(e) {
+            const pageId = this.getAttribute('data-page');
+            if (pageId) {
+                // For Elite users, allow all pages
+                const userPlan = localStorage.getItem('userPlan') || 'basic';
+                if (userPlan === 'elite' || !this.classList.contains('locked-feature')) {
+                    showPage(pageId);
+                } else {
+                    showPage('plans-page');
+                }
+            }
+        });
+    });
     // Show home page on load
     showPage('home-page');
-    
-    // Add debug function
-    window.directShowPage = showPage;
-    
-    console.log('✅ EMERGENCY: Simple navigation system ready');
-    console.log('🧪 DEBUG: Use directShowPage("page-id") to test');
 }
+
+// ==================== SIDEBAR HEIGHT FIX ==================== //
+// Ensure sidebar and main layout always have min-height: 100vh
+(function fixSidebarHeight() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .main-layout, .sidebar, body, html {
+            min-height: 100vh !important;
+        }
+        .page-content {
+            display: block !important;
+        }
+        .page-content:not(.active-page) {
+            /* Hide inactive pages visually but keep layout stable */
+            position: absolute !important;
+            left: -9999px !important;
+            top: 0 !important;
+            width: 1px !important;
+            height: 1px !important;
+            overflow: hidden !important;
+        }
+        .page-content.active-page {
+            position: static !important;
+            width: auto !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();
 
 // ==================== MOBILE HAMBURGER MENU ==================== //
 

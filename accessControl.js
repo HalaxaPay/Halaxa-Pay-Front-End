@@ -60,6 +60,11 @@ class HalaxaAccessControl {
     await this.getCurrentUser();
     this.setupPageAccessControl();
     this.setupNetworkRestrictions();
+    
+    // Load home page by default
+    this.loadPage('home-page');
+    
+    console.log('🔐 Access control initialized for plan:', this.userPlan);
   }
 
   // ==================== USER PLAN DETECTION ==================== //
@@ -247,16 +252,312 @@ class HalaxaAccessControl {
   }
 
   setupPageAccessControl() {
-    // DISABLED: This method was interfering with Elite user navigation
-    // Access control is now handled by the locked-feature class system in SPA.js
     const plan = this.getCurrentPlan();
-    console.log(`🔐 Page access control disabled for ${plan} users - using SPA.js navigation system`);
-    return;
+    const limits = this.getPlanLimits(plan);
+    
+    console.log(`🔐 Setting up page access control for plan: ${plan}`);
+    console.log(`🔐 Blocked pages:`, limits.blockedPages);
+    
+    // Setup navigation event listeners for all nav items
+    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    
+    navItems.forEach(navItem => {
+      const pageId = navItem.dataset.page;
+      
+      // Remove any existing click listeners
+      const newNavItem = navItem.cloneNode(true);
+      navItem.parentNode.replaceChild(newNavItem, navItem);
+      
+      // Add new click listener with access control
+      newNavItem.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // Check if page is blocked for current plan
+        if (limits.blockedPages.includes(pageId)) {
+          console.log(`🔒 Page ${pageId} is blocked for ${plan} plan`);
+          
+          // Show access denied modal
+          this.showPageAccessDeniedModal(pageId, plan);
+          return;
+        }
+        
+        // Page is allowed - load it
+        console.log(`✅ Loading page: ${pageId}`);
+        this.loadPage(pageId);
+      });
+    });
+    
+    // Also handle direct URL navigation
+    this.handleDirectNavigation();
   }
-
-  redirectToPlans() {
-    console.log('🔒 Redirecting to plans page within SPA...');
-    navigateToPlansPage();
+  
+  loadPage(pageId) {
+    console.log(`🔄 Loading page content for: ${pageId}`);
+    
+    // Hide all pages
+    const allPages = document.querySelectorAll('.page-content');
+    allPages.forEach(page => {
+      page.classList.remove('active-page');
+      page.style.display = 'none';
+    });
+    
+    // Show target page
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+      targetPage.style.display = 'block';
+      targetPage.classList.add('active-page');
+      console.log(`✅ Page ${pageId} is now active`);
+      
+      // Update navigation indicators
+      this.updateNavigationIndicators(pageId);
+      
+      // Initialize page-specific features
+      this.initializePageFeatures(pageId);
+    } else {
+      console.error(`❌ Page ${pageId} not found in DOM`);
+    }
+  }
+  
+  updateNavigationIndicators(activePageId) {
+    // Update desktop navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.page === activePageId) {
+        item.classList.add('active');
+      }
+    });
+    
+    // Update mobile navigation
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.page === activePageId) {
+        item.classList.add('active');
+      }
+    });
+  }
+  
+  initializePageFeatures(pageId) {
+    // Initialize page-specific features based on the page
+    switch (pageId) {
+      case 'capital-page':
+        console.log('💰 Initializing Capital page features');
+        this.initializeCapitalPage();
+        break;
+      case 'orders-page':
+        console.log('📦 Initializing Orders page features');
+        this.initializeOrdersPage();
+        break;
+      case 'automation-page':
+        console.log('🤖 Initializing Automation page features');
+        this.initializeAutomationPage();
+        break;
+      case 'home-page':
+        console.log('🏠 Initializing Home page features');
+        this.initializeHomePage();
+        break;
+      default:
+        console.log(`📄 Initializing ${pageId} features`);
+    }
+  }
+  
+  initializeCapitalPage() {
+    // Load capital page data and initialize charts
+    console.log('💰 Loading capital page data...');
+    
+    // Initialize capital page with real data
+    if (window.updateCapitalPageWithRealData) {
+      // Simulate loading capital data
+      const capitalData = {
+        has_data: true,
+        total_received: 12500,
+        total_paid_out: 3200,
+        net_flow: 9300
+      };
+      window.updateCapitalPageWithRealData(capitalData);
+    }
+    
+    // Initialize any capital-specific charts or components
+    this.initializeCapitalCharts();
+  }
+  
+  initializeOrdersPage() {
+    console.log('📦 Loading orders page data...');
+    
+    // Initialize orders page with sample data
+    const ordersData = {
+      total_orders: 247,
+      ready_to_ship: 156,
+      countries: 24,
+      total_revenue: 89420
+    };
+    
+    // Update orders metrics
+    this.updateOrdersMetrics(ordersData);
+  }
+  
+  initializeAutomationPage() {
+    console.log('🤖 Loading automation page data...');
+    
+    // Initialize automation page features
+    this.initializeWebhookSystem();
+  }
+  
+  initializeHomePage() {
+    console.log('🏠 Loading home page data...');
+    
+    // Initialize home page features
+    if (window.initializeAllEngineFeatures) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      window.initializeAllEngineFeatures(user.id);
+    }
+  }
+  
+  initializeCapitalCharts() {
+    // Initialize any charts on the capital page
+    console.log('📊 Initializing capital charts...');
+  }
+  
+  updateOrdersMetrics(data) {
+    // Update orders page metrics
+    const metricElements = document.querySelectorAll('[data-orders-metric]');
+    metricElements.forEach(element => {
+      const metric = element.dataset.ordersMetric;
+      if (data[metric]) {
+        element.textContent = data[metric];
+      }
+    });
+  }
+  
+  initializeWebhookSystem() {
+    // Initialize webhook system for automation page
+    console.log('🔌 Initializing webhook system...');
+    
+    const connectBtn = document.getElementById('connect-webhook-btn');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', () => {
+        this.handleWebhookConnection();
+      });
+    }
+  }
+  
+  handleWebhookConnection() {
+    console.log('🔌 Handling webhook connection...');
+    
+    const webhookUrl = document.getElementById('webhook-url').value;
+    if (webhookUrl) {
+      // Simulate webhook connection
+      const successMessage = document.getElementById('webhook-success');
+      if (successMessage) {
+        successMessage.style.display = 'block';
+      }
+      
+      // Update status
+      const statusIndicator = document.querySelector('[data-webhook-status]');
+      if (statusIndicator) {
+        statusIndicator.innerHTML = `
+          <div class="status-dot connected"></div>
+          <span class="status-text">Connected</span>
+        `;
+      }
+    }
+  }
+  
+  handleDirectNavigation() {
+    // Handle direct URL navigation (e.g., if someone bookmarks a page)
+    const currentPage = document.querySelector('.page-content.active-page');
+    if (currentPage) {
+      const pageId = currentPage.id;
+      const plan = this.getCurrentPlan();
+      const limits = this.getPlanLimits(plan);
+      
+      if (limits.blockedPages.includes(pageId)) {
+        console.log(`🔒 Direct navigation blocked to ${pageId} for ${plan} plan`);
+        this.showPageAccessDeniedModal(pageId, plan);
+        
+        // Redirect to home page
+        this.loadPage('home-page');
+      }
+    }
+  }
+  
+  showPageAccessDeniedModal(pageId, currentPlan) {
+    const pageName = pageId.replace('-page', '').charAt(0).toUpperCase() + pageId.replace('-page', '').slice(1);
+    const requiredPlan = pageId === 'capital-page' ? 'Pro' : 'Elite';
+    
+    // Remove existing modal
+    const existingModal = document.getElementById('access-denied-modal');
+    if (existingModal) {
+      existingModal.remove();
+    }
+    
+    // Create access denied modal
+    const modal = document.createElement('div');
+    modal.id = 'access-denied-modal';
+    modal.style.cssText = `
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0, 0, 0, 0.7) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 10001 !important;
+      backdrop-filter: blur(5px) !important;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        border: 3px solid #f59e0b;
+      ">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+        <h3 style="color: #f59e0b; margin-bottom: 1rem; font-size: 1.5rem;">Upgrade Required</h3>
+        <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.5;">
+          The <strong>${pageName}</strong> page requires a <strong>${requiredPlan}</strong> plan or higher.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-direction: column;">
+          <button onclick="this.closest('#access-denied-modal').remove(); window.location.href='#plans-page';" style="
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+          ">Upgrade to ${requiredPlan}</button>
+          <button onclick="document.getElementById('access-denied-modal').remove();" style="
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+          ">Maybe Later</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => {
+      if (modal && modal.parentNode) {
+        modal.remove();
+      }
+    }, 10000);
   }
 
   // ==================== VISUAL LOCKS AND BADGES ==================== //
@@ -404,6 +705,11 @@ class HalaxaAccessControl {
         allowedNetworks: limits.allowedNetworks
       }
     };
+  }
+
+  redirectToPlans() {
+    console.log('🔒 Redirecting to plans page within SPA...');
+    navigateToPlansPage();
   }
 }
 

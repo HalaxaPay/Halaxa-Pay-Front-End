@@ -104,12 +104,19 @@ async function initializeCriticalAccessControl() {
     try {
         console.log('🔐 Initializing critical access control...');
         
-        // Initialize the access control system
-        if (typeof HalaxaAccessControl === 'undefined') {
-            throw new Error('HalaxaAccessControl class not found');
+        // Wait for the access control system to be available globally
+        let attempts = 0;
+        while (typeof window.HalaxaAccessControl === 'undefined' && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
         }
         
-        window.accessControl = new HalaxaAccessControl();
+        if (typeof window.HalaxaAccessControl === 'undefined') {
+            throw new Error('HalaxaAccessControl not found - accessControl.js may not be loaded');
+        }
+        
+        // Use the global instance from accessControl.js
+        window.accessControl = window.HalaxaAccessControl;
         await window.accessControl.init();
         
         console.log('✅ Critical access control initialized');
@@ -1295,23 +1302,12 @@ function logPageVisibility() {
 }
 
 function initializeSPA() {
-    // Attach click handlers to nav items
-    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
-        nav.addEventListener('click', function(e) {
-            const pageId = this.getAttribute('data-page');
-            if (pageId) {
-                // For Elite users, allow all pages
-                const userPlan = localStorage.getItem('userPlan') || 'basic';
-                if (userPlan === 'elite' || !this.classList.contains('locked-feature')) {
-                    showPage(pageId);
-                } else {
-                    showPage('plans-page');
-                }
-            }
-        });
-    });
-    // Show home page on load
-    showPage('home-page');
+    // DISABLED: Navigation is now handled by accessControl.js
+    // The access control system will set up all navigation event listeners
+    console.log('🚀 SPA initialized - navigation handled by access control system');
+    
+    // Show home page on load (access control will handle this)
+    // showPage('home-page'); // DISABLED - access control handles this
 }
 
 // ==================== SIDEBAR HEIGHT & PAGE VISIBILITY FIX ==================== //
@@ -4005,289 +4001,23 @@ function initializeAuthenticatedFeatures() {
 }
 
 // ==================== ACCESS CONTROL SYSTEM ==================== //
-
-class HalaxaAccessControl {
-    constructor() {
-        this.currentUser = null;
-        this.userPlan = 'basic';
-        this.planLimits = {
-            basic: {
-                maxPaymentLinks: 1,
-                maxMonthlyVolume: 500,
-                allowedNetworks: ['polygon'],
-                blockedPages: ['capital-page', 'orders-page', 'automation-page'],
-                features: {
-                    advancedAnalytics: false,
-                    multipleWallets: false,
-                    customBranding: false,
-                    prioritySupport: false,
-                    automations: false
-                }
-            },
-            pro: {
-                maxPaymentLinks: 30,
-                maxMonthlyVolume: 30000,
-                allowedNetworks: ['polygon', 'solana'],
-                blockedPages: ['orders-page', 'automation-page'],
-                features: {
-                    advancedAnalytics: true,
-                    multipleWallets: true,
-                    customBranding: false,
-                    prioritySupport: true,
-                    automations: false
-                }
-            },
-            elite: {
-                maxPaymentLinks: Infinity,
-                maxMonthlyVolume: Infinity,
-                allowedNetworks: ['polygon', 'solana', 'tron'],
-                blockedPages: [], // 🎯 NO BLOCKED PAGES FOR ELITE!
-                features: {
-                    advancedAnalytics: true,
-                    multipleWallets: true,
-                    customBranding: true,
-                    prioritySupport: true,
-                    automations: true
-                }
-            }
-        };
-    }
-
-    async init() {
-        await this.getCurrentUser();
-        this.setupPageAccessControl();
-        this.setupNetworkRestrictions();
-        this.setupPaymentLinkRestrictions();
-        console.log('🔐 Access control initialized for plan:', this.userPlan);
-    }
-
-    async getCurrentUser() {
-        try {
-            const userData = localStorage.getItem('user');
-            const accessToken = localStorage.getItem('accessToken');
-            
-            if (!userData || !accessToken) {
-                this.userPlan = 'basic';
-                return;
-            }
-
-            this.currentUser = JSON.parse(userData);
-            
-            // 🎯 GET REAL PLAN FROM DATABASE (user_plans table)
-            console.log('🔍 Fetching user plan from database for user:', this.currentUser.id);
-            const response = await fetch(`${BACKEND_URL}/api/account/profile`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            });
-            
-            if (response.ok) {
-                const profileData = await response.json();
-                this.userPlan = profileData.plan || 'basic'; // Will get 'elite' from your database
-                console.log('✅ Database plan retrieved:', this.userPlan);
-                
-                // Update localStorage with real plan
-                localStorage.setItem('userPlan', this.userPlan);
-            } else {
-                console.warn('⚠️ Could not fetch plan from database, using fallback');
-                this.userPlan = 'basic';
-            }
-            
-            console.log('🔐 User plan detected:', this.userPlan);
-        } catch (error) {
-            console.error('Error fetching user plan:', error);
-            this.userPlan = 'basic';
-        }
-    }
-
-    getCurrentPlan() {
-        return this.userPlan || 'basic';
-    }
-
-    getPlanLimits(plan = null) {
-        const userPlan = plan || this.getCurrentPlan();
-        return this.planLimits[userPlan] || this.planLimits.basic;
-    }
-
-    // Check if user can create payment link
-    async canCreatePaymentLink() {
-        try {
-            const plan = this.getCurrentPlan();
-            const limits = this.getPlanLimits(plan);
-            const accessToken = localStorage.getItem('accessToken');
-
-            // Get current active payment links from backend
-            const response = await fetch(`${BACKEND_URL}/api/payment-links`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            });
-
-            if (!response.ok) {
-                throw new Error('Unable to fetch payment links');
-            }
-
-            const data = await response.json();
-            const activeLinks = data.paymentLinks?.filter(link => link.is_active !== false) || [];
-            const currentLinkCount = activeLinks.length;
-
-            if (currentLinkCount >= limits.maxPaymentLinks) {
-                return {
-                    allowed: false,
-                    reason: 'payment_link_limit',
-                    message: `${plan.toUpperCase()} plan allows only ${limits.maxPaymentLinks} active link${limits.maxPaymentLinks > 1 ? 's' : ''}. Upgrade for more.`,
-                    current: currentLinkCount,
-                    limit: limits.maxPaymentLinks
-                };
-            }
-
-            return {
-                allowed: true,
-                current: currentLinkCount,
-                limit: limits.maxPaymentLinks
-            };
-
-        } catch (error) {
-            console.error('Error checking payment link limit:', error);
-            return {
-                allowed: false,
-                reason: 'error',
-                message: 'Unable to verify payment link limits. Please try again.'
-            };
-        }
-    }
-
-    // Check if network is allowed
-    isNetworkAllowed(network) {
-        const limits = this.getPlanLimits();
-        return limits.allowedNetworks.includes(network.toLowerCase());
-    }
-
-    // Setup network restrictions in UI
-    setupNetworkRestrictions() {
-        const plan = this.getCurrentPlan();
-        const limits = this.getPlanLimits(plan);
-        
-        // Apply restrictions to network selection buttons
-        const networkButtons = document.querySelectorAll('[data-network]');
-        
-        networkButtons.forEach(button => {
-            const network = button.dataset.network;
-            
-            if (!limits.allowedNetworks.includes(network)) {
-                button.classList.add('network-locked');
-                button.disabled = true;
-                
-
-                
-                // Add click handler to redirect to plans
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('🔒 Network restricted - redirecting to plans page');
-                    navigateToPlansPage();
-                    return false;
-                });
-            }
-        });
-    }
-
-    // Setup page access control
-    setupPageAccessControl() {
-        const plan = this.getCurrentPlan();
-        const limits = this.getPlanLimits(plan);
-        
-        console.log('🔐 Setting up page access control for plan:', plan);
-        console.log('🔐 Blocked pages:', limits.blockedPages);
-        
-        // Setup desktop navigation
-        const navItems = document.querySelectorAll('.nav-item');
-        console.log('🔐 Found', navItems.length, 'desktop nav items');
-        navItems.forEach(navItem => {
-            this.setupNavItemAccess(navItem, limits);
-        });
-        
-        // Setup mobile navigation (in hamburger sidebar)
-        const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-        console.log('🔐 Found', mobileNavItems.length, 'mobile nav items');
-        mobileNavItems.forEach(mobileNavItem => {
-            console.log('🔐 Setting up mobile nav item:', mobileNavItem.dataset.page);
-            this.setupNavItemAccess(mobileNavItem, limits);
-        });
-    }
-    
-    // Setup individual nav item with badges and access control
-    setupNavItemAccess(navItem, limits) {
-        const pageId = navItem.dataset.page;
-        
-        // Check if this page is blocked for the current user's plan
-        if (limits.blockedPages.includes(pageId)) {
-            // Determine required plan for this page
-            const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
-            
-            navItem.classList.add('nav-locked');
-            navItem.classList.add('locked-feature'); // This class is used by the main navigation logic
-            
-            // Add animated shine effect based on required plan
-            navItem.classList.add(`locked-${requiredPlan}`);
-            
-            console.log(`🔒 Page ${pageId} is blocked for current plan`);
-        } else {
-            // Ensure nav item is not locked for users who have access
-            navItem.classList.remove('nav-locked', 'locked-feature', 'locked-pro', 'locked-elite');
-            console.log(`✅ Page ${pageId} is accessible for current plan`);
-        }
-    }
-
-    // Setup payment link creation restrictions
-    setupPaymentLinkRestrictions() {
-        const createButton = document.querySelector('#forge-link-btn, .forge-link-btn, [data-action="create-payment-link"]');
-        
-        if (createButton) {
-            const originalHandler = createButton.onclick;
-            
-            createButton.addEventListener('click', async (e) => {
-                const permission = await this.canCreatePaymentLink();
-                
-                if (!permission.allowed) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔒 Payment link limit reached - redirecting to plans page');
-                    navigateToPlansPage();
-                    return false;
-                }
-                
-                // Permission granted, proceed with original handler
-                return true;
-            });
-        }
-    }
-
-    // Redirect to plans page within SPA
-    redirectToPlans() {
-        console.log('🔒 Redirecting to plans page within SPA...');
-        navigateToPlansPage();
-    }
-}
+// REMOVED: Duplicate HalaxaAccessControl class - using the one from accessControl.js instead
 
 // Global access control instance
 let accessControl = null;
 
-// Initialize access control system
+// Initialize access control system (now using global instance from accessControl.js)
 async function initializeAccessControl() {
     try {
-        accessControl = new HalaxaAccessControl();
-        await accessControl.init();
+        // Use the global instance from accessControl.js
+        accessControl = window.HalaxaAccessControl;
+        
+        if (!accessControl) {
+            throw new Error('Access control system not found');
+        }
         
         // Add comprehensive modal styles
         addAccessControlStyles();
-        
-        // For Elite users, disable all access control restrictions
-        const userPlan = localStorage.getItem('userPlan') || 'basic';
-        if (userPlan === 'elite') {
-            console.log('🎯 Elite user detected - bypassing all access control restrictions');
-            // Override the setupPageAccessControl method to do nothing for Elite users
-            accessControl.setupPageAccessControl = function() {
-                console.log('✅ Elite user - page access control bypassed');
-            };
-        }
         
         console.log('✅ Access control system initialized');
     } catch (error) {

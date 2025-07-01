@@ -149,58 +149,58 @@ function renderNetworkOptions() {
 /**
  * Example: Protect navigation links
  */
-// function setupProtectedNavigation() {
-//   const navLinks = document.querySelectorAll('.nav-link, .sidebar-link');
-//   
-//   navLinks.forEach(link => {
-//     const href = link.getAttribute('href');
-//     
-//     if (href && !checkPageAccess(href)) {
-//       link.classList.add('locked-nav-link');
-//       
-//       link.addEventListener('click', (e) => {
-//         e.preventDefault();
-//         showPageRestrictionModal(href);
-//       });
-//     }
-//   });
-// }
+function setupProtectedNavigation() {
+  const navLinks = document.querySelectorAll('.nav-link, .sidebar-link');
+  
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    
+    if (href && !checkPageAccess(href)) {
+      link.classList.add('locked-nav-link');
+      
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPageRestrictionModal(href);
+      });
+    }
+  });
+}
 
 /**
  * Example: Setup page-level access control
  */
-// function initializePageAccessControl() {
-//   const currentPath = window.location.pathname;
-//   
-//   // Check if current page requires upgrade
-//   if (!checkPageAccess(currentPath)) {
-//     showPageUpgradeOverlay();
-//     return;
-//   }
-//   
-//   // Setup visual locks for current page elements
-//   applyPageSpecificLocks();
-// }
+function initializePageAccessControl() {
+  const currentPath = window.location.pathname;
+  
+  // Check if current page requires upgrade
+  if (!checkPageAccess(currentPath)) {
+    showPageUpgradeOverlay();
+    return;
+  }
+  
+  // Setup visual locks for current page elements
+  applyPageSpecificLocks();
+}
 
-// function applyPageSpecificLocks() {
-//   const userPlan = getUserPlan();
-//   
-//   // Capital page locks
-//   if (window.location.pathname.includes('/capital')) {
-//     if (userPlan === 'basic') {
-//       document.body.classList.add('page-restricted');
-//       showPageBanner('PRO', 'This feature requires Pro plan');
-//     }
-//   }
-//   
-//   // Orders page locks
-//   if (window.location.pathname.includes('/orders')) {
-//     if (userPlan !== 'elite') {
-//       document.body.classList.add('page-restricted');
-//       showPageBanner('ELITE', 'This feature requires Elite plan');
-//     }
-//   }
-// }
+function applyPageSpecificLocks() {
+  const userPlan = getUserPlan();
+  
+  // Capital page locks
+  if (window.location.pathname.includes('/capital')) {
+    if (userPlan === 'basic') {
+      document.body.classList.add('page-restricted');
+      showPageBanner('PRO', 'This feature requires Pro plan');
+    }
+  }
+  
+  // Orders page locks
+  if (window.location.pathname.includes('/orders')) {
+    if (userPlan !== 'elite') {
+      document.body.classList.add('page-restricted');
+      showPageBanner('ELITE', 'This feature requires Elite plan');
+    }
+  }
+}
 
 // ==================== UI HELPER FUNCTIONS ==================== //
 
@@ -401,8 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.HalaxaAccessControl) {
       setupPaymentFormAccessControl();
       setupNetworkSelection();
-      // setupProtectedNavigation(); // DISABLED for SPA
-      // initializePageAccessControl(); // DISABLED for SPA
+      setupProtectedNavigation();
+      initializePageAccessControl();
       setupUsageMonitoring();
       updateUsageDisplays();
       setupAdvancedAnalytics();
@@ -433,8 +433,8 @@ window.addEventListener('usageUpdated', (event) => {
 window.AccessControlIntegration = {
   setupPaymentFormAccessControl,
   setupNetworkSelection,
-  // setupProtectedNavigation, // DISABLED for SPA
-  // initializePageAccessControl, // DISABLED for SPA
+  setupProtectedNavigation,
+  initializePageAccessControl,
   setupUsageMonitoring,
   renderNetworkOptions,
   showRestrictionModal,

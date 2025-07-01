@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Hide ALL premium content immediately until verification completes
         hideAllPremiumContentImmediately();
         
-        // Show security verification loading
-        showAccessControlVerification();
-        
         // Initialize access control synchronously and wait for completion
         await initializeCriticalAccessControl();
         
@@ -34,9 +31,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         applyPlanRestrictionsImmediately(userPlan);
         
         console.log('✅ Access control verification complete - UI safe to initialize');
-        
-        // Hide security verification overlay
-        hideAccessControlVerification();
         
         // NOW initialize the UI - access control is already in place
     initializeSPA();
@@ -100,52 +94,7 @@ function hideAllPremiumContentImmediately() {
     document.head.appendChild(securityStyle);
 }
 
-/**
- * Show access control verification loading overlay
- */
-function showAccessControlVerification() {
-    const overlay = document.createElement('div');
-    overlay.id = 'access-control-verification';
-    overlay.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background: rgba(255, 255, 255, 0.95) !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        z-index: 10000 !important;
-        backdrop-filter: blur(5px) !important;
-    `;
-    
-    overlay.innerHTML = `
-        <div style="text-align: center; padding: 2rem; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #10b981;">
-            <div style="width: 40px; height: 40px; border: 3px solid #e5e7eb; border-top: 3px solid #10b981; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
-            <h3 style="color: #10b981; margin-bottom: 0.5rem; font-size: 1.2rem;">Verifying Access Permissions</h3>
-            <p style="color: #6b7280; font-size: 0.9rem;">Securing your dashboard experience...</p>
-            <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            </style>
-        </div>
-    `;
-    
-    document.body.appendChild(overlay);
-}
 
-/**
- * Hide access control verification overlay
- */
-function hideAccessControlVerification() {
-    const overlay = document.getElementById('access-control-verification');
-    if (overlay) {
-        overlay.remove();
-    }
-}
 
 /**
  * CRITICAL: Initialize access control with enhanced security
@@ -308,21 +257,46 @@ function applyPlanRestrictionsImmediately(userPlan) {
             transition: all 0.2s ease !important;
         }
         
-
+        /* Lock and badge container - keeps everything inline */
+        .nav-item.locked-feature .lock-badge-container,
+        .mobile-nav-item.locked-feature .lock-badge-container {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 4px !important;
+            margin-left: 8px !important;
+        }
         
-        /* Simple plan badges */
+        /* FontAwesome lock icon - smaller and subtle */
+        .nav-item.locked-feature .lock-icon,
+        .mobile-nav-item.locked-feature .lock-icon {
+            color: #9ca3af !important;
+            font-size: 0.65rem !important;
+            opacity: 0.8 !important;
+        }
+        
+        /* Plan badges with original brand colors */
         .nav-item.locked-feature .plan-badge,
         .mobile-nav-item.locked-feature .plan-badge {
             display: inline-block !important;
-            margin-left: 4px !important;
             padding: 1px 6px !important;
             border-radius: 8px !important;
             font-size: 0.6rem !important;
             font-weight: 600 !important;
             text-transform: uppercase !important;
-            background: #f3f4f6 !important;
-            color: #6b7280 !important;
-            border: 1px solid #e5e7eb !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        /* PRO badge - Orange gradient */
+        .nav-item.locked-feature .plan-badge.pro-badge,
+        .mobile-nav-item.locked-feature .plan-badge.pro-badge {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C61 100%) !important;
+        }
+        
+        /* ELITE badge - Purple gradient */
+        .nav-item.locked-feature .plan-badge.elite-badge,
+        .mobile-nav-item.locked-feature .plan-badge.elite-badge {
+            background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 100%) !important;
         }
     `;
     
@@ -407,12 +381,13 @@ function applyFOMOLockedStyling(userPlan) {
         if (navItem) {
             navItem.classList.add('locked-feature');
             
-            // Simple clean layout: Page name, lock, plan badge
+            // Clean layout: Page name, FontAwesome lock, plan badge (all on same line)
             const span = navItem.querySelector('span');
             if (span && !span.querySelector('.plan-badge')) {
-                // Add simple lock and badge together
+                // Add FontAwesome lock and colored badge inline
                 const lockAndBadge = document.createElement('span');
-                lockAndBadge.innerHTML = ` 🔒 <span class="plan-badge">${feature.badge}</span>`;
+                lockAndBadge.className = 'lock-badge-container';
+                lockAndBadge.innerHTML = ` <i class="fas fa-lock lock-icon"></i> <span class="plan-badge ${feature.requiredPlan}-badge">${feature.badge}</span>`;
                 span.appendChild(lockAndBadge);
             }
         }
@@ -424,12 +399,13 @@ function applyFOMOLockedStyling(userPlan) {
         if (mobileNavItem) {
             mobileNavItem.classList.add('locked-feature');
             
-            // Simple clean layout: Page name, lock, plan badge
+            // Clean layout: Page name, FontAwesome lock, plan badge (all on same line)
             const span = mobileNavItem.querySelector('span');
             if (span && !span.querySelector('.plan-badge')) {
-                // Add simple lock and badge together
+                // Add FontAwesome lock and colored badge inline
                 const lockAndBadge = document.createElement('span');
-                lockAndBadge.innerHTML = ` 🔒 <span class="plan-badge">${feature.badge}</span>`;
+                lockAndBadge.className = 'lock-badge-container';
+                lockAndBadge.innerHTML = ` <i class="fas fa-lock lock-icon"></i> <span class="plan-badge ${feature.requiredPlan}-badge">${feature.badge}</span>`;
                 span.appendChild(lockAndBadge);
             }
         }

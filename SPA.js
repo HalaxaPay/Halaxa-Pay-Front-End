@@ -1495,34 +1495,35 @@ function animateMobileNavSelection(selectedItem, allItems, targetPageId = null) 
 }
 
 function smoothPageTransition(targetPageId, allPages) {
+    console.log('🔄 Transitioning to page:', targetPageId);
+    
     const currentPage = document.querySelector('.page-content.active-page');
     const targetPage = document.getElementById(targetPageId);
     
-    if (currentPage === targetPage) return;
-    
-    // Exit animation for current page
-    if (currentPage) {
-        currentPage.style.animation = 'pageSlideOut 0.3s ease-in-out forwards';
-        
-        setTimeout(() => {
-            currentPage.classList.remove('active-page');
-            currentPage.style.animation = '';
-            
-            // Enter animation for target page
-            targetPage.classList.add('active-page');
-            targetPage.style.animation = 'pageSlideIn 0.5s ease-out forwards';
-            
-            // **NEW: Reinitialize access control for the new page**
-            reinitializeAccessControlForPage();
-            
-            setTimeout(() => {
-                targetPage.style.animation = '';
-            }, 500);
-        }, 300);
-    } else {
-        // First load
-        targetPage.classList.add('active-page');
+    // CRITICAL: Check if target page exists
+    if (!targetPage) {
+        console.error('❌ Target page not found:', targetPageId);
+        console.log('📋 Available pages:', Array.from(document.querySelectorAll('.page-content')).map(p => p.id));
+        return;
     }
+    
+    if (currentPage === targetPage) {
+        console.log('✅ Already on target page');
+        return;
+    }
+    
+    // Hide all pages first (safety measure)
+    const allPageElements = document.querySelectorAll('.page-content');
+    allPageElements.forEach(page => {
+        page.classList.remove('active-page');
+        page.style.display = 'none';
+    });
+    
+    // Show and activate target page immediately
+    targetPage.style.display = 'block';
+    targetPage.classList.add('active-page');
+    
+    console.log('✅ Page transition completed to:', targetPageId);
 }
 
 // ==================== INTERACTIVE ANIMATIONS ==================== //

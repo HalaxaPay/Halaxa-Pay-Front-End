@@ -29,13 +29,13 @@ class HalaxaAccessControl {
         maxPaymentLinks: 30,
         maxMonthlyVolume: 30000,
         allowedNetworks: ['polygon', 'solana'],
-        blockedPages: ['/orders', '/shipping'],
+        blockedPages: ['/orders', '/shipping', '/automation'],
         features: {
           advancedAnalytics: true,
           multipleWallets: true,
           customBranding: false,
           prioritySupport: true,
-          automations: true
+          automations: false
         }
       },
       elite: {
@@ -354,7 +354,6 @@ class HalaxaAccessControl {
     messageDiv.className = 'access-denied-message';
     messageDiv.innerHTML = `
       <div class="access-denied-content">
-        <div class="access-denied-icon">⚡</div>
         <h4>Upgrade Required</h4>
         <p>${restriction.message}</p>
         <button class="btn-upgrade-inline" onclick="window.location.href='/plans.html'">

@@ -7421,6 +7421,11 @@ body::before {
     font-size: 0.8rem;
 }
 
+/* Make X marks red in plan cards */
+.feature-item i.fa-times {
+    color: #ef4444 !important;
+}
+
 /* Plan CTA Buttons */
 .plan-cta-btn {
     width: 100%;

@@ -230,7 +230,7 @@ function applyPlanRestrictionsImmediately(userPlan) {
             overflow: hidden !important;
         }
         
-        /* STRONG Pro Plan Shine (Orange) for Capital & Automation pages */
+        /* STRONG Pro Plan Shine (Orange) for Capital page only */
         .nav-item.locked-pro::before,
         .mobile-nav-item.locked-pro::before {
             content: '' !important;
@@ -391,10 +391,11 @@ function applyFOMOLockedStyling(userPlan) {
     const lockedFeatures = {
         'basic': [
             { page: 'capital-page', requiredPlan: 'pro' },
-            { page: 'automation-page', requiredPlan: 'pro' },
+            { page: 'automation-page', requiredPlan: 'elite' },
             { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'pro': [
+            { page: 'automation-page', requiredPlan: 'elite' },
             { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'elite': [] // Elite users see no locked features
@@ -1282,7 +1283,7 @@ function initializeSPA() {
             // Define premium pages that require access control (backup check)
             const premiumPages = {
                 'capital-page': ['pro', 'elite'],
-                'automation-page': ['pro', 'elite'], 
+                'automation-page': ['elite'], 
                 'orders-page': ['elite']
             };
             
@@ -1358,7 +1359,7 @@ function initializeSPA() {
             // Define premium pages that require access control (backup check)
             const premiumPages = {
                 'capital-page': ['pro', 'elite'],
-                'automation-page': ['pro', 'elite'], 
+                'automation-page': ['elite'], 
                 'orders-page': ['elite']
             };
             
@@ -4104,13 +4105,13 @@ class HalaxaAccessControl {
                 maxPaymentLinks: 30,
                 maxMonthlyVolume: 30000,
                 allowedNetworks: ['polygon', 'solana'],
-                blockedPages: ['orders-page'],
+                blockedPages: ['orders-page', 'automation-page'],
                 features: {
                     advancedAnalytics: true,
                     multipleWallets: true,
                     customBranding: false,
                     prioritySupport: true,
-                    automations: true
+                    automations: false
                 }
             },
             elite: {
@@ -4294,7 +4295,7 @@ class HalaxaAccessControl {
         const pageId = navItem.dataset.page;
         
         // Determine required plan for this page
-        const requiredPlan = pageId === 'capital-page' || pageId === 'automation-page' ? 'pro' : 'elite';
+        const requiredPlan = pageId === 'capital-page' ? 'pro' : 'elite';
         
         // Plan badges removed from desktop as requested
         
@@ -4555,7 +4556,7 @@ function navigateToPage(pageId) {
     // Define premium pages that require access control
     const premiumPages = {
         'capital-page': ['pro', 'elite'],
-        'automation-page': ['pro', 'elite'], 
+        'automation-page': ['elite'], 
         'orders-page': ['elite']
     };
     

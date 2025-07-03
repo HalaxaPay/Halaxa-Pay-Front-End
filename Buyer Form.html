@@ -504,146 +504,105 @@
     </div>
 </div>
 <script>
-        // Function to get URL parameters
-        function getUrlParams() {
-            const params = new URLSearchParams(window.location.search);
-            console.log('Raw URL:', window.location.href); // Log full URL
-            console.log('Raw URL search params:', window.location.search); // Log search params
-            
-            const amount = params.get('amount') || '0.00';
-            const chain = params.get('chain') || 'Polygon';
-            const link_id = params.get('link_id') || 'demo';
-            const wallet_address = params.get('wallet_address') || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-            
-            console.log('URL Parameters:', { 
-                rawAmount: params.get('amount'),
-                parsedAmount: amount,
-                chain,
-                link_id,
-                wallet_address 
-            }); // Detailed debug log
-            return { amount, chain, link_id, wallet_address };
-        }
-
-        // Function to initialize the form
-        function initializeForm() {
-            console.log('Starting form initialization...'); // Debug log
-            
-            const params = getUrlParams();
-            console.log('Form initialization params:', params); // Debug log
-            
-            // Display payment details
-            const totalHeading = document.getElementById('total-heading');
-            console.log('Total heading element found:', totalHeading); // Debug element existence
-            
-            const paymentChain = document.getElementById('payment-chain');
-            console.log('Payment chain element found:', paymentChain); // Debug element existence
-            
-            if (totalHeading) {
-                // Format the amount with 2 decimal places and add dollar sign
-                const formattedAmount = parseFloat(params.amount).toFixed(2);
-                console.log('Formatted amount:', formattedAmount); // Debug formatted amount
-                
-                const displayText = `$${formattedAmount} USDC`;
-                console.log('Setting display text to:', displayText); // Debug display text
-                
-                totalHeading.textContent = displayText;
-                console.log('Updated total heading text:', totalHeading.textContent); // Debug updated text
-            } else {
-                console.error('Total heading element not found! Element ID: total-heading'); // Debug log
-                // Try to find the element by class as a fallback
-                const totalHeadingByClass = document.querySelector('.total-heading');
-                console.log('Found by class:', totalHeadingByClass); // Debug class search
-            }
-            
-            if (paymentChain) {
-                paymentChain.textContent = params.chain;
-                console.log('Updated payment chain:', paymentChain.textContent); // Debug log
-            } else {
-                console.error('Payment chain element not found! Element ID: payment-chain'); // Debug log
-            }
-            
-            // Store the current payment details
-            const paymentDetails = {
-                amount: params.amount,
-                chain: params.chain,
-                link_id: params.link_id,
-                wallet_address: params.wallet_address
-            };
-            
-            localStorage.setItem('currentPayment', JSON.stringify(paymentDetails));
-            console.log('Stored payment details:', paymentDetails); // Debug log
+    // Function to get link_id from URL
+    function getLinkIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('link_id') || '';
     }
 
-        // Function to handle form submission
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            console.log('Form submitted'); // Debug log
-            
-            const formData = new FormData(event.target);
-            const buyerDetails = {
-                name: formData.get('full-name'),
-                email: formData.get('email'),
-                address: {
-                    line1: formData.get('address-line-1'),
-                    line2: formData.get('address-line-2'),
-                    city: formData.get('city'),
-                    country: formData.get('country')
-                }
-            };
-            
-            // Store buyer details
-            localStorage.setItem('buyerDetails', JSON.stringify(buyerDetails));
-            console.log('Stored buyer details:', buyerDetails); // Debug log
-            
-            // Get current payment details
-            const currentPayment = JSON.parse(localStorage.getItem('currentPayment') || '{}');
-            console.log('Current payment details:', currentPayment); // Debug log
-            
-            // Save buyer details to localStorage for immediate redirect
-            localStorage.setItem('buyerDetails', JSON.stringify(buyerDetails));
-            
-            // Redirect to payment page with all parameters
-            const baseUrl = window.location.origin;
-            const paymentUrl = `${baseUrl}/Payment Page.html?amount=${currentPayment.amount}&chain=${currentPayment.chain}&link_id=${currentPayment.link_id}&wallet_address=${currentPayment.wallet_address}`;
-            console.log('Redirecting to payment page:', paymentUrl);
-            window.location.href = paymentUrl;
-            
-            // Optional: Also save to backend in background (non-blocking)
-            const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-            fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/buyer`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(buyerDetails)
-            })
-            .catch(error => {
-                console.warn('Background save to backend failed:', error);
-                // Don't block the user flow
-            });
-        }
-
-        // Initialize the form when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Page loaded, DOM content ready'); // Debug log
-            console.log('Current URL:', window.location.href); // Debug current URL
-            
-            // Verify the element exists in the DOM
-            const totalHeading = document.getElementById('total-heading');
-            console.log('Initial total heading element:', totalHeading); // Debug initial element state
-            
-            initializeForm();
-
-            // Add form submit handler
-            const form = document.getElementById('buyer-form');
-            if (form) {
-                form.addEventListener('submit', handleFormSubmit);
-                console.log('Form submit handler added'); // Debug log
+    // Function to fetch payment link details from backend
+    async function fetchPaymentLinkDetails(linkId) {
+        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/payment-links/${linkId}`);
+            const result = await response.json();
+            if (result.success && result.data) {
+                return result.data;
             } else {
-                console.error('Form not found! Element ID: buyer-form'); // Debug log
+                throw new Error(result.error || 'Payment link not found');
             }
+        } catch (error) {
+            console.error('Error fetching payment link details:', error);
+            return null;
+        }
+    }
+
+    // Function to initialize the form and payment summary
+    async function initializeForm() {
+        const linkId = getLinkIdFromUrl();
+        if (!linkId) {
+            alert('Invalid or missing payment link.');
+            return;
+        }
+        const paymentData = await fetchPaymentLinkDetails(linkId);
+        if (!paymentData) {
+            alert('Payment link not found or expired.');
+            return;
+        }
+        // Display payment details
+        const totalHeading = document.getElementById('total-heading');
+        const paymentChain = document.getElementById('payment-chain');
+        if (totalHeading) {
+            const formattedAmount = parseFloat(paymentData.amount_usdc).toFixed(2);
+            totalHeading.textContent = `$${formattedAmount} USDC`;
+        }
+        if (paymentChain) {
+            paymentChain.textContent = paymentData.network.charAt(0).toUpperCase() + paymentData.network.slice(1);
+        }
+        // Store the current payment details (from backend only)
+        const paymentDetails = {
+            amount: paymentData.amount_usdc,
+            chain: paymentData.network,
+            link_id: paymentData.link_id,
+            wallet_address: paymentData.wallet_address
+        };
+        localStorage.setItem('currentPayment', JSON.stringify(paymentDetails));
+    }
+
+    // Function to handle form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const buyerDetails = {
+            name: formData.get('full-name'),
+            email: formData.get('email'),
+            address: {
+                line1: formData.get('address-line-1'),
+                line2: formData.get('address-line-2'),
+                city: formData.get('city'),
+                country: formData.get('country')
+            }
+        };
+        // Store buyer details
+        localStorage.setItem('buyerDetails', JSON.stringify(buyerDetails));
+        // Get current payment details (from backend only)
+        const currentPayment = JSON.parse(localStorage.getItem('currentPayment') || '{}');
+        // Redirect to payment page with only link_id in the URL
+        const baseUrl = window.location.origin;
+        const paymentUrl = `${baseUrl}/Payment Page.html?link_id=${currentPayment.link_id}`;
+        window.location.href = paymentUrl;
+        // Optional: Also save to backend in background (non-blocking)
+        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+        fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/buyer`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(buyerDetails)
+        }).catch(error => {
+            console.warn('Background save to backend failed:', error);
         });
+    }
+
+    // Initialize the form when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeForm();
+        // Add form submit handler
+        const form = document.getElementById('buyer-form');
+        if (form) {
+            form.addEventListener('submit', handleFormSubmit);
+        }
+    });
 </script>
 <script type="module" src="./supabase-client.js"></script>
 </body>

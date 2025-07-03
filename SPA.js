@@ -2768,9 +2768,9 @@ function displayGeneratedLink(linkData) {
     const linkContent = document.getElementById('generated-link-content');
     if (!linkContent) return;
     
-    // Create the proper payment URL with parameters for Buyer Form
+    // Create the proper payment URL with only the link_id for Buyer Form
     const baseUrl = window.location.origin;
-    const paymentUrl = `${baseUrl}/Buyer Form.html?amount=${linkData.amount_usdc}&chain=${linkData.network}&link_id=${linkData.link_id}&wallet_address=${linkData.wallet_address}`;
+    const paymentUrl = `${baseUrl}/Buyer Form.html?link_id=${linkData.link_id}`;
     
     const linkHTML = `
         <div class="generated-link-success">
@@ -2822,122 +2822,120 @@ function displayGeneratedLink(linkData) {
         styles.id = 'generated-link-styles';
         styles.textContent = `
             .generated-link-success {
-                background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-                border: 2px solid #22c55e;
-                border-radius: 12px;
-                padding: 24px;
+                background: var(--bg-secondary, #fff);
+                border: 1.5px solid var(--accent-primary, #22c55e);
+                border-radius: 18px;
+                box-shadow: 0 4px 24px rgba(34, 197, 94, 0.07), 0 1.5px 6px rgba(16, 185, 129, 0.04);
+                padding: 28px 24px 20px 24px;
                 text-align: center;
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
                 animation: slideIn 0.5s ease-out;
             }
-            
             .link-header {
-                margin-bottom: 16px;
+                margin-bottom: 18px;
             }
-            
             .success-icon {
-                color: #22c55e;
-                font-size: 2rem;
+                color: var(--accent-primary, #22c55e);
+                font-size: 2.2rem;
                 margin-bottom: 8px;
             }
-            
             .link-header h4 {
-                color: #166534;
+                color: var(--accent-secondary, #059669);
                 margin: 0;
-                font-size: 1.25rem;
-                font-weight: 600;
+                font-size: 1.3rem;
+                font-weight: 700;
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
             }
-            
             .link-title {
-                font-size: 1.1rem;
+                font-size: 1.08rem;
                 font-weight: 600;
-                color: #374151;
+                color: var(--text-primary, #1a1d29);
                 margin-bottom: 8px;
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
             }
-            
             .link-details {
                 display: flex;
                 justify-content: center;
-                gap: 16px;
-                margin-bottom: 20px;
+                gap: 12px;
+                margin-bottom: 18px;
             }
-            
             .link-amount, .link-network {
-                background: rgba(34, 197, 94, 0.1);
-                padding: 4px 12px;
-                border-radius: 20px;
-                font-size: 0.9rem;
+                background: var(--accent-ultra-light, #ecfdf5);
+                padding: 4px 14px;
+                border-radius: 16px;
+                font-size: 0.93rem;
                 font-weight: 500;
-                color: #166534;
+                color: var(--accent-secondary, #059669);
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
             }
-            
             .url-label {
                 display: block;
                 text-align: left;
-                margin-bottom: 8px;
+                margin-bottom: 7px;
                 font-weight: 500;
-                color: #374151;
+                color: var(--text-primary, #1a1d29);
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
             }
-            
             .url-input-wrapper {
                 display: flex;
                 gap: 8px;
-                margin-bottom: 20px;
+                margin-bottom: 18px;
             }
-            
             .link-url-input {
                 flex: 1;
-                padding: 12px;
-                border: 2px solid #d1d5db;
+                padding: 11px 12px;
+                border: 1.5px solid var(--border-light, #e5f3f0);
                 border-radius: 8px;
                 font-family: monospace;
-                font-size: 0.9rem;
-                background: white;
+                font-size: 0.97rem;
+                background: var(--bg-secondary, #fff);
+                color: var(--text-primary, #1a1d29);
             }
-            
             .copy-link-btn {
-                background: #22c55e;
-                color: white;
+                background: var(--accent-primary, #22c55e);
+                color: #fff;
                 border: none;
-                padding: 12px 16px;
+                padding: 11px 18px;
                 border-radius: 8px;
                 cursor: pointer;
-                font-weight: 500;
+                font-weight: 600;
                 display: flex;
                 align-items: center;
-                gap: 6px;
-                transition: background-color 0.2s;
+                gap: 7px;
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
+                font-size: 0.97rem;
+                box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
+                transition: background 0.18s;
             }
-            
             .copy-link-btn:hover {
-                background: #16a34a;
+                background: var(--accent-secondary, #059669);
             }
-            
             .link-actions {
                 display: flex;
                 justify-content: center;
-                gap: 12px;
+                gap: 10px;
                 flex-wrap: wrap;
             }
-            
             .share-btn, .qr-btn, .test-btn {
-                background: #f3f4f6;
-                border: 2px solid #d1d5db;
-                padding: 10px 16px;
+                background: var(--accent-ultra-light, #ecfdf5);
+                border: 1.5px solid var(--border-light, #e5f3f0);
+                padding: 9px 16px;
                 border-radius: 8px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 6px;
-                font-weight: 500;
-                color: #374151;
-                transition: all 0.2s;
+                gap: 7px;
+                font-weight: 600;
+                color: var(--accent-secondary, #059669);
+                font-family: var(--font-primary, 'Satoshi', sans-serif);
+                font-size: 0.97rem;
+                box-shadow: 0 1.5px 6px rgba(16, 185, 129, 0.04);
+                transition: background 0.18s, border 0.18s;
             }
-            
             .share-btn:hover, .qr-btn:hover, .test-btn:hover {
-                background: #e5e7eb;
-                border-color: #9ca3af;
+                background: var(--accent-light, #d1fae5);
+                border-color: var(--accent-primary, #22c55e);
             }
-            
             @keyframes slideIn {
                 from {
                     opacity: 0;

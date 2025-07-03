@@ -105,7 +105,7 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
-    zoom: 0.85; /* Scale entire dashboard to 85% */
+    zoom: 1; /* Normal scale */
 }
 
 /* ==================== ANIMATED BACKGROUND ==================== */
@@ -7155,25 +7155,25 @@ body::before {
 /* Plans Page Header */
 .plans-header {
     text-align: center;
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-10);
 }
 
 .plans-title {
     font-family: var(--font-primary);
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
     letter-spacing: -0.025em;
 }
 
 .plans-subtitle {
     color: var(--text-secondary);
     font-family: var(--font-primary);
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     font-weight: 400;
-    margin-bottom: var(--space-4);
-    max-width: 450px;
+    margin-bottom: var(--space-6);
+    max-width: 500px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -7182,24 +7182,24 @@ body::before {
 .plans-switch {
     display: flex;
     justify-content: center;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-8);
 }
 
 .billing-toggle {
     background: rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-lg);
-    padding: 3px;
+    padding: var(--space-1);
     display: flex;
-    gap: 2px;
+    gap: var(--space-1);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .billing-option {
-    padding: 6px var(--space-3);
+    padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
     font-family: var(--font-primary);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--text-secondary);
@@ -7214,9 +7214,9 @@ body::before {
 .plans-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
+    gap: var(--space-5);
     margin-bottom: var(--space-12);
-    max-width: 720px;
+    max-width: 960px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -7225,10 +7225,13 @@ body::before {
 .plan-card {
     background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    padding: var(--space-6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     position: relative;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
 }
 
 .plan-card:hover {
@@ -7295,13 +7298,13 @@ body::before {
 .popular-badge,
 .elite-badge {
     position: absolute;
-    top: -5px;
+    top: -8px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 2px var(--space-2);
+    padding: 4px var(--space-3);
     border-radius: var(--radius-full);
     font-family: var(--font-primary);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -7321,18 +7324,18 @@ body::before {
 /* Plan Header */
 .plan-header {
     text-align: center;
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 
 .plan-icon {
-    width: 36px;
-    height: 36px;
-    margin: 0 auto var(--space-2) auto;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto var(--space-3) auto;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.25rem;
     transition: all 0.3s ease;
 }
 
@@ -7353,23 +7356,25 @@ body::before {
 
 .plan-name {
     font-family: var(--font-primary);
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    margin: 0 0 var(--space-1) 0;
+    margin: 0 0 var(--space-2) 0;
     color: var(--text-primary);
 }
 
 .plan-description {
     color: var(--text-secondary);
     font-family: var(--font-primary);
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     margin: 0;
+    line-height: 1.4;
 }
 
 /* Plan Pricing */
 .plan-pricing {
     text-align: center;
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding: var(--space-3) 0;
 }
 
 .price-display {
@@ -7381,22 +7386,22 @@ body::before {
 
 .currency {
     font-family: var(--font-primary);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
 }
 
 .price-amount {
     font-family: var(--font-primary);
-    font-size: 1.8rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0 2px;
+    margin: 0 4px;
 }
 
 .price-period {
     font-family: var(--font-primary);
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--text-secondary);
 }
@@ -7404,29 +7409,30 @@ body::before {
 .price-note {
     color: var(--text-secondary);
     font-family: var(--font-primary);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-style: italic;
 }
 
 /* Plan Features */
 .plan-features {
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-5);
+    flex: 1;
 }
 
 .feature-item {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-1) 0;
+    padding: var(--space-2) 0;
     font-family: var(--font-primary);
     color: var(--text-primary);
-    font-size: 0.8rem;
+    font-size: 0.875rem;
 }
 
 .feature-item i {
-    width: 14px;
+    width: 16px;
     color: var(--accent-primary);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 /* Make X marks red in plan cards */
@@ -7437,10 +7443,10 @@ body::before {
 /* Plan CTA Buttons */
 .plan-cta-btn {
     width: 100%;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     font-family: var(--font-primary);
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
     border: none;
     cursor: pointer;
@@ -7449,6 +7455,7 @@ body::before {
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
+    margin-top: auto;
 }
 
 .basic-btn {

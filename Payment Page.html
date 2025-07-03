@@ -926,16 +926,27 @@
     </div>
 
     <script>
-        // Function to get URL parameters
-        function getUrlParams() {
+        // Function to get link_id from URL
+        function getLinkIdFromUrl() {
             const params = new URLSearchParams(window.location.search);
-            const amount = params.get('amount') || '0.00';
-            const chain = params.get('chain') || 'Polygon';
-            const link_id = params.get('link_id') || 'demo';
-            const wallet_address = params.get('wallet_address') || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
-            
-            console.log('URL Parameters:', { amount, chain, link_id, wallet_address }); // Debug log
-            return { amount, chain, link_id, wallet_address };
+            return params.get('link_id') || '';
+        }
+
+        // Function to fetch payment link details from backend
+        async function fetchPaymentLinkDetails(linkId) {
+            const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/payment-links/${linkId}`);
+                const result = await response.json();
+                if (result.success && result.data) {
+                    return result.data;
+                } else {
+                    throw new Error(result.error || 'Payment link not found');
+                }
+            } catch (error) {
+                console.error('Error fetching payment link details:', error);
+                return null;
+            }
         }
 
         // Function to copy wallet address
@@ -950,100 +961,79 @@
         }
 
         // Function to initialize payment details
-        function initializePaymentDetails() {
-            const params = getUrlParams();
-            console.log('Initializing payment details with params:', params); // Debug log
-            
+        async function initializePaymentDetails() {
+            const linkId = getLinkIdFromUrl();
+            if (!linkId) {
+                alert('Invalid or missing payment link.');
+                return;
+            }
+            const paymentData = await fetchPaymentLinkDetails(linkId);
+            if (!paymentData) {
+                alert('Payment link not found or expired.');
+                return;
+            }
             // Display payment details
             const amountDisplay = document.getElementById('amount-display');
             const chainDisplay = document.getElementById('chain-display');
             const walletAddress = document.getElementById('wallet-address');
-            
             if (amountDisplay) {
-                amountDisplay.textContent = `$${params.amount} USDC`;
-                console.log('Updated amount display:', amountDisplay.textContent); // Debug log
-            } else {
-                console.error('Amount display element not found!'); // Debug log
+                amountDisplay.textContent = `$${parseFloat(paymentData.amount_usdc).toFixed(2)} USDC`;
             }
-            
             if (chainDisplay) {
-                chainDisplay.innerHTML = `<i class="fas fa-link"></i><span>${params.chain}</span>`;
-                console.log('Updated chain display:', chainDisplay.textContent); // Debug log
-            } else {
-                console.error('Chain display element not found!'); // Debug log
+                chainDisplay.innerHTML = `<i class="fas fa-link"></i><span>${paymentData.network.charAt(0).toUpperCase() + paymentData.network.slice(1)}</span>`;
             }
-            
             if (walletAddress) {
-                walletAddress.textContent = params.wallet_address;
-                console.log('Updated wallet address:', walletAddress.textContent); // Debug log
-            } else {
-                console.error('Wallet address element not found!'); // Debug log
+                walletAddress.textContent = paymentData.wallet_address;
             }
-            
-            // Store the current payment details
+            // Store the current payment details (from backend only)
             const paymentDetails = {
-                amount: params.amount,
-                chain: params.chain,
-                link_id: params.link_id,
-                wallet_address: params.wallet_address
+                amount: paymentData.amount_usdc,
+                chain: paymentData.network,
+                link_id: paymentData.link_id,
+                wallet_address: paymentData.wallet_address
             };
-            
             localStorage.setItem('currentPayment', JSON.stringify(paymentDetails));
-            console.log('Stored payment details:', paymentDetails); // Debug log
         }
 
         // Function to handle payment confirmation
         async function handlePaymentConfirmation() {
-            const params = getUrlParams();
-            console.log('Handling payment confirmation with params:', params);
-            
+            const currentPayment = JSON.parse(localStorage.getItem('currentPayment') || '{}');
             const confirmButton = document.getElementById('confirm-payment');
             const originalText = confirmButton.innerHTML;
-            
             // Show loading state
             confirmButton.disabled = true;
             confirmButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Scanning Blockchain...</span>';
-            
             try {
                 // Call backend to verify payment
                 const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-                const response = await fetch(`${BACKEND_URL}/api/payment-links/${params.link_id}/verify`, {
+                const response = await fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/verify`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        wallet_address: params.wallet_address,
-                        amount_usdc: parseFloat(params.amount),
-                        network: params.chain.toLowerCase()
+                        wallet_address: currentPayment.wallet_address,
+                        amount_usdc: parseFloat(currentPayment.amount),
+                        network: currentPayment.chain.toLowerCase()
                     })
                 });
-                
                 const result = await response.json();
-                console.log('Payment verification result:', result);
-                
                 const baseUrl = window.location.origin;
-                
                 if (result.success && result.payment_found) {
                     // Payment found - redirect to success page
                     localStorage.setItem('paymentStatus', 'success');
                     localStorage.setItem('transactionHash', result.transaction_hash || '');
-                    const successUrl = `${baseUrl}/Success Page.html?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}&tx=${result.transaction_hash || ''}`;
+                    const successUrl = `${baseUrl}/Success Page.html?link_id=${currentPayment.link_id}&tx=${result.transaction_hash || ''}`;
                     window.location.href = successUrl;
                 } else {
                     // Payment not found - redirect to failure page
                     localStorage.setItem('paymentStatus', 'failed');
-                    const failureUrl = `${baseUrl}/Failure Page.html?amount=${params.amount}&chain=${params.chain}&link_id=${params.link_id}&wallet_address=${params.wallet_address}`;
+                    const failureUrl = `${baseUrl}/Failure Page.html?link_id=${currentPayment.link_id}`;
                     window.location.href = failureUrl;
                 }
-                
             } catch (error) {
                 console.error('Error verifying payment:', error);
-                
-                // Network error - show error message but don't redirect yet
                 alert('Failed to verify payment. Please check your connection and try again.');
-                
-                // Reset button state
                 confirmButton.disabled = false;
                 confirmButton.innerHTML = originalText;
             }
@@ -1055,16 +1045,13 @@
             const expandButton = document.querySelector('.expand-button');
             const fullTransactionId = '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
             const shortTransactionId = '0x1234567890abcdef...567890abcdef';
-            
             if (transactionId.classList.contains('expanded')) {
-                // Collapse - show short version
                 transactionId.classList.remove('expanded');
                 expandButton.classList.remove('expanded');
                 transactionId.textContent = shortTransactionId;
                 expandButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
                 expandButton.setAttribute('aria-label', 'Expand transaction ID');
             } else {
-                // Expand - show full version
                 transactionId.classList.add('expanded');
                 expandButton.classList.add('expanded');
                 transactionId.textContent = fullTransactionId;
@@ -1077,26 +1064,19 @@
         function initializeTransactionId() {
             const transactionId = document.getElementById('transaction-id');
             const shortTransactionId = '0x1234567890abcdef...567890abcdef';
-            
             if (transactionId) {
                 transactionId.textContent = shortTransactionId;
-                console.log('Initialized transaction ID:', shortTransactionId);
             }
         }
 
         // Initialize the page when it loads
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Payment page loaded'); // Debug log
             initializePaymentDetails();
             initializeTransactionId();
-            
             // Add payment confirmation handler
             const confirmButton = document.getElementById('confirm-payment');
             if (confirmButton) {
                 confirmButton.addEventListener('click', handlePaymentConfirmation);
-                console.log('Payment confirmation handler added'); // Debug log
-            } else {
-                console.error('Confirm payment button not found!'); // Debug log
             }
         });
     </script>

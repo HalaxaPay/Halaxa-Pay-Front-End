@@ -5159,3 +5159,148 @@ window.showPlansPageDirectly = function() {
         console.log('✅ Plans page forced to show');
     }
 };
+
+// Remove the plan refresh and database info buttons
+function removePlanRefreshAndDatabaseButtons() {
+    const refreshBtn = document.getElementById('refresh-plan-btn');
+    if (refreshBtn) refreshBtn.remove();
+    const dbBtn = document.getElementById('database-info-btn');
+    if (dbBtn) dbBtn.remove();
+}
+
+// Add profile picture button (blue, same size as golden one)
+function addProfileMenuButton() {
+    removePlanRefreshAndDatabaseButtons();
+    if (document.getElementById('profile-menu-btn')) return;
+    
+    const btn = document.createElement('button');
+    btn.id = 'profile-menu-btn';
+    btn.innerHTML = '<i class="fas fa-user-circle"></i>';
+    btn.style.cssText = `
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 10000;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    `;
+    btn.addEventListener('mouseenter', () => {
+        btn.style.transform = 'translateY(-2px)';
+        btn.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.35)';
+    });
+    btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translateY(0)';
+        btn.style.boxShadow = '0 4px 15px rgba(59, 130, 246, 0.25)';
+    });
+
+    // Menu logic
+    btn.onclick = async function(e) {
+        e.stopPropagation();
+        let menu = document.getElementById('profile-menu-dropdown');
+        if (menu) {
+            menu.remove();
+            return;
+        }
+        menu = document.createElement('div');
+        menu.id = 'profile-menu-dropdown';
+        menu.style.cssText = `
+            position: fixed;
+            top: 68px;
+            right: 15px;
+            min-width: 170px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10001;
+            animation: fadeIn 0.2s;
+        `;
+        // Log Out button (always shown)
+        const logoutBtn = document.createElement('button');
+        logoutBtn.textContent = 'Log Out';
+        logoutBtn.style.cssText = `
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 10px 24px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        `;
+        logoutBtn.onmouseenter = () => logoutBtn.style.background = '#fef2f2';
+        logoutBtn.onmouseleave = () => logoutBtn.style.background = 'none';
+        logoutBtn.onclick = async () => {
+            // Log out logic
+            try {
+                if (window.auth && window.auth.signOut) {
+                    await window.auth.signOut();
+                }
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('userPlan');
+                localStorage.removeItem('userData');
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            } catch (err) {
+                alert('Error logging out. Please try again.');
+            }
+        };
+        menu.appendChild(logoutBtn);
+        // Unsubscribe button (only if not on basic)
+        let plan = localStorage.getItem('userPlan') || 'basic';
+        if (plan !== 'basic') {
+            const unsubBtn = document.createElement('button');
+            unsubBtn.textContent = 'Unsubscribe';
+            unsubBtn.style.cssText = `
+                background: none;
+                border: none;
+                color: #ef4444;
+                font-weight: 700;
+                font-size: 1rem;
+                padding: 10px 24px;
+                text-align: left;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: background 0.2s;
+            `;
+            unsubBtn.onmouseenter = () => unsubBtn.style.background = '#fef2f2';
+            unsubBtn.onmouseleave = () => unsubBtn.style.background = 'none';
+            unsubBtn.onclick = () => {
+                alert('Unsubscribe functionality coming soon!');
+            };
+            menu.appendChild(unsubBtn);
+        }
+        document.body.appendChild(menu);
+        // Close menu on outside click
+        setTimeout(() => {
+            document.addEventListener('click', function handler(ev) {
+                if (!menu.contains(ev.target) && ev.target !== btn) {
+                    menu.remove();
+                    document.removeEventListener('click', handler);
+                }
+            });
+        }, 0);
+    };
+    document.body.appendChild(btn);
+}
+
+// Call this after page load
+window.addEventListener('DOMContentLoaded', () => {
+    addProfileMenuButton();
+});

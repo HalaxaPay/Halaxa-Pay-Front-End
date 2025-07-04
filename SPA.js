@@ -47,8 +47,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
         
-        // Add plan refresh button for testing/debugging
-        addPlanRefreshButton();
         
     } catch (error) {
         console.error('🚨 CRITICAL: Access control initialization failed:', error);

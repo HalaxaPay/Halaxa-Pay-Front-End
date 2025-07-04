@@ -5160,3 +5160,214 @@ function addProfileMenuButton() {
 window.addEventListener('DOMContentLoaded', () => {
     addProfileMenuButton();
 });
+
+// Add dark mode toggle switch next to profile picture button
+function addDarkModeToggleButton() {
+    if (document.getElementById('dark-mode-toggle')) return;
+    const btn = document.createElement('button');
+    btn.id = 'dark-mode-toggle';
+    btn.title = 'Toggle dark mode';
+    btn.style.cssText = `
+        position: fixed;
+        top: 15px;
+        right: 75px;
+        z-index: 10000;
+        width: 48px;
+        height: 48px;
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+    `;
+    // iOS-style toggle
+    btn.innerHTML = `
+      <div id="dark-toggle-track" style="width: 38px; height: 22px; border-radius: 12px; background: #e5e7eb; position: relative; transition: background 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <div id="dark-toggle-ball" style="width: 18px; height: 18px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: left 0.3s, background 0.3s;"></div>
+      </div>
+    `;
+    function setDarkMode(enabled) {
+        if (enabled) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'true');
+            btn.querySelector('#dark-toggle-track').style.background = '#2563eb';
+            btn.querySelector('#dark-toggle-ball').style.left = '18px';
+            btn.querySelector('#dark-toggle-ball').style.background = '#fff';
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', 'false');
+            btn.querySelector('#dark-toggle-track').style.background = '#e5e7eb';
+            btn.querySelector('#dark-toggle-ball').style.left = '2px';
+            btn.querySelector('#dark-toggle-ball').style.background = '#fff';
+        }
+    }
+    // Initial state from localStorage
+    setDarkMode(localStorage.getItem('darkMode') === 'true');
+    btn.onclick = () => {
+        const enabled = !document.body.classList.contains('dark-mode');
+        setDarkMode(enabled);
+    };
+    document.body.appendChild(btn);
+}
+// Add dark mode CSS
+(function injectDarkModeCSS() {
+    if (document.getElementById('halaxa-dark-mode-style')) return;
+    const style = document.createElement('style');
+    style.id = 'halaxa-dark-mode-style';
+    style.textContent = `
+      body.dark-mode {
+        background: #18181b !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .dashboard-header,
+      body.dark-mode .metrics-panel,
+      body.dark-mode .account-status-card,
+      body.dark-mode .ai-intelligence-card,
+      body.dark-mode .performance-observatory,
+      body.dark-mode .plan-badge,
+      body.dark-mode .subscription-actions,
+      body.dark-mode .modal-content,
+      body.dark-mode .page-content,
+      body.dark-mode .stats-panel,
+      body.dark-mode .usage-monitoring-panel {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        box-shadow: none !important;
+      }
+      body.dark-mode .plan-badge,
+      body.dark-mode .user-avatar {
+        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
+        color: #fff !important;
+      }
+      body.dark-mode .metric-label,
+      body.dark-mode .metric-value,
+      body.dark-mode .metric-insight,
+      body.dark-mode .user-name,
+      body.dark-mode .user-email,
+      body.dark-mode .plan-name,
+      body.dark-mode .plan-description,
+      body.dark-mode .feature-item,
+      body.dark-mode .price-amount,
+      body.dark-mode .currency,
+      body.dark-mode .price-period,
+      body.dark-mode .price-note {
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .modal-content,
+      body.dark-mode .access-restriction-modal,
+      body.dark-mode .page-upgrade-overlay {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode input,
+      body.dark-mode textarea,
+      body.dark-mode select {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        border-color: #374151 !important;
+      }
+      body.dark-mode .btn-upgrade-plan,
+      body.dark-mode .btn-view-plans,
+      body.dark-mode .btn-upgrade-small,
+      body.dark-mode .btn-upgrade-now {
+        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
+        color: #fff !important;
+        border: none !important;
+      }
+      body.dark-mode .upgrade-btn,
+      body.dark-mode .manage-btn {
+        background: #23232a !important;
+        color: #f87171 !important;
+        border: 1px solid #374151 !important;
+      }
+      body.dark-mode .modal-actions button,
+      body.dark-mode .modal-actions .btn-close-modal {
+        background: #23232a !important;
+        color: #f87171 !important;
+        border: 1px solid #374151 !important;
+      }
+      body.dark-mode .chart-action,
+      body.dark-mode .time-btn {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        border: 1px solid #374151 !important;
+      }
+      body.dark-mode .metric-card {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        box-shadow: none !important;
+      }
+      body.dark-mode .sidebar {
+        background: #18181b !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .nav-item,
+      body.dark-mode .mobile-nav-item {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .nav-item.active,
+      body.dark-mode .mobile-nav-item.active {
+        background: #2563eb !important;
+        color: #fff !important;
+      }
+      body.dark-mode .feature-item i.fa-times {
+        color: #ef4444 !important;
+      }
+      body.dark-mode .notification-content {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .user-avatar {
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+      }
+      body.dark-mode .plan-status-badge {
+        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
+        color: #fff !important;
+      }
+      body.dark-mode .page-restriction-banner {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .banner-content .plan-badge {
+        background: #2563eb !important;
+        color: #fff !important;
+      }
+      body.dark-mode .usage-monitoring-panel {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .copy-button {
+        background: #2563eb !important;
+        color: #fff !important;
+      }
+      body.dark-mode .wallet-address-container {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        border-color: #374151 !important;
+      }
+      body.dark-mode .wallet-address {
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .insight-item {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+      }
+      body.dark-mode .insight-icon.info {
+        color: #2563eb !important;
+      }
+      body.dark-mode .modal-content button,
+      body.dark-mode .modal-content .btn-close-modal {
+        background: #23232a !important;
+        color: #f87171 !important;
+        border: 1px solid #374151 !important;
+      }
+    `;
+    document.head.appendChild(style);
+})();
+// Call after DOMContentLoaded
+window.addEventListener('DOMContentLoaded', () => {
+    addDarkModeToggleButton();
+});

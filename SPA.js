@@ -5221,8 +5221,8 @@ function addDarkModeToggleButton() {
         background: #18181b !important;
         color: #f3f4f6 !important;
       }
-      body.dark-mode .dashboard-header,
-      body.dark-mode .metrics-panel,
+      /* Card base style for dark mode */
+      body.dark-mode .metric-card,
       body.dark-mode .account-status-card,
       body.dark-mode .ai-intelligence-card,
       body.dark-mode .performance-observatory,
@@ -5231,16 +5231,41 @@ function addDarkModeToggleButton() {
       body.dark-mode .modal-content,
       body.dark-mode .page-content,
       body.dark-mode .stats-panel,
-      body.dark-mode .usage-monitoring-panel {
+      body.dark-mode .usage-monitoring-panel,
+      body.dark-mode .insight-item,
+      body.dark-mode .card,
+      body.dark-mode .order-card,
+      body.dark-mode .payment-link-card {
         background: #23232a !important;
         color: #f3f4f6 !important;
-        box-shadow: none !important;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
+        border-radius: 18px !important;
+        border: 1px solid #23232a !important;
+        transition: background 0.3s, color 0.3s;
       }
-      body.dark-mode .plan-badge,
-      body.dark-mode .user-avatar {
-        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
-        color: #fff !important;
+      /* Card hover effect */
+      body.dark-mode .metric-card:hover,
+      body.dark-mode .account-status-card:hover,
+      body.dark-mode .order-card:hover,
+      body.dark-mode .payment-link-card:hover {
+        background: #26263a !important;
+        box-shadow: 0 4px 32px rgba(37,99,235,0.10) !important;
+        border: 1px solid #2563eb33 !important;
       }
+      /* Card accent variations */
+      body.dark-mode .metric-card.network,
+      body.dark-mode .order-card.network {
+        background: linear-gradient(135deg, #23232a 80%, #2563eb22 100%) !important;
+      }
+      body.dark-mode .metric-card.revenue,
+      body.dark-mode .order-card.revenue {
+        background: linear-gradient(135deg, #23232a 80%, #10b98122 100%) !important;
+      }
+      body.dark-mode .metric-card,
+      body.dark-mode .order-card {
+        border: 1px solid #23232a !important;
+      }
+      /* Card text and icon color */
       body.dark-mode .metric-label,
       body.dark-mode .metric-value,
       body.dark-mode .metric-insight,
@@ -5252,8 +5277,33 @@ function addDarkModeToggleButton() {
       body.dark-mode .price-amount,
       body.dark-mode .currency,
       body.dark-mode .price-period,
-      body.dark-mode .price-note {
+      body.dark-mode .price-note,
+      body.dark-mode .order-card * {
         color: #f3f4f6 !important;
+      }
+      /* Card border highlight for selected/active */
+      body.dark-mode .metric-card.selected,
+      body.dark-mode .order-card.selected {
+        border: 1.5px solid #2563eb !important;
+        box-shadow: 0 0 0 2px #2563eb33 !important;
+      }
+      /* Card subtle gradient for variety */
+      body.dark-mode .metric-card,
+      body.dark-mode .order-card {
+        background: linear-gradient(120deg, #23232a 80%, #18181b 100%) !important;
+      }
+      /* Card shadow for depth */
+      body.dark-mode .metric-card,
+      body.dark-mode .order-card {
+        box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
+      }
+      /* Rest of dark mode styles (unchanged) */
+      body.dark-mode .dashboard-header,
+      body.dark-mode .metrics-panel,
+      body.dark-mode .plan-badge,
+      body.dark-mode .user-avatar {
+        background: linear-gradient(135deg, #2563eb 0%, #1e293b 100%) !important;
+        color: #fff !important;
       }
       body.dark-mode .modal-content,
       body.dark-mode .access-restriction-modal,
@@ -5293,11 +5343,6 @@ function addDarkModeToggleButton() {
         background: #23232a !important;
         color: #f3f4f6 !important;
         border: 1px solid #374151 !important;
-      }
-      body.dark-mode .metric-card {
-        background: #23232a !important;
-        color: #f3f4f6 !important;
-        box-shadow: none !important;
       }
       body.dark-mode .sidebar {
         background: #18181b !important;
@@ -5349,10 +5394,6 @@ function addDarkModeToggleButton() {
         border-color: #374151 !important;
       }
       body.dark-mode .wallet-address {
-        color: #f3f4f6 !important;
-      }
-      body.dark-mode .insight-item {
-        background: #23232a !important;
         color: #f3f4f6 !important;
       }
       body.dark-mode .insight-icon.info {

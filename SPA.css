@@ -11980,287 +11980,142 @@ body.dark-mode {
     background: #fff !important;
   }
 
-  /* === DARK MODE PATCH FOR DASHBOARD CARDS & PANELS === */
-.dark-mode .dashboard-card,
-.dark-mode .analytics-panel,
-.dark-mode .metrics-panel,
-.dark-mode .transaction-insights,
-.dark-mode .market-overview,
-.dark-mode .monthly-consolidation,
-.dark-mode .revenue-analytics,
-.dark-mode .balance-over-time,
-.dark-mode .ai-cards,
-.dark-mode .key-metrics,
-.dark-mode .insight-card,
-.dark-mode .summary-card {
-  background: #23242a !important; /* deep dark background */
-  color: #f3f6fa !important;      /* light text */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
-  border-color: #2c2d33 !important;
-}
-
-.dark-mode .dashboard-card h2,
-.dark-mode .dashboard-card h3,
-.dark-mode .dashboard-card h4,
-.dark-mode .dashboard-card p,
-.dark-mode .dashboard-card span,
-.dark-mode .metrics-panel h2,
-.dark-mode .metrics-panel h3,
-.dark-mode .metrics-panel h4,
-.dark-mode .metrics-panel p,
-.dark-mode .metrics-panel span,
-.dark-mode .transaction-insights h2,
-.dark-mode .transaction-insights h3,
-.dark-mode .transaction-insights h4,
-.dark-mode .transaction-insights p,
-.dark-mode .transaction-insights span {
-  color: #f3f6fa !important;
-}
-
-.dark-mode .dashboard-card .icon,
-.dark-mode .metrics-panel .icon,
-.dark-mode .transaction-insights .icon {
-  filter: brightness(1.2) invert(0.85);
-}
-
-.dark-mode .dashboard-card .muted,
-.dark-mode .metrics-panel .muted,
-.dark-mode .transaction-insights .muted {
-  color: #b0b3b8 !important;
-}
-
-.dark-mode .dashboard-card input,
-.dark-mode .dashboard-card select,
-.dark-mode .dashboard-card textarea {
-  background: #23242a !important;
-  color: #f3f6fa !important;
-  border-color: #2c2d33 !important;
-}
-
-/* Remove white backgrounds from charts and loading states */
-.dark-mode .chart-container,
-.dark-mode .loading-state,
-.dark-mode .revenue-analytics,
-.dark-mode .balance-over-time {
-  background: #23242a !important;
-  color: #f3f6fa !important;
-}
-
-/* Optional: Soften blue panels for dark mode */
-.dark-mode .key-metrics,
-.dark-mode .transaction-insights {
-  background: linear-gradient(135deg, #232a3a 0%, #1a1d23 100%) !important;
-  color: #f3f6fa !important;
-}
-
-/* Optional: Card borders for separation */
-.dark-mode .dashboard-card,
-.dark-mode .metrics-panel,
-.dark-mode .transaction-insights {
-  border: 1px solid #2c2d33 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
-}
-
-/* === DARK MODE PATCH FOR SUMMARY CARDS & INFO PANELS === */
-.dark-mode .summary-card,
-.dark-mode .stat-card,
-.dark-mode .info-card,
-.dark-mode .dashboard-summary,
-.dark-mode .dashboard-stat,
-.dark-mode .usdc-flow-card,
-.dark-mode .recent-transactions-card,
-.dark-mode .payment-link-card,
-.dark-mode .card,
-.dark-mode .overview-card {
-  background: #23242a !important;   /* deep dark background */
-  color: #f3f6fa !important;        /* light text */
-  border: 1px solid #2c2d33 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
-}
-
-.dark-mode .summary-card *,
-.dark-mode .stat-card *,
-.dark-mode .info-card *,
-.dark-mode .dashboard-summary *,
-.dark-mode .dashboard-stat *,
-.dark-mode .usdc-flow-card *,
-.dark-mode .recent-transactions-card *,
-.dark-mode .payment-link-card *,
-.dark-mode .card *,
-.dark-mode .overview-card * {
-  color: #f3f6fa !important;
-}
-
-.dark-mode .summary-card .icon,
-.dark-mode .stat-card .icon,
-.dark-mode .info-card .icon,
-.dark-mode .dashboard-summary .icon,
-.dark-mode .dashboard-stat .icon,
-.dark-mode .usdc-flow-card .icon,
-.dark-mode .recent-transactions-card .icon,
-.dark-mode .payment-link-card .icon,
-.dark-mode .card .icon,
-.dark-mode .overview-card .icon {
-  filter: brightness(1.2) invert(0.85);
-}
-
-.dark-mode .summary-card .muted,
-.dark-mode .stat-card .muted,
-.dark-mode .info-card .muted,
-.dark-mode .dashboard-summary .muted,
-.dark-mode .dashboard-stat .muted,
-.dark-mode .usdc-flow-card .muted,
-.dark-mode .recent-transactions-card .muted,
-.dark-mode .payment-link-card .muted,
-.dark-mode .card .muted,
-.dark-mode .overview-card .muted {
-  color: #b0b3b8 !important;
-}
-
-/* Remove white backgrounds from loading states and chart containers */
-.dark-mode .summary-card .loading-state,
-.dark-mode .stat-card .loading-state,
-.dark-mode .info-card .loading-state,
-.dark-mode .dashboard-summary .loading-state,
-.dark-mode .dashboard-stat .loading-state,
-.dark-mode .usdc-flow-card .loading-state,
-.dark-mode .recent-transactions-card .loading-state,
-.dark-mode .payment-link-card .loading-state,
-.dark-mode .card .loading-state,
-.dark-mode .overview-card .loading-state,
-.dark-mode .chart-container {
-  background: #23242a !important;
-  color: #f3f6fa !important;
-}
-
-/* Optional: If you want a subtle gradient for cards in dark mode */
-.dark-mode .summary-card,
-.dark-mode .stat-card,
-.dark-mode .info-card,
-.dark-mode .dashboard-summary,
-.dark-mode .dashboard-stat,
-.dark-mode .usdc-flow-card,
-.dark-mode .recent-transactions-card,
-.dark-mode .payment-link-card,
-.dark-mode .card,
-.dark-mode .overview-card {
-  background: linear-gradient(135deg, #23242a 60%, #232a33 100%) !important;
-}
-
-/* Optional: For cards with input fields */
-.dark-mode .summary-card input,
-.dark-mode .summary-card select,
-.dark-mode .summary-card textarea,
-.dark-mode .stat-card input,
-.dark-mode .stat-card select,
-.dark-mode .stat-card textarea,
-.dark-mode .info-card input,
-.dark-mode .info-card select,
-.dark-mode .info-card textarea {
-  background: #23242a !important;
-  color: #f3f6fa !important;
-  border-color: #2c2d33 !important;
-}
-
-/* === DARK MODE PATCH FOR AUTOMATION PAGE CARDS & PANELS === */
-.dark-mode .automation-card,
-.dark-mode .webhook-integration,
-.dark-mode .account-panel,
-.dark-mode .setup-guide,
-.dark-mode .integration-panel,
-.dark-mode .integration-card,
-.dark-mode .quick-setup-guide,
-.dark-mode .popular-integrations,
-.dark-mode .info-panel,
-.dark-mode .automation-header,
-.dark-mode .automation-section,
-.dark-mode .automation-box {
+  /* === DARK MODE PATCH FOR ALL CARDS & PANELS (UNIFIED) === */
+body.dark-mode .summary-card,
+body.dark-mode .stat-card,
+body.dark-mode .info-card,
+body.dark-mode .dashboard-summary,
+body.dark-mode .dashboard-stat,
+body.dark-mode .usdc-flow-card,
+body.dark-mode .recent-transactions-card,
+body.dark-mode .payment-link-card,
+body.dark-mode .card,
+body.dark-mode .overview-card,
+body.dark-mode .automation-card,
+body.dark-mode .webhook-integration,
+body.dark-mode .account-panel,
+body.dark-mode .setup-guide,
+body.dark-mode .integration-panel,
+body.dark-mode .integration-card,
+body.dark-mode .quick-setup-guide,
+body.dark-mode .popular-integrations,
+body.dark-mode .info-panel,
+body.dark-mode .automation-header,
+body.dark-mode .automation-section,
+body.dark-mode .automation-box {
   background: #23242a !important;
   color: #f3f6fa !important;
   border: 1px solid #2c2d33 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
 }
 
-/* For all text inside these cards */
-.dark-mode .automation-card *,
-.dark-mode .webhook-integration *,
-.dark-mode .account-panel *,
-.dark-mode .setup-guide *,
-.dark-mode .integration-panel *,
-.dark-mode .integration-card *,
-.dark-mode .quick-setup-guide *,
-.dark-mode .popular-integrations *,
-.dark-mode .info-panel *,
-.dark-mode .automation-header *,
-.dark-mode .automation-section *,
-.dark-mode .automation-box * {
+body.dark-mode .summary-card *,
+body.dark-mode .stat-card *,
+body.dark-mode .info-card *,
+body.dark-mode .dashboard-summary *,
+body.dark-mode .dashboard-stat *,
+body.dark-mode .usdc-flow-card *,
+body.dark-mode .recent-transactions-card *,
+body.dark-mode .payment-link-card *,
+body.dark-mode .card *,
+body.dark-mode .overview-card *,
+body.dark-mode .automation-card *,
+body.dark-mode .webhook-integration *,
+body.dark-mode .account-panel *,
+body.dark-mode .setup-guide *,
+body.dark-mode .integration-panel *,
+body.dark-mode .integration-card *,
+body.dark-mode .quick-setup-guide *,
+body.dark-mode .popular-integrations *,
+body.dark-mode .info-panel *,
+body.dark-mode .automation-header *,
+body.dark-mode .automation-section *,
+body.dark-mode .automation-box * {
   color: #f3f6fa !important;
 }
 
-/* Muted/secondary text */
-.dark-mode .automation-card .muted,
-.dark-mode .webhook-integration .muted,
-.dark-mode .account-panel .muted,
-.dark-mode .setup-guide .muted,
-.dark-mode .integration-panel .muted,
-.dark-mode .integration-card .muted,
-.dark-mode .quick-setup-guide .muted,
-.dark-mode .popular-integrations .muted,
-.dark-mode .info-panel .muted {
-  color: #b0b3b8 !important;
-}
-
-/* Icon color adjustment for dark mode */
-.dark-mode .automation-card .icon,
-.dark-mode .webhook-integration .icon,
-.dark-mode .account-panel .icon,
-.dark-mode .setup-guide .icon,
-.dark-mode .integration-panel .icon,
-.dark-mode .integration-card .icon,
-.dark-mode .quick-setup-guide .icon,
-.dark-mode .popular-integrations .icon,
-.dark-mode .info-panel .icon {
+body.dark-mode .summary-card .icon,
+body.dark-mode .stat-card .icon,
+body.dark-mode .info-card .icon,
+body.dark-mode .dashboard-summary .icon,
+body.dark-mode .dashboard-stat .icon,
+body.dark-mode .usdc-flow-card .icon,
+body.dark-mode .recent-transactions-card .icon,
+body.dark-mode .payment-link-card .icon,
+body.dark-mode .card .icon,
+body.dark-mode .overview-card .icon,
+body.dark-mode .automation-card .icon,
+body.dark-mode .webhook-integration .icon,
+body.dark-mode .account-panel .icon,
+body.dark-mode .setup-guide .icon,
+body.dark-mode .integration-panel .icon,
+body.dark-mode .integration-card .icon,
+body.dark-mode .quick-setup-guide .icon,
+body.dark-mode .popular-integrations .icon,
+body.dark-mode .info-panel .icon,
+body.dark-mode .automation-header .icon,
+body.dark-mode .automation-section .icon,
+body.dark-mode .automation-box .icon {
   filter: brightness(1.2) invert(0.85);
 }
 
-/* Input fields inside cards */
-.dark-mode .automation-card input,
-.dark-mode .automation-card select,
-.dark-mode .automation-card textarea,
-.dark-mode .webhook-integration input,
-.dark-mode .webhook-integration select,
-.dark-mode .webhook-integration textarea {
+body.dark-mode .summary-card .muted,
+body.dark-mode .stat-card .muted,
+body.dark-mode .info-card .muted,
+body.dark-mode .dashboard-summary .muted,
+body.dark-mode .dashboard-stat .muted,
+body.dark-mode .usdc-flow-card .muted,
+body.dark-mode .recent-transactions-card .muted,
+body.dark-mode .payment-link-card .muted,
+body.dark-mode .card .muted,
+body.dark-mode .overview-card .muted,
+body.dark-mode .automation-card .muted,
+body.dark-mode .webhook-integration .muted,
+body.dark-mode .account-panel .muted,
+body.dark-mode .setup-guide .muted,
+body.dark-mode .integration-panel .muted,
+body.dark-mode .integration-card .muted,
+body.dark-mode .quick-setup-guide .muted,
+body.dark-mode .popular-integrations .muted,
+body.dark-mode .info-panel .muted,
+body.dark-mode .automation-header .muted,
+body.dark-mode .automation-section .muted,
+body.dark-mode .automation-box .muted {
+  color: #b0b3b8 !important;
+}
+
+body.dark-mode .summary-card input,
+body.dark-mode .summary-card select,
+body.dark-mode .summary-card textarea,
+body.dark-mode .stat-card input,
+body.dark-mode .stat-card select,
+body.dark-mode .stat-card textarea,
+body.dark-mode .info-card input,
+body.dark-mode .info-card select,
+body.dark-mode .info-card textarea,
+body.dark-mode .automation-card input,
+body.dark-mode .automation-card select,
+body.dark-mode .automation-card textarea,
+body.dark-mode .webhook-integration input,
+body.dark-mode .webhook-integration select,
+body.dark-mode .webhook-integration textarea {
   background: #23242a !important;
   color: #f3f6fa !important;
   border-color: #2c2d33 !important;
 }
 
-/* Buttons: keep accent color, but adjust text if needed */
-.dark-mode .automation-card button,
-.dark-mode .webhook-integration button {
-  color: #23242a !important; /* dark text for contrast on orange */
-  background: #ff8352 !important; /* keep your accent color */
-  border: none;
-}
-
-/* Switches/toggles: background for dark mode */
-.dark-mode .automation-card .switch,
-.dark-mode .webhook-integration .switch {
-  background: #2c2d33 !important;
-}
-
-/* Optional: Subtle gradient for cards in dark mode */
-.dark-mode .automation-card,
-.dark-mode .webhook-integration,
-.dark-mode .account-panel,
-.dark-mode .setup-guide,
-.dark-mode .integration-panel,
-.dark-mode .integration-card,
-.dark-mode .quick-setup-guide,
-.dark-mode .popular-integrations,
-.dark-mode .info-panel,
-.dark-mode .automation-header,
-.dark-mode .automation-section,
-.dark-mode .automation-box {
-  background: linear-gradient(135deg, #23242a 60%, #232a33 100%) !important;
+body.dark-mode .summary-card .loading-state,
+body.dark-mode .stat-card .loading-state,
+body.dark-mode .info-card .loading-state,
+body.dark-mode .dashboard-summary .loading-state,
+body.dark-mode .dashboard-stat .loading-state,
+body.dark-mode .usdc-flow-card .loading-state,
+body.dark-mode .recent-transactions-card .loading-state,
+body.dark-mode .payment-link-card .loading-state,
+body.dark-mode .card .loading-state,
+body.dark-mode .overview-card .loading-state,
+body.dark-mode .automation-card .loading-state,
+body.dark-mode .webhook-integration .loading-state {
+  background: #23242a !important;
+  color: #f3f6fa !important;
 }

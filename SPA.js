@@ -5637,6 +5637,9 @@ function addDarkModeToggleButton() {
       body.dark-mode .integration-list-status * {
         color: #f3f4f6 !important;
       }
+      body.dark-mode .integrations-card {
+        background: #23232a !important;
+      }
     `;
     document.head.appendChild(style);
 })();

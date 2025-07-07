@@ -5411,6 +5411,55 @@ function addDarkModeToggleButton() {
         color: #f87171 !important;
         border: 1px solid #374151 !important;
       }
+      body.dark-mode .payment-link-form,
+      body.dark-mode .quick-action-card,
+      body.dark-mode .stat-card,
+      body.dark-mode .flow-stat-card,
+      body.dark-mode .crypto-flow-chart-panel,
+      body.dark-mode .actions-hub,
+      body.dark-mode .treasury-card,
+      body.dark-mode .metrics-panel,
+      body.dark-mode .chart-card,
+      body.dark-mode .setup-guide-card,
+      body.dark-mode .account-status-card,
+      body.dark-mode .webhook-integration-card,
+      body.dark-mode .subscription-card,
+      body.dark-mode .ai-intelligence-card,
+      body.dark-mode .usage-stat-card,
+      body.dark-mode .achievements-card,
+      body.dark-mode .intelligence-panel,
+      body.dark-mode .activity-monitor-section,
+      body.dark-mode .activity-table,
+      body.dark-mode .no-activity-message {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
+        border-radius: 18px !important;
+        border: 1px solid #23232a !important;
+        transition: background 0.3s, color 0.3s;
+      }
+      body.dark-mode .payment-link-form *,
+      body.dark-mode .quick-action-card *,
+      body.dark-mode .stat-card *,
+      body.dark-mode .flow-stat-card *,
+      body.dark-mode .crypto-flow-chart-panel *,
+      body.dark-mode .actions-hub *,
+      body.dark-mode .treasury-card *,
+      body.dark-mode .metrics-panel *,
+      body.dark-mode .chart-card *,
+      body.dark-mode .setup-guide-card *,
+      body.dark-mode .account-status-card *,
+      body.dark-mode .webhook-integration-card *,
+      body.dark-mode .subscription-card *,
+      body.dark-mode .ai-intelligence-card *,
+      body.dark-mode .usage-stat-card *,
+      body.dark-mode .achievements-card *,
+      body.dark-mode .intelligence-panel *,
+      body.dark-mode .activity-monitor-section *,
+      body.dark-mode .activity-table *,
+      body.dark-mode .no-activity-message * {
+        color: #f3f4f6 !important;
+      }
     `;
     document.head.appendChild(style);
 })();

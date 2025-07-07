@@ -5235,13 +5235,19 @@ function addDarkModeToggleButton() {
       body.dark-mode .insight-item,
       body.dark-mode .card,
       body.dark-mode .order-card,
-      body.dark-mode .payment-link-card {
+      body.dark-mode .payment-link-card,
+      body.dark-mode .welcome-header,
+      body.dark-mode .market-pulse-card {
         background: #23232a !important;
         color: #f3f4f6 !important;
         box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
         border-radius: 18px !important;
         border: 1px solid #23232a !important;
         transition: background 0.3s, color 0.3s;
+      }
+      body.dark-mode .welcome-header *,
+      body.dark-mode .market-pulse-card * {
+        color: #f3f4f6 !important;
       }
       /* Card hover effect */
       body.dark-mode .metric-card:hover,

@@ -12119,3 +12119,73 @@ body.dark-mode .webhook-integration .loading-state {
   background: #23242a !important;
   color: #f3f6fa !important;
 }
+
+/* === DARK MODE PATCH FOR ALL ACTUAL CARDS & PANELS === */
+body.dark-mode .metric-card,
+body.dark-mode .metrics-panel,
+body.dark-mode .intelligence-panel,
+body.dark-mode .insight-item,
+body.dark-mode .usage-stat-card,
+body.dark-mode .achievements-card,
+body.dark-mode .subscription-card,
+body.dark-mode .ai-intelligence-card,
+body.dark-mode .plan-badge,
+body.dark-mode .feature-item,
+body.dark-mode .flow-stat-card,
+body.dark-mode .crypto-flow-chart-panel,
+body.dark-mode .webhook-integration-card,
+body.dark-mode .account-status-card,
+body.dark-mode .setup-guide-card,
+body.dark-mode .automation-header,
+body.dark-mode .automation-main-section,
+body.dark-mode .automation-tips-section,
+body.dark-mode .activity-monitor-section,
+body.dark-mode .activity-table,
+body.dark-mode .no-activity-message {
+  background: #23242a !important;
+  color: #f3f6fa !important;
+  border: 1px solid #2c2d33 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+}
+
+body.dark-mode .metric-card *,
+body.dark-mode .metrics-panel *,
+body.dark-mode .intelligence-panel *,
+body.dark-mode .insight-item *,
+body.dark-mode .usage-stat-card *,
+body.dark-mode .achievements-card *,
+body.dark-mode .subscription-card *,
+body.dark-mode .ai-intelligence-card *,
+body.dark-mode .plan-badge *,
+body.dark-mode .feature-item *,
+body.dark-mode .flow-stat-card *,
+body.dark-mode .crypto-flow-chart-panel *,
+body.dark-mode .webhook-integration-card *,
+body.dark-mode .account-status-card *,
+body.dark-mode .setup-guide-card *,
+body.dark-mode .automation-header *,
+body.dark-mode .automation-main-section *,
+body.dark-mode .automation-tips-section *,
+body.dark-mode .activity-monitor-section *,
+body.dark-mode .activity-table *,
+body.dark-mode .no-activity-message * {
+  color: #f3f6fa !important;
+}
+
+body.dark-mode .metric-card .icon,
+body.dark-mode .metrics-panel .icon,
+body.dark-mode .intelligence-panel .icon,
+body.dark-mode .insight-item .icon,
+body.dark-mode .usage-stat-card .icon,
+body.dark-mode .achievements-card .icon,
+body.dark-mode .subscription-card .icon,
+body.dark-mode .ai-intelligence-card .icon,
+body.dark-mode .plan-badge .icon,
+body.dark-mode .feature-item .icon,
+body.dark-mode .flow-stat-card .icon,
+body.dark-mode .crypto-flow-chart-panel .icon,
+body.dark-mode .webhook-integration-card .icon,
+body.dark-mode .account-status-card .icon,
+body.dark-mode .setup-guide-card .icon {
+  filter: brightness(1.2) invert(0.85);
+}

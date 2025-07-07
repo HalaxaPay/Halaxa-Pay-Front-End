@@ -5637,59 +5637,6 @@ function addDarkModeToggleButton() {
       body.dark-mode .integration-list-status * {
         color: #f3f4f6 !important;
       }
-      body.dark-mode .integrations-card,
-      body.dark-mode .integrations-header,
-      body.dark-mode .integrations-icon,
-      body.dark-mode .integrations-content,
-      body.dark-mode .integration-grid,
-      body.dark-mode .integration-item,
-      body.dark-mode .integration-details,
-      body.dark-mode .integration-badge,
-      body.dark-mode .transaction-card,
-      body.dark-mode .payment-link-header,
-      body.dark-mode .payment-link-title,
-      body.dark-mode .payment-link-subtitle,
-      body.dark-mode .active-links-card,
-      body.dark-mode .active-links-table,
-      body.dark-mode .table-header-section,
-      body.dark-mode .table-title,
-      body.dark-mode .table-subtitle,
-      body.dark-mode .table-body,
-      body.dark-mode .table-row,
-      body.dark-mode .table-cell,
-      body.dark-mode .recent-transactions-card {
-        background: #23232a !important;
-        color: #f3f4f6 !important;
-        box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
-        border-radius: 18px !important;
-        border: 1px solid #23232a !important;
-        transition: background 0.3s, color 0.3s;
-        display: block !important;
-      }
-      body.dark-mode .integrations-card *,
-      body.dark-mode .integrations-header *,
-      body.dark-mode .integrations-icon *,
-      body.dark-mode .integrations-content *,
-      body.dark-mode .integration-grid *,
-      body.dark-mode .integration-item *,
-      body.dark-mode .integration-details *,
-      body.dark-mode .integration-badge *,
-      body.dark-mode .transaction-card *,
-      body.dark-mode .payment-link-header *,
-      body.dark-mode .payment-link-title *,
-      body.dark-mode .payment-link-subtitle *,
-      body.dark-mode .active-links-card *,
-      body.dark-mode .active-links-table *,
-      body.dark-mode .table-header-section *,
-      body.dark-mode .table-title *,
-      body.dark-mode .table-subtitle *,
-      body.dark-mode .table-body *,
-      body.dark-mode .table-row *,
-      body.dark-mode .table-cell *,
-      body.dark-mode .recent-transactions-card * {
-        color: #f3f4f6 !important;
-        display: block !important;
-      }
     `;
     document.head.appendChild(style);
 })();

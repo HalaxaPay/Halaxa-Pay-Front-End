@@ -47,6 +47,44 @@ export const auth = {
       });
       
       if (error) throw error;
+      
+      // ✅ AUTOMATIC INSERT INTO USERS TABLE AFTER SUCCESSFUL SIGNUP
+      if (data.user) {
+        console.log('✅ User successfully signed up, inserting into users table...');
+        
+        try {
+          const { data: insertData, error: insertError } = await supabase
+            .from('users')
+            .insert([{
+              id: data.user.id,
+              email: data.user.email,
+              created_at: new Date().toISOString(),
+              first_name: userData.first_name || '',
+              last_name: userData.last_name || '',
+              full_name: userData.full_name || [userData.first_name, userData.last_name].filter(Boolean).join(' ') || '',
+              plan: 'basic',
+              is_email_verified: false // Will be true after email confirmation
+            }])
+            .select()
+            .single();
+          
+          if (insertError) {
+            // Log error but don't block signup process
+            console.error('❌ Failed to insert user into users table:', insertError.message);
+            console.log('⚠️ User signup successful but users table insert failed - continuing...');
+          } else {
+            console.log('✅ User successfully inserted into users table:', {
+              id: insertData.id.substring(0, 8) + '****',
+              email: insertData.email
+            });
+          }
+        } catch (insertException) {
+          // Log exception but don't block signup process
+          console.error('❌ Exception during users table insert:', insertException.message);
+          console.log('⚠️ User signup successful but users table insert failed - continuing...');
+        }
+      }
+      
       return { success: true, data };
     } catch (error) {
       console.error('Sign up error:', error);

@@ -58,12 +58,15 @@ export const auth = {
             .insert([{
               id: data.user.id,
               email: data.user.email,
-              created_at: new Date().toISOString(),
+              password: '', // Empty password since using Supabase Auth
               first_name: userData.first_name || '',
               last_name: userData.last_name || '',
               full_name: userData.full_name || [userData.first_name, userData.last_name].filter(Boolean).join(' ') || '',
               plan: 'basic',
-              is_email_verified: false // Will be true after email confirmation
+              is_email_verified: false, // Will be true after email confirmation
+              created_at: new Date().toISOString(),
+              last_login: new Date().toISOString(), // Set initial last login
+              refresh_token: '' // Empty initially, will be set during login
             }])
             .select()
             .single();

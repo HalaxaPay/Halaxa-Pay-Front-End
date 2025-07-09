@@ -1010,6 +1010,51 @@
                 height: 120px;
             }
         }
+        .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 18px 0 0 0;
+        }
+        .google-signin-btn {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 2px rgba(60,64,67,.08), 0 1.5px 6px 0 rgba(60,64,67,.08);
+            border-radius: 6px;
+            height: 40px;
+            padding: 0 18px 0 10px;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+            outline: none;
+            min-width: 220px;
+        }
+        .google-signin-btn:hover {
+            box-shadow: 0 2px 4px rgba(60,64,67,.12), 0 4px 12px 0 rgba(60,64,67,.12);
+        }
+        .google-logo {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        .google-btn-text {
+            color: #3c4043;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Satoshi', Arial, sans-serif;
+            letter-spacing: 0.1px;
+        }
+        @media (max-width: 480px) {
+            .google-signin-btn {
+                min-width: 180px;
+                height: 36px;
+                padding: 0 10px 0 8px;
+            }
+            .google-btn-text {
+                font-size: 15px;
+            }
+        }
     </style>
 
     <!-- Floating particles -->
@@ -1059,6 +1104,15 @@
                     </div>
 
                     <button type="submit" class="signup-button" id="signupButton">Create Account</button>
+                    
+                    <!-- Google Sign-In Button -->
+                    <div class="google-btn-wrapper">
+                        <button type="button" class="google-signin-btn">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
+                            <span class="google-btn-text">Sign in with Google</span>
+                        </button>
+                    </div>
+                    
                     <div class="error-message" id="generalError"></div>
                     <div class="login-link">
                         Already have an account? <a href="login.html">Sign In</a>
@@ -1486,12 +1540,12 @@
                 generalError.style.border = '1px solid rgba(16, 185, 129, 0.3)';
                 generalError.style.borderRadius = '8px';
                 generalError.style.padding = '12px';
-                generalError.textContent = '✅ Account created and dashboard initialized! Redirecting to login...';
+                generalError.textContent = '✅ Account created and dashboard initialized! Redirecting to your dashboard...';
 
-                // Redirect to login page in same directory
+                // Redirect to personalized dashboard (SPA.html) immediately
                 setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
+                    window.location.href = 'SPA.html';
+                }, 1200);
 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -1550,6 +1604,61 @@
     } else {
       checkGeoBlocking();
     }
+    </script>
+    
+    <script type="module">
+        import { supabase } from './supabase-client.js';
+        const googleBtn = document.querySelector('.google-signin-btn');
+        const generalError = document.getElementById('generalError');
+        const signupButton = document.getElementById('signupButton');
+        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async () => {
+                try {
+                    signupButton.classList.add('loading');
+                    signupButton.textContent = 'Signing in with Google...';
+                    generalError.style.display = 'none';
+
+                    // Start Google OAuth
+                    const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+                    if (error) throw error;
+                    // The page will redirect to Google and back
+                } catch (err) {
+                    generalError.style.display = 'block';
+                    generalError.textContent = err.message || 'Google sign-in failed.';
+                    signupButton.classList.remove('loading');
+                    signupButton.textContent = 'Create Account';
+                }
+            });
+        }
+
+        // On page load, check if we have a Supabase session (after redirect)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user && session.provider_token) {
+                // Call backend to sync user and get backend JWT
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ supabaseToken: session.access_token })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || 'OAuth sync failed');
+                    // Store backend JWTs
+                    if (result.accessToken) localStorage.setItem('accessToken', result.accessToken);
+                    if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
+                    localStorage.setItem('userActive', 'true');
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    // Redirect to dashboard
+                    window.location.href = 'SPA.html';
+                } catch (err) {
+                    generalError.style.display = 'block';
+                    generalError.textContent = err.message || 'OAuth sync failed.';
+                }
+            }
+        });
     </script>
     
     <script type="module" src="./supabase-client.js"></script>

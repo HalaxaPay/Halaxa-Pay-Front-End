@@ -1235,6 +1235,51 @@
             height: 100px;
         }
     }
+    .google-btn-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 18px 0 0 0;
+    }
+    .google-signin-btn {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #dadce0;
+        box-shadow: 0 1px 2px rgba(60,64,67,.08), 0 1.5px 6px 0 rgba(60,64,67,.08);
+        border-radius: 6px;
+        height: 40px;
+        padding: 0 18px 0 10px;
+        cursor: pointer;
+        transition: box-shadow 0.2s;
+        outline: none;
+        min-width: 220px;
+    }
+    .google-signin-btn:hover {
+        box-shadow: 0 2px 4px rgba(60,64,67,.12), 0 4px 12px 0 rgba(60,64,67,.12);
+    }
+    .google-logo {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+    }
+    .google-btn-text {
+        color: #3c4043;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: 'Satoshi', Arial, sans-serif;
+        letter-spacing: 0.1px;
+    }
+    @media (max-width: 480px) {
+        .google-signin-btn {
+            min-width: 180px;
+            height: 36px;
+            padding: 0 10px 0 8px;
+        }
+        .google-btn-text {
+            font-size: 15px;
+        }
+    }
 </style>
 
 <!-- Floating particles like dashboard -->
@@ -1282,6 +1327,15 @@
                 <button type="submit" class="login-button" id="loginButton">
                     Access Dashboard
                 </button>
+                
+                <!-- Google Sign-In Button -->
+                <div class="google-btn-wrapper">
+                    <button type="button" class="google-signin-btn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
+                        <span class="google-btn-text">Sign in with Google</span>
+                    </button>
+                </div>
+                
                 <div class="error-message" id="generalError"></div>
                 <div class="signup-link">
                     New to Halaxa? <a href="signup.html">Create your account</a>
@@ -1344,29 +1398,27 @@
     const loginButton = document.getElementById('loginButton');
 </script>
 
-<script>
-    // Function to handle login form submission
+<script type="module">
+    import { supabase } from './supabase-client.js';
+    const googleBtn = document.querySelector('.google-signin-btn');
+    const generalError = document.getElementById('generalError');
+    // Use the already declared loginButton
+    const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+
+    // Function to handle login form submission (email/password)
     async function handleLogin(event) {
         event.preventDefault();
-        
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('generalError');
-        const loginButton = document.getElementById('loginButton');
-        
         // Clear any previous errors
         errorMessage.style.display = 'none';
-        
         // Add loading state
         loginButton.classList.add('loading');
         loginButton.textContent = 'Authenticating...';
-        
         console.log('Starting login process for:', email);
-        
         try {
-            console.log('Making request to backend...');
-            const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-        const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+            const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1375,71 +1427,76 @@
                 credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-            
             const data = await response.json();
-            console.log('Response data:', data);
-            
             if (response.ok) {
-                console.log('✅ Login successful - backend authentication complete');
-                
-                // Store backend authentication tokens
-                if (data.accessToken) {
-                    localStorage.setItem('accessToken', data.accessToken);
-                }
-                if (data.refreshToken) {
-                    localStorage.setItem('refreshToken', data.refreshToken);
-                }
-                
-                // Store user session data
-                if (data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                }
-                
-                // Set session flags
+                if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
+                if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+                if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
                 localStorage.setItem('userActive', 'true');
                 localStorage.setItem('isPreview', 'false');
-                
-                // Clean up any old data
                 localStorage.removeItem('sellerId');
                 localStorage.removeItem('halaxa_token');
                 localStorage.removeItem('token');
-                
-                console.log('🔐 Backend session established successfully');
-                
-                // Success feedback
                 loginButton.textContent = 'Access Granted! 🎉';
                 loginButton.style.background = 'var(--gradient-mixed)';
-                
-                // 🚀 SECURE REDIRECT (no user ID in URL)
                 setTimeout(() => {
-                    console.log('🚀 Redirecting to secure dashboard...');
-                    window.location.href = 'SPA.html'; // Clean URL, no parameters
+                    window.location.href = 'SPA.html';
                 }, 1500);
             } else {
-                console.log('Login failed:', data.error);
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';
                 errorMessage.style.display = 'block';
-                
-                // Reset button
                 loginButton.classList.remove('loading');
                 loginButton.textContent = 'Access Dashboard';
             }
         } catch (error) {
-            console.error('Login error:', error);
             errorMessage.textContent = 'Network error. Please check your connection and try again.';
             errorMessage.style.display = 'block';
-            
-            // Reset button
             loginButton.classList.remove('loading');
             loginButton.textContent = 'Access Dashboard';
         }
     }
-
-    // Add event listener to login form
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+    if (googleBtn) {
+        googleBtn.addEventListener('click', async () => {
+            try {
+                loginButton.classList.add('loading');
+                loginButton.textContent = 'Signing in with Google...';
+                generalError.style.display = 'none';
+                const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+                if (error) throw error;
+            } catch (err) {
+                generalError.style.display = 'block';
+                generalError.textContent = err.message || 'Google sign-in failed.';
+                loginButton.classList.remove('loading');
+                loginButton.textContent = 'Access Dashboard';
+            }
+        });
+    }
+
+    // On page load, check if we have a Supabase session (after redirect)
+    document.addEventListener('DOMContentLoaded', async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user && session.provider_token) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ supabaseToken: session.access_token })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'OAuth sync failed');
+                if (result.accessToken) localStorage.setItem('accessToken', result.accessToken);
+                if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('user', JSON.stringify(result.user));
+                window.location.href = 'SPA.html';
+            } catch (err) {
+                generalError.style.display = 'block';
+                generalError.textContent = err.message || 'OAuth sync failed.';
+            }
+        }
+    });
 </script>
 </body>
 </html>

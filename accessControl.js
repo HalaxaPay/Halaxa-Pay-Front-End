@@ -110,7 +110,7 @@ class HalaxaAccessControl {
       // Fetch user plan from Supabase
       const { data: userPlan, error } = await supabase
         .from('user_plans')
-        .select('plan_type, started_at, next_billing, auto_renewal')
+        .select('plan_type,started_at,next_billing,auto_renewal')
         .eq('user_id', this.currentUser.id)
         .single();
 

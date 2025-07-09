@@ -1607,7 +1607,7 @@
     </script>
     
     <script type="module">
-        import { supabase } from './supabase-client.js';
+        import { supabase, signInWithGoogle } from './supabase-client.js';
         const googleBtn = document.querySelector('.google-signin-btn');
         const generalError = document.getElementById('generalError');
         const signupButton = document.getElementById('signupButton');
@@ -1619,11 +1619,7 @@
                     signupButton.classList.add('loading');
                     signupButton.textContent = 'Signing in with Google...';
                     generalError.style.display = 'none';
-
-                    // Start Google OAuth
-                    const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-                    if (error) throw error;
-                    // The page will redirect to Google and back
+                    await signInWithGoogle();
                 } catch (err) {
                     generalError.style.display = 'block';
                     generalError.textContent = err.message || 'Google sign-in failed.';
@@ -1632,33 +1628,6 @@
                 }
             });
         }
-
-        // On page load, check if we have a Supabase session (after redirect)
-        document.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session && session.user && session.provider_token) {
-                // Call backend to sync user and get backend JWT
-                try {
-                    const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ supabaseToken: session.access_token })
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.error || 'OAuth sync failed');
-                    // Store backend JWTs
-                    if (result.accessToken) localStorage.setItem('accessToken', result.accessToken);
-                    if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
-                    localStorage.setItem('userActive', 'true');
-                    localStorage.setItem('user', JSON.stringify(result.user));
-                    // Redirect to dashboard
-                    window.location.href = 'SPA.html';
-                } catch (err) {
-                    generalError.style.display = 'block';
-                    generalError.textContent = err.message || 'OAuth sync failed.';
-                }
-            }
-        });
     </script>
     
     <script type="module" src="./supabase-client.js"></script>

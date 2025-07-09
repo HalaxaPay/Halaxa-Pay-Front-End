@@ -1399,10 +1399,9 @@
 </script>
 
 <script type="module">
-    import { supabase } from './supabase-client.js';
+    import { supabase, signInWithGoogle } from './supabase-client.js';
     const googleBtn = document.querySelector('.google-signin-btn');
     const generalError = document.getElementById('generalError');
-    // Use the already declared loginButton
     const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
     // Function to handle login form submission (email/password)
@@ -1463,8 +1462,7 @@
                 loginButton.classList.add('loading');
                 loginButton.textContent = 'Signing in with Google...';
                 generalError.style.display = 'none';
-                const { data, error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-                if (error) throw error;
+                await signInWithGoogle();
             } catch (err) {
                 generalError.style.display = 'block';
                 generalError.textContent = err.message || 'Google sign-in failed.';
@@ -1473,30 +1471,6 @@
             }
         });
     }
-
-    // On page load, check if we have a Supabase session (after redirect)
-    document.addEventListener('DOMContentLoaded', async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session && session.user && session.provider_token) {
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ supabaseToken: session.access_token })
-                });
-                const result = await response.json();
-                if (!response.ok) throw new Error(result.error || 'OAuth sync failed');
-                if (result.accessToken) localStorage.setItem('accessToken', result.accessToken);
-                if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
-                localStorage.setItem('userActive', 'true');
-                localStorage.setItem('user', JSON.stringify(result.user));
-                window.location.href = 'SPA.html';
-            } catch (err) {
-                generalError.style.display = 'block';
-                generalError.textContent = err.message || 'OAuth sync failed.';
-            }
-        }
-    });
 </script>
 </body>
 </html>

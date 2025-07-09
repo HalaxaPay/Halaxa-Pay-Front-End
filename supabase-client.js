@@ -336,6 +336,55 @@ auth.onAuthStateChange((event, session) => {
   }
 });
 
+// ==================== GLOBAL AUTH REDIRECT LISTENER ==================== //
+
+// Helper: Get backend JWT and redirect to personalized dashboard
+async function handlePostAuthRedirect(session) {
+  if (!session || !session.user || !session.access_token) return;
+  try {
+    // Call backend to sync user and get backend JWT
+    const response = await fetch('https://halaxa-backend.onrender.com/api/auth/oauth-sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ supabaseToken: session.access_token })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.accessToken || !result.user) throw new Error(result.error || 'OAuth sync failed');
+    // Store backend JWTs
+    localStorage.setItem('accessToken', result.accessToken);
+    if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
+    localStorage.setItem('userActive', 'true');
+    localStorage.setItem('user', JSON.stringify(result.user));
+    // Redirect to personalized dashboard
+    window.location.href = `/spa/${result.user.id}`;
+  } catch (err) {
+    // Optionally show error UI
+    console.error('OAuth sync failed:', err);
+    alert('Google sign-in failed: ' + (err.message || 'OAuth sync failed.'));
+  }
+}
+
+// Listen for all auth state changes (including Google OAuth)
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' && session && session.user) {
+    // Only redirect if not already on the dashboard
+    if (!window.location.pathname.startsWith('/spa')) {
+      await handlePostAuthRedirect(session);
+    }
+  }
+});
+
+// Export a helper for Google sign-in with redirectTo
+export async function signInWithGoogle() {
+  const redirectTo = 'https://halaxapay.com/login.html'; // After Google, return to login page for JWT sync
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo }
+  });
+  if (error) throw error;
+  return data;
+}
+
 // ==================== EXPORT FOR GLOBAL USE ==================== //
 
 // Make available globally

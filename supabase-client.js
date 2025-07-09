@@ -355,8 +355,8 @@ async function handlePostAuthRedirect(session) {
     if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
     localStorage.setItem('userActive', 'true');
     localStorage.setItem('user', JSON.stringify(result.user));
-    // Redirect to personalized dashboard
-    window.location.href = `/spa/${result.user.id}`;
+    // Redirect to personalized dashboard (correct format)
+    window.location.href = `/SPA.html?userid=${result.user.id}`;
   } catch (err) {
     // Optionally show error UI
     console.error('OAuth sync failed:', err);
@@ -376,7 +376,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 
 // Export a helper for Google sign-in with redirectTo
 export async function signInWithGoogle() {
-  const redirectTo = 'https://halaxapay.com/login.html'; // After Google, return to login page for JWT sync
+  const redirectTo = 'https://halaxapay.com/SPA.html'; // After Google, return to dashboard for JWT sync
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo }

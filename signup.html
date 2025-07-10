@@ -494,6 +494,18 @@
             background: rgba(46, 204, 113, 0.08);
         }
 
+        .password-helper {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: var(--space-2);
+            line-height: 1.4;
+            opacity: 0.8;
+        }
+
+        .password-strength {
+            transition: all 0.3s ease;
+        }
+
         .terms-checkbox {
             display: flex;
             align-items: flex-start;
@@ -503,6 +515,10 @@
             margin-bottom: var(--space-8);
             animation: fadeInUp 0.6s ease-out 0.9s both;
             line-height: 1.5;
+            padding: var(--space-4);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .terms-checkbox input[type="checkbox"] {
@@ -625,6 +641,13 @@
             background: rgba(52, 152, 219, 0.05);
         }
 
+        .login-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: var(--space-6) 0 var(--space-4) 0;
+            opacity: 0.6;
+        }
+
         .error-message {
             display: none;
             color: #ef4444;
@@ -651,25 +674,32 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
-        /* Loading state */
+        /* Enhanced Loading state */
         .signup-button.loading {
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.9;
+            background: var(--gradient-mixed);
+            position: relative;
         }
 
         .signup-button.loading::after {
             content: '';
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-top: 2px solid white;
             border-radius: 50%;
             animation: buttonLoading 1s linear infinite;
-            margin-left: var(--space-2);
+            transform: translate(-50%, -50%);
+            margin-left: 0;
         }
 
         @keyframes buttonLoading {
-            to { transform: rotate(360deg); }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         /* Enhanced Mobile Responsive Design */
@@ -818,9 +848,21 @@
                 font-size: 1rem;
             }
 
+            .password-strength {
+                right: 3.5rem;
+                top: 2.8rem;
+                font-size: 1rem;
+            }
+
+            .password-helper {
+                font-size: 0.8rem;
+                margin-top: var(--space-1);
+            }
+
             .terms-checkbox {
                 margin-bottom: var(--space-6);
                 font-size: 0.9rem;
+                padding: var(--space-3);
             }
 
             .terms-checkbox input[type="checkbox"] {
@@ -1015,44 +1057,80 @@
             justify-content: center;
             align-items: center;
             margin: 18px 0 0 0;
+            animation: fadeInUp 0.6s ease-out 1.3s both;
         }
         .google-signin-btn {
             display: flex;
             align-items: center;
+            justify-content: center;
             background: #fff;
             border: 1px solid #dadce0;
-            box-shadow: 0 1px 2px rgba(60,64,67,.08), 0 1.5px 6px 0 rgba(60,64,67,.08);
-            border-radius: 6px;
-            height: 40px;
-            padding: 0 18px 0 10px;
+            box-shadow: 0 2px 8px rgba(60,64,67,.12), 0 4px 16px rgba(60,64,67,.08);
+            border-radius: 50px;
+            height: 48px;
+            padding: 0 24px;
             cursor: pointer;
-            transition: box-shadow 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
-            min-width: 220px;
+            min-width: 264px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Satoshi', Arial, sans-serif;
         }
         .google-signin-btn:hover {
-            box-shadow: 0 2px 4px rgba(60,64,67,.12), 0 4px 12px 0 rgba(60,64,67,.12);
+            box-shadow: 0 4px 12px rgba(60,64,67,.16), 0 8px 24px rgba(60,64,67,.12);
+            transform: translateY(-2px);
+            border-color: #c1c5c9;
+        }
+        .google-signin-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(60,64,67,.12);
+        }
+        .google-signin-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        .google-signin-btn:hover::before {
+            left: 100%;
         }
         .google-logo {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            margin-right: 16px;
+            transition: transform 0.3s ease;
+        }
+        .google-signin-btn:hover .google-logo {
+            transform: scale(1.1);
         }
         .google-btn-text {
             color: #3c4043;
             font-size: 16px;
-            font-weight: 500;
-            font-family: 'Satoshi', Arial, sans-serif;
-            letter-spacing: 0.1px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            transition: color 0.3s ease;
+        }
+        .google-signin-btn:hover .google-btn-text {
+            color: #1a73e8;
         }
         @media (max-width: 480px) {
             .google-signin-btn {
-                min-width: 180px;
-                height: 36px;
-                padding: 0 10px 0 8px;
+                min-width: 216px;
+                height: 44px;
+                padding: 0 20px;
             }
             .google-btn-text {
                 font-size: 15px;
+            }
+            .google-logo {
+                width: 22px;
+                height: 22px;
+                margin-right: 14px;
             }
         }
     </style>
@@ -1071,8 +1149,8 @@
         <div class="left-side">
             <div class="signup-container">
                 <div class="logo">
-                    <h1>Join Halaxa</h1>
-                    <p>Start your crypto payment journey</p>
+                    <h1>Accept Crypto Like a Pro</h1>
+                    <p>Secure, fast, and trusted by global founders.</p>
                 </div>
                 <form id="signupForm">
                     <div class="form-group">
@@ -1089,6 +1167,8 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Create a strong password" required>
                         <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
+                        <i class="password-strength fas fa-check-circle" id="passwordStrength" style="display: none; color: var(--accent-primary); position: absolute; right: 3rem; top: 2.8rem; font-size: 1.1rem;"></i>
+                        <div class="password-helper" id="passwordHelper">Minimum 8 characters. Use numbers and a special character for higher security.</div>
                         <div class="error-message" id="passwordError"></div>
                     </div>
                     <div class="form-group">
@@ -1100,10 +1180,13 @@
                     
                     <div class="terms-checkbox">
                         <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">I agree to Halaxa's Terms of Service and Privacy Policy</label>
+                        <label for="terms">
+                            <i class="fas fa-lock" style="margin-right: 8px; color: var(--text-secondary); font-size: 0.9rem;"></i>
+                            ✅ I agree to Halaxa's <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Terms of Service</a> and <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Privacy Policy</a>
+                        </label>
                     </div>
 
-                    <button type="submit" class="signup-button" id="signupButton">Create Account</button>
+                    <button type="submit" class="signup-button" id="signupButton">Get Started</button>
                     
                     <!-- Google Sign-In Button -->
                     <div class="google-btn-wrapper">
@@ -1115,7 +1198,8 @@
                     
                     <div class="error-message" id="generalError"></div>
                     <div class="login-link">
-                        Already have an account? <a href="login.html">Sign In</a>
+                        <div class="login-divider"></div>
+                        <span><i class="fas fa-wave-hand" style="margin-right: 8px; color: var(--text-secondary);"></i>Already joined? <a href="login.html">Sign in here</a></span>
                     </div>
                 </form>
             </div>
@@ -1173,6 +1257,22 @@
             confirmPasswordToggle.classList.toggle('fa-eye-slash');
         });
 
+        // Password strength checker
+        const passwordStrength = document.getElementById('passwordStrength');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const hasMinLength = password.length >= 8;
+            const hasNumber = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            
+            if (hasMinLength && hasNumber && hasSpecialChar) {
+                passwordStrength.style.display = 'block';
+            } else {
+                passwordStrength.style.display = 'none';
+            }
+        });
+
         // Enhanced form interactions
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
@@ -1184,8 +1284,6 @@
                 this.parentElement.style.transform = 'translateY(0)';
             });
         });
-
-        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
         // ==================== USER DASHBOARD INITIALIZATION ==================== //
         
@@ -1462,9 +1560,9 @@
             // Clear previous errors
             generalError.style.display = 'none';
             
-            // Add loading state
-            signupButton.classList.add('loading');
-            signupButton.textContent = 'Creating Account...';
+                            // Add loading state
+                signupButton.classList.add('loading');
+                signupButton.textContent = 'Accessing Dashboard';
             
             if (password !== confirmPassword) {
                 generalError.style.display = 'block';

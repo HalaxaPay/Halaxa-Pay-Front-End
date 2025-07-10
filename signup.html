@@ -1141,61 +1141,56 @@
     </div>
 
     <div class="split-container">
-        <div class="left-side">
-            <div class="signup-container">
-                <div class="logo">
-                    <h1>Join Halaxa</h1>
-                    <p>Accept Crypto Like a Pro</p>
+        <div class="left-side" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-primary);">
+            <div style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+                <div style="width: 100%; text-align: center; margin-bottom: 2.2rem;">
+                    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--accent-blue); margin-bottom: 0.3rem; letter-spacing: -1px;">Join Halaxa</h1>
+                    <div style="font-size: 1.05rem; color: var(--text-secondary); font-weight: 500;">Accept crypto like a pro</div>
                 </div>
-                <form id="signupForm">
-                    <div class="form-group">
-                        <label for="fullname">Full Name</label>
-                        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.6rem;">
+                    <button type="button" class="google-signin-btn" style="width: 100%; justify-content: center; font-size: 1.05rem; font-weight: 600; border-radius: 999px; height: 44px;">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo" style="width: 22px; height: 22px; margin-right: 12px;">Continue with Google
+                    </button>
+                    <button type="button" class="apple-signin-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #dadce0; box-shadow: 0 1px 2px rgba(60,64,67,.08); border-radius: 999px; height: 44px; padding: 0 12px; cursor: pointer; font-size: 1.05rem; font-weight: 600; color: #222; transition: box-shadow 0.2s;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple logo" style="width: 20px; height: 20px; margin-right: 12px;">Continue with Apple
+                    </button>
+                </div>
+                <div style="width: 100%; display: flex; align-items: center; margin: 1.2rem 0 1.2rem 0;">
+                    <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
+                    <span style="margin: 0 0.75rem; color: var(--text-tertiary); font-size: 0.95rem;">or</span>
+                    <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
+                </div>
+                <form id="signupForm" style="width: 100%; display: flex; flex-direction: column; gap: 1.3rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="fullname" style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; font-size: 0.98rem;">Full Name</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required style="height: 36px; font-size: 0.98rem; border-radius: 8px; padding: 0 12px;">
                         <div class="error-message" id="fullnameError"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your business email" required>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="email" style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; font-size: 0.98rem;">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your business email" required style="height: 36px; font-size: 0.98rem; border-radius: 8px; padding: 0 12px;">
                         <div class="error-message" id="emailError"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="password" style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; font-size: 0.98rem;">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required style="height: 36px; font-size: 0.98rem; border-radius: 8px; padding: 0 12px;">
                         <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
                         <i class="password-strength fas fa-check-circle" id="passwordStrength" style="display: none; color: var(--accent-primary); position: absolute; right: 3rem; top: 2.8rem; font-size: 1.1rem;"></i>
                         <div class="error-message" id="passwordError"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
-                        <i class="password-toggle fas fa-eye" id="confirmPasswordToggle"></i>
-                        <div class="error-message" id="confirmPasswordError"></div>
-                    </div>
-                    
-                    <div class="terms-checkbox">
-                        <input type="checkbox" id="terms" name="terms" required>
-                        <label for="terms">
-                            <i class="fas fa-lock" style="margin-right: 8px; color: var(--text-secondary); font-size: 0.9rem;"></i>
-                         I agree to Halaxa's <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Terms of Service</a> and <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Privacy Policy</a>
+                    <div class="terms-checkbox" style="margin: 0.5rem 0 0.2rem 0; padding: 0.7rem 0.9rem; border: 1px solid var(--border-light); border-radius: 0.7rem; background: #fafbfc; display: flex; align-items: center; gap: 0.7rem;">
+                        <input type="checkbox" id="terms" name="terms" required style="width: 18px; height: 18px;">
+                        <label for="terms" style="font-size: 0.97rem; color: var(--text-primary);">
+                            <i class="fas fa-lock" style="margin-right: 6px; color: var(--text-secondary); font-size: 0.9rem;"></i>
+                            I agree to Halaxa's <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Terms of Service</a> and <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Privacy Policy</a>
                         </label>
                     </div>
-
-                    <button type="submit" class="signup-button" id="signupButton">Get Started</button>
-                    
-                    <!-- Google Sign-In Button -->
-                    <div class="google-btn-wrapper">
-                        <button type="button" class="google-signin-btn">
-                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
-                            <span class="google-btn-text">Sign in with Google</span>
-                        </button>
-                    </div>
-                    
+                    <button type="submit" class="signup-button" id="signupButton" style="width: 100%; margin-top: 0.5rem; font-size: 1.05rem; font-weight: 700; height: 42px; border-radius: 999px;">Get Started</button>
                     <div class="error-message" id="generalError"></div>
-                    <div class="login-link">
-                        <div class="login-divider"></div>
-                        <span><i class="fas fa-wave-hand" style="margin-right: 8px; color: var(--text-secondary);"></i>Already joined? <a href="login.html">Sign in here</a></span>
-                    </div>
                 </form>
+                <div style="width: 100%; text-align: center; margin-top: 2.2rem; font-size: 0.98rem; color: var(--text-secondary);">
+                    Already joined? <a href="login.html" style="color: var(--accent-blue); font-weight: 600; text-decoration: none;">Sign in here</a>
+                </div>
             </div>
         </div>
         

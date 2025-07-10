@@ -366,8 +366,6 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.15);
             width: 100%;
             max-width: 520px;
-            transform: scale(0.78);
-            transform-origin: top center;
             position: relative;
             z-index: 1;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -497,11 +495,7 @@
         }
 
         .password-helper {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: var(--space-2);
-            line-height: 1.4;
-            opacity: 0.8;
+            display: none;
         }
 
         .password-strength {
@@ -727,7 +721,6 @@
             .signup-container {
                 padding: var(--space-8);
                 max-width: 98%;
-                transform: scale(1);
             }
 
             .right-content h2 {
@@ -971,7 +964,6 @@
                 border-radius: var(--radius-lg);
                 max-width: 100%;
                 width: 100%;
-                transform: scale(1) !important;
             }
 
             .logo h1 {
@@ -1171,7 +1163,6 @@
                         <input type="password" id="password" name="password" placeholder="Create a strong password" required>
                         <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
                         <i class="password-strength fas fa-check-circle" id="passwordStrength" style="display: none; color: var(--accent-primary); position: absolute; right: 3rem; top: 2.8rem; font-size: 1.1rem;"></i>
-                        <div class="password-helper" id="passwordHelper">Minimum 8 characters. Use numbers and a special character for higher security.</div>
                         <div class="error-message" id="passwordError"></div>
                     </div>
                     <div class="form-group">

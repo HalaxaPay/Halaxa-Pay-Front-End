@@ -1214,7 +1214,7 @@
 
     <div class="split-container">
         <div class="left-side" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-primary);">
-            <div style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+            <div style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;">
                 <div style="width: 100%; text-align: center; margin-bottom: 2.8rem;">
                     <h1 style="font-size: 2.9rem; font-weight: 900; background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; margin-bottom: 0.18rem; font-family: 'Satoshi', Arial, sans-serif;">Join Halaxa</h1>
                     <div style="font-size: 1.18rem; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.01em;">Accept crypto like a pro</div>
@@ -1243,25 +1243,20 @@
                         <input type="email" id="email" name="email" placeholder="Enter your business email" required class="premium-input">
                         <div class="error-message" id="emailError"></div>
                     </div>
-                    <div class="premium-form-group">
+                    <div class="premium-form-group" style="margin-bottom: 0.95rem; position: relative;">
                         <label for="password" class="premium-label">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a strong password" required class="premium-input">
-                        <i class="password-toggle fas fa-eye premium-eye" id="passwordToggle"></i>
-                        <i class="password-strength fas fa-check-circle" id="passwordStrength" style="display: none; color: var(--accent-primary); position: absolute; right: 48px; top: 50%; transform: translateY(-50%); font-size: 1.1rem;"></i>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required class="premium-input" style="padding-right: 32px;">
+                        <i class="password-toggle fas fa-eye premium-eye" id="passwordToggle" style="right: 8px; font-size: 1.02rem; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); cursor: pointer; padding: 2px; background: none;"></i>
                         <div class="error-message" id="passwordError"></div>
-                    </div>
-                    <div class="terms-checkbox" style="margin: 0.9rem 0 0.2rem 0; padding: 0.9rem 1.2rem; border: 1px solid var(--border-light); border-radius: 0.9rem; background: #fafbfc; display: flex; align-items: center; gap: 0.9rem;">
-                        <input type="checkbox" id="terms" name="terms" required style="width: 18px; height: 18px;">
-                        <label for="terms" style="font-size: 1.09rem; color: var(--text-primary);">
-                            <i class="fas fa-lock" style="margin-right: 6px; color: var(--text-secondary); font-size: 0.9rem;"></i>
-                            I agree to Halaxa's <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Terms of Service</a> and <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">Privacy Policy</a>
-                        </label>
                     </div>
                     <button type="submit" class="signup-button" id="signupButton" style="width: 100%; margin-top: 0.6rem; font-size: 1.22rem; font-weight: 900; height: 58px; border-radius: 999px; background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%); color: #fff; box-shadow: 0 6px 24px rgba(52,152,219,0.13); letter-spacing: 0.05em; border: none; display: flex; align-items: center; justify-content: center; transition: box-shadow 0.18s, background 0.18s;">GET STARTED</button>
                     <div class="error-message" id="generalError"></div>
                 </form>
                 <div style="width: 100%; text-align: center; margin-top: 2.7rem; font-size: 1.13rem; color: var(--text-secondary);">
                     Already joined? <a href="login.html" style="color: var(--accent-blue); font-weight: 800; text-decoration: none;">Sign in here</a>
+                    <div style="font-size: 0.85rem; color: var(--text-tertiary); margin-top: 0.7rem; font-weight: 400;">
+                        By signing up you agree to Halaxa's <a href="#" style="color: var(--accent-blue); text-decoration: none;">Terms of Service</a> and <a href="#" style="color: var(--accent-blue); text-decoration: none;">Privacy Policy</a>
+                    </div>
                 </div>
             </div>
         </div>

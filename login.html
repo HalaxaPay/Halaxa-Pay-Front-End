@@ -1309,21 +1309,93 @@
     .google-signin-btn:hover .google-btn-text {
         color: #1a73e8;
     }
-    @media (max-width: 480px) {
-        .google-signin-btn {
-            min-width: 216px;
+            @media (max-width: 480px) {
+            .google-signin-btn {
+                min-width: 216px;
+                height: 44px;
+                padding: 0 20px;
+            }
+            .google-btn-text {
+                font-size: 15px;
+            }
+            .google-logo {
+                width: 22px;
+                height: 22px;
+                margin-right: 14px;
+            }
+        }
+
+        /* Premium form animations and styles */
+        .premium-form-group {
+            margin-bottom: 0.95rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeSlideUp 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        .premium-form-group:nth-child(1) { animation-delay: 0.1s; }
+        .premium-form-group:nth-child(2) { animation-delay: 0.22s; }
+        .premium-form-group:nth-child(3) { animation-delay: 0.34s; }
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .premium-label {
+            display: block;
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-size: 1.08rem;
+            letter-spacing: 0.01em;
+            margin-bottom: 0.65rem;
+            font-family: 'Satoshi', Arial, sans-serif;
+            transition: color 0.2s;
+        }
+        .premium-input {
+            width: 100%;
             height: 44px;
-            padding: 0 20px;
+            font-size: 1.08rem;
+            border-radius: 13px;
+            padding: 0 54px 0 20px;
+            background: #fafdff;
+            border: 1.7px solid var(--border-light);
+            box-shadow: 0 2px 8px rgba(52,152,219,0.04) inset;
+            font-family: 'Satoshi', Arial, sans-serif;
+            color: var(--text-primary);
+            transition: border 0.22s, box-shadow 0.22s;
+            outline: none;
+            font-weight: 500;
         }
-        .google-btn-text {
-            font-size: 15px;
+        .premium-input:focus {
+            border: 1.7px solid var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.10);
+            background: #fff;
         }
-        .google-logo {
-            width: 22px;
-            height: 22px;
-            margin-right: 14px;
+        .premium-input::placeholder {
+            color: var(--text-tertiary);
+            opacity: 1;
+            font-weight: 400;
         }
-    }
+        .premium-eye {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.22s, background 0.22s;
+            padding: 4px;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .premium-eye:hover, .premium-input:focus ~ .premium-eye {
+            color: var(--accent-blue);
+            background: rgba(52,152,219,0.07);
+        }
+        @media (max-width: 600px) {
+            .premium-label { font-size: 1rem; }
+            .premium-input { font-size: 1rem; height: 40px; padding: 0 44px 0 14px; }
+            .premium-eye { font-size: 1.1rem; right: 12px; }
+        }
 </style>
 
 <!-- Floating particles like dashboard -->
@@ -1339,54 +1411,47 @@
 </div>
 
 <div class="split-container">
-    <div class="left-side">
-        <div class="login-container">
-            <div class="logo">
-                <h1>Halaxa Portal</h1>
-                <p>Advanced Crypto Payment Platform</p>
-            </div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your professional email" required>
-                    <div class="error-message" id="emailError"></div>
+            <div class="left-side" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-primary);">
+            <div style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;">
+                <div style="width: 100%; text-align: center; margin-bottom: 2.8rem;">
+                    <h1 style="font-size: 2.9rem; font-weight: 900; background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; margin-bottom: 0.18rem; font-family: 'Satoshi', Arial, sans-serif;">Welcome Back</h1>
+                    <div style="font-size: 1.18rem; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.01em;">Access your crypto dashboard</div>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your secure password" required>
-                    <i class="password-toggle fas fa-eye" id="passwordToggle"></i>
-                    <div class="error-message" id="passwordError"></div>
-                </div>
-                <div class="security-message">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Bank-grade security with end-to-end encryption</span>
-                </div>
-                <div class="remember-forgot">
-                    <label class="remember-me">
-                        <input type="checkbox" name="remember">
-                        Keep me signed in
-                    </label>
-                    <a href="PasswordReset.html" class="forgot-password">Forgot Password?</a>
-                </div>
-                <button type="submit" class="login-button" id="loginButton">
-                    Access Dashboard
-                </button>
-                
-                <!-- Google Sign-In Button -->
-                <div class="google-btn-wrapper">
-                    <button type="button" class="google-signin-btn">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
-                        <span class="google-btn-text">Sign in with Google</span>
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1.3rem; margin-bottom: 2.3rem;">
+                    <button type="button" class="google-signin-btn" style="width: 100%; justify-content: center; font-size: 1.13rem; font-weight: 700; border-radius: 999px; height: 52px; box-shadow: 0 2px 8px rgba(52,152,219,0.07);">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo" style="width: 22px; height: 22px; margin-right: 12px;">Continue with Google
+                    </button>
+                    <button type="button" class="apple-signin-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #dadce0; box-shadow: 0 2px 8px rgba(60,64,67,.08); border-radius: 999px; height: 52px; padding: 0 12px; cursor: pointer; font-size: 1.13rem; font-weight: 700; color: #222; transition: box-shadow 0.2s;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple logo" style="width: 20px; height: 20px; margin-right: 12px;">Continue with Apple
                     </button>
                 </div>
-                
-                <div class="error-message" id="generalError"></div>
-                <div class="signup-link">
-                    New to Halaxa? <a href="signup.html">Create your account</a>
+                <div style="width: 100%; display: flex; align-items: center; margin: 1.1rem 0 1.1rem 0;">
+                    <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
+                    <span style="margin: 0 0.75rem; color: var(--text-tertiary); font-size: 1.13rem;">or</span>
+                    <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
                 </div>
-            </form>
+                <form id="loginForm" style="width: 100%; display: flex; flex-direction: column; gap: 0.95rem;">
+                    <div class="premium-form-group">
+                        <label for="email" class="premium-label">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your business email" required class="premium-input">
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    <div class="premium-form-group" style="margin-bottom: 0.95rem;">
+                        <label for="password" class="premium-label">Password</label>
+                        <div style="position: relative; width: 100%;">
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required class="premium-input" style="padding-right: 36px;">
+                            <i class="password-toggle fas fa-eye premium-eye" id="passwordToggle" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1.02rem; color: var(--text-tertiary); cursor: pointer; padding: 2px; background: none;"></i>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+                    <button type="submit" class="signup-button" id="loginButton" style="width: 100%; margin-top: 0.6rem; font-size: 1.22rem; font-weight: 900; height: 58px; border-radius: 999px; background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%); color: #fff; box-shadow: 0 6px 24px rgba(52,152,219,0.13); letter-spacing: 0.05em; border: none; display: flex; align-items: center; justify-content: center; transition: box-shadow 0.18s, background 0.18s;">ACCESS DASHBOARD</button>
+                    <div class="error-message" id="generalError"></div>
+                </form>
+                <div style="width: 100%; text-align: center; margin-top: 2.7rem; font-size: 1.13rem; color: var(--text-secondary);">
+                    New to Halaxa? <a href="signup.html" style="color: var(--accent-blue); font-weight: 800; text-decoration: none;">Create your account</a>
+                </div>
+            </div>
         </div>
-    </div>
     
     <div class="right-side">
         <div class="flowing-shapes">

@@ -387,26 +387,21 @@ async function handlePostAuthRedirect(session) {
       console.log('✅ Authentication data stored successfully');
       console.log('🎯 Redirecting to dashboard...');
       
-      // Redirect to personalized dashboard
-      window.location.href = `/SPA.html?userid=${result.user.id}`;
+      // Redirect to personalized dashboard (clean URL)
+      window.location.href = '/SPA.html';
     } catch (storageError) {
       console.error('❌ localStorage error:', storageError);
       // Continue with redirect even if localStorage fails
-      window.location.href = `/SPA.html?userid=${result.user.id}`;
+      window.location.href = '/SPA.html';
     }
     
   } catch (err) {
     console.error('❌ OAuth sync failed:', err);
     console.error('❌ Error details:', err.message);
     
-    // Show user-friendly error
-    const errorMessage = err.message || 'OAuth sync failed';
-    alert(`Google sign-in failed: ${errorMessage}`);
-    
-    // Redirect to login as fallback
-    setTimeout(() => {
-      window.location.href = '/login.html';
-    }, 2000);
+    // Don't show alert, just redirect to login silently
+    console.log('🔄 Redirecting to login due to OAuth sync failure');
+    window.location.href = '/login.html';
   }
 }
 
@@ -419,6 +414,12 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     console.log('👤 User ID:', session.user.id.substring(0, 8) + '****');
     console.log('📧 User email:', session.user.email);
     console.log('📍 Current pathname:', window.location.pathname);
+    
+    // Clean up URL by removing OAuth code parameter
+    if (window.location.search.includes('code=')) {
+      console.log('🧹 Cleaning up OAuth code from URL...');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
     
     // Only redirect if not already on the dashboard
     if (!window.location.pathname.includes('SPA.html')) {
@@ -442,7 +443,13 @@ export async function signInWithGoogle() {
   
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo }
+    options: { 
+      redirectTo,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent'
+      }
+    }
   });
   if (error) throw error;
   return data;

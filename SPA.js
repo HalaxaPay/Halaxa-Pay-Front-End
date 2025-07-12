@@ -87,11 +87,7 @@ function hideAllPremiumContentImmediately() {
         }
         
         /* SECURITY: Disable navigation temporarily until access control loads */
-        .nav-item,
-        .mobile-nav-item {
-            pointer-events: none !important;
-            opacity: 0.7 !important;
-        }
+        /* REMOVED: Navigation blocking to fix navigation issues */
     `;
     document.head.appendChild(securityStyle);
 }
@@ -422,11 +418,7 @@ function applyPlanRestrictionsImmediately(userPlan) {
     }
     
     // Re-enable navigation after access control is applied
-    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
-    navItems.forEach(item => {
-        item.style.pointerEvents = 'auto';
-        item.style.opacity = '1';
-    });
+    // REMOVED: Navigation re-enabling since we removed the blocking
     
     console.log('✅ FOMO plan restrictions applied for:', userPlan);
 }

@@ -1029,9 +1029,9 @@ window.getUserPlanInfo = () => {
   return halaxaAccessControl.getUserPlanInfo();
 };
 
-// Auto-update usage displays every 30 seconds
-setInterval(() => {
-  halaxaAccessControl.updateUsageDisplay();
-}, 30000);
+// Auto-update usage displays (removed to prevent page reloads)
+// setInterval(() => {
+//   halaxaAccessControl.updateUsageDisplay();
+// }, 30000);
 
 console.log('🔐 Halaxa Access Control System loaded successfully'); 

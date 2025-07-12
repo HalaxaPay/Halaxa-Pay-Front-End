@@ -59,8 +59,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                     homePage.classList.add('active-page');
                     console.log('✅ Home page activated');
                 }
+                
+                // Force re-enable navigation (not needed since navigation isn't blocked)
+                // const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+                // navItems.forEach(item => {
+                //     item.style.pointerEvents = 'auto';
+                //     item.style.opacity = '1';
+                // });
+                // console.log('🔓 Navigation forcefully re-enabled');
             }
-        }, 100);
+        }, 500);
         
         
     } catch (error) {
@@ -102,11 +110,14 @@ function hideAllPremiumContentImmediately() {
         }
         
         /* SECURITY: Disable navigation temporarily until access control loads */
+        /* TEMPORARILY DISABLED TO FIX NAVIGATION */
+        /*
         .nav-item,
         .mobile-nav-item {
             pointer-events: none !important;
             opacity: 0.7 !important;
         }
+        */
     `;
     document.head.appendChild(securityStyle);
 }
@@ -437,11 +448,14 @@ function applyPlanRestrictionsImmediately(userPlan) {
     }
     
     // Re-enable navigation after access control is applied
+    // TEMPORARILY DISABLED - navigation not being blocked
+    /*
     const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
     navItems.forEach(item => {
         item.style.pointerEvents = 'auto';
         item.style.opacity = '1';
     });
+    */
     
     console.log('✅ FOMO plan restrictions applied for:', userPlan);
 }
@@ -4142,9 +4156,8 @@ function initializeAuthenticatedFeatures() {
     // Initialize access control system
     initializeAccessControl();
     
-    // Update market data immediately and every 30 seconds
-    updateMarketHeartbeat();
-    setInterval(updateMarketHeartbeat, 30000);
+    // Update market data immediately (removed auto-refresh to prevent page reloads)
+updateMarketHeartbeat();
     
     console.log('✅ Authenticated features initialized');
 }

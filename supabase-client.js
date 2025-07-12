@@ -281,10 +281,15 @@ export const database = {
 // Initialize auth state on load
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    console.log('🔐 Initializing auth state...');
+    
     // Check for existing session
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
+      console.log('✅ Found existing Supabase session');
+      console.log('👤 User ID:', session.user.id.substring(0, 8) + '****');
+      
       // Store user data
       localStorage.setItem('user', JSON.stringify({
         id: session.user.id,
@@ -296,11 +301,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       await database.getUserPlan(session.user.id);
       
       console.log('✅ User session restored');
+      
+      // If we're on SPA.html but don't have backend tokens, try to sync
+      if (window.location.pathname.includes('SPA.html') && !localStorage.getItem('accessToken')) {
+        console.log('🔄 No backend tokens found, attempting OAuth sync...');
+        await handlePostAuthRedirect(session);
+      }
     } else {
       console.log('ℹ️ No active session');
     }
   } catch (error) {
-    console.error('Session initialization error:', error);
+    console.error('❌ Session initialization error:', error);
   }
 });
 
@@ -340,43 +351,95 @@ auth.onAuthStateChange((event, session) => {
 
 // Helper: Get backend JWT and redirect to personalized dashboard
 async function handlePostAuthRedirect(session) {
-  if (!session || !session.user || !session.access_token) return;
+  if (!session || !session.user || !session.access_token) {
+    console.error('❌ Invalid session data for OAuth sync');
+    return;
+  }
+  
   try {
+    console.log('🔄 Starting OAuth sync with backend...');
+    console.log('👤 User ID:', session.user.id.substring(0, 8) + '****');
+    console.log('📧 User email:', session.user.email);
+    
     // Call backend to sync user and get backend JWT
     const response = await fetch('https://halaxa-backend.onrender.com/api/auth/oauth-sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ supabaseToken: session.access_token })
     });
+    
+    console.log('📡 Backend response status:', response.status);
+    
     const result = await response.json();
-    if (!response.ok || !result.accessToken || !result.user) throw new Error(result.error || 'OAuth sync failed');
-    // Store backend JWTs
-    localStorage.setItem('accessToken', result.accessToken);
-    if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
-    localStorage.setItem('userActive', 'true');
-    localStorage.setItem('user', JSON.stringify(result.user));
-    // Redirect to personalized dashboard (correct format)
-    window.location.href = `/SPA.html?userid=${result.user.id}`;
+    console.log('📄 Backend response data:', result);
+    
+    if (!response.ok || !result.accessToken || !result.user) {
+      throw new Error(result.error || 'OAuth sync failed');
+    }
+    
+    // Store backend JWTs with error handling
+    try {
+      localStorage.setItem('accessToken', result.accessToken);
+      if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
+      localStorage.setItem('userActive', 'true');
+      localStorage.setItem('user', JSON.stringify(result.user));
+      
+      console.log('✅ Authentication data stored successfully');
+      console.log('🎯 Redirecting to dashboard...');
+      
+      // Redirect to personalized dashboard
+      window.location.href = `/SPA.html?userid=${result.user.id}`;
+    } catch (storageError) {
+      console.error('❌ localStorage error:', storageError);
+      // Continue with redirect even if localStorage fails
+      window.location.href = `/SPA.html?userid=${result.user.id}`;
+    }
+    
   } catch (err) {
-    // Optionally show error UI
-    console.error('OAuth sync failed:', err);
-    alert('Google sign-in failed: ' + (err.message || 'OAuth sync failed.'));
+    console.error('❌ OAuth sync failed:', err);
+    console.error('❌ Error details:', err.message);
+    
+    // Show user-friendly error
+    const errorMessage = err.message || 'OAuth sync failed';
+    alert(`Google sign-in failed: ${errorMessage}`);
+    
+    // Redirect to login as fallback
+    setTimeout(() => {
+      window.location.href = '/login.html';
+    }, 2000);
   }
 }
 
 // Listen for all auth state changes (including Google OAuth)
 supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log('🔐 Auth state change event:', event);
+  
   if (event === 'SIGNED_IN' && session && session.user) {
+    console.log('✅ User signed in via OAuth');
+    console.log('👤 User ID:', session.user.id.substring(0, 8) + '****');
+    console.log('📧 User email:', session.user.email);
+    console.log('📍 Current pathname:', window.location.pathname);
+    
     // Only redirect if not already on the dashboard
-    if (!window.location.pathname.startsWith('/spa')) {
+    if (!window.location.pathname.includes('SPA.html')) {
+      console.log('🔄 Starting OAuth redirect process...');
       await handlePostAuthRedirect(session);
+    } else {
+      console.log('ℹ️ Already on dashboard, skipping redirect');
     }
+  } else if (event === 'SIGNED_OUT') {
+    console.log('👋 User signed out');
   }
 });
 
 // Export a helper for Google sign-in with redirectTo
 export async function signInWithGoogle() {
-  const redirectTo = 'https://halaxapay.com/SPA.html'; // After Google, return to dashboard for JWT sync
+  // Use current domain for redirect (works for both local and production)
+  const currentDomain = window.location.origin;
+  const redirectTo = `${currentDomain}/SPA.html`;
+  
+  console.log('🔐 Google OAuth redirect URL:', redirectTo);
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo }

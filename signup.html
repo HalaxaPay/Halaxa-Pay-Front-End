@@ -1622,9 +1622,11 @@
             }
         }
 
+        // iOS detection
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
         // iOS-specific touch event handling
         const signupForm = document.getElementById('signupForm');
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
         // Use touchstart for iOS, click for others
         const eventType = isIOS ? 'touchstart' : 'click';
@@ -1817,25 +1819,41 @@
         const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
         if (googleBtn) {
+            console.log('🔐 Google button found, adding event listener...');
+            console.log('🔐 Google button element:', googleBtn);
+            
             googleBtn.addEventListener('click', async (e) => {
+                console.log('🔐 Google button clicked');
+                console.log('🔐 Event type:', e.type);
+                
                 // iOS-specific: Prevent double-tap issues
-                if (isIOS) {
+                const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                console.log('📱 iOS device detected:', isIOSDevice);
+                
+                if (isIOSDevice) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
                 
                 try {
+                    console.log('🔄 Starting Google sign-in...');
                     signupButton.classList.add('loading');
                     signupButton.textContent = 'Signing in with Google...';
                     generalError.style.display = 'none';
                     await signInWithGoogle();
                 } catch (err) {
+                    console.error('❌ Google sign-in error:', err);
                     generalError.style.display = 'block';
                     generalError.textContent = err.message || 'Google sign-in failed.';
                     signupButton.classList.remove('loading');
                     signupButton.textContent = 'Create Account';
                 }
             });
+            
+            console.log('✅ Google button event listener added');
+        } else {
+            console.error('❌ Google button not found!');
+            console.error('🔍 Available buttons:', document.querySelectorAll('button'));
         }
     </script>
     

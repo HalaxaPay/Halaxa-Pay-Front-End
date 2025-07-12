@@ -1690,6 +1690,10 @@
                     localStorage.setItem('refreshToken', data.refreshToken);
                 }
 
+                // 🚨 CRITICAL: Set authentication flags for SPA.js
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('user', JSON.stringify(data.user));
+
                 // 🚀 DASHBOARD INITIALIZATION
                 console.log('🚀 User dashboard initialized by backend during registration');
                 signupButton.textContent = 'Setting up your dashboard...';

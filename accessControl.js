@@ -326,6 +326,15 @@ class HalaxaAccessControl {
     
     // Also handle direct URL navigation
     this.handleDirectNavigation();
+    
+    // CRITICAL: Re-enable navigation after access control is set up
+    console.log('🔓 Re-enabling navigation after access control setup...');
+    navItems.forEach(item => {
+      item.style.pointerEvents = 'auto';
+      item.style.opacity = '1';
+    });
+    
+    console.log('✅ Navigation re-enabled and access control active');
   }
   
   loadPage(pageId) {

@@ -33,19 +33,34 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.log('✅ Access control verification complete - UI safe to initialize');
         
         // NOW initialize the UI - access control is already in place
-    initializeSPA();
-    
+        initializeSPA();
+        
         // Initialize other functionality
-    setupPaymentForm();
-    initializeAnimations();
-    initializeParticles();
-    initializeCardEffects();
-    initializePricingToggle();
-    
+        setupPaymentForm();
+        initializeAnimations();
+        initializeParticles();
+        initializeCardEffects();
+        initializePricingToggle();
+        
         // Initialize user personalization (now safe since access control is active)
-    initializeUserPersonalization().catch(error => {
+        initializeUserPersonalization().catch(error => {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
+        
+        // CRITICAL: Ensure navigation is properly initialized after access control
+        setTimeout(() => {
+            if (window.accessControl) {
+                console.log('🔐 Re-initializing navigation after access control setup...');
+                window.accessControl.setupPageAccessControl();
+                
+                // Show home page by default
+                const homePage = document.getElementById('home-page');
+                if (homePage) {
+                    homePage.classList.add('active-page');
+                    console.log('✅ Home page activated');
+                }
+            }
+        }, 100);
         
         
     } catch (error) {
@@ -87,7 +102,11 @@ function hideAllPremiumContentImmediately() {
         }
         
         /* SECURITY: Disable navigation temporarily until access control loads */
-        /* REMOVED: Navigation blocking to fix navigation issues */
+        .nav-item,
+        .mobile-nav-item {
+            pointer-events: none !important;
+            opacity: 0.7 !important;
+        }
     `;
     document.head.appendChild(securityStyle);
 }
@@ -418,7 +437,11 @@ function applyPlanRestrictionsImmediately(userPlan) {
     }
     
     // Re-enable navigation after access control is applied
-    // REMOVED: Navigation re-enabling since we removed the blocking
+    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    navItems.forEach(item => {
+        item.style.pointerEvents = 'auto';
+        item.style.opacity = '1';
+    });
     
     console.log('✅ FOMO plan restrictions applied for:', userPlan);
 }

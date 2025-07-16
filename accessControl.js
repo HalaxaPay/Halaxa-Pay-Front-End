@@ -97,37 +97,21 @@ class HalaxaAccessControl {
     try {
       // Get current user from localStorage or session
       const userData = localStorage.getItem('user');
-      if (!userData) return null;
+      if (!userData) {
+        console.log('⚠️ No user data in localStorage');
+        return null;
+      }
 
       this.currentUser = JSON.parse(userData);
       
       // 🔍 DEBUG: Show exactly what we're querying
-      console.log('🔍 DEBUG: Supabase connection details:');
-      console.log('📍 Database URL:', supabase.supabaseUrl);
-      console.log('👤 User ID being queried:', this.currentUser.id);
+      console.log('🔍 DEBUG: Access Control initialization:');
+      console.log('👤 User ID being queried:', this.currentUser.id?.substring(0, 8) + '****');
       console.log('📧 User email:', this.currentUser.email);
       
-      // Fetch user plan from Supabase
-      const { data: userPlan, error } = await supabase
-        .from('user_plans')
-        .select('plan_type,started_at,next_billing,auto_renewal')
-        .eq('user_id', this.currentUser.id)
-        .single();
-
-      // 🔍 DEBUG: Show raw database response
-      console.log('🔍 DEBUG: Raw database response:');
-      console.log('📄 Data:', userPlan);
-      console.log('❌ Error:', error);
-
-      if (error || !userPlan) {
-        console.warn('⚠️ No plan found or error occurred, defaulting to basic');
-        if (error) console.warn('⚠️ Database error:', error.message);
-        this.userPlan = 'basic'; // Default to basic
-      } else {
-        this.userPlan = userPlan.plan_type || 'basic';
-        console.log('✅ Plan found in database:', this.userPlan);
-      }
-
+      // Try multiple sources for user plan - backend API first, then database
+      this.userPlan = await this.getUserPlanFromMultipleSources();
+      
       console.log(`🔐 Final user plan detected: ${this.userPlan}`);
       return this.userPlan;
 
@@ -136,6 +120,73 @@ class HalaxaAccessControl {
       this.userPlan = 'basic';
       return 'basic';
     }
+  }
+
+  async getUserPlanFromMultipleSources() {
+    // Source 1: Check localStorage first (fastest)
+    const cachedPlan = localStorage.getItem('userPlan');
+    if (cachedPlan && ['basic', 'pro', 'elite'].includes(cachedPlan)) {
+      console.log('✅ Using cached plan:', cachedPlan);
+      return cachedPlan;
+    }
+
+    // Source 2: Try backend API (most reliable)
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        console.log('🔄 Fetching plan from backend API...');
+        const response = await fetch('https://halaxa-backend.onrender.com/api/account/profile', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 5000 // 5 second timeout
+        });
+
+        if (response.ok) {
+          const profile = await response.json();
+          const plan = profile.plan || 'basic';
+          console.log('✅ Plan from backend API:', plan);
+          localStorage.setItem('userPlan', plan); // Cache it
+          return plan;
+        }
+      }
+    } catch (apiError) {
+      console.log('⚠️ Backend API failed:', apiError.message);
+    }
+
+    // Source 3: Try direct Supabase query (fallback)
+    try {
+      console.log('🔄 Trying direct database query...');
+      const { data: userPlan, error } = await supabase
+        .from('user_plans')
+        .select('plan_type')
+        .eq('user_id', this.currentUser.id)
+        .maybeSingle(); // Use maybeSingle to handle no results gracefully
+
+      if (!error && userPlan) {
+        const plan = userPlan.plan_type || 'basic';
+        console.log('✅ Plan from database:', plan);
+        localStorage.setItem('userPlan', plan); // Cache it
+        return plan;
+      } else if (error) {
+        console.log('⚠️ Database query error:', error.message);
+      }
+    } catch (dbError) {
+      console.log('⚠️ Database query failed:', dbError.message);
+    }
+
+    // Source 4: Check user data in localStorage (fallback)
+    if (this.currentUser.plan && ['basic', 'pro', 'elite'].includes(this.currentUser.plan)) {
+      console.log('✅ Using plan from user data:', this.currentUser.plan);
+      localStorage.setItem('userPlan', this.currentUser.plan);
+      return this.currentUser.plan;
+    }
+
+    // Final fallback
+    console.log('⚠️ All sources failed, defaulting to basic');
+    localStorage.setItem('userPlan', 'basic');
+    return 'basic';
   }
 
   getCurrentPlan() {

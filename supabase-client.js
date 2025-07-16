@@ -430,6 +430,8 @@ async function handleOAuthRedirect() {
     }
     
     console.log('✅ OAuth session found, syncing with backend...');
+    console.log('👤 User:', session.user.email);
+    console.log('🔑 Access Token:', session.access_token ? 'Present' : 'Missing');
     
     // Sync with backend to ensure user is in all tables
     const response = await fetch('https://halaxa-backend.onrender.com/api/auth/oauth-sync', {
@@ -447,10 +449,17 @@ async function handleOAuthRedirect() {
     }
     
     console.log('✅ Backend sync successful');
+    console.log('🎫 Received tokens:', {
+      accessToken: result.accessToken ? 'Present' : 'Missing',
+      refreshToken: result.refreshToken ? 'Present' : 'Missing',
+      user: result.user ? 'Present' : 'Missing'
+    });
     
-    // Store user data and tokens
-    localStorage.setItem('user', JSON.stringify(result.user));
-    localStorage.setItem('userPlan', result.user.plan || 'basic');
+    // Store ALL session data properly (same as normal signup)
+    if (result.user) {
+      localStorage.setItem('user', JSON.stringify(result.user));
+      localStorage.setItem('userPlan', result.user.plan || 'basic');
+    }
     
     if (result.accessToken) {
       localStorage.setItem('accessToken', result.accessToken);
@@ -459,15 +468,37 @@ async function handleOAuthRedirect() {
       localStorage.setItem('refreshToken', result.refreshToken);
     }
     
+    // Mark user as active (critical for authentication checks)
+    localStorage.setItem('userActive', 'true');
+    localStorage.setItem('isPreview', 'false');
+    
+    // Clean up any old session data
+    localStorage.removeItem('sellerId');
+    localStorage.removeItem('halaxa_token');
+    localStorage.removeItem('token');
+    
+    console.log('✅ Session data stored successfully');
+    
     // Clean up URL
     const url = new URL(window.location);
     url.searchParams.delete('oauth');
     window.history.replaceState({}, document.title, url.toString());
     
+    // Show success message before redirect
+    const successMsg = document.createElement('div');
+    successMsg.style.cssText = `
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #10b981; color: white; padding: 12px 24px;
+      border-radius: 8px; z-index: 10000; font-family: system-ui;
+    `;
+    successMsg.textContent = '✅ Google sign-in successful! Redirecting to dashboard...';
+    document.body.appendChild(successMsg);
+    
     // Trigger a page refresh to initialize the dashboard properly
     setTimeout(() => {
+      document.body.removeChild(successMsg);
       window.location.reload();
-    }, 1000);
+    }, 1500);
     
   } catch (error) {
     console.error('❌ OAuth redirect handling failed:', error);

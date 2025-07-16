@@ -27,11 +27,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         
         // Get user plan and apply restrictions BEFORE showing UI
-        // TEMPORARY: Use simple plan detection to avoid backend issues
-        console.log('⚠️ TEMPORARILY USING BASIC PLAN - Backend integration needs fixing');
-        console.log('🔧 For signup testing, use: test-signup.html');
-        const userPlan = 'basic'; // getSimpleUserPlan();
-        localStorage.setItem('userPlan', 'basic');
+        const userPlan = getUserPlanFromSession();
+        console.log('🔍 Detected user plan:', userPlan);
         applyPlanRestrictionsImmediately(userPlan);
         
         // Re-apply FOMO locks after a short delay to ensure DOM is ready
@@ -180,6 +177,41 @@ async function verifyUserAuthenticationSync() {
     } catch (error) {
         console.error('❌ Authentication verification failed:', error);
         return false;
+    }
+}
+
+/**
+ * Get user plan from session data
+ */
+function getUserPlanFromSession() {
+    try {
+        // First check localStorage userPlan
+        const storedPlan = localStorage.getItem('userPlan');
+        if (storedPlan && ['basic', 'pro', 'elite'].includes(storedPlan)) {
+            console.log('✅ Plan found in localStorage:', storedPlan);
+            return storedPlan;
+        }
+        
+        // Fallback to user data
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            if (user.plan && ['basic', 'pro', 'elite'].includes(user.plan)) {
+                console.log('✅ Plan found in user data:', user.plan);
+                localStorage.setItem('userPlan', user.plan); // Store for future use
+                return user.plan;
+            }
+        }
+        
+        // Default fallback
+        console.log('⚠️ No plan found, defaulting to basic');
+        localStorage.setItem('userPlan', 'basic');
+        return 'basic';
+        
+    } catch (error) {
+        console.error('❌ Error getting user plan:', error);
+        localStorage.setItem('userPlan', 'basic');
+        return 'basic';
     }
 }
 

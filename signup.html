@@ -1684,13 +1684,26 @@
                     throw new Error(data.error || 'Registration failed');
                 }
 
-                // Store tokens
+                // Store tokens and user session data
                 if (data.accessToken) {
                     localStorage.setItem('accessToken', data.accessToken);
                 }
                 if (data.refreshToken) {
                     localStorage.setItem('refreshToken', data.refreshToken);
                 }
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('userPlan', data.user.plan || 'basic');
+                }
+                
+                // Mark user as active (critical for authentication checks)
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('isPreview', 'false');
+                
+                // Clean up any old session data
+                localStorage.removeItem('sellerId');
+                localStorage.removeItem('halaxa_token');
+                localStorage.removeItem('token');
 
                 // 🚀 DASHBOARD INITIALIZATION
                 console.log('🚀 User dashboard initialized by backend during registration');
@@ -1710,12 +1723,17 @@
                 generalError.style.border = '1px solid rgba(16, 185, 129, 0.3)';
                 generalError.style.borderRadius = '8px';
                 generalError.style.padding = '12px';
-                generalError.textContent = '✅ Account created and dashboard initialized! Redirecting to your dashboard...';
+                generalError.textContent = '✅ Account created and dashboard initialized! Auto-login successful - redirecting to your dashboard...';
+                
+                console.log('✅ Registration successful, session established:');
+                console.log('👤 User:', data.user ? data.user.email : 'No user data');
+                console.log('🔑 Access Token:', data.accessToken ? 'Present' : 'Missing');
+                console.log('🎫 Session Active:', localStorage.getItem('userActive'));
 
-                // Redirect to personalized dashboard (SPA.html) immediately
+                // Redirect to personalized dashboard (SPA.html) - user is now auto-logged in
                 setTimeout(() => {
                     window.location.href = 'SPA.html';
-                }, 1200);
+                }, 1500);
 
             } catch (error) {
                 console.error('Registration error:', error);

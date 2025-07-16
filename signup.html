@@ -1244,7 +1244,7 @@
                     <span style="margin: 0 0.75rem; color: var(--text-tertiary); font-size: 1.13rem;">or</span>
                     <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
                 </div>
-                <form id="signupForm" style="width: 100%; display: flex; flex-direction: column; gap: 0.95rem;">
+                <form id="signupForm" method="post" action="#" style="width: 100%; display: flex; flex-direction: column; gap: 0.95rem;">
                     <div class="premium-form-group">
                         <label for="fullname" class="premium-label">Full Name</label>
                         <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required class="premium-input">
@@ -1311,7 +1311,7 @@
         const passwordToggle = document.getElementById('passwordToggle');
         const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
         const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
+                    // Confirm password field removed - not needed in this form
 
         passwordToggle.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -1622,27 +1622,31 @@
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const fullName = document.getElementById('fullname').value;
-            const email = document.getElementById('email').value;
+            const fullName = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
             const generalError = document.getElementById('generalError');
             const signupButton = document.getElementById('signupButton');
             
             // Clear previous errors
             generalError.style.display = 'none';
             
-                            // Add loading state
-                signupButton.classList.add('loading');
-                signupButton.textContent = 'Accessing Dashboard';
-            
-            if (password !== confirmPassword) {
+            // Validate inputs
+            if (!fullName || !email || !password) {
                 generalError.style.display = 'block';
-                generalError.textContent = 'Passwords do not match';
-                signupButton.classList.remove('loading');
-                signupButton.textContent = 'Create Account';
+                generalError.textContent = 'Please fill in all fields';
+                generalError.style.color = '#dc3545';
+                generalError.style.background = 'rgba(220, 53, 69, 0.1)';
+                generalError.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                generalError.style.borderRadius = '8px';
+                generalError.style.padding = '12px';
                 return;
             }
+            
+            // Add loading state
+            signupButton.classList.add('loading');
+            signupButton.textContent = 'Creating Account...';
+            signupButton.disabled = true;
 
                     // Split full name into first and last name
         const nameParts = fullName.trim().split(' ');
@@ -1740,9 +1744,11 @@
                 generalError.style.display = 'block';
                 generalError.textContent = error.message || 'Registration failed. Please try again.';
                 
-                // Reset button
+                // Reset button completely
                 signupButton.classList.remove('loading');
-                signupButton.textContent = 'Create Account';
+                signupButton.textContent = 'GET STARTED';
+                signupButton.disabled = false;
+                signupButton.style.background = 'linear-gradient(90deg, #2ECC71 0%, #3498DB 100%)';
             }
         });
     </script>

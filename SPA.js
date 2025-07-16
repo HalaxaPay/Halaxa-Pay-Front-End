@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         const userPlan = await getUserPlanSync();
         applyPlanRestrictionsImmediately(userPlan);
         
+        // Re-apply FOMO locks after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            applyFOMOLockedStyling(userPlan);
+        }, 100);
+        
         console.log('✅ Access control verification complete - UI safe to initialize');
         
         // NOW initialize the UI - access control is already in place
@@ -40,7 +45,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         initializeAnimations();
         initializeParticles();
         initializeCardEffects();
-        initializePricingToggle();
+        
+        // Initialize pricing toggle after DOM is ready
+        setTimeout(() => {
+            initializePricingToggle();
+        }, 100);
         
         // Initialize user personalization (now safe since access control is active)
         initializeUserPersonalization().catch(error => {
@@ -214,7 +223,6 @@ async function getUserPlanSync() {
         localStorage.setItem('userPlan', 'basic');
         return 'basic';
     }
-}
 
 /**
  * Force refresh user plan from database (clears cache)

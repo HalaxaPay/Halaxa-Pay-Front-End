@@ -1786,15 +1786,25 @@
         if (googleBtn) {
             googleBtn.addEventListener('click', async () => {
                 try {
-                    signupButton.classList.add('loading');
-                    signupButton.textContent = 'Signing in with Google...';
+                    console.log('🔄 Google sign-in button clicked');
+                    googleBtn.classList.add('loading');
+                    googleBtn.textContent = 'Signing in with Google...';
+                    googleBtn.disabled = true;
                     generalError.style.display = 'none';
+                    
+                    // Use the new backend-routed Google OAuth
                     await signInWithGoogle();
+                    
+                    // The signInWithGoogle function will redirect to the backend,
+                    // so this code won't be reached unless there's an error
+                    
                 } catch (err) {
+                    console.error('❌ Google sign-in error:', err);
                     generalError.style.display = 'block';
-                    generalError.textContent = err.message || 'Google sign-in failed.';
-                    signupButton.classList.remove('loading');
-                    signupButton.textContent = 'Create Account';
+                    generalError.textContent = err.message || 'Google sign-in failed. Please try again.';
+                    googleBtn.classList.remove('loading');
+                    googleBtn.textContent = 'Sign In with Google';
+                    googleBtn.disabled = false;
                 }
             });
         }

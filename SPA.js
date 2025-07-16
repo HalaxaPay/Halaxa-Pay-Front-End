@@ -27,7 +27,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         
         // Get user plan and apply restrictions BEFORE showing UI
-        const userPlan = await getUserPlanSync();
+        // TEMPORARY: Use simple plan detection to avoid backend issues
+        console.log('⚠️ TEMPORARILY USING BASIC PLAN - Backend integration needs fixing');
+        console.log('🔧 For signup testing, use: test-signup.html');
+        const userPlan = 'basic'; // getSimpleUserPlan();
+        localStorage.setItem('userPlan', 'basic');
         applyPlanRestrictionsImmediately(userPlan);
         
         // Re-apply FOMO locks after a short delay to ensure DOM is ready
@@ -180,83 +184,118 @@ async function verifyUserAuthenticationSync() {
 }
 
 /**
- * SYNCHRONOUS user plan detection - Always fetches fresh from database
+ * SYNCHRONOUS user plan detection - Always fetches fresh from backend
  */
 async function getUserPlanSync() {
     try {
         console.log('📋 Detecting user plan...');
         
-        // Always get fresh plan from access control (database)
-        if (window.accessControl) {
-            const userPlan = await window.accessControl.getCurrentUser();
-            if (userPlan) {
-                // Update cache with fresh data
-                localStorage.setItem('userPlan', userPlan);
-                console.log('✅ Fresh plan detected from database and cached:', userPlan);
-                return userPlan;
-            }
+        // Get current user from localStorage
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+            console.log('⚠️ No user data found, defaulting to basic');
+            localStorage.setItem('userPlan', 'basic');
+            return 'basic';
         }
         
-        // Fallback: Try cached version if database is unavailable
+        const user = JSON.parse(userData);
+        if (!user.id) {
+            console.log('⚠️ No user ID found, defaulting to basic');
+            localStorage.setItem('userPlan', 'basic');
+            return 'basic';
+        }
+        
+        // Try to get plan from backend API
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            
+            // Try multiple backend endpoints for plan data
+            const endpoints = [
+                'https://halaxa-backend.onrender.com/api/account/plan',
+                'https://halaxa-backend.onrender.com/api/account/user-data',
+                'https://halaxa-backend.onrender.com/api/auth/profile'
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(accessToken && { 'Authorization': `Bearer ${accessToken}` })
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        const userPlan = result.plan || result.user?.plan || result.userPlan || 'basic';
+                        if (userPlan && userPlan !== 'basic') {
+                            localStorage.setItem('userPlan', userPlan);
+                            console.log('✅ Fresh plan detected from backend:', userPlan);
+                            return userPlan;
+                        }
+                    }
+                } catch (endpointError) {
+                    console.log(`⚠️ Endpoint ${endpoint} failed:`, endpointError.message);
+                    continue;
+                }
+            }
+            
+            console.log('⚠️ All backend endpoints failed, trying fallbacks');
+        } catch (apiError) {
+            console.log('⚠️ Backend API error, trying fallbacks:', apiError.message);
+        }
+        
+        // Fallback 1: Try to get plan from user object
+        if (user.plan) {
+            console.log('✅ Using plan from user object:', user.plan);
+            localStorage.setItem('userPlan', user.plan);
+            return user.plan;
+        }
+        
+        // Fallback 2: Try cached version if database is unavailable
         let cachedPlan = localStorage.getItem('userPlan');
-        if (cachedPlan) {
-            console.log('⚠️ Using cached plan (database unavailable):', cachedPlan);
+        if (cachedPlan && cachedPlan !== 'null' && cachedPlan !== 'undefined') {
+            console.log('⚠️ Using cached plan (backend unavailable):', cachedPlan);
             return cachedPlan;
         }
         
-        // Default to basic if no plan found
-        console.log('⚠️ No plan found, defaulting to basic');
+        // Final fallback: Default to basic
+        console.log('⚠️ No plan found anywhere, defaulting to basic');
         localStorage.setItem('userPlan', 'basic');
         return 'basic';
         
     } catch (error) {
-        console.error('❌ Plan detection failed, trying cached version:', error);
+        console.error('❌ Plan detection failed completely:', error);
         
-        // Try cached version on error
-        let cachedPlan = localStorage.getItem('userPlan');
-        if (cachedPlan) {
-            console.log('✅ Using cached plan due to error:', cachedPlan);
-            return cachedPlan;
-        }
-        
-        // Final fallback
+        // Final emergency fallback
         localStorage.setItem('userPlan', 'basic');
         return 'basic';
     }
+}
 
 /**
- * Force refresh user plan from database (clears cache)
+ * Force refresh user plan from backend (clears cache)
  */
 async function refreshUserPlan() {
     try {
-        console.log('🔄 Refreshing user plan from database...');
+        console.log('🔄 Refreshing user plan from backend...');
         
         // Clear cached plan
         localStorage.removeItem('userPlan');
         
-        // Force access control to fetch fresh plan data
-        if (window.accessControl) {
-            // Get fresh plan from database
-            const newPlan = await window.accessControl.getCurrentUser();
-            
-            // Update localStorage with new plan
-            if (newPlan) {
-                localStorage.setItem('userPlan', newPlan);
-            }
-            
-            // Re-initialize page access control with new plan
-            window.accessControl.setupPageAccessControl();
-            window.accessControl.applyVisualLocks();
-            
-            // Reapply plan restrictions
-            applyPlanRestrictionsImmediately(newPlan);
-            
-            console.log('✅ Plan refreshed:', newPlan);
-            return newPlan;
-        } else {
-            console.warn('⚠️ Access control not available');
-            return localStorage.getItem('userPlan') || 'basic';
-        }
+        // Get fresh plan using getUserPlanSync
+        const newPlan = await getUserPlanSync();
+        
+        // Re-apply plan restrictions with new plan
+        applyPlanRestrictionsImmediately(newPlan);
+        
+                 // Re-apply FOMO locks
+         applyFOMOLockedStyling(newPlan);
+        
+        console.log('✅ Plan refreshed:', newPlan);
+        return newPlan;
+        
     } catch (error) {
         console.error('❌ Error refreshing plan:', error);
         return localStorage.getItem('userPlan') || 'basic';
@@ -6311,4 +6350,12 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', setupAutomationPageSelection);
 } else {
   setupAutomationPageSelection();
+}
+
+// TEMPORARY: Simple plan function to bypass complex backend logic
+function getSimpleUserPlan() {
+    // For now, always return basic to get the system working
+    const cachedPlan = localStorage.getItem('userPlan') || 'basic';
+    console.log('🔧 TEMP: Using simple plan detection:', cachedPlan);
+    return cachedPlan;
 }

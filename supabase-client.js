@@ -29,6 +29,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     params: {
       eventsPerSecond: 10
     }
+  },
+  global: {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept, Origin, X-Requested-With'
+    }
   }
 });
 
@@ -37,6 +44,42 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 export const auth = {
   // Sign up user
   async signUp(email, password, userData = {}) {
+    try {
+      // Use backend API to avoid CORS issues
+      const response = await fetch('https://halaxa-backend.onrender.com/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName: userData.first_name || '',
+          lastName: userData.last_name || ''
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Registration failed');
+      }
+      
+      // Store the user data
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+        localStorage.setItem('userPlan', 'basic');
+      }
+      
+      return { success: true, data: { user: result.user } };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Alternative Supabase direct signup (if backend fails)
+  async signUpDirect(email, password, userData = {}) {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -97,6 +140,47 @@ export const auth = {
 
   // Sign in user
   async signIn(email, password) {
+    try {
+      // Use backend API to avoid CORS issues
+      const response = await fetch('https://halaxa-backend.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Login failed');
+      }
+      
+      // Store user data and tokens
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+        localStorage.setItem('userPlan', result.user.plan || 'basic');
+        
+        if (result.accessToken) {
+          localStorage.setItem('accessToken', result.accessToken);
+        }
+        if (result.refreshToken) {
+          localStorage.setItem('refreshToken', result.refreshToken);
+        }
+      }
+      
+      return { success: true, data: { user: result.user } };
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Alternative Supabase direct signin (if backend fails)
+  async signInDirect(email, password) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -209,9 +293,18 @@ export const database = {
         .from('user_plans')
         .select('plan_type, started_at, next_billing')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
       
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && error.code !== 'PGRST116') {
+        console.warn('getUserPlan error:', error);
+        // If it's a CORS or 406 error, fall back to basic
+        if (error.message.includes('CORS') || error.message.includes('406')) {
+          console.warn('CORS or 406 error detected, falling back to basic plan');
+          localStorage.setItem('userPlan', 'basic');
+          return { success: true, plan: 'basic', data: null };
+        }
+        throw error;
+      }
       
       const plan = data?.plan_type || 'basic';
       localStorage.setItem('userPlan', plan);
@@ -219,6 +312,8 @@ export const database = {
       return { success: true, plan, data };
     } catch (error) {
       console.error('Error fetching user plan:', error);
+      // Always fall back to basic on any error
+      localStorage.setItem('userPlan', 'basic');
       return { success: false, plan: 'basic', error: error.message };
     }
   },
@@ -393,4 +488,14 @@ window.supabaseAuth = auth;
 window.supabaseRealtime = realtime;
 window.supabaseDatabase = database;
 
-console.log('🚀 Frontend Supabase client initialized'); 
+console.log('🚀 Frontend Supabase client initialized');
+
+// CORS Configuration Notice
+console.log('🔧 CORS CONFIGURATION NEEDED:');
+console.log('📍 Go to: https://supabase.com/dashboard/project/srdznitapqluldldkqsk/settings/api');
+console.log('🌐 Add these allowed origins in CORS settings:');
+console.log('   - https://halaxapay.com');
+console.log('   - https://www.halaxapay.com');
+console.log('   - http://localhost:*');
+console.log('   - file://*');
+console.log('💡 Using backend proxy for auth to avoid CORS issues until configured'); 

@@ -376,6 +376,16 @@ export const database = {
 // Initialize auth state on load
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    // Check if this is an OAuth redirect
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOAuthRedirect = urlParams.get('oauth') === 'google';
+    
+    if (isOAuthRedirect) {
+      console.log('🔄 Detected Google OAuth redirect, processing...');
+      await handleOAuthRedirect();
+      return;
+    }
+    
     // Check for existing session
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -398,6 +408,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Session initialization error:', error);
   }
 });
+
+// Handle OAuth redirect
+async function handleOAuthRedirect() {
+  try {
+    console.log('🔄 Processing OAuth redirect...');
+    
+    // Get session from Supabase
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.error('❌ OAuth session error:', error);
+      alert('Google sign-in failed: ' + error.message);
+      return;
+    }
+    
+    if (!session?.user) {
+      console.error('❌ No user session found after OAuth');
+      alert('Google sign-in failed: No user session found');
+      return;
+    }
+    
+    console.log('✅ OAuth session found, syncing with backend...');
+    
+    // Sync with backend to ensure user is in all tables
+    const response = await fetch('https://halaxa-backend.onrender.com/api/auth/oauth-sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ supabaseToken: session.access_token })
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      console.error('❌ Backend sync failed:', result);
+      alert('Google sign-in failed: ' + (result.error || 'Backend sync failed'));
+      return;
+    }
+    
+    console.log('✅ Backend sync successful');
+    
+    // Store user data and tokens
+    localStorage.setItem('user', JSON.stringify(result.user));
+    localStorage.setItem('userPlan', result.user.plan || 'basic');
+    
+    if (result.accessToken) {
+      localStorage.setItem('accessToken', result.accessToken);
+    }
+    if (result.refreshToken) {
+      localStorage.setItem('refreshToken', result.refreshToken);
+    }
+    
+    // Clean up URL
+    const url = new URL(window.location);
+    url.searchParams.delete('oauth');
+    window.history.replaceState({}, document.title, url.toString());
+    
+    // Trigger a page refresh to initialize the dashboard properly
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+    
+  } catch (error) {
+    console.error('❌ OAuth redirect handling failed:', error);
+    alert('Google sign-in failed: ' + error.message);
+  }
+}
 
 // Listen for auth changes
 auth.onAuthStateChange((event, session) => {
@@ -469,15 +545,42 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 });
 
-// Export a helper for Google sign-in with redirectTo
+// Export a helper for Google sign-in via backend
 export async function signInWithGoogle() {
-  const redirectTo = 'https://halaxapay.com/SPA.html'; // After Google, return to dashboard for JWT sync
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo }
-  });
-  if (error) throw error;
-  return data;
+  try {
+    console.log('🔄 Initiating Google OAuth via backend...');
+    
+    // Redirect to backend Google OAuth endpoint
+    const googleAuthUrl = 'https://halaxa-backend.onrender.com/api/auth/google';
+    window.location.href = googleAuthUrl;
+    
+    return { success: true };
+  } catch (error) {
+    console.error('❌ Google OAuth initiation failed:', error);
+    throw error;
+  }
+}
+
+// Alternative: Direct Supabase Google OAuth (fallback)
+export async function signInWithGoogleDirect() {
+  try {
+    const redirectTo = window.location.origin + '/SPA.html';
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { 
+        redirectTo,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('❌ Direct Google OAuth failed:', error);
+    throw error;
+  }
 }
 
 // ==================== EXPORT FOR GLOBAL USE ==================== //

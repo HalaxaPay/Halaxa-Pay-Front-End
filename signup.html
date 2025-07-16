@@ -1619,6 +1619,9 @@
 
 
         
+        // Define backend URL for this script scope
+        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+        
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1805,7 +1808,6 @@
         const googleBtn = document.querySelector('.google-signin-btn');
         const generalError = document.getElementById('generalError');
         const signupButton = document.getElementById('signupButton');
-        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
         if (googleBtn) {
             googleBtn.addEventListener('click', async () => {

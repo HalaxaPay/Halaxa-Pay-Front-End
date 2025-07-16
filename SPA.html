@@ -352,7 +352,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Digital Vault</div>
-                                <div class="metric-value" data-metric="digital-vault">$---</div>
+                                <div class="metric-value" data-metric="digital-vault" data-metric="total_balance">$---</div>
                                 <div class="metric-insight">USDC Accumulated</div>
                             </div>
                         </div>
@@ -366,7 +366,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Transaction Velocity</div>
-                                <div class="metric-value" data-metric="velocity">---</div>
+                                <div class="metric-value" data-metric="velocity" data-metric="total_executions">---</div>
                                 <div class="metric-insight">Network Executions</div>
                             </div>
                         </div>
@@ -380,7 +380,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Precision Rate</div>
-                                <div class="metric-value" data-metric="flawless_executions">--%</div>
+                                <div class="metric-value" data-metric="flawless_executions" data-metric="precision_percentage">--%</div>
                                 <div class="metric-insight">Flawless Execution</div>
                             </div>
                         </div>
@@ -394,7 +394,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Transaction Magnitude</div>
-                                <div class="metric-value" data-metric="transaction-magnitude">$--</div>
+                                <div class="metric-value" data-metric="transaction-magnitude" data-metric="average_amount">$--</div>
                                 <div class="metric-insight">Average Flow</div>
                             </div>
                         </div>
@@ -408,7 +408,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Payment Conduits</div>
-                                <div class="metric-value" data-metric="payment-conduits">---</div>
+                                <div class="metric-value" data-metric="payment-conduits" data-metric="active_links">---</div>
                                 <div class="metric-insight">Active Bridges</div>
                             </div>
                         </div>
@@ -422,7 +422,7 @@
                             </div>
                             <div class="metric-content">
                                 <div class="metric-label">Monthly Harvest</div>
-                                <div class="metric-value" data-metric="monthly-harvest">$---</div>
+                                <div class="metric-value" data-metric="monthly-harvest" data-metric="monthly_revenue">$---</div>
                                 <div class="metric-insight">Revenue Stream</div>
                             </div>
                         </div>
@@ -662,32 +662,32 @@
                             
                             <div class="metric-item">
                                 <div class="metric-label">Conversion Rate</div>
-                                <div class="metric-value" data-key-metric="conversion-rate">--%</div>
+                                <div class="metric-value" data-key-metric="conversion-rate" data-metric="conversion_rate">--%</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Avg. Processing Time</div>
-                                <div class="metric-value" data-key-metric="processing-time">--s</div>
+                                <div class="metric-value" data-key-metric="processing-time" data-metric="avg_processing_time">--s</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Network Fees Saved</div>
-                                <div class="metric-value" data-key-metric="fees-saved">$---</div>
+                                <div class="metric-value" data-key-metric="fees-saved" data-metric="fees_saved_total">$---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Active Wallets</div>
-                                <div class="metric-value" data-key-metric="active-wallets">---</div>
+                                <div class="metric-value" data-key-metric="active-wallets" data-metric="active_wallets">---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Total Volume (24h)</div>
-                                <div class="metric-value" data-key-metric="daily-volume">$---</div>
+                                <div class="metric-value" data-key-metric="daily-volume" data-metric="volume_24h">$---</div>
                             </div>
                             
                             <div class="metric-item">
                                 <div class="metric-label">Gas Optimization</div>
-                                <div class="metric-value" data-key-metric="gas-optimization">--%</div>
+                                <div class="metric-value" data-key-metric="gas-optimization" data-metric="gas_optimization_score">--%</div>
                             </div>
                         </div>
 
@@ -750,7 +750,7 @@
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value" data-tx-stat="total-transactions">---</div>
+                                <div class="stat-value" data-tx-stat="total-transactions" data-metric="total_transactions">---</div>
                                 <div class="stat-label">Total Transactions</div>
                             </div>
                         </div>
@@ -759,7 +759,7 @@
                                 <i class="fas fa-coins"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value" data-tx-stat="total-volume">$---</div>
+                                <div class="stat-value" data-tx-stat="total-volume" data-metric="total_volume">$---</div>
                                 <div class="stat-label">Total Volume</div>
                             </div>
                         </div>
@@ -768,7 +768,7 @@
                                 <i class="fas fa-piggy-bank"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value" data-tx-stat="fees-saved">--%</div>
+                                <div class="stat-value" data-tx-stat="fees-saved" data-metric="savings_percentage">--%</div>
                                 <div class="stat-label">Fees Saved</div>
                             </div>
                         </div>
@@ -777,7 +777,7 @@
                                 <i class="fas fa-calendar-week"></i>
                             </div>
                             <div class="stat-info">
-                                <div class="stat-value" data-tx-stat="weekly-count">---</div>
+                                <div class="stat-value" data-tx-stat="weekly-count" data-metric="weekly_transactions">---</div>
                                 <div class="stat-label">This Week</div>
                             </div>
                         </div>
@@ -1362,7 +1362,7 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Total USDC Received</div>
-                                <div class="flow-stat-value" data-capital="total-received">$---,---</div>
+                                <div class="flow-stat-value" data-capital="total-received" data-metric="total_received">$---,---</div>
                                 <div class="flow-stat-crypto" data-capital="total-received-crypto">--- USDC Polygon • --- USDC Solana</div>
                             </div>
                         </div>
@@ -1373,7 +1373,7 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Total USDC Paid Out</div>
-                                <div class="flow-stat-value" data-capital="total-paid">$---,---</div>
+                                <div class="flow-stat-value" data-capital="total-paid" data-metric="total_paid_out">$---,---</div>
                                 <div class="flow-stat-crypto" data-capital="total-paid-crypto">--- USDC Polygon • --- USDC Solana</div>
                             </div>
                         </div>
@@ -1384,7 +1384,7 @@
                             </div>
                             <div class="flow-stat-content">
                                 <div class="flow-stat-label">Net USDC Flow</div>
-                                <div class="flow-stat-value" data-capital="net-flow">+$---,---</div>
+                                <div class="flow-stat-value" data-capital="net-flow" data-metric="net_flow">+$---,---</div>
                                 <div class="flow-stat-crypto" data-capital="net-flow-crypto">+--- USDC Polygon • +--- USDC Solana</div>
                             </div>
                         </div>
@@ -1512,11 +1512,11 @@
                             <div class="fees-summary">
                                 <div class="fee-stat">
                                     <span class="fee-label">Total Fees</span>
-                                    <span class="fee-value" data-fees="total">$---</span>
+                                    <span class="fee-value" data-fees="total" data-metric="total_savings">$---</span>
                                 </div>
                                 <div class="fee-stat">
                                     <span class="fee-label">Avg Payment Processor Fee</span>
-                                    <span class="fee-value" data-fees="avg-percentage">--%</span>
+                                    <span class="fee-value" data-fees="avg-percentage" data-metric="avg_savings_percentage">--%</span>
                                 </div>
                             </div>
                             
@@ -3516,5 +3516,73 @@
           <!-- Access control moved to backend-only for security -->
       <script type="module" src="./supabase-client.js"></script>
       <!-- Detection system moved to backend-only for security -->
+
+<!-- Automation Page Selection Modal/Panel -->
+<div class="automation-selection" id="automation-selection">
+  <h2 class="automation-select-title">Choose Your Automation Platform</h2>
+  <div class="automation-select-options">
+    <button class="automation-option zapier" id="select-zapier">
+      <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier Logo" class="automation-logo zapier-logo" />
+      <span>Zapier</span>
+    </button>
+    <button class="automation-option shopify" id="select-shopify">
+      <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify Logo" class="automation-logo shopify-logo" />
+      <span>Shopify</span>
+    </button>
+  </div>
+</div>
+
+<!-- Zapier Automation Page -->
+<div class="automation-platform-page" id="zapier-automation-page" style="display:none;">
+  <div class="automation-platform-header zapier">
+    <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier Logo" class="automation-logo zapier-logo-large" />
+    <h2>Zapier Automation Integration</h2>
+    <button class="automation-back-btn" id="back-to-automation-selection-zapier"><i class="fas fa-arrow-left"></i> Back</button>
+  </div>
+  <form class="automation-form zapier-form" id="zapier-form">
+    <div class="form-group">
+      <label for="zapier-webhook-url">Zapier Webhook URL</label>
+      <input type="url" id="zapier-webhook-url" class="form-input" placeholder="https://hooks.zapier.com/hooks/catch/..." required />
+    </div>
+    <div class="form-group">
+      <label for="zapier-link-id">Halaxa Link ID</label>
+      <input type="text" id="zapier-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required />
+    </div>
+    <button type="submit" class="automation-submit-btn zapier">Connect Zapier</button>
+  </form>
+  <div class="automation-info zapier-info">
+    <p>Connect your Halaxa payment events to thousands of apps using Zapier. Enter your Zapier webhook and the Halaxa Link ID you want to automate.</p>
+  </div>
+</div>
+
+<!-- Shopify Automation Page -->
+<div class="automation-platform-page" id="shopify-automation-page" style="display:none;">
+  <div class="automation-platform-header shopify">
+    <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify Logo" class="automation-logo shopify-logo-large" />
+    <h2>Shopify Automation Integration</h2>
+    <button class="automation-back-btn" id="back-to-automation-selection-shopify"><i class="fas fa-arrow-left"></i> Back</button>
+  </div>
+  <form class="automation-form shopify-form" id="shopify-form">
+    <div class="form-group">
+      <label for="shopify-store-url">Shopify Store URL</label>
+      <input type="url" id="shopify-store-url" class="form-input" placeholder="https://yourstore.myshopify.com" required />
+    </div>
+    <div class="form-group">
+      <label for="shopify-api-key">Shopify Store API Key</label>
+      <input type="text" id="shopify-api-key" class="form-input" placeholder="Enter your Shopify API Key" required />
+    </div>
+    <div class="form-group">
+      <label for="shopify-link-id">Halaxa Link ID</label>
+      <input type="text" id="shopify-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required />
+    </div>
+    <button type="submit" class="automation-submit-btn shopify">Connect Shopify</button>
+  </form>
+  <div class="automation-info shopify-info">
+    <p>Automate your Shopify store with Halaxa. Enter your store URL, API key, and the Halaxa Link ID to connect your payment flows.</p>
+  </div>
+</div>
+
+<!-- The rest of the automation page (tips, stats, etc.) can remain below or be hidden when a platform is selected. -->
+
 </body>
 </html>

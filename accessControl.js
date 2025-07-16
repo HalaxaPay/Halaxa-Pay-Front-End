@@ -327,14 +327,7 @@ class HalaxaAccessControl {
     // Also handle direct URL navigation
     this.handleDirectNavigation();
     
-    // CRITICAL: Re-enable navigation after access control is set up
-    console.log('🔓 Re-enabling navigation after access control setup...');
-    navItems.forEach(item => {
-      item.style.pointerEvents = 'auto';
-      item.style.opacity = '1';
-    });
-    
-    console.log('✅ Navigation re-enabled and access control active');
+
   }
   
   loadPage(pageId) {
@@ -1029,9 +1022,9 @@ window.getUserPlanInfo = () => {
   return halaxaAccessControl.getUserPlanInfo();
 };
 
-// Auto-update usage displays (removed to prevent page reloads)
-// setInterval(() => {
-//   halaxaAccessControl.updateUsageDisplay();
-// }, 30000);
+// Auto-update usage displays every 30 seconds
+setInterval(() => {
+  halaxaAccessControl.updateUsageDisplay();
+}, 30000);
 
 console.log('🔐 Halaxa Access Control System loaded successfully'); 

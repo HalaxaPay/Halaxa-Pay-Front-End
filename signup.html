@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Halaxa - Sign Up</title>
     
     <!-- Favicon -->
@@ -91,12 +91,7 @@
             position: relative;
             font-family: var(--font-primary);
             padding-bottom: env(safe-area-inset-bottom);
-            /* iOS-specific fixes */
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
+
         }
 
         /* Dashboard-style animated background */
@@ -1622,18 +1617,10 @@
             }
         }
 
-        // iOS detection
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
         
-        // iOS-specific touch event handling
-        const signupForm = document.getElementById('signupForm');
-        
-        // Use touchstart for iOS, click for others
-        const eventType = isIOS ? 'touchstart' : 'click';
-        
-        signupForm.addEventListener('submit', async function(e) {
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            e.stopPropagation(); // Prevent iOS double-tap issues
             
             const fullName = document.getElementById('fullname').value;
             const email = document.getElementById('email').value;
@@ -1661,11 +1648,6 @@
         const nameParts = fullName.trim().split(' ');
         const first_name = nameParts[0];
         const last_name = nameParts.slice(1).join(' ') || ''; // Handle single name case
-        
-        // iOS-specific: Force blur to prevent keyboard issues
-        if (isIOS) {
-            document.activeElement?.blur();
-        }
             
             try {
                 console.log('Testing backend connection...');
@@ -1702,24 +1684,12 @@
                     throw new Error(data.error || 'Registration failed');
                 }
 
-                // Store tokens with iOS error handling
-                try {
-                    if (data.accessToken) {
-                        localStorage.setItem('accessToken', data.accessToken);
-                    }
-                    if (data.refreshToken) {
-                        localStorage.setItem('refreshToken', data.refreshToken);
-                    }
-
-                    // 🚨 CRITICAL: Set authentication flags for SPA.js
-                    localStorage.setItem('userActive', 'true');
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    
-                    console.log('✅ Authentication data stored successfully');
-                } catch (storageError) {
-                    console.error('❌ localStorage error (iOS private browsing?):', storageError);
-                    // Continue with redirect even if localStorage fails
-                    alert('Note: Some features may not work in private browsing mode');
+                // Store tokens
+                if (data.accessToken) {
+                    localStorage.setItem('accessToken', data.accessToken);
+                }
+                if (data.refreshToken) {
+                    localStorage.setItem('refreshToken', data.refreshToken);
                 }
 
                 // 🚀 DASHBOARD INITIALIZATION
@@ -1744,12 +1714,7 @@
 
                 // Redirect to personalized dashboard (SPA.html) immediately
                 setTimeout(() => {
-                    // iOS-specific: Use replace instead of href to prevent back button issues
-                    if (isIOS) {
-                        window.location.replace('SPA.html');
-                    } else {
-                        window.location.href = 'SPA.html';
-                    }
+                    window.location.href = 'SPA.html';
                 }, 1200);
 
             } catch (error) {
@@ -1819,41 +1784,19 @@
         const BACKEND_URL = 'https://halaxa-backend.onrender.com';
 
         if (googleBtn) {
-            console.log('🔐 Google button found, adding event listener...');
-            console.log('🔐 Google button element:', googleBtn);
-            
-            googleBtn.addEventListener('click', async (e) => {
-                console.log('🔐 Google button clicked');
-                console.log('🔐 Event type:', e.type);
-                
-                // iOS-specific: Prevent double-tap issues
-                const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
-                console.log('📱 iOS device detected:', isIOSDevice);
-                
-                if (isIOSDevice) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                
+            googleBtn.addEventListener('click', async () => {
                 try {
-                    console.log('🔄 Starting Google sign-in...');
                     signupButton.classList.add('loading');
                     signupButton.textContent = 'Signing in with Google...';
                     generalError.style.display = 'none';
                     await signInWithGoogle();
                 } catch (err) {
-                    console.error('❌ Google sign-in error:', err);
                     generalError.style.display = 'block';
                     generalError.textContent = err.message || 'Google sign-in failed.';
                     signupButton.classList.remove('loading');
                     signupButton.textContent = 'Create Account';
                 }
             });
-            
-            console.log('✅ Google button event listener added');
-        } else {
-            console.error('❌ Google button not found!');
-            console.error('🔍 Available buttons:', document.querySelectorAll('button'));
         }
     </script>
     

@@ -47,28 +47,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
         
-        // CRITICAL: Ensure navigation is properly initialized after access control
-        setTimeout(() => {
-            if (window.accessControl) {
-                console.log('🔐 Re-initializing navigation after access control setup...');
-                window.accessControl.setupPageAccessControl();
-                
-                // Show home page by default
-                const homePage = document.getElementById('home-page');
-                if (homePage) {
-                    homePage.classList.add('active-page');
-                    console.log('✅ Home page activated');
-                }
-                
-                // Force re-enable navigation (not needed since navigation isn't blocked)
-                // const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
-                // navItems.forEach(item => {
-                //     item.style.pointerEvents = 'auto';
-                //     item.style.opacity = '1';
-                // });
-                // console.log('🔓 Navigation forcefully re-enabled');
-            }
-        }, 500);
+
         
         
     } catch (error) {
@@ -110,14 +89,11 @@ function hideAllPremiumContentImmediately() {
         }
         
         /* SECURITY: Disable navigation temporarily until access control loads */
-        /* TEMPORARILY DISABLED TO FIX NAVIGATION */
-        /*
         .nav-item,
         .mobile-nav-item {
             pointer-events: none !important;
             opacity: 0.7 !important;
         }
-        */
     `;
     document.head.appendChild(securityStyle);
 }
@@ -448,14 +424,11 @@ function applyPlanRestrictionsImmediately(userPlan) {
     }
     
     // Re-enable navigation after access control is applied
-    // TEMPORARILY DISABLED - navigation not being blocked
-    /*
     const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
     navItems.forEach(item => {
         item.style.pointerEvents = 'auto';
         item.style.opacity = '1';
     });
-    */
     
     console.log('✅ FOMO plan restrictions applied for:', userPlan);
 }
@@ -761,7 +734,7 @@ async function loadPersonalizedData(user) {
             
             // Initialize features in parallel for speed
             await Promise.all([
-                initializeAllEngineFeatures(user.id),
+                initializeCalculationEngineFeatures(user.id),
                 initializeAuthenticatedFeatures()
             ]);
             
@@ -937,6 +910,583 @@ function updateDashboardWithRealData(dashboardData) {
         
     } catch (error) {
         console.error('❌ Error updating dashboard with real data:', error);
+    }
+}
+
+// New function to update dashboard with calculation engine data
+function updateDashboardWithCalculationEngineData(dashboardData) {
+    console.log('🔄 Updating dashboard with calculation engine data...');
+    
+    try {
+        // Update balance cards
+        if (dashboardData.balances) {
+            updateBalanceOverviewCards(dashboardData);
+        }
+        
+        // Update analytics
+        if (dashboardData.analytics) {
+            updateAnalyticsCards(dashboardData.analytics);
+        }
+        
+        // Update insights
+        if (dashboardData.insights) {
+            updateInsightsCards(dashboardData.insights);
+        }
+        
+        // Update velocity
+        if (dashboardData.velocity) {
+            updateVelocityCards(dashboardData.velocity);
+        }
+        
+        // Update precision
+        if (dashboardData.precision) {
+            updatePrecisionCards(dashboardData.precision);
+        }
+        
+        // Update magnitude
+        if (dashboardData.magnitude) {
+            updateMagnitudeCards(dashboardData.magnitude);
+        }
+        
+        // Update networks
+        if (dashboardData.networks) {
+            updateNetworkDistributionCards(dashboardData.networks);
+        }
+        
+        // Update capital flow
+        if (dashboardData.capital_flow) {
+            updateCapitalFlowCards(dashboardData.capital_flow);
+        }
+        
+        // Update fee comparison
+        if (dashboardData.fee_comparison) {
+            updateFeeComparisonCards(dashboardData.fee_comparison);
+        }
+        
+        // Update MRR
+        if (dashboardData.mrr) {
+            updateMRRCards(dashboardData.mrr);
+        }
+        
+        // Update additional calculations
+        if (dashboardData.digital_vault) {
+            updateDigitalVaultCards(dashboardData.digital_vault);
+        }
+        
+        if (dashboardData.transaction_activity) {
+            updateTransactionActivityCards(dashboardData.transaction_activity);
+        }
+        
+        if (dashboardData.ai_insights) {
+            updateAIInsightsCards(dashboardData.ai_insights);
+        }
+        
+        if (dashboardData.total_volume) {
+            updateTotalVolumeCards(dashboardData.total_volume);
+        }
+        
+        if (dashboardData.weekly_transactions) {
+            updateWeeklyTransactionsCards(dashboardData.weekly_transactions);
+        }
+        
+        if (dashboardData.monthly_transactions) {
+            updateMonthlyTransactionsCards(dashboardData.monthly_transactions);
+        }
+        
+        if (dashboardData.largest_payment) {
+            updateLargestPaymentCards(dashboardData.largest_payment);
+        }
+        
+        if (dashboardData.average_payment) {
+            updateAveragePaymentCards(dashboardData.average_payment);
+        }
+        
+        if (dashboardData.orders) {
+            updateOrdersCards(dashboardData.orders);
+        }
+        
+        if (dashboardData.revenue) {
+            updateRevenueCards(dashboardData.revenue);
+        }
+        
+        if (dashboardData.user_balances) {
+            updateUserBalancesCards(dashboardData.user_balances);
+        }
+        
+        if (dashboardData.volume_overview) {
+            updateVolumeOverviewCards(dashboardData.volume_overview);
+        }
+        
+        if (dashboardData.comprehensive_fees) {
+            updateComprehensiveFeesCards(dashboardData.comprehensive_fees);
+        }
+        
+        if (dashboardData.recent_transactions_detailed) {
+            updateRecentTransactionsDetailedCards(dashboardData.recent_transactions_detailed);
+        }
+        
+        if (dashboardData.countries) {
+            updateCountriesCards(dashboardData.countries);
+        }
+        
+        if (dashboardData.ready_to_ship) {
+            updateReadyToShipCards(dashboardData.ready_to_ship);
+        }
+        
+        if (dashboardData.new_orders) {
+            updateNewOrdersCards(dashboardData.new_orders);
+        }
+        
+        if (dashboardData.total_customers) {
+            updateTotalCustomersCards(dashboardData.total_customers);
+        }
+        
+        if (dashboardData.total_usdc_paid_out !== undefined) {
+            updateTotalUSDCPaidOutCards(dashboardData.total_usdc_paid_out);
+        }
+        
+        if (dashboardData.billing_history) {
+            updateBillingHistoryCards(dashboardData.billing_history);
+        }
+        
+        console.log('✅ Dashboard updated with calculation engine data');
+    } catch (error) {
+        console.error('❌ Error updating dashboard with calculation engine data:', error);
+    }
+}
+
+// Helper functions for calculation engine data updates
+function updateAnalyticsCards(analytics) {
+    try {
+        // Update total volume
+        const totalVolumeElement = document.querySelector('[data-metric="total_volume"]');
+        if (totalVolumeElement) {
+            totalVolumeElement.textContent = `$${formatCurrency(analytics.total_volume)}`;
+        }
+        
+        // Update transaction count
+        const transactionCountElement = document.querySelector('[data-metric="transaction_count"]');
+        if (transactionCountElement) {
+            transactionCountElement.textContent = analytics.transaction_count.toLocaleString();
+        }
+        
+        // Update success rate
+        const successRateElement = document.querySelector('[data-metric="success_rate"]');
+        if (successRateElement) {
+            successRateElement.textContent = `${analytics.success_rate.toFixed(1)}%`;
+        }
+        
+        // Update 24h volume
+        const volume24hElement = document.querySelector('[data-metric="volume_24h"]');
+        if (volume24hElement) {
+            volume24hElement.textContent = `$${formatCurrency(analytics.volume_24h)}`;
+        }
+    } catch (error) {
+        console.error('Error updating analytics cards:', error);
+    }
+}
+
+function updateInsightsCards(insights) {
+    try {
+        // Update insight message
+        const insightElement = document.querySelector('.ai-insight-message');
+        if (insightElement) {
+            insightElement.textContent = insights.message;
+        }
+        
+        // Update risk score
+        const riskScoreElement = document.querySelector('[data-metric="risk_score"]');
+        if (riskScoreElement) {
+            riskScoreElement.textContent = `${insights.risk_score}%`;
+        }
+    } catch (error) {
+        console.error('Error updating insights cards:', error);
+    }
+}
+
+function updateVelocityCards(velocity) {
+    try {
+        // Update total executions
+        const totalExecutionsElement = document.querySelector('[data-metric="total_executions"]');
+        if (totalExecutionsElement) {
+            totalExecutionsElement.textContent = velocity.total_executions.toLocaleString();
+        }
+        
+        // Update daily average
+        const dailyAverageElement = document.querySelector('[data-metric="daily_average"]');
+        if (dailyAverageElement) {
+            dailyAverageElement.textContent = velocity.daily_average.toString();
+        }
+        
+        // Update velocity
+        const velocityElement = document.querySelector('[data-metric="velocity"]');
+        if (velocityElement) {
+            velocityElement.textContent = velocity.velocity.toString();
+        }
+    } catch (error) {
+        console.error('Error updating velocity cards:', error);
+    }
+}
+
+function updatePrecisionCards(precision) {
+    try {
+        // Update precision percentage
+        const precisionElement = document.querySelector('[data-metric="precision_percentage"]');
+        if (precisionElement) {
+            precisionElement.textContent = `${precision.precision_percentage.toFixed(1)}%`;
+        }
+        
+        // Update successful count
+        const successfulElement = document.querySelector('[data-metric="successful_count"]');
+        if (successfulElement) {
+            successfulElement.textContent = precision.successful_count.toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error updating precision cards:', error);
+    }
+}
+
+function updateMagnitudeCards(magnitude) {
+    try {
+        // Update average amount
+        const averageElement = document.querySelector('[data-metric="average_amount"]');
+        if (averageElement) {
+            averageElement.textContent = `$${formatCurrency(magnitude.average_amount)}`;
+        }
+        
+        // Update largest transaction
+        const largestElement = document.querySelector('[data-metric="largest_transaction"]');
+        if (largestElement) {
+            largestElement.textContent = `$${formatCurrency(magnitude.largest_transaction)}`;
+        }
+    } catch (error) {
+        console.error('Error updating magnitude cards:', error);
+    }
+}
+
+function updateCapitalFlowCards(capitalFlow) {
+    try {
+        // Update total received
+        const receivedElement = document.querySelector('[data-metric="total_received"]');
+        if (receivedElement) {
+            receivedElement.textContent = `$${formatCurrency(capitalFlow.total_received)}`;
+        }
+        
+        // Update net flow
+        const netFlowElement = document.querySelector('[data-metric="net_flow"]');
+        if (netFlowElement) {
+            netFlowElement.textContent = `$${formatCurrency(capitalFlow.net_flow)}`;
+        }
+    } catch (error) {
+        console.error('Error updating capital flow cards:', error);
+    }
+}
+
+function updateFeeComparisonCards(feeComparison) {
+    try {
+        // Update total savings
+        const savingsElement = document.querySelector('[data-metric="total_savings"]');
+        if (savingsElement) {
+            savingsElement.textContent = `$${formatCurrency(feeComparison.total_savings)}`;
+        }
+        
+        // Update savings percentage
+        const savingsPercentElement = document.querySelector('[data-metric="savings_percentage"]');
+        if (savingsPercentElement) {
+            savingsPercentElement.textContent = `${feeComparison.savings_percentage.toFixed(1)}%`;
+        }
+    } catch (error) {
+        console.error('Error updating fee comparison cards:', error);
+    }
+}
+
+function updateMRRCards(mrr) {
+    try {
+        // Update monthly revenue
+        const monthlyRevenueElement = document.querySelector('[data-metric="monthly_revenue"]');
+        if (monthlyRevenueElement) {
+            monthlyRevenueElement.textContent = `$${formatCurrency(mrr.monthly_revenue)}`;
+        }
+        
+        // Update annual revenue
+        const annualRevenueElement = document.querySelector('[data-metric="annual_revenue"]');
+        if (annualRevenueElement) {
+            annualRevenueElement.textContent = `$${formatCurrency(mrr.annual_revenue)}`;
+        }
+    } catch (error) {
+        console.error('Error updating MRR cards:', error);
+    }
+}
+
+// Additional update functions for all calculations
+function updateDigitalVaultCards(digitalVault) {
+    try {
+        const totalBalanceElement = document.querySelector('[data-metric="total_balance"]');
+        if (totalBalanceElement) {
+            totalBalanceElement.textContent = `$${formatCurrency(digitalVault.total_balance)}`;
+        }
+        
+        const uniqueWalletsElement = document.querySelector('[data-metric="unique_wallets"]');
+        if (uniqueWalletsElement) {
+            uniqueWalletsElement.textContent = digitalVault.unique_wallets.toString();
+        }
+    } catch (error) {
+        console.error('Error updating digital vault cards:', error);
+    }
+}
+
+function updateTransactionActivityCards(activity) {
+    try {
+        const totalTransactionsElement = document.querySelector('[data-metric="total_transactions"]');
+        if (totalTransactionsElement) {
+            totalTransactionsElement.textContent = activity.total_transactions.toLocaleString();
+        }
+        
+        const successRateElement = document.querySelector('[data-metric="success_rate"]');
+        if (successRateElement) {
+            successRateElement.textContent = `${activity.success_rate.toFixed(1)}%`;
+        }
+        
+        const weeklyTransactionsElement = document.querySelector('[data-metric="weekly_transactions"]');
+        if (weeklyTransactionsElement) {
+            weeklyTransactionsElement.textContent = activity.weekly_transactions.toString();
+        }
+    } catch (error) {
+        console.error('Error updating transaction activity cards:', error);
+    }
+}
+
+function updateAIInsightsCards(aiInsights) {
+    try {
+        const insightMessageElement = document.querySelector('[data-metric="insight_message"]');
+        if (insightMessageElement) {
+            insightMessageElement.textContent = aiInsights.insight_message;
+        }
+        
+        const riskScoreElement = document.querySelector('[data-metric="risk_score"]');
+        if (riskScoreElement) {
+            riskScoreElement.textContent = `${aiInsights.risk_score}%`;
+        }
+        
+        const confidenceLevelElement = document.querySelector('[data-metric="confidence_level"]');
+        if (confidenceLevelElement) {
+            confidenceLevelElement.textContent = `${aiInsights.confidence_level}%`;
+        }
+    } catch (error) {
+        console.error('Error updating AI insights cards:', error);
+    }
+}
+
+function updateTotalVolumeCards(totalVolume) {
+    try {
+        const totalVolumeElement = document.querySelector('[data-metric="total_volume"]');
+        if (totalVolumeElement) {
+            totalVolumeElement.textContent = `$${formatCurrency(totalVolume.total_volume)}`;
+        }
+    } catch (error) {
+        console.error('Error updating total volume cards:', error);
+    }
+}
+
+function updateWeeklyTransactionsCards(weeklyTransactions) {
+    try {
+        const weeklyTransactionsElement = document.querySelector('[data-metric="weekly_transactions"]');
+        if (weeklyTransactionsElement) {
+            weeklyTransactionsElement.textContent = weeklyTransactions.weekly_transactions.toString();
+        }
+    } catch (error) {
+        console.error('Error updating weekly transactions cards:', error);
+    }
+}
+
+function updateMonthlyTransactionsCards(monthlyTransactions) {
+    try {
+        const monthlyTransactionsElement = document.querySelector('[data-metric="monthly_transactions"]');
+        if (monthlyTransactionsElement) {
+            monthlyTransactionsElement.textContent = monthlyTransactions.monthly_transactions.toString();
+        }
+    } catch (error) {
+        console.error('Error updating monthly transactions cards:', error);
+    }
+}
+
+function updateLargestPaymentCards(largestPayment) {
+    try {
+        const largestPaymentElement = document.querySelector('[data-metric="largest_payment"]');
+        if (largestPaymentElement) {
+            largestPaymentElement.textContent = `$${formatCurrency(largestPayment.largest_payment)}`;
+        }
+    } catch (error) {
+        console.error('Error updating largest payment cards:', error);
+    }
+}
+
+function updateAveragePaymentCards(averagePayment) {
+    try {
+        const averagePaymentElement = document.querySelector('[data-metric="average_payment"]');
+        if (averagePaymentElement) {
+            averagePaymentElement.textContent = `$${formatCurrency(averagePayment.average_payment)}`;
+        }
+    } catch (error) {
+        console.error('Error updating average payment cards:', error);
+    }
+}
+
+function updateOrdersCards(orders) {
+    try {
+        const totalOrdersElement = document.querySelector('[data-metric="total_orders"]');
+        if (totalOrdersElement) {
+            totalOrdersElement.textContent = orders.total_orders.toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error updating orders cards:', error);
+    }
+}
+
+function updateRevenueCards(revenue) {
+    try {
+        const totalRevenueElement = document.querySelector('[data-metric="total_revenue"]');
+        if (totalRevenueElement) {
+            totalRevenueElement.textContent = `$${formatCurrency(revenue.total_revenue)}`;
+        }
+    } catch (error) {
+        console.error('Error updating revenue cards:', error);
+    }
+}
+
+function updateUserBalancesCards(userBalances) {
+    try {
+        const totalBalanceElement = document.querySelector('[data-metric="total_balance"]');
+        if (totalBalanceElement) {
+            totalBalanceElement.textContent = `$${formatCurrency(userBalances.total_balance)}`;
+        }
+    } catch (error) {
+        console.error('Error updating user balances cards:', error);
+    }
+}
+
+function updateVolumeOverviewCards(volumeOverview) {
+    try {
+        const totalVolumeElement = document.querySelector('[data-metric="total_volume"]');
+        if (totalVolumeElement) {
+            totalVolumeElement.textContent = `$${formatCurrency(volumeOverview.total_volume)}`;
+        }
+        
+        const transactionCountElement = document.querySelector('[data-metric="transaction_count"]');
+        if (transactionCountElement) {
+            transactionCountElement.textContent = volumeOverview.transaction_count.toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error updating volume overview cards:', error);
+    }
+}
+
+function updateComprehensiveFeesCards(comprehensiveFees) {
+    try {
+        const totalSavingsElement = document.querySelector('[data-metric="total_savings"]');
+        if (totalSavingsElement) {
+            totalSavingsElement.textContent = `$${formatCurrency(comprehensiveFees.total_savings)}`;
+        }
+        
+        const savingsPercentageElement = document.querySelector('[data-metric="savings_percentage"]');
+        if (savingsPercentageElement) {
+            savingsPercentageElement.textContent = `${comprehensiveFees.savings_percentage.toFixed(1)}%`;
+        }
+    } catch (error) {
+        console.error('Error updating comprehensive fees cards:', error);
+    }
+}
+
+function updateRecentTransactionsDetailedCards(recentTransactionsDetailed) {
+    try {
+        const recentTransactionsList = document.querySelector('.recent-transactions-list');
+        if (recentTransactionsList && recentTransactionsDetailed.recent_transactions) {
+            const transactionsHTML = recentTransactionsDetailed.recent_transactions.map(tx => `
+                <div class="transaction-item">
+                    <div class="transaction-hash">${tx.hash.substring(0, 8)}...</div>
+                    <div class="transaction-amount">$${formatCurrency(tx.amount)}</div>
+                    <div class="transaction-network">${tx.network}</div>
+                    <div class="transaction-status">${tx.status}</div>
+                </div>
+            `).join('');
+            recentTransactionsList.innerHTML = transactionsHTML;
+        }
+    } catch (error) {
+        console.error('Error updating recent transactions detailed cards:', error);
+    }
+}
+
+function updateCountriesCards(countries) {
+    try {
+        const totalCountriesElement = document.querySelector('[data-metric="total_countries"]');
+        if (totalCountriesElement) {
+            totalCountriesElement.textContent = countries.total_countries.toString();
+        }
+    } catch (error) {
+        console.error('Error updating countries cards:', error);
+    }
+}
+
+function updateReadyToShipCards(readyToShip) {
+    try {
+        const readyToShipElement = document.querySelector('[data-metric="ready_to_ship"]');
+        if (readyToShipElement) {
+            readyToShipElement.textContent = readyToShip.ready_to_ship.toString();
+        }
+    } catch (error) {
+        console.error('Error updating ready to ship cards:', error);
+    }
+}
+
+function updateNewOrdersCards(newOrders) {
+    try {
+        const newOrdersElement = document.querySelector('[data-metric="new_orders"]');
+        if (newOrdersElement) {
+            newOrdersElement.textContent = newOrders.new_orders.toString();
+        }
+    } catch (error) {
+        console.error('Error updating new orders cards:', error);
+    }
+}
+
+function updateTotalCustomersCards(totalCustomers) {
+    try {
+        const totalCustomersElement = document.querySelector('[data-metric="total_customers"]');
+        if (totalCustomersElement) {
+            totalCustomersElement.textContent = totalCustomers.total_customers.toLocaleString();
+        }
+    } catch (error) {
+        console.error('Error updating total customers cards:', error);
+    }
+}
+
+function updateTotalUSDCPaidOutCards(totalUSDCPaidOut) {
+    try {
+        const totalUSDCPaidOutElement = document.querySelector('[data-metric="total_usdc_paid_out"]');
+        if (totalUSDCPaidOutElement) {
+            totalUSDCPaidOutElement.textContent = `$${formatCurrency(totalUSDCPaidOut)}`;
+        }
+    } catch (error) {
+        console.error('Error updating total USDC paid out cards:', error);
+    }
+}
+
+function updateBillingHistoryCards(billingHistory) {
+    try {
+        const billingHistoryList = document.querySelector('.billing-history-list');
+        if (billingHistoryList && billingHistory.billing_history) {
+            const billingHTML = billingHistory.billing_history.map(bill => `
+                <div class="billing-item">
+                    <div class="billing-id">${bill.id.substring(0, 8)}...</div>
+                    <div class="billing-amount">$${formatCurrency(bill.amount)}</div>
+                    <div class="billing-status">${bill.status}</div>
+                    <div class="billing-date">${new Date(bill.date).toLocaleDateString()}</div>
+                </div>
+            `).join('');
+            billingHistoryList.innerHTML = billingHTML;
+        }
+    } catch (error) {
+        console.error('Error updating billing history cards:', error);
     }
 }
 
@@ -2621,6 +3171,31 @@ async function handlePaymentLinkCreation() {
         console.log('📥 DEBUG - Response body:', result);
         
         if (response.ok && result.success) {
+            // Add wallet connection to database
+            if (result.payment_link.wallet_address && result.payment_link.network) {
+                try {
+                    const walletResponse = await fetch(`${BACKEND_URL}/api/wallet-connection`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${accessToken}`
+                        },
+                        body: JSON.stringify({
+                            wallet_address: result.payment_link.wallet_address,
+                            network: result.payment_link.network
+                        })
+                    });
+                    
+                    if (walletResponse.ok) {
+                        console.log('✅ Wallet connection added successfully');
+                    } else {
+                        console.warn('⚠️ Failed to add wallet connection');
+                    }
+                } catch (error) {
+                    console.error('❌ Error adding wallet connection:', error);
+                }
+            }
+            
             showPaymentNotification('Payment link created successfully!', 'success');
             displayGeneratedLink(result.payment_link);
             
@@ -2942,82 +3517,36 @@ function showQRCode(url) {
     showPaymentNotification('QR Code feature coming soon!', 'info');
 }
 
-// Initialize all Engine.js features via sophisticated calculation endpoints
-async function initializeAllEngineFeatures(userId) {
-    console.log('🚀 Initializing ALL sophisticated Engine.js features for user:', userId);
+// Initialize calculation engine features
+async function initializeCalculationEngineFeatures(userId) {
+    console.log('🚀 Initializing calculation engine features for user:', userId);
     
     try {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) return;
         
-        // 🎯 CALL ALL ENGINE.JS SOPHISTICATED CALCULATION ENDPOINTS
-        const enginePromises = [
-            // 🧠 COMPREHENSIVE DASHBOARD ANALYTICS
-            fetch(`${BACKEND_URL}/api/account/dashboard-analytics-complete`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 📊 MONTHLY CONSTELLATION DATA (12-month revenue analysis)
-            fetch(`${BACKEND_URL}/api/account/monthly-constellation`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 🤖 AI FINANCIAL INSIGHTS (Predictive Analytics)
-            fetch(`${BACKEND_URL}/api/account/ai-insights`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // ⚡ TRANSACTION VELOCITY ANALYSIS
-            fetch(`${BACKEND_URL}/api/account/transaction-velocity`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 🏦 DIGITAL VAULT DATA (Balance Aggregations)
-            fetch(`${BACKEND_URL}/api/account/digital-vault`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 💰 USDC FLOW DATA (30-day analysis)
-            fetch(`${BACKEND_URL}/api/account/usdc-flow/30D`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 📈 USER GROWTH METRICS (4-month analysis)
-            fetch(`${BACKEND_URL}/api/account/user-growth`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 🧾 BILLING HISTORY ANALYTICS
-            fetch(`${BACKEND_URL}/api/account/billing-history`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 📦 ORDER MANAGEMENT ANALYTICS
-            fetch(`${BACKEND_URL}/api/account/order-analytics`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            }),
-            // 🔗 PAYMENT LINKS (For compatibility)
-            fetch(`${BACKEND_URL}/api/payment-links`, {
-                headers: { 'Authorization': `Bearer ${accessToken}` }
-            })
-        ];
+        // 🎯 CALL CALCULATION ENGINE ENDPOINT
+        const response = await fetch(`${BACKEND_URL}/api/dashboard/${userId}`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
         
-        console.log('📡 Calling Engine.js calculation endpoints...');
-        const responses = await Promise.allSettled(enginePromises);
-        
-        // 🎯 PROCESS COMPREHENSIVE DASHBOARD ANALYTICS
-        if (responses[0].status === 'fulfilled' && responses[0].value.ok) {
-            const comprehensiveData = await responses[0].value.json();
-            console.log('✅ Comprehensive dashboard analytics loaded:', Object.keys(comprehensiveData));
-            updateDashboardWithRealData(comprehensiveData);
-            updateAllDashboardElements(comprehensiveData);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                console.log('✅ Calculation engine data loaded successfully');
+                updateDashboardWithCalculationEngineData(result.data);
+                updateAllDashboardElements(result.data);
+            } else {
+                console.error('❌ Calculation engine error:', result.error);
+            }
+        } else {
+            console.error('❌ Failed to fetch calculation engine data');
         }
         
-        // 📊 PROCESS MONTHLY CONSTELLATION DATA
-        if (responses[1].status === 'fulfilled' && responses[1].value.ok) {
-            const constellationData = await responses[1].value.json();
-            console.log('✅ Monthly constellation data loaded');
-            updateMonthlyConstellationDisplay(constellationData);
-        }
-        
-        // 🤖 PROCESS AI FINANCIAL INSIGHTS
-        if (responses[2].status === 'fulfilled' && responses[2].value.ok) {
-            const aiInsights = await responses[2].value.json();
-            console.log('✅ AI financial insights loaded');
-            updateAIInsightsDisplay(aiInsights);
-        }
+    } catch (error) {
+        console.error('❌ Calculation engine initialization error:', error);
+    }
+}
         
         // ⚡ PROCESS TRANSACTION VELOCITY
         if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
@@ -4156,8 +4685,9 @@ function initializeAuthenticatedFeatures() {
     // Initialize access control system
     initializeAccessControl();
     
-    // Update market data immediately (removed auto-refresh to prevent page reloads)
-updateMarketHeartbeat();
+        // Update market data immediately and every 30 seconds
+    updateMarketHeartbeat();
+    setInterval(updateMarketHeartbeat, 30000);
     
     console.log('✅ Authenticated features initialized');
 }
@@ -5675,3 +6205,102 @@ function addDarkModeToggleButton() {
 window.addEventListener('DOMContentLoaded', () => {
     addDarkModeToggleButton();
 });
+
+// ==================== AUTOMATION PAGE SELECTION LOGIC ==================== //
+
+function setupAutomationPageSelection() {
+  // Elements
+  const automationSelection = document.getElementById('automation-selection');
+  const zapierPage = document.getElementById('zapier-automation-page');
+  const shopifyPage = document.getElementById('shopify-automation-page');
+  const zapierBtn = document.getElementById('select-zapier');
+  const shopifyBtn = document.getElementById('select-shopify');
+  const backZapier = document.getElementById('back-to-automation-selection-zapier');
+  const backShopify = document.getElementById('back-to-automation-selection-shopify');
+  const automationNav = document.querySelector('.nav-item[data-page="automation-page"]');
+  const mobileAutomationNav = document.querySelector('.mobile-nav-item[data-page="automation-page"]');
+
+  // Helper to show/hide
+  function showSelection() {
+    automationSelection.style.display = '';
+    zapierPage.style.display = 'none';
+    shopifyPage.style.display = 'none';
+  }
+  function showZapier() {
+    automationSelection.style.display = 'none';
+    zapierPage.style.display = '';
+    shopifyPage.style.display = 'none';
+  }
+  function showShopify() {
+    automationSelection.style.display = 'none';
+    zapierPage.style.display = 'none';
+    shopifyPage.style.display = '';
+  }
+
+  // Initial state
+  showSelection();
+
+  // Button listeners
+  if (zapierBtn) zapierBtn.onclick = showZapier;
+  if (shopifyBtn) shopifyBtn.onclick = showShopify;
+  if (backZapier) backZapier.onclick = showSelection;
+  if (backShopify) backShopify.onclick = showSelection;
+
+  // Intercept navigation to automation page
+  function automationNavHandler(e) {
+    e.preventDefault();
+    // Hide all .page-content
+    document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active-page'));
+    // Show automation page
+    const automationPage = document.getElementById('automation-page');
+    if (automationPage) automationPage.classList.add('active-page');
+    // Always show selection first
+    showSelection();
+    // Set nav active
+    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => item.classList.remove('active'));
+    if (e.currentTarget) e.currentTarget.classList.add('active');
+  }
+  if (automationNav) automationNav.addEventListener('click', automationNavHandler);
+  if (mobileAutomationNav) mobileAutomationNav.addEventListener('click', automationNavHandler);
+
+  // Form handlers (dummy)
+  const zapierForm = document.getElementById('zapier-form');
+  if (zapierForm) {
+    zapierForm.onsubmit = function(e) {
+      e.preventDefault();
+      showAutomationNotification('Zapier webhook connected! (demo)', 'success');
+      zapierForm.reset();
+    };
+  }
+  const shopifyForm = document.getElementById('shopify-form');
+  if (shopifyForm) {
+    shopifyForm.onsubmit = function(e) {
+      e.preventDefault();
+      showAutomationNotification('Shopify automation connected! (demo)', 'success');
+      shopifyForm.reset();
+    };
+  }
+}
+
+function showAutomationNotification(message, type = 'info') {
+  // Simple notification for automation forms
+  const notification = document.createElement('div');
+  notification.className = `automation-notification ${type}`;
+  notification.innerHTML = `<span>${message}</span>`;
+  Object.assign(notification.style, {
+    position: 'fixed', top: '30px', right: '30px', zIndex: 9999,
+    background: type === 'success' ? 'linear-gradient(90deg,#10b981,#059669)' : '#2563eb',
+    color: '#fff', padding: '16px 28px', borderRadius: '10px', fontWeight: 600,
+    boxShadow: '0 4px 16px rgba(16,185,129,0.15)', fontSize: '1rem',
+    transition: 'opacity 0.3s', opacity: 1
+  });
+  document.body.appendChild(notification);
+  setTimeout(() => { notification.style.opacity = 0; setTimeout(() => notification.remove(), 400); }, 3000);
+}
+
+// Attach after DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupAutomationPageSelection);
+} else {
+  setupAutomationPageSelection();
+}

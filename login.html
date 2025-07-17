@@ -1472,6 +1472,7 @@
     // Function to handle login form submission (email/password)
     async function handleLogin(event) {
         event.preventDefault();
+        event.stopPropagation();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('generalError');
@@ -1482,15 +1483,27 @@
         loginButton.textContent = 'Accessing Dashboard';
         console.log('Starting login process for:', email);
         try {
+            // Create AbortController for timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+            
+            console.log('Starting login...');
+            console.log('Sending data:', { email: email.substring(0, 3) + '*****' });
+            
             const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
                 method: 'POST',
+                mode: 'cors',
+                credentials: 'omit', // Changed from 'include' to avoid CORS issues
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'Origin': 'https://halaxapay.com'
                 },
-                credentials: 'include',
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId); // Clear timeout on successful response
             const data = await response.json();
             if (response.ok) {
                 if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
@@ -1514,7 +1527,22 @@
                 loginButton.textContent = 'Access Dashboard';
             }
         } catch (error) {
-            errorMessage.textContent = 'Network error. Please check your connection and try again.';
+            console.error('Login error:', error);
+            
+            // Show specific error message based on error type
+            let errorText = 'Login failed. Please try again.';
+            
+            if (error.name === 'AbortError') {
+                errorText = 'Request timed out. The server may be busy. Please try again.';
+            } else if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                errorText = 'Connection to server failed. Please check your internet connection and try again.';
+            } else if (error.message.includes('invalid') || error.message.includes('incorrect')) {
+                errorText = 'Invalid email or password. Please check your credentials and try again.';
+            } else if (error.message.includes('Network')) {
+                errorText = 'Network error. Please check your connection and try again.';
+            }
+            
+            errorMessage.textContent = errorText;
             errorMessage.style.display = 'block';
             loginButton.classList.remove('loading');
             loginButton.textContent = 'Access Dashboard';

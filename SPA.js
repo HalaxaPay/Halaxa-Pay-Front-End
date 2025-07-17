@@ -44,6 +44,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Initialize mobile functionality FIRST (with delay to ensure DOM is ready)
         setTimeout(() => {
             initializeMobileHamburgerMenu();
+            // Force mobile menu visibility check
+            const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+            if (hamburgerBtn && window.innerWidth <= 768) {
+                console.log('🔍 Mobile detected, ensuring hamburger visibility');
+                hamburgerBtn.style.display = 'flex';
+                hamburgerBtn.style.position = 'fixed';
+                hamburgerBtn.style.top = '15px';
+                hamburgerBtn.style.left = '15px';
+                hamburgerBtn.style.zIndex = '999999';
+            }
         }, 100);
         
         // Initialize other functionality
@@ -2164,6 +2174,19 @@ function initializeMobileHamburgerMenu() {
     });
 
     console.log('🍔 Mobile hamburger menu initialized successfully');
+    
+    // Add window resize listener to maintain mobile behavior
+    window.addEventListener('resize', function() {
+        const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+        if (hamburgerBtn && window.innerWidth <= 768) {
+            // Ensure mobile behavior on resize
+            hamburgerBtn.style.display = 'flex';
+            hamburgerBtn.style.position = 'fixed';
+            hamburgerBtn.style.top = '15px';
+            hamburgerBtn.style.left = '15px';
+            hamburgerBtn.style.zIndex = '999999';
+        }
+    });
 }
 
 function openMobileSidebar() {

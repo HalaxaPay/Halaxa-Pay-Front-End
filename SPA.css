@@ -9,6 +9,180 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* ==================== CRITICAL MOBILE VIEWPORT FIXES ==================== */
+
+/* Prevent horizontal scrolling on all devices */
+html, body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    position: relative !important;
+}
+
+/* Ensure all containers respect viewport width */
+* {
+    max-width: 100% !important;
+}
+
+/* Force specific containers to respect viewport */
+.container, .dashboard-wrapper, .main-content-area, .page-content, .home-page, .pricing-page {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+}
+
+/* Fix mobile layout issues */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Ensure main wrapper doesn't overflow */
+    .dashboard-wrapper {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Fix main content area on mobile */
+    .main-content-area {
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin-left: 0 !important;
+        padding: 60px 15px 15px 15px !important; /* Top padding for hamburger menu */
+        overflow-x: hidden !important;
+    }
+    
+    /* Hide desktop sidebar on mobile */
+    .sidebar {
+        display: none !important;
+    }
+    
+    /* Show mobile hamburger button - Override all existing styles */
+    .mobile-hamburger-container,
+    .mobile-hamburger-btn {
+        display: flex !important;
+        position: fixed !important;
+        top: 15px !important;
+        left: 15px !important;
+        z-index: 99999 !important;
+        width: 45px !important;
+        height: 45px !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 2px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Make sure container doesn't interfere */
+    .mobile-hamburger-container {
+        width: auto !important;
+        height: auto !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    /* Hamburger lines */
+    .hamburger-line {
+        width: 20px !important;
+        height: 2px !important;
+        background: #333 !important;
+        border-radius: 1px !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    /* Active hamburger animation */
+    .mobile-hamburger-btn.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px) !important;
+    }
+    
+    .mobile-hamburger-btn.active .hamburger-line:nth-child(2) {
+        opacity: 0 !important;
+    }
+    
+    .mobile-hamburger-btn.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px) !important;
+    }
+    
+    /* Fix pricing cards and other wide elements on mobile */
+    .pricing-grid, .pricing-card, .market-heartbeat, .stats-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Fix any fixed-width elements */
+    table, .table-container, .chart-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+    }
+    
+    /* Fix button groups */
+    .button-group, .pricing-toggle {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex-wrap: wrap !important;
+    }
+    
+    /* Override desktop hamburger positioning - Maximum specificity */
+    .mobile-hamburger-container .mobile-hamburger-btn,
+    .mobile-hamburger-container,
+    button.mobile-hamburger-btn,
+    #mobile-hamburger-btn {
+        transform: none !important;
+        top: 15px !important;
+        left: 15px !important;
+        right: auto !important;
+        bottom: auto !important;
+        position: fixed !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 999999 !important;
+    }
+    
+    /* Force visibility on all screen sizes below 768px */
+    .mobile-hamburger-container {
+        display: block !important;
+        position: fixed !important;
+        top: 15px !important;
+        left: 15px !important;
+        z-index: 999999 !important;
+    }
+    
+    /* Critical: Ensure no element can cause horizontal scroll */
+    *, *:before, *:after {
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Prevent any element from extending beyond viewport */
+    img, video, iframe, canvas, svg {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
 :root {
     /* Light Color Palette with Green and Blue Accents */
     --bg-primary: #fafbfc;

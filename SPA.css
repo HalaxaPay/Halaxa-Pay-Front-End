@@ -798,53 +798,25 @@ body::before {
     margin-bottom: var(--space-6);
 }
 
-/* ==================== CRITICAL MOBILE VIEWPORT FIXES ==================== */
+/* ==================== MOBILE-ONLY FIXES ==================== */
 
-/* Prevent horizontal scrolling on all devices */
-html, body {
-    overflow-x: hidden !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    position: relative !important;
-}
-
-/* Ensure all containers respect viewport width */
-* {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-/* Fix mobile layout issues */
+/* Mobile viewport fixes - ONLY apply to mobile devices */
 @media (max-width: 768px) {
     html, body {
         overflow-x: hidden !important;
         width: 100% !important;
         max-width: 100vw !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    /* Ensure main wrapper doesn't overflow */
-    .dashboard-wrapper {
-        width: 100% !important;
-        max-width: 100vw !important;
-        overflow-x: hidden !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    /* Fix main content area on mobile */
-    .main-content-area {
-        width: 100% !important;
-        max-width: 100vw !important;
-        margin-left: 0 !important;
-        padding: 60px 15px 15px 15px !important; /* Top padding for hamburger menu */
-        overflow-x: hidden !important;
     }
     
     /* Hide desktop sidebar on mobile */
     .sidebar {
         display: none !important;
+    }
+    
+    /* Fix main content area on mobile */
+    .main-content-area {
+        margin-left: 0 !important;
+        padding: 60px 15px 15px 15px !important;
     }
     
     /* Show mobile hamburger button */
@@ -13439,4 +13411,5 @@ body.dark-mode .webhook-integration-card .icon,
 body.dark-mode .account-status-card .icon,
 body.dark-mode .setup-guide-card .icon {
   filter: brightness(1.2) invert(0.85);
+}
 }

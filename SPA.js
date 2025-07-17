@@ -41,20 +41,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         // NOW initialize the UI - access control is already in place
         initializeSPA();
         
-        // Initialize mobile functionality FIRST (with delay to ensure DOM is ready)
-        setTimeout(() => {
-            initializeMobileHamburgerMenu();
-            // Force mobile menu visibility check
-            const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
-            if (hamburgerBtn && window.innerWidth <= 768) {
-                console.log('🔍 Mobile detected, ensuring hamburger visibility');
-                hamburgerBtn.style.display = 'flex';
-                hamburgerBtn.style.position = 'fixed';
-                hamburgerBtn.style.top = '15px';
-                hamburgerBtn.style.left = '15px';
-                hamburgerBtn.style.zIndex = '999999';
-            }
-        }, 100);
+        // Initialize mobile functionality FIRST
+        initializeMobileHamburgerMenu();
         
         // Initialize other functionality
         setupPaymentForm();
@@ -2128,30 +2116,17 @@ function initializeMobileHamburgerMenu() {
 
     if (!hamburgerBtn || !sidebarOverlay || !sidebarClose) {
         console.log('🍔 Mobile hamburger menu elements not found');
-        console.log('🔍 Available elements:', {
-            hamburgerBtn: !!hamburgerBtn,
-            sidebarOverlay: !!sidebarOverlay,
-            sidebarClose: !!sidebarClose
-        });
         return;
     }
 
-    // Remove any existing event listeners to prevent duplicates
-    hamburgerBtn.removeEventListener('click', openMobileSidebar);
-    sidebarClose.removeEventListener('click', closeMobileSidebar);
-
     // Open sidebar when hamburger is clicked
-    hamburgerBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    hamburgerBtn.addEventListener('click', function() {
         console.log('🍔 Opening mobile sidebar');
         openMobileSidebar();
     });
 
     // Close sidebar when close button is clicked
-    sidebarClose.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    sidebarClose.addEventListener('click', function() {
         console.log('🍔 Closing mobile sidebar via close button');
         closeMobileSidebar();
     });
@@ -2159,34 +2134,12 @@ function initializeMobileHamburgerMenu() {
     // Close sidebar when overlay is clicked
     sidebarOverlay.addEventListener('click', function(e) {
         if (e.target === sidebarOverlay) {
-            e.preventDefault();
-            e.stopPropagation();
             console.log('🍔 Closing mobile sidebar via overlay click');
             closeMobileSidebar();
         }
     });
 
-    // Close sidebar on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebarOverlay.classList.contains('active')) {
-            closeMobileSidebar();
-        }
-    });
-
-    console.log('🍔 Mobile hamburger menu initialized successfully');
-    
-    // Add window resize listener to maintain mobile behavior
-    window.addEventListener('resize', function() {
-        const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
-        if (hamburgerBtn && window.innerWidth <= 768) {
-            // Ensure mobile behavior on resize
-            hamburgerBtn.style.display = 'flex';
-            hamburgerBtn.style.position = 'fixed';
-            hamburgerBtn.style.top = '15px';
-            hamburgerBtn.style.left = '15px';
-            hamburgerBtn.style.zIndex = '999999';
-        }
-    });
+    console.log('🍔 Mobile hamburger menu initialized');
 }
 
 function openMobileSidebar() {
@@ -2194,20 +2147,11 @@ function openMobileSidebar() {
     const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
     
     if (hamburgerBtn && sidebarOverlay) {
-        // Add active states
         hamburgerBtn.classList.add('active');
         sidebarOverlay.classList.add('active');
         
-        // Prevent body scrolling and fix viewport issues
+        // Prevent body scrolling when sidebar is open
         document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
-        
-        // Store current scroll position
-        document.body.setAttribute('data-scroll-y', window.scrollY.toString());
-        
-        console.log('✅ Mobile sidebar opened');
     }
 }
 
@@ -2216,24 +2160,11 @@ function closeMobileSidebar() {
     const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
     
     if (hamburgerBtn && sidebarOverlay) {
-        // Remove active states
         hamburgerBtn.classList.remove('active');
         sidebarOverlay.classList.remove('active');
         
-        // Restore body scrolling and viewport
-        const scrollY = document.body.getAttribute('data-scroll-y');
+        // Restore body scrolling
         document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        
-        // Restore scroll position
-        if (scrollY) {
-            window.scrollTo(0, parseInt(scrollY));
-            document.body.removeAttribute('data-scroll-y');
-        }
-        
-        console.log('✅ Mobile sidebar closed');
     }
 }
 
@@ -4871,15 +4802,6 @@ async function updateMarketHeartbeat() {
         console.log('✅ Market heartbeat updated with real data');
     } catch (error) {
         console.error('❌ Error updating market heartbeat:', error);
-        
-        // Fallback: Show offline message
-        const btcElement = document.querySelector('.market-stat:nth-child(1) .stat-data .stat-value');
-        const ethElement = document.querySelector('.market-stat:nth-child(2) .stat-data .stat-value');
-        const usdcElement = document.querySelector('.market-stat:nth-child(3) .stat-data .stat-value');
-        
-        if (btcElement) btcElement.textContent = 'Offline';
-        if (ethElement) ethElement.textContent = 'Offline';
-        if (usdcElement) usdcElement.textContent = 'Offline';
     }
 }
 

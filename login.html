@@ -1504,7 +1504,8 @@
                 loginButton.textContent = 'Access Granted! 🎉';
                 loginButton.style.background = 'var(--gradient-mixed)';
                 setTimeout(() => {
-                    window.location.href = 'SPA.html';
+                    console.log('🚀 Redirecting to dashboard...');
+                    window.location.replace('SPA.html'); // Use replace instead of href to prevent back button issues
                 }, 1500);
             } else {
                 errorMessage.textContent = data.error || 'Login failed. Please try again.';

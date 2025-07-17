@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified | Halaxa Pay</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #f7f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Satoshi', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating particles background */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #2ECC71;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 15s infinite linear;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 6s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 8s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 10s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 12s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 14s; }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .verify-card {
+            background: linear-gradient(135deg, #f8fffe 0%, #f7f9fa 100%);
+            box-shadow: 0 8px 32px rgba(46,204,113,0.10), 0 1.5px 8px rgba(52,152,219,0.08);
+            border-radius: 1.5rem;
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 360px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            text-align: center;
+        }
+
+        .verify-card .icon {
+            font-size: 2.5rem;
+            color: #2ECC71;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2ECC71 0%, #3498DB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .verify-card h1 {
+            font-size: 2.1rem;
+            font-weight: 900;
+            margin: 0 0 0.3rem 0;
+            background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .verify-card .subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .verify-card .success-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2ECC71;
+            margin-bottom: 0.8rem;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .verify-card .success-notice {
+            font-size: 0.9rem;
+            color: #3498DB;
+            background: #ecfdf5;
+            border-radius: 0.7rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            border-left: 4px solid #2ECC71;
+        }
+
+        .dashboard-button {
+            width: 100%;
+            padding: 1rem 0;
+            background: linear-gradient(90deg, #2ECC71 0%, #3498DB 100%);
+            color: #fff;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 12px rgba(46,204,113,0.08);
+            letter-spacing: 0.5px;
+            transition: filter 0.2s, box-shadow 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .dashboard-button:hover {
+            filter: brightness(1.08);
+            box-shadow: 0 4px 24px rgba(52,152,219,0.13);
+            transform: translateY(-1px);
+        }
+
+        .dashboard-button:active {
+            transform: translateY(0);
+        }
+
+        .contact {
+            margin-top: 0.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .contact a {
+            color: #3498DB;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .verify-card {
+                padding: 2rem 1.5rem 1.5rem 1.5rem;
+                border-radius: 1.2rem;
+                max-width: 90vw;
+            }
+            .verify-card h1 {
+                font-size: 1.8rem;
+            }
+            .verify-card .success-title {
+                font-size: 1.2rem;
+            }
+            .dashboard-button {
+                font-size: 1rem;
+                padding: 0.9rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles background -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="verify-card">
+        <span class="icon"><i class="fas fa-check-circle"></i></span>
+        <h1>Halaxa Pay</h1>
+        <div class="subtitle">Welcome to secure payments</div>
+        
+        <div class="success-title">Email Verified Successfully!</div>
+        
+        <div class="success-notice">
+            <strong>Account Active:</strong> Your Halaxa Pay account is now fully activated and ready to use.
+        </div>
+        
+        <a href="SPA.html" class="dashboard-button">
+            <i class="fas fa-tachometer-alt" style="margin-right: 0.5rem;"></i>
+            ACCESS DASHBOARD
+        </a>
+
+        <div class="contact">
+             Need help? <a href="mailto:Support@HalaxaPay.com">Support@HalaxaPay.com</a>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a subtle animation delay to the success elements
+            const elements = ['.success-title', '.success-notice', '.dashboard-button'];
+            
+            elements.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(10px)';
+                    element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, (index + 1) * 150);
+                }
+            });
+
+            // Add click tracking for analytics (optional)
+            document.querySelector('.dashboard-button').addEventListener('click', function(e) {
+                // You can add analytics tracking here if needed
+                console.log('User accessed dashboard after email verification');
+            });
+        });
+
+        // Optional: Add confetti effect on page load
+        function createConfetti() {
+            const colors = ['#2ECC71', '#3498DB', '#f39c12', '#e74c3c'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '8px';
+                    confetti.style.height = '8px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-10px';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.borderRadius = '50%';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    const animation = confetti.animate([
+                        { transform: 'translateY(-10px) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight + 20}px) rotate(720deg)`, opacity: 0 }
+                    ], {
+                        duration: 3000 + Math.random() * 2000,
+                        easing: 'linear'
+                    });
+                    
+                    animation.onfinish = () => confetti.remove();
+                }, i * 50);
+            }
+        }
+
+        // Trigger confetti effect on page load
+        window.addEventListener('load', () => {
+            setTimeout(createConfetti, 500);
+        });
+    </script>
+</body>
+</html>

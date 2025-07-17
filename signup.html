@@ -1244,7 +1244,7 @@
                     <span style="margin: 0 0.75rem; color: var(--text-tertiary); font-size: 1.13rem;">or</span>
                     <div style="flex: 1; height: 1px; background: var(--border-light);"></div>
                 </div>
-                <form id="signupForm" method="post" action="#" style="width: 100%; display: flex; flex-direction: column; gap: 0.95rem;">
+                <form id="signupForm" style="width: 100%; display: flex; flex-direction: column; gap: 0.95rem;">
                     <div class="premium-form-group">
                         <label for="fullname" class="premium-label">Full Name</label>
                         <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required class="premium-input">
@@ -1309,39 +1309,34 @@
     <script>
         // Enhanced password visibility toggle
         const passwordToggle = document.getElementById('passwordToggle');
-        const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
         const passwordInput = document.getElementById('password');
-                    // Confirm password field removed - not needed in this form
 
-        passwordToggle.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            passwordToggle.classList.toggle('fa-eye');
-            passwordToggle.classList.toggle('fa-eye-slash');
-        });
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                passwordToggle.classList.toggle('fa-eye');
+                passwordToggle.classList.toggle('fa-eye-slash');
+            });
+        }
 
-        confirmPasswordToggle.addEventListener('click', () => {
-            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            confirmPasswordInput.setAttribute('type', type);
-            confirmPasswordToggle.classList.toggle('fa-eye');
-            confirmPasswordToggle.classList.toggle('fa-eye-slash');
-        });
-
-        // Password strength checker
+        // Password strength checker (if element exists)
         const passwordStrength = document.getElementById('passwordStrength');
         
-        passwordInput.addEventListener('input', function() {
-            const password = this.value;
-            const hasMinLength = password.length >= 8;
-            const hasNumber = /\d/.test(password);
-            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-            
-            if (hasMinLength && hasNumber && hasSpecialChar) {
-                passwordStrength.style.display = 'block';
-            } else {
-                passwordStrength.style.display = 'none';
-            }
-        });
+        if (passwordInput && passwordStrength) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const hasMinLength = password.length >= 8;
+                const hasNumber = /\d/.test(password);
+                const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                
+                if (hasMinLength && hasNumber && hasSpecialChar) {
+                    passwordStrength.style.display = 'block';
+                } else {
+                    passwordStrength.style.display = 'none';
+                }
+            });
+        }
 
         // Enhanced form interactions
         const inputs = document.querySelectorAll('input');
@@ -1624,6 +1619,7 @@
         
         document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            e.stopPropagation();
             
             const fullName = document.getElementById('fullname').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -1739,7 +1735,8 @@
 
                 // Redirect to personalized dashboard (SPA.html) - user is now auto-logged in
                 setTimeout(() => {
-                    window.location.href = 'SPA.html';
+                    console.log('🚀 Redirecting to dashboard...');
+                    window.location.replace('SPA.html'); // Use replace instead of href to prevent back button issues
                 }, 1500);
 
             } catch (error) {

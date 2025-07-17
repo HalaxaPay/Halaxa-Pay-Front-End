@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaxa - OAuth Callback</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2ECC71 0%, #3498DB 50%, #34d399 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .callback-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .success-message {
+            color: #51cf66;
+            background: rgba(81, 207, 102, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border: 1px solid rgba(81, 207, 102, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="callback-container">
+        <div class="loading-spinner"></div>
+        <h1>Processing Your Sign-In</h1>
+        <p>Please wait while we set up your personalized dashboard...</p>
+        <div id="status"></div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabase-client.js';
+
+        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+        const statusDiv = document.getElementById('status');
+
+        async function handleOAuthCallback() {
+            try {
+                console.log('🔄 Processing OAuth callback...');
+                
+                // Get session from Supabase
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) {
+                    throw new Error('Session error: ' + sessionError.message);
+                }
+                
+                if (!session?.user) {
+                    throw new Error('No user session found after OAuth');
+                }
+                
+                console.log('✅ OAuth session found, syncing with backend...');
+                console.log('👤 User:', session.user.email);
+                
+                statusDiv.innerHTML = '<p>Syncing with backend...</p>';
+                
+                // Sync with backend to ensure user is in all tables
+                const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ supabaseToken: session.access_token })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Backend sync failed');
+                }
+                
+                console.log('✅ Backend sync successful');
+                
+                // Store ALL session data properly
+                if (result.user) {
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    localStorage.setItem('userPlan', result.user.plan || 'basic');
+                }
+                
+                if (result.accessToken) {
+                    localStorage.setItem('accessToken', result.accessToken);
+                }
+                if (result.refreshToken) {
+                    localStorage.setItem('refreshToken', result.refreshToken);
+                }
+                
+                // Mark user as active (critical for authentication checks)
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('isPreview', 'false');
+                
+                // Clean up any old session data
+                localStorage.removeItem('sellerId');
+                localStorage.removeItem('halaxa_token');
+                localStorage.removeItem('token');
+                
+                console.log('✅ Session data stored successfully');
+                
+                // Show success message
+                statusDiv.innerHTML = `
+                    <div class="success-message">
+                        <strong>✅ Google sign-in successful!</strong><br>
+                        Redirecting to your personalized dashboard...
+                    </div>
+                `;
+                
+                // Redirect to personalized dashboard
+                setTimeout(() => {
+                    window.location.href = 'SPA.html';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ OAuth callback handling failed:', error);
+                
+                statusDiv.innerHTML = `
+                    <div class="error-message">
+                        <strong>❌ Google sign-in failed</strong><br>
+                        ${error.message}<br><br>
+                        <a href="login.html" style="color: white; text-decoration: underline;">
+                            Click here to try again
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // Process callback when page loads
+        window.addEventListener('load', handleOAuthCallback);
+    </script>
+</body>
+</html> 

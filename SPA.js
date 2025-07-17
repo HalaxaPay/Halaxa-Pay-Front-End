@@ -48,8 +48,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         initializeCardEffects();
         
         // Initialize pricing toggle after DOM is ready
-        setTimeout(() => {
+        setTimeout(async () => {
+            await fetchGeoPricing(); // Load geo-based pricing first
             initializePricingToggle();
+            await setMonthlyPricing(); // Set initial pricing with geo-awareness
         }, 100);
         
         // Initialize user personalization (now safe since access control is active)
@@ -2668,8 +2670,13 @@ function addButtonClickEffect(button) {
     }, 200);
 }
 
-function setMonthlyPricing() {
+async function setMonthlyPricing() {
     console.log('💰 Setting monthly pricing...');
+    
+    // Fetch geo-based pricing if not already loaded
+    if (!currentGeoPricing) {
+        await fetchGeoPricing();
+    }
     
     // Add pricing change class for animations
     const plansGrid = document.querySelector('.plans-grid');
@@ -2694,12 +2701,12 @@ function setMonthlyPricing() {
     
     // Update pricing with animation delay
     setTimeout(() => {
-        // Update Pro plan pricing
-        if (proPrice) proPrice.textContent = '29';
+        // Update Pro plan pricing with geo-based pricing
+        if (proPrice) proPrice.textContent = currentGeoPricing.pro.monthly.toString();
         if (proBillingNote) proBillingNote.textContent = 'Billed monthly';
         
-        // Update Elite plan pricing
-        if (elitePrice) elitePrice.textContent = '59';
+        // Update Elite plan pricing with geo-based pricing
+        if (elitePrice) elitePrice.textContent = currentGeoPricing.elite.monthly.toString();
         if (eliteBillingNote) eliteBillingNote.textContent = 'Billed monthly';
     }, 200);
     
@@ -2710,11 +2717,16 @@ function setMonthlyPricing() {
         if (plansGrid) plansGrid.classList.remove('pricing-changing');
     }, 800);
     
-    console.log('✅ Monthly pricing set');
+    console.log('✅ Monthly pricing set with geo-based pricing:', currentGeoPricing);
 }
 
-function setAnnualPricing() {
+async function setAnnualPricing() {
     console.log('💰 Setting annual pricing...');
+    
+    // Fetch geo-based pricing if not already loaded
+    if (!currentGeoPricing) {
+        await fetchGeoPricing();
+    }
     
     // Add pricing change class for animations
     const plansGrid = document.querySelector('.plans-grid');
@@ -2739,13 +2751,17 @@ function setAnnualPricing() {
     
     // Update pricing with animation delay
     setTimeout(() => {
-        // Update Pro plan pricing - $20/month billed annually ($240)
-        if (proPrice) proPrice.textContent = '20';
-        if (proBillingNote) proBillingNote.textContent = 'Billed annually ($240)';
+        // Calculate annual totals
+        const proYearlyTotal = currentGeoPricing.pro.yearly * 12;
+        const eliteYearlyTotal = currentGeoPricing.elite.yearly * 12;
         
-        // Update Elite plan pricing - $49/month billed annually ($588)
-        if (elitePrice) elitePrice.textContent = '49';
-        if (eliteBillingNote) eliteBillingNote.textContent = 'Billed annually ($588)';
+        // Update Pro plan pricing with geo-based pricing
+        if (proPrice) proPrice.textContent = currentGeoPricing.pro.yearly.toString();
+        if (proBillingNote) proBillingNote.textContent = `Billed annually ($${proYearlyTotal})`;
+        
+        // Update Elite plan pricing with geo-based pricing
+        if (elitePrice) elitePrice.textContent = currentGeoPricing.elite.yearly.toString();
+        if (eliteBillingNote) eliteBillingNote.textContent = `Billed annually ($${eliteYearlyTotal})`;
     }, 200);
     
     // Remove animation classes
@@ -2755,7 +2771,42 @@ function setAnnualPricing() {
         if (plansGrid) plansGrid.classList.remove('pricing-changing');
     }, 800);
     
-    console.log('✅ Annual pricing set - Pro: $20/month ($240/year), Elite: $49/month ($588/year)');
+    console.log('✅ Annual pricing set with geo-based pricing:', currentGeoPricing);
+}
+
+// ==================== GEO-BASED PRICING FUNCTIONALITY ==================== //
+
+let currentGeoPricing = null;
+
+async function fetchGeoPricing() {
+    try {
+        console.log('🌍 Fetching geo-based pricing...');
+        
+        const response = await fetch(`${BACKEND_URL}/api/geo/pricing/current`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch geo pricing');
+        }
+        
+        const data = await response.json();
+        currentGeoPricing = data.pricing;
+        
+        console.log('💰 Geo pricing fetched:', data);
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error fetching geo pricing:', error);
+        
+        // Fallback to default pricing
+        currentGeoPricing = {
+            pro: { monthly: 29, yearly: 20 },
+            elite: { monthly: 59, yearly: 49 }
+        };
+        
+        return { 
+            pricing: currentGeoPricing, 
+            geo: { country: null, isSpecialPricing: false } 
+        };
+    }
 }
 
 // ==================== PLAN UPGRADE FUNCTIONALITY ==================== //
@@ -2805,6 +2856,12 @@ async function handlePlanUpgrade(targetPlan) {
             throw new Error('Unable to get user email');
         }
 
+        // Determine billing cycle from current toggle state
+        const annualBtn = document.querySelector('[data-billing="annual"]');
+        const billing = annualBtn && annualBtn.classList.contains('active') ? 'yearly' : 'monthly';
+
+        console.log(`💰 Creating checkout session for ${targetPlan} plan with ${billing} billing`);
+
         // Create Stripe checkout session
         const response = await fetch(`${BACKEND_URL}/api/stripe/create-checkout-session`, {
             method: 'POST',
@@ -2814,7 +2871,8 @@ async function handlePlanUpgrade(targetPlan) {
             },
             body: JSON.stringify({
                 plan: targetPlan,
-                email: userEmail
+                email: userEmail,
+                billing: billing
             })
         });
 
@@ -2823,6 +2881,8 @@ async function handlePlanUpgrade(targetPlan) {
         if (!response.ok) {
             throw new Error(data.error || 'Failed to create checkout session');
         }
+
+        console.log('💰 Checkout session created:', data);
 
         // Redirect to Stripe Checkout
         if (data.url) {
@@ -3687,12 +3747,7 @@ async function initializeCalculationEngineFeatures(userId) {
         
         console.log('🎉 ALL sophisticated Engine.js features initialized successfully!');
         console.log('💡 Engine.js calculations now powering the entire dashboard');
-        
-    } catch (error) {
-        console.error('❌ Error initializing Engine.js features:', error);
-        console.log('🔄 Falling back to basic functionality...');
-    }
-}
+           
 
 // Update capital page with real data
 function updateCapitalPageWithRealData(capitalData) {

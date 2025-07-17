@@ -2166,51 +2166,100 @@ function initializeMobileHamburgerMenu() {
         });
     });
 
-    console.log('🍔 Mobile hamburger menu initialized');
+    // Emergency failsafe - if user taps screen while frozen, restore scroll
+    let emergencyTapCount = 0;
+    document.addEventListener('touchstart', function(e) {
+        // If body scroll is disabled but sidebar is not visible, this is an emergency
+        if (document.body.style.overflow === 'hidden') {
+            const sidebar = document.querySelector('.mobile-sidebar');
+            if (sidebar) {
+                const sidebarRect = sidebar.getBoundingClientRect();
+                if (sidebarRect.left < -300) { // Sidebar not visible
+                    emergencyTapCount++;
+                    if (emergencyTapCount >= 2) { // After 2 taps, emergency restore
+                        emergencyRestoreScroll();
+                        emergencyTapCount = 0;
+                    }
+                }
+            }
+        } else {
+            emergencyTapCount = 0; // Reset if scroll is working
+        }
+    });
+
+    console.log('🍔 Mobile hamburger menu initialized with emergency failsafes');
 }
 
 function openMobileSidebar() {
+    console.log('🍔 Opening mobile sidebar');
     const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
     const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
     
     if (hamburgerBtn && sidebarOverlay) {
-        // Add a small delay to ensure proper state management
+        hamburgerBtn.classList.add('active');
+        sidebarOverlay.classList.add('active');
+        
+        // Prevent body scrolling when sidebar is open
+        document.body.style.overflow = 'hidden';
+        
+        // CRITICAL FAILSAFE: Always restore scroll after 5 seconds if sidebar still not working
         setTimeout(() => {
-            hamburgerBtn.classList.add('active');
-            sidebarOverlay.classList.add('active');
-            
-            // Prevent body scrolling when sidebar is open
-            document.body.style.overflow = 'hidden';
-            
-            // Safety timeout to prevent infinite frozen state
-            setTimeout(() => {
-                if (!sidebarOverlay.classList.contains('active')) {
-                    // If sidebar is not active after animation, reset hamburger
-                    hamburgerBtn.classList.remove('active');
+            if (document.body.style.overflow === 'hidden' && !document.querySelector('.mobile-sidebar-overlay.active')) {
+                console.log('🔧 FAILSAFE: Restoring scroll - sidebar failed to show');
+                document.body.style.overflow = '';
+                hamburgerBtn.classList.remove('active');
+            }
+        }, 5000);
+        
+        // Quick check - if sidebar doesn't become visible, restore scroll immediately
+        setTimeout(() => {
+            const sidebar = document.querySelector('.mobile-sidebar');
+            if (sidebar) {
+                const sidebarRect = sidebar.getBoundingClientRect();
+                if (sidebarRect.left < -300) { // Still off-screen
+                    console.log('🔧 QUICK FAILSAFE: Sidebar not visible, restoring scroll');
                     document.body.style.overflow = '';
+                    hamburgerBtn.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
                 }
-            }, 600); // Wait for animation to complete
-        }, 50);
+            }
+        }, 1000);
     }
 }
 
 function closeMobileSidebar() {
+    console.log('🍔 Closing mobile sidebar');
     const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
     const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+    
+    // ALWAYS restore scrolling first, no matter what
+    document.body.style.overflow = '';
     
     if (hamburgerBtn && sidebarOverlay) {
         hamburgerBtn.classList.remove('active');
         sidebarOverlay.classList.remove('active');
         
-        // Restore body scrolling
-        document.body.style.overflow = '';
-        
-        // Force cleanup to prevent stuck states
+        // Double-check cleanup
         setTimeout(() => {
             hamburgerBtn.classList.remove('active');
             sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = ''; // Triple-check scroll restoration
         }, 100);
     }
+}
+
+// Global failsafe - emergency scroll restore function
+function emergencyRestoreScroll() {
+    console.log('🚨 EMERGENCY: Restoring scroll and resetting mobile menu');
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.height = '';
+    
+    const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+    const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
+    
+    if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
 }
 
 function animateNavSelection(selectedItem, allItems, targetPageId = null) {

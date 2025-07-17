@@ -1653,18 +1653,17 @@
         const last_name = nameParts.slice(1).join(' ') || ''; // Handle single name case
             
             try {
-                console.log('Testing backend connection...');
-                const testResponse = await fetch(`${BACKEND_URL}/test`);
-                const testData = await testResponse.json();
-                console.log('Backend test response:', testData);
-
                 console.log('Starting registration...');
                 console.log('Sending data:', { email, first_name, last_name });
+                
+                // Create AbortController for timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
                 
                 const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
                     method: 'POST',
                     mode: 'cors',
-                    credentials: 'include',
+                    credentials: 'omit', // Changed from 'include' to avoid CORS issues
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -1674,8 +1673,11 @@
                         password,
                         first_name,
                         last_name
-                    })
+                    }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId); // Clear timeout if request completes
 
                 console.log('Response status:', response.status);
                 console.log('Response headers:', Object.fromEntries(response.headers.entries()));
@@ -1741,8 +1743,29 @@
 
             } catch (error) {
                 console.error('Registration error:', error);
+                
+                // Show specific error message based on error type
+                let errorMessage = 'Registration failed. Please try again.';
+                
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out. The server may be busy. Please try again.';
+                } else if (error.message.includes('CORS') || error.message.includes('fetch')) {
+                    errorMessage = 'Connection to server failed. Please check your internet connection and try again.';
+                } else if (error.message.includes('already exists') || error.message.includes('already registered')) {
+                    errorMessage = 'An account with this email already exists. Please try logging in instead.';
+                } else if (error.message.includes('Invalid') || error.message.includes('validation')) {
+                    errorMessage = 'Please check your input and try again.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
                 generalError.style.display = 'block';
-                generalError.textContent = error.message || 'Registration failed. Please try again.';
+                generalError.textContent = errorMessage;
+                generalError.style.color = '#dc3545';
+                generalError.style.background = 'rgba(220, 53, 69, 0.1)';
+                generalError.style.border = '1px solid rgba(220, 53, 69, 0.3)';
+                generalError.style.borderRadius = '8px';
+                generalError.style.padding = '12px';
                 
                 // Reset button completely
                 signupButton.classList.remove('loading');

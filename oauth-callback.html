@@ -95,16 +95,88 @@
         async function handleOAuthCallback() {
             try {
                 console.log('🔄 Processing OAuth callback...');
+                console.log('🔍 Current URL:', window.location.href);
+                console.log('🔍 URL hash:', window.location.hash);
+                console.log('🔍 URL search:', window.location.search);
                 
-                // Get session from Supabase
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                statusDiv.innerHTML = '<p>Processing Google authentication...</p>';
                 
-                if (sessionError) {
-                    throw new Error('Session error: ' + sessionError.message);
+                // Check for error in URL parameters first
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlError = urlParams.get('error');
+                const urlErrorDescription = urlParams.get('error_description');
+                
+                if (urlError) {
+                    throw new Error(`OAuth error: ${urlError} - ${urlErrorDescription || 'Unknown error'}`);
+                }
+                
+                // Handle the auth callback from the URL (Supabase v2 method)
+                console.log('🔄 Checking for auth hash in URL...');
+                
+                // Check if we have auth data in the URL hash
+                if (window.location.hash && window.location.hash.includes('access_token')) {
+                    console.log('✅ Found auth hash in URL, processing...');
+                    
+                    // Let Supabase handle the callback
+                    const { data, error } = await supabase.auth.getSession();
+                    if (error) {
+                        console.warn('⚠️ Error getting session after callback:', error.message);
+                    }
+                    console.log('🔍 Initial session check result:', { data, error });
+                } else {
+                    console.log('🔍 No auth hash found in URL, checking for existing session...');
+                }
+                
+                // Wait a moment for session to be established
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Try to get session with retries
+                let session = null;
+                let attempts = 0;
+                const maxAttempts = 8;
+                
+                while (!session && attempts < maxAttempts) {
+                    attempts++;
+                    console.log(`🔄 Attempt ${attempts}/${maxAttempts} to get session...`);
+                    
+                    // Try multiple methods to get the session
+                    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+                    
+                    if (sessionError) {
+                        console.warn(`⚠️ Session error (attempt ${attempts}):`, sessionError.message);
+                    }
+                    
+                    if (sessionData?.session?.user) {
+                        session = sessionData.session;
+                        console.log(`✅ Session found on attempt ${attempts}!`);
+                        break;
+                    }
+                    
+                    // Also try getting user directly
+                    try {
+                        const { data: userData, error: userError } = await supabase.auth.getUser();
+                        if (userData?.user && !userError) {
+                            console.log(`✅ User found directly on attempt ${attempts}, getting fresh session...`);
+                            const { data: freshSession } = await supabase.auth.getSession();
+                            if (freshSession?.session) {
+                                session = freshSession.session;
+                                break;
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`⚠️ Direct user check failed (attempt ${attempts}):`, err.message);
+                    }
+                    
+                    // Wait before retry (progressive backoff)
+                    if (attempts < maxAttempts) {
+                        const waitTime = Math.min(1000 + (attempts * 500), 3000);
+                        console.log(`⏱️ Waiting ${waitTime}ms before retry...`);
+                        await new Promise(resolve => setTimeout(resolve, waitTime));
+                    }
                 }
                 
                 if (!session?.user) {
-                    throw new Error('No user session found after OAuth');
+                    throw new Error('Unable to retrieve user session after Google OAuth. Please try signing in again.');
                 }
                 
                 console.log('✅ OAuth session found, syncing with backend...');
@@ -115,19 +187,24 @@
                 // Sync with backend to ensure user is in all tables
                 const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({ supabaseToken: session.access_token })
                 });
                 
-                const result = await response.json();
-                
                 if (!response.ok) {
-                    throw new Error(result.error || 'Backend sync failed');
+                    const errorText = await response.text();
+                    console.error('❌ Backend sync failed:', response.status, errorText);
+                    throw new Error(`Backend sync failed: ${response.status} ${response.statusText}`);
                 }
                 
-                console.log('✅ Backend sync successful');
+                const result = await response.json();
+                console.log('✅ Backend sync successful:', result);
                 
-                // Store ALL session data properly
+                // Store ALL session data exactly like normal signup/login
                 if (result.user) {
                     localStorage.setItem('user', JSON.stringify(result.user));
                     localStorage.setItem('userPlan', result.user.plan || 'basic');
@@ -150,6 +227,7 @@
                 localStorage.removeItem('token');
                 
                 console.log('✅ Session data stored successfully');
+                console.log('🚀 Redirecting to personalized dashboard...');
                 
                 // Show success message
                 statusDiv.innerHTML = `
@@ -159,10 +237,10 @@
                     </div>
                 `;
                 
-                // Redirect to personalized dashboard
+                // Redirect to personalized dashboard (same as normal signup/login)
                 setTimeout(() => {
-                    window.location.href = 'SPA.html';
-                }, 2000);
+                    window.location.replace('SPA.html');
+                }, 1500);
                 
             } catch (error) {
                 console.error('❌ OAuth callback handling failed:', error);

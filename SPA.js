@@ -89,8 +89,7 @@ function hideAllPremiumContentImmediately() {
         }
         
         /* SECURITY: Hide restricted networks by default */
-        .network-option[data-network="solana"],
-        .network-option[data-network="tron"] {
+        .network-option[data-network="solana"] {
             display: none !important;
         }
         
@@ -464,19 +463,13 @@ function applyPlanRestrictionsImmediately(userPlan) {
     if (userPlan === 'basic') {
         restrictions += `
             /* Basic plan: Lock network options */
-            .network-option[data-network="solana"],
-            .network-option[data-network="tron"] {
+            .network-option[data-network="solana"] {
                 display: none !important;
             }
         `;
     } else if (userPlan === 'pro') {
         restrictions += `
-            /* Pro plan: Lock only tron network */
-            .network-option[data-network="tron"] {
-                display: none !important;
-            }
-            
-            /* Show solana for pro plan */
+            /* Pro plan: Show solana network */
             .network-option[data-network="solana"] {
                 display: flex !important;
             }
@@ -484,8 +477,7 @@ function applyPlanRestrictionsImmediately(userPlan) {
     } else if (userPlan === 'elite') {
         restrictions += `
             /* Elite plan: Show everything, no locks */
-            .network-option[data-network="solana"],
-            .network-option[data-network="tron"] {
+            .network-option[data-network="solana"] {
                 display: flex !important;
             }
         `;
@@ -3201,8 +3193,7 @@ function updateGasFee(network) {
     
     const fees = {
         polygon: '~$0.0001',
-        solana: '~$0.00005',
-        tron: '~$0.001'
+        solana: '~$0.00005'
     };
     
     gasFeeValue.textContent = fees[network] || '~$0.0001';

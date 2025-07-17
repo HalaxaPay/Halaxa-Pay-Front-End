@@ -1405,7 +1405,6 @@
                     user_id: userId,
                     wallet_address: '',
                     usdc_polygon: 0,
-                    usdc_tron: 0,
                     usdc_solana: 0,
                     usd_equivalent: 0,
                     last_updated: new Date().toISOString()
@@ -1458,7 +1457,7 @@
 
                  // 8. Initialize network_distributions (OPTIONAL) - Network-specific entries
                  console.log('🌐 Creating network distributions...');
-                 const networks = ['polygon', 'solana', 'tron'];
+                 const networks = ['polygon', 'solana'];
                  let networkDistributionSuccess = true;
                  
                  for (const network of networks) {

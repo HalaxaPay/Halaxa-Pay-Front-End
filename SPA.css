@@ -3740,7 +3740,7 @@ html, body {
 }
 
 .crypto-color.usdc-polygon { background: #2ECC71; }
-.crypto-color.usdc-trc20 { background: #3498DB; }
+.crypto-color.usdc-solana { background: #3498DB; }
 .crypto-color.others { background: #85C1E9; }
 
 /* Transaction Volume Section */
@@ -3982,7 +3982,7 @@ html, body {
     animation-delay: 0.2s;
 }
 
-.network-bar-fill.trc20 {
+.network-bar-fill.solana {
     background: linear-gradient(90deg, #3498DB, #2980B9);
     animation-delay: 0.4s;
 }
@@ -4362,7 +4362,7 @@ html, body {
     color: var(--accent-primary);
 }
 
-.trc20-icon {
+.solana-icon {
     background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
     color: var(--accent-blue);
 }
@@ -4690,7 +4690,7 @@ html, body {
     color: var(--accent-primary);
 }
 
-.network-badge.trc20 {
+.network-badge.solana {
     background: rgba(52, 152, 219, 0.1);
     color: var(--accent-blue);
 }

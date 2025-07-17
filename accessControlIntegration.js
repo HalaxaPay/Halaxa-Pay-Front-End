@@ -117,13 +117,6 @@ function renderNetworkOptions() {
       icon: '◎', 
       requiredPlan: 'pro',
       available: checkNetworkAccess('solana')
-    },
-    { 
-      id: 'tron', 
-      name: 'Tron', 
-      icon: '▲', 
-      requiredPlan: 'elite',
-      available: checkNetworkAccess('tron')
     }
   ];
 

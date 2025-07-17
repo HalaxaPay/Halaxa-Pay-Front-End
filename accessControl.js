@@ -41,7 +41,7 @@ class HalaxaAccessControl {
       elite: {
         maxPaymentLinks: Infinity,
         maxMonthlyVolume: Infinity,
-        allowedNetworks: ['polygon', 'solana', 'tron'],
+        allowedNetworks: ['polygon', 'solana'],
         blockedPages: [],
         features: {
           advancedAnalytics: true,
@@ -302,8 +302,7 @@ class HalaxaAccessControl {
     
     return {
       polygon: true, // Always available
-      solana: limits.allowedNetworks.includes('solana'),
-      tron: limits.allowedNetworks.includes('tron')
+      solana: limits.allowedNetworks.includes('solana')
     };
   }
 
@@ -324,9 +323,7 @@ class HalaxaAccessControl {
         if (!selector.querySelector('.network-tooltip')) {
           const tooltip = document.createElement('div');
           tooltip.className = 'network-tooltip';
-          tooltip.textContent = network === 'solana' 
-            ? 'Upgrade to Pro or Elite to enable Solana network.' 
-            : 'Upgrade to Elite to enable Tron network.';
+          tooltip.textContent = 'Upgrade to Pro or Elite to enable Solana network.';
           selector.appendChild(tooltip);
         }
       }

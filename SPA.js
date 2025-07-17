@@ -131,8 +131,8 @@ async function initializeCriticalAccessControl() {
         }
         
         // Use the global instance from accessControl.js
-        window.accessControl = window.HalaxaAccessControl;
-        await window.accessControl.init();
+        // Note: No need to assign to window.accessControl since we use window.HalaxaAccessControl directly
+        await window.HalaxaAccessControl.init();
         
         console.log('✅ Critical access control initialized');
         return true;
@@ -3254,8 +3254,8 @@ async function handlePaymentLinkCreation() {
         }
         
         // **ENHANCED: Check access control with integrated system**
-        if (accessControl) {
-            const permission = await accessControl.canCreatePaymentLink();
+        if (window.HalaxaAccessControl) {
+            const permission = await window.HalaxaAccessControl.canCreatePaymentLink();
             if (!permission.allowed) {
                 showPaymentNotification(permission.message || 'Payment link limit reached. Upgrade your plan for more links.', 'error');
                 setTimeout(() => {
@@ -3265,7 +3265,7 @@ async function handlePaymentLinkCreation() {
             }
             
             // Check network access
-            if (!accessControl.isNetworkAllowed(selectedNetwork)) {
+            if (!window.HalaxaAccessControl.isNetworkAllowed(selectedNetwork)) {
                 const requiredPlan = selectedNetwork === 'solana' ? 'Pro' : 'Elite';
                 showPaymentNotification(`${selectedNetwork.toUpperCase()} network requires ${requiredPlan} plan. Redirecting to upgrade...`, 'error');
                 setTimeout(() => {
@@ -4829,16 +4829,13 @@ function initializeAuthenticatedFeatures() {
 // ==================== ACCESS CONTROL SYSTEM ==================== //
 // REMOVED: Duplicate HalaxaAccessControl class - using the one from accessControl.js instead
 
-// Global access control instance
-let accessControl = null;
-
 // Initialize access control system (now using global instance from accessControl.js)
 async function initializeAccessControl() {
     try {
-        // Use the global instance from accessControl.js
-        accessControl = window.HalaxaAccessControl;
+        // Use the global instance from accessControl.js directly
+        // No need for local accessControl variable - using window.HalaxaAccessControl everywhere
         
-        if (!accessControl) {
+        if (!window.HalaxaAccessControl) {
             throw new Error('Access control system not found');
         }
         
@@ -5025,7 +5022,7 @@ function navigateToPage(pageId) {
     console.log('🧭 SECURITY CHECK: Navigating to page:', pageId);
     
     // CRITICAL: Verify access control is active
-    if (!window.accessControl) {
+    if (!window.HalaxaAccessControl) {
         console.error('🚨 SECURITY BREACH: Access control not initialized!');
         showEmergencyAccessDenied();
         return;
@@ -5053,9 +5050,9 @@ function navigateToPage(pageId) {
     }
     
     // ADDITIONAL: Check with access control system
-    if (window.accessControl) {
-        const plan = window.accessControl.getCurrentPlan();
-        const limits = window.accessControl.getPlanLimits(plan);
+    if (window.HalaxaAccessControl) {
+        const plan = window.HalaxaAccessControl.getCurrentPlan();
+        const limits = window.HalaxaAccessControl.getPlanLimits(plan);
         
         // Check if page is in blocked pages list
         const pageRoute = `/${pageId.replace('-page', '')}`;
@@ -5239,13 +5236,13 @@ function navigateToPlansPage() {
 
 // Reinitialize access control after page navigation
 function reinitializeAccessControlForPage() {
-    if (accessControl) {
+    if (window.HalaxaAccessControl) {
         // Re-setup restrictions for the current page
         setTimeout(() => {
             console.log('🔄 Reinitializing access control for current page');
-            accessControl.setupPageAccessControl(); // Re-apply nav restrictions
-            accessControl.setupNetworkRestrictions();
-            accessControl.setupPaymentLinkRestrictions();
+            window.HalaxaAccessControl.setupPageAccessControl(); // Re-apply nav restrictions
+            window.HalaxaAccessControl.setupNetworkRestrictions();
+            window.HalaxaAccessControl.setupPaymentLinkRestrictions();
             updatePlanStatusDisplay();
         }, 100);
     }
@@ -5253,10 +5250,10 @@ function reinitializeAccessControlForPage() {
 
 // Update plan status display in the UI
 function updatePlanStatusDisplay() {
-    if (!accessControl) return;
+    if (!window.HalaxaAccessControl) return;
     
-    const plan = accessControl.getCurrentPlan();
-    const limits = accessControl.getPlanLimits(plan);
+    const plan = window.HalaxaAccessControl.getCurrentPlan();
+    const limits = window.HalaxaAccessControl.getPlanLimits(plan);
     
     // Add plan badge to the main title or user area
     const planBadge = document.querySelector('.plan-status-badge') || 
@@ -5594,9 +5591,9 @@ function updateOrderAnalyticsDisplay(orderData) {
 window.testPageNavigation = function(pageId) {
     console.log(`🧪 Testing navigation to: ${pageId}`);
     
-    if (window.accessControl) {
-        const plan = window.accessControl.getCurrentPlan();
-        const limits = window.accessControl.getPlanLimits(plan);
+    if (window.HalaxaAccessControl) {
+        const plan = window.HalaxaAccessControl.getCurrentPlan();
+        const limits = window.HalaxaAccessControl.getPlanLimits(plan);
         
         console.log(`📋 Current plan: ${plan}`);
         console.log(`🔒 Blocked pages: ${limits.blockedPages.join(', ')}`);
@@ -5605,7 +5602,7 @@ window.testPageNavigation = function(pageId) {
             console.log(`❌ Page ${pageId} is blocked for ${plan} plan`);
         } else {
             console.log(`✅ Page ${pageId} is allowed for ${plan} plan`);
-            window.accessControl.loadPage(pageId);
+            window.HalaxaAccessControl.loadPage(pageId);
         }
     } else {
         console.error('❌ Access control not initialized');

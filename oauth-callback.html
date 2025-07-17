@@ -122,9 +122,29 @@
                 }
                 
                 console.log('✅ OAuth tokens detected in URL hash');
-                statusDiv.innerHTML = '<p>OAuth tokens detected, establishing session...</p>';
+                statusDiv.innerHTML = '<p>Extracting authentication tokens...</p>';
                 
-                // Set up auth state listener BEFORE processing
+                // MANUALLY extract tokens from URL hash (bypass Supabase URL validation)
+                const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                const accessToken = hashParams.get('access_token');
+                const refreshToken = hashParams.get('refresh_token');
+                const tokenType = hashParams.get('token_type');
+                const expiresIn = hashParams.get('expires_in');
+                
+                console.log('🔍 Extracted tokens:', {
+                    accessToken: accessToken ? `${accessToken.substring(0, 20)}...` : 'Missing',
+                    refreshToken: refreshToken ? `${refreshToken.substring(0, 20)}...` : 'Missing',
+                    tokenType,
+                    expiresIn
+                });
+                
+                if (!accessToken) {
+                    throw new Error('Access token not found in OAuth response');
+                }
+                
+                statusDiv.innerHTML = '<p>Establishing Supabase session...</p>';
+                
+                // Set up auth state listener BEFORE setting session
                 console.log('🔄 Setting up auth state listener...');
                 authStateListener = supabase.auth.onAuthStateChange(async (event, session) => {
                     console.log('🔔 Auth state changed:', event);
@@ -147,22 +167,40 @@
                         
                         await syncWithBackend(session);
                     } else if (event === 'SIGNED_OUT') {
-                        console.log('⚠️ User signed out during OAuth process');
+                        console.log('⚠️ Auth state: SIGNED_OUT - this is expected initially');
                     } else if (event === 'TOKEN_REFRESHED') {
                         console.log('🔄 OAuth tokens refreshed');
                     }
                 });
                 
-                // Set up a timeout to handle cases where auth state doesn't change
+                // Set up timeout for fallback
                 timeoutId = setTimeout(() => {
-                    console.log('⚠️ Timeout waiting for auth state change, trying manual session check...');
-                    handleFallbackSessionCheck();
-                }, 10000); // 10 second timeout
+                    console.log('⚠️ Timeout waiting for auth state change, trying direct approach...');
+                    handleDirectSessionSync(accessToken);
+                }, 8000); // 8 second timeout
                 
-                // Let Supabase process the URL hash automatically
-                console.log('🔄 Letting Supabase process the URL hash...');
+                // MANUALLY set the session using extracted tokens
+                console.log('🔄 Setting session manually with extracted tokens...');
                 
-                // The auth state listener will handle the rest
+                // Create session object
+                const sessionData = {
+                    access_token: accessToken,
+                    refresh_token: refreshToken || '',
+                    expires_in: parseInt(expiresIn) || 3600,
+                    token_type: tokenType || 'bearer'
+                };
+                
+                // Set session in Supabase (this should trigger SIGNED_IN event)
+                const { data, error } = await supabase.auth.setSession(sessionData);
+                
+                if (error) {
+                    console.error('❌ Failed to set session:', error);
+                    // Don't throw here, let the timeout handle fallback
+                } else if (data?.session?.user) {
+                    console.log('✅ Session set successfully via setSession()');
+                } else {
+                    console.log('⚠️ setSession() completed but no user in response');
+                }
                 
             } catch (error) {
                 console.error('❌ OAuth callback initial processing failed:', error);
@@ -170,9 +208,10 @@
             }
         }
         
-        async function handleFallbackSessionCheck() {
+        // Direct approach if auth state listener doesn't work
+        async function handleDirectSessionSync(accessToken) {
             try {
-                console.log('🔄 Attempting fallback session check...');
+                console.log('🔄 Attempting direct backend sync with access token...');
                 
                 // Clear existing listener
                 if (authStateListener) {
@@ -180,23 +219,74 @@
                     authStateListener = null;
                 }
                 
-                // Try to get session directly
-                const { data: { session }, error } = await supabase.auth.getSession();
-                
-                if (error) {
-                    throw new Error(`Session retrieval failed: ${error.message}`);
+                // Clear timeout
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
                 }
                 
-                if (session?.user && session?.access_token) {
-                    console.log('✅ Session found via fallback method!');
-                    await syncWithBackend(session);
-                } else {
-                    throw new Error('Unable to establish session after OAuth. The authentication tokens may be invalid or expired.');
+                statusDiv.innerHTML = '<p>Syncing directly with backend...</p>';
+                
+                // Sync directly with backend using the access token
+                const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ supabaseToken: accessToken })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Direct backend sync failed:', response.status, errorText);
+                    throw new Error(`Backend sync failed: ${response.status} ${response.statusText}`);
                 }
+                
+                const result = await response.json();
+                console.log('✅ Direct backend sync successful:', result);
+                
+                // Store session data
+                if (result.user) {
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    localStorage.setItem('userPlan', result.user.plan || 'basic');
+                }
+                
+                if (result.accessToken) {
+                    localStorage.setItem('accessToken', result.accessToken);
+                }
+                if (result.refreshToken) {
+                    localStorage.setItem('refreshToken', result.refreshToken);
+                }
+                
+                // Mark user as active
+                localStorage.setItem('userActive', 'true');
+                localStorage.setItem('isPreview', 'false');
+                
+                // Clean up old session data
+                localStorage.removeItem('sellerId');
+                localStorage.removeItem('halaxa_token');
+                localStorage.removeItem('token');
+                
+                console.log('✅ Session data stored successfully (direct method)');
+                
+                // Show success and redirect
+                statusDiv.innerHTML = `
+                    <div class="success-message">
+                        <strong>✅ Google sign-in successful!</strong><br>
+                        Redirecting to your personalized dashboard...
+                    </div>
+                `;
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.replace('SPA.html');
+                }, 1500);
                 
             } catch (error) {
-                console.error('❌ Fallback session check failed:', error);
-                showError(error.message);
+                console.error('❌ Direct session sync failed:', error);
+                showError(`Authentication failed: ${error.message}`);
             }
         }
         

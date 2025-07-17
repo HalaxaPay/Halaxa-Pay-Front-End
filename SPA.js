@@ -2139,6 +2139,33 @@ function initializeMobileHamburgerMenu() {
         }
     });
 
+    // Add navigation functionality to mobile menu items
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const pageId = this.getAttribute('data-page');
+            if (pageId) {
+                console.log('🍔 Mobile nav item clicked:', pageId);
+                
+                // Close the mobile sidebar first
+                closeMobileSidebar();
+                
+                // Navigate to the page after a short delay
+                setTimeout(() => {
+                    if (typeof navigateToPage === 'function') {
+                        navigateToPage(pageId);
+                    } else if (typeof showPage === 'function') {
+                        showPage(pageId);
+                    }
+                }, 300); // Wait for sidebar to close
+                
+                // Update active state
+                mobileNavItems.forEach(navItem => navItem.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+
     console.log('🍔 Mobile hamburger menu initialized');
 }
 
@@ -2147,11 +2174,23 @@ function openMobileSidebar() {
     const sidebarOverlay = document.getElementById('mobile-sidebar-overlay');
     
     if (hamburgerBtn && sidebarOverlay) {
-        hamburgerBtn.classList.add('active');
-        sidebarOverlay.classList.add('active');
-        
-        // Prevent body scrolling when sidebar is open
-        document.body.style.overflow = 'hidden';
+        // Add a small delay to ensure proper state management
+        setTimeout(() => {
+            hamburgerBtn.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            
+            // Prevent body scrolling when sidebar is open
+            document.body.style.overflow = 'hidden';
+            
+            // Safety timeout to prevent infinite frozen state
+            setTimeout(() => {
+                if (!sidebarOverlay.classList.contains('active')) {
+                    // If sidebar is not active after animation, reset hamburger
+                    hamburgerBtn.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }, 600); // Wait for animation to complete
+        }, 50);
     }
 }
 
@@ -2165,6 +2204,12 @@ function closeMobileSidebar() {
         
         // Restore body scrolling
         document.body.style.overflow = '';
+        
+        // Force cleanup to prevent stuck states
+        setTimeout(() => {
+            hamburgerBtn.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }, 100);
     }
 }
 

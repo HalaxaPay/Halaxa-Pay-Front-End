@@ -2718,20 +2718,26 @@ html, body {
 
     /* Mobile Sidebar Overlay */
     .mobile-sidebar-overlay {
-        display: none !important;
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        background: rgba(0, 0, 0, 0.5) !important;
-        backdrop-filter: blur(5px) !important;
+        background: rgba(0, 0, 0, 0) !important;
+        backdrop-filter: blur(0px) !important;
         z-index: 1000 !important;
+        pointer-events: none !important;
         transition: all 0.3s ease !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
     }
 
     .mobile-sidebar-overlay.active {
-        display: block !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(5px) !important;
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 
     /* Mobile Sidebar - iPhone Optimized & Stable */
@@ -2747,15 +2753,16 @@ html, body {
         box-shadow: 
             var(--shadow-lg),
             inset -1px 0 0 rgba(255, 255, 255, 0.1) !important; /* Inner border */
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Smoother animation */
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Slower, smoother animation */
         overflow-y: auto !important;
         overflow-x: hidden !important;
         z-index: 10001 !important; /* High z-index but below hamburger */
         -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
-        will-change: transform, left !important; /* iOS optimization */
+        will-change: left !important; /* iOS optimization */
         transform: translateZ(0) !important; /* Hardware acceleration */
         -webkit-backface-visibility: hidden !important;
         backface-visibility: hidden !important;
+        pointer-events: auto !important;
     }
 
     .mobile-sidebar-overlay.active .mobile-sidebar {

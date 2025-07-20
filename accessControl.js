@@ -193,6 +193,21 @@ class HalaxaAccessControl {
     return this.userPlan || 'basic';
   }
 
+  // Force refresh plan from backend (for when plan changes)
+  async refreshPlanFromBackend() {
+    try {
+      console.log('🔄 Force refreshing plan from backend...');
+      localStorage.removeItem('userPlan'); // Clear cache
+      this.userPlan = await this.getUserPlanFromMultipleSources();
+      this.applyVisualLocks(); // Re-apply locks with new plan
+      console.log('✅ Plan refreshed:', this.userPlan);
+      return this.userPlan;
+    } catch (error) {
+      console.error('❌ Failed to refresh plan:', error);
+      return 'basic';
+    }
+  }
+
   getPlanLimits(plan = null) {
     const userPlan = plan || this.getCurrentPlan();
     return this.planLimits[userPlan] || this.planLimits.basic;

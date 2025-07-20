@@ -158,14 +158,14 @@ class HalaxaAccessControl {
     // Source 3: Try direct Supabase query (fallback)
     try {
       console.log('🔄 Trying direct database query...');
-      const { data: userPlan, error } = await supabase
-        .from('user_plans')
-        .select('plan_type')
+      const { data: userSubscription, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan_tier')
         .eq('user_id', this.currentUser.id)
         .maybeSingle(); // Use maybeSingle to handle no results gracefully
 
-      if (!error && userPlan) {
-        const plan = userPlan.plan_type || 'basic';
+      if (!error && userSubscription) {
+        const plan = userSubscription.plan_tier || 'basic';
         console.log('✅ Plan from database:', plan);
         localStorage.setItem('userPlan', plan); // Cache it
         return plan;

@@ -2712,9 +2712,15 @@ html, body {
     .mobile-hamburger-btn.active .hamburger-line:nth-child(3) {
         transform: rotate(-45deg) translate(7px, -6px);
     }
-
-    /* Mobile Sidebar Overlay */
+    
+    /* FINAL OVERRIDE - Ensure mobile sidebar works */
     .mobile-sidebar-overlay {
+        display: block !important;
+    }
+
+    /* Mobile Sidebar Overlay - FORCE OVERRIDE */
+    .mobile-sidebar-overlay {
+        display: block !important; /* Force override the display: none above */
         position: fixed;
         top: 0;
         left: 0;
@@ -2885,7 +2891,7 @@ html, body {
         }
         
         .mobile-sidebar {
-            -webkit-transform: translateZ(0) !important;
+            /* Removed conflicting webkit transform */
         }
         
         .mobile-nav-item {
@@ -3050,10 +3056,7 @@ html, body {
         height: 48px !important;
     }
     
-    .mobile-sidebar {
-        width: 280px !important; /* Adjusted width for small screens */
-        max-width: 90vw !important; /* Allow more screen usage */
-    }
+    /* Mobile sidebar width controlled by main definition above */
 }
 
 /* ==================== PAGE TRANSITION ANIMATIONS ==================== */

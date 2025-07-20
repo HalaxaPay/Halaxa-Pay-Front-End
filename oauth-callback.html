@@ -81,8 +81,8 @@
 <body>
     <div class="callback-container">
         <div class="loading-spinner"></div>
-        <h1>Processing Your Sign-In</h1>
-        <p>Please wait while we set up your personalized dashboard...</p>
+        <h1>Almost There!</h1>
+        <p>Setting up your secure workspace. This will just take a moment...</p>
         <div id="status"></div>
     </div>
 
@@ -105,7 +105,7 @@
                 console.log('🔍 Current URL:', window.location.href);
                 console.log('🔍 URL hash:', window.location.hash);
                 
-                statusDiv.innerHTML = '<p>Processing Google authentication...</p>';
+                statusDiv.innerHTML = '<p>Verifying your Google account...</p>';
                 
                 // Check for OAuth errors in URL first
                 const urlParams = new URLSearchParams(window.location.search);
@@ -122,7 +122,7 @@
                 }
                 
                 console.log('✅ OAuth tokens detected in URL hash');
-                statusDiv.innerHTML = '<p>Extracting authentication tokens...</p>';
+                statusDiv.innerHTML = '<p>🔐 Securing your account...</p>';
                 
                 // MANUALLY extract tokens from URL hash (bypass Supabase URL validation)
                 const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -142,7 +142,7 @@
                     throw new Error('Access token not found in OAuth response');
                 }
                 
-                statusDiv.innerHTML = '<p>Establishing Supabase session...</p>';
+                statusDiv.innerHTML = '<p>✨ Preparing your personalized dashboard...</p>';
                 
                 // Set up auth state listener BEFORE setting session
                 console.log('🔄 Setting up auth state listener...');
@@ -225,7 +225,7 @@
                     timeoutId = null;
                 }
                 
-                statusDiv.innerHTML = '<p>Syncing directly with backend...</p>';
+                statusDiv.innerHTML = '<p>🎯 Almost ready! Setting up your workspace...</p>';
                 
                 // Sync directly with backend using the access token
                 const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
@@ -274,8 +274,9 @@
                 // Show success and redirect
                 statusDiv.innerHTML = `
                     <div class="success-message">
-                        <strong>✅ Google sign-in successful!</strong><br>
-                        Redirecting to your personalized dashboard...
+                        <strong>✅ Welcome back!</strong><br>
+                        Your secure workspace is ready. Redirecting now...<br>
+                        <small style="opacity: 0.8;">🔒 Your data is protected with enterprise-grade security</small>
                     </div>
                 `;
                 
@@ -286,14 +287,14 @@
                 
             } catch (error) {
                 console.error('❌ Direct session sync failed:', error);
-                showError(`Authentication failed: ${error.message}`);
+                showError(`Sign-in incomplete: ${error.message}`);
             }
         }
         
         async function syncWithBackend(session) {
             try {
                 console.log('🔄 Syncing with backend...');
-                statusDiv.innerHTML = '<p>Syncing with backend...</p>';
+                statusDiv.innerHTML = '<p>🚀 Connecting you to your dashboard...</p>';
                 
                 const response = await fetch(`${BACKEND_URL}/api/auth/oauth-sync`, {
                     method: 'POST',
@@ -342,8 +343,9 @@
                 // Show success message
                 statusDiv.innerHTML = `
                     <div class="success-message">
-                        <strong>✅ Google sign-in successful!</strong><br>
-                        Redirecting to your personalized dashboard...
+                        <strong>✅ All set!</strong><br>
+                        Taking you to your secure dashboard...<br>
+                        <small style="opacity: 0.8;">🛡️ Authenticated via Google's secure servers</small>
                     </div>
                 `;
                 
@@ -354,7 +356,7 @@
                 
             } catch (error) {
                 console.error('❌ Backend sync failed:', error);
-                showError(`Backend sync failed: ${error.message}`);
+                showError(`Connection failed: ${error.message}`);
             }
         }
         

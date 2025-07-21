@@ -8346,6 +8346,41 @@ html, body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     animation: slideInUp 0.5s ease-out;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.platform-config-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        rgba(16, 185, 129, 0.8) 0%, 
+        rgba(59, 130, 246, 0.8) 50%, 
+        rgba(16, 185, 129, 0.8) 100%);
+    border-radius: 2rem 2rem 0 0;
+}
+
+/* Zapier Config Page Accent */
+#zapier-config-page::before {
+    background: linear-gradient(90deg, 
+        rgba(255, 106, 0, 0.8) 0%, 
+        rgba(255, 140, 97, 0.8) 50%, 
+        rgba(255, 106, 0, 0.8) 100%);
+}
+
+/* Shopify Config Page Accent */
+#shopify-config-page::before {
+    background: linear-gradient(90deg, 
+        rgba(149, 191, 71, 0.8) 0%, 
+        rgba(125, 166, 61, 0.8) 50%, 
+        rgba(149, 191, 71, 0.8) 100%);
 }
 
 @keyframes slideInUp {
@@ -8388,6 +8423,34 @@ html, body {
     transform: translateX(-3px);
 }
 
+/* Zapier Back Button - Orange */
+#zapier-config-page .back-btn {
+    background: linear-gradient(135deg, #FF6A00, #FF8C61);
+    border: 1px solid rgba(255, 106, 0, 0.3);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 106, 0, 0.2);
+}
+
+#zapier-config-page .back-btn:hover {
+    background: linear-gradient(135deg, #E65A00, #FF6A00);
+    transform: translateX(-5px);
+    box-shadow: 0 6px 20px rgba(255, 106, 0, 0.3);
+}
+
+/* Shopify Back Button - Green */
+#shopify-config-page .back-btn {
+    background: linear-gradient(135deg, #95BF47, #7DA63D);
+    border: 1px solid rgba(149, 191, 71, 0.3);
+    color: white;
+    box-shadow: 0 4px 15px rgba(149, 191, 71, 0.2);
+}
+
+#shopify-config-page .back-btn:hover {
+    background: linear-gradient(135deg, #7DA63D, #95BF47);
+    transform: translateX(-5px);
+    box-shadow: 0 6px 20px rgba(149, 191, 71, 0.3);
+}
+
 .config-title {
     display: flex;
     align-items: center;
@@ -8411,41 +8474,73 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    position: relative;
 }
 
 .form-group label {
     font-weight: 600;
     color: var(--text-primary);
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: linear-gradient(135deg, #10B981, #059669);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
 }
 
 .form-input {
     padding: 1rem 1.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 0.75rem;
     color: var(--text-primary);
     font-size: 1rem;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .form-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+        0 0 0 3px rgba(16, 185, 129, 0.1),
+        0 4px 20px rgba(16, 185, 129, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .form-help {
     font-size: 0.875rem;
     color: var(--text-secondary);
     margin-top: 0.25rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.05);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
 }
 
 .config-submit-btn {
@@ -8487,6 +8582,42 @@ html, body {
     background: linear-gradient(135deg, #7DA63D, #95BF47);
     transform: translateY(-2px);
     box-shadow: 0 12px 35px rgba(149, 191, 71, 0.4);
+}
+
+/* Enhanced Form Styling for Zapier */
+#zapier-config-page .form-input:focus {
+    border-color: #FF6A00;
+    box-shadow: 
+        0 0 0 3px rgba(255, 106, 0, 0.1),
+        0 4px 20px rgba(255, 106, 0, 0.1);
+}
+
+#zapier-config-page .form-group label::before {
+    background: linear-gradient(135deg, #FF6A00, #FF8C61);
+    box-shadow: 0 0 8px rgba(255, 106, 0, 0.4);
+}
+
+#zapier-config-page .form-help {
+    border-left-color: rgba(255, 106, 0, 0.3);
+    background: rgba(255, 106, 0, 0.05);
+}
+
+/* Enhanced Form Styling for Shopify */
+#shopify-config-page .form-input:focus {
+    border-color: #95BF47;
+    box-shadow: 
+        0 0 0 3px rgba(149, 191, 71, 0.1),
+        0 4px 20px rgba(149, 191, 71, 0.1);
+}
+
+#shopify-config-page .form-group label::before {
+    background: linear-gradient(135deg, #95BF47, #7DA63D);
+    box-shadow: 0 0 8px rgba(149, 191, 71, 0.4);
+}
+
+#shopify-config-page .form-help {
+    border-left-color: rgba(149, 191, 71, 0.3);
+    background: rgba(149, 191, 71, 0.05);
 }
 
 /* === AUTOMATION PAGE CLEAN STYLES === */
@@ -11155,6 +11286,7 @@ html, body {
 
 /* Automation Header - Simple & Clean */
 .automation-header {
+    margin-top: 1.5rem;
     margin-bottom: 2rem;
     text-align: center;
 }

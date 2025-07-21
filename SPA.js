@@ -6428,26 +6428,62 @@ function setupEliteAutomationPlatforms() {
   const zapierForm = document.getElementById('zapier-config-form');
   const shopifyForm = document.getElementById('shopify-config-form');
 
-  // Helper functions
+  // Helper functions - using CSS classes instead of inline styles
   function showPlatformSelection() {
-    if (elitePlatforms) elitePlatforms.style.display = 'grid';
-    if (platformPages) platformPages.style.display = 'none';
-    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
-    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
+    if (elitePlatforms) {
+      elitePlatforms.style.removeProperty('display');
+      elitePlatforms.classList.remove('hidden');
+    }
+    if (platformPages) {
+      platformPages.style.display = 'none';
+      platformPages.classList.add('hidden');
+    }
+    if (zapierConfigPage) {
+      zapierConfigPage.style.display = 'none';
+      zapierConfigPage.classList.add('hidden');
+    }
+    if (shopifyConfigPage) {
+      shopifyConfigPage.style.display = 'none';
+      shopifyConfigPage.classList.add('hidden');
+    }
   }
 
   function showZapierConfig() {
-    if (elitePlatforms) elitePlatforms.style.display = 'none';
-    if (platformPages) platformPages.style.display = 'block';
-    if (zapierConfigPage) zapierConfigPage.style.display = 'block';
-    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
+    if (elitePlatforms) {
+      elitePlatforms.style.display = 'none';
+      elitePlatforms.classList.add('hidden');
+    }
+    if (platformPages) {
+      platformPages.style.removeProperty('display');
+      platformPages.classList.remove('hidden');
+    }
+    if (zapierConfigPage) {
+      zapierConfigPage.style.removeProperty('display');
+      zapierConfigPage.classList.remove('hidden');
+    }
+    if (shopifyConfigPage) {
+      shopifyConfigPage.style.display = 'none';
+      shopifyConfigPage.classList.add('hidden');
+    }
   }
 
   function showShopifyConfig() {
-    if (elitePlatforms) elitePlatforms.style.display = 'none';
-    if (platformPages) platformPages.style.display = 'block';
-    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
-    if (shopifyConfigPage) shopifyConfigPage.style.display = 'block';
+    if (elitePlatforms) {
+      elitePlatforms.style.display = 'none';
+      elitePlatforms.classList.add('hidden');
+    }
+    if (platformPages) {
+      platformPages.style.removeProperty('display');
+      platformPages.classList.remove('hidden');
+    }
+    if (zapierConfigPage) {
+      zapierConfigPage.style.display = 'none';
+      zapierConfigPage.classList.add('hidden');
+    }
+    if (shopifyConfigPage) {
+      shopifyConfigPage.style.removeProperty('display');
+      shopifyConfigPage.classList.remove('hidden');
+    }
   }
 
   // Platform button click handlers

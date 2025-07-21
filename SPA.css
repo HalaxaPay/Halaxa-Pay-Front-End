@@ -8072,6 +8072,11 @@ html, body {
     opacity: 1 !important;
 }
 
+/* Hidden class for JavaScript control */
+.hidden {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     .elite-automation-platforms {
         grid-template-columns: 1fr;

@@ -290,8 +290,8 @@ export const database = {
   async getUserPlan(userId) {
     try {
       const { data, error } = await supabase
-        .from('user_plans')
-        .select('plan_type, started_at, next_billing')
+        .from('user_subscriptions')
+        .select('plan_tier, started_at, next_billing_date')
         .eq('user_id', userId)
         .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
       
@@ -306,7 +306,7 @@ export const database = {
         throw error;
       }
       
-      const plan = data?.plan_type || 'basic';
+      const plan = data?.plan_tier || 'basic';
       localStorage.setItem('userPlan', plan);
       
       return { success: true, plan, data };

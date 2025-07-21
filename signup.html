@@ -1362,18 +1362,10 @@
             
                          const initializationResults = {
                  user_profiles: false,
-                 user_plans: false,
+                 user_subscriptions: false,
                  user_balances: false,
                  user_metrics: false,
-                 fees_saved: false,
-                 key_metrics: false,
-                 execution_metrics: false,
-                 network_distributions: false,
-                 transaction_insights: false,
-                 monthly_metrics: false,
-                 ai_oracle_messages: false,
-                 user_growth: false,
-                 usdc_balances: false
+                 network_distributions: false
              };
 
             try {
@@ -1381,19 +1373,18 @@
                 initializationResults.user_profiles = await safeInsert(supabase, 'user_profiles', {
                     user_id: userId,
                     name: fullName || '',
-                    initials: initials,
-                    email: email,
-                    created_at: new Date().toISOString()
+                    initials: initials
                 }, 'Creating user profile');
 
-                // 2. Initialize user_plans (CRITICAL)
-                initializationResults.user_plans = await safeInsert(supabase, 'user_plans', {
+                // 2. Initialize user_subscriptions (CRITICAL)
+                initializationResults.user_subscriptions = await safeInsert(supabase, 'user_subscriptions', {
                     user_id: userId,
-                    plan_type: 'basic',
+                    plan_tier: 'basic',
+                    plan_status: 'active',
                     started_at: new Date().toISOString(),
-                    next_billing: nextBilling.toISOString(),
+                    next_billing_date: nextBilling.toISOString(),
                     auto_renewal: true
-                }, 'Creating user plan');
+                }, 'Creating user subscription');
 
                 // 3. Initialize user_balances (CRITICAL)
                 initializationResults.user_balances = await safeInsert(supabase, 'user_balances', {
@@ -1401,8 +1392,7 @@
                     wallet_address: '',
                     usdc_polygon: 0,
                     usdc_solana: 0,
-                    usd_equivalent: 0,
-                    last_updated: new Date().toISOString()
+                    usd_equivalent: 0
                 }, 'Creating user balances');
 
                 // 4. Initialize user_metrics (CRITICAL)
@@ -1410,47 +1400,12 @@
                     user_id: userId,
                     days_active: 0,
                     status_level: 'new',
-                    current_streak: 0,
-                    longest_streak: 0,
-                    total_transactions: 0,
-                    last_transaction: null,
-                    last_updated: new Date().toISOString()
+                    current_streak: 0
                 }, 'Creating user metrics');
 
-                // 5. Initialize fees_saved (OPTIONAL)
-                initializationResults.fees_saved = await safeInsert(supabase, 'fees_saved', {
-                    user_id: userId,
-                    saved_amount: 0,
-                    total_transactions: 0,
-                    average_savings_per_tx: 0,
-                    last_updated: new Date().toISOString()
-                }, 'Creating fees saved tracking');
 
-                // 6. Initialize key_metrics (OPTIONAL)
-                initializationResults.key_metrics = await safeInsert(supabase, 'key_metrics', {
-                    user_id: userId,
-                    total_volume: 0,
-                    total_transactions: 0,
-                    successful_payments: 0,
-                    failed_payments: 0,
-                    pending_payments: 0,
-                    conversion_rate: 0,
-                    last_updated: new Date().toISOString()
-                }, 'Creating key metrics');
 
-                                 // 7. Initialize execution_metrics (OPTIONAL)
-                 initializationResults.execution_metrics = await safeInsert(supabase, 'execution_metrics', {
-                     user_id: userId,
-                     average_processing_time: 0,
-                     fastest_transaction: 0,
-                     slowest_transaction: 0,
-                     total_processing_time: 0,
-                     success_rate: 100,
-                     error_rate: 0,
-                     last_updated: new Date().toISOString()
-                 }, 'Creating execution metrics');
-
-                 // 8. Initialize network_distributions (OPTIONAL) - Network-specific entries
+                 // 5. Initialize network_distributions (OPTIONAL) - Network-specific entries
                  console.log('🌐 Creating network distributions...');
                  const networks = ['polygon', 'solana'];
                  let networkDistributionSuccess = true;
@@ -1459,79 +1414,13 @@
                      const success = await safeInsert(supabase, 'network_distributions', {
                          user_id: userId,
                          network: network,
-                         percentage: 0,
-                         amount_usdc: 0,
-                         transaction_count: 0,
-                         last_updated: new Date().toISOString()
+                         volume_usdc: 0,
+                         percent_usage: 0
                      }, `Creating ${network} network distribution`);
                      
                      if (!success) networkDistributionSuccess = false;
                  }
                  initializationResults.network_distributions = networkDistributionSuccess;
-
-                 // 9. Initialize transaction_insights (OPTIONAL)
-                 initializationResults.transaction_insights = await safeInsert(supabase, 'transaction_insights', {
-                     user_id: userId,
-                     total_volume: 0,
-                     average_transaction_size: 0,
-                     peak_hour: null,
-                     most_active_day: null,
-                     transaction_frequency: 0,
-                     largest_transaction: 0,
-                     smallest_transaction: 0,
-                     last_updated: new Date().toISOString()
-                 }, 'Creating transaction insights');
-
-                 // 10. Initialize monthly_metrics (OPTIONAL)
-                 initializationResults.monthly_metrics = await safeInsert(supabase, 'monthly_metrics', {
-                     user_id: userId,
-                     month: new Date().toISOString().slice(0, 7), // YYYY-MM format
-                     total_volume: 0,
-                     transaction_count: 0,
-                     unique_payers: 0,
-                     average_transaction: 0,
-                     growth_rate: 0,
-                     created_at: new Date().toISOString()
-                 }, 'Creating monthly metrics');
-
-                 // 11. Initialize ai_oracle_messages (OPTIONAL)
-                 initializationResults.ai_oracle_messages = await safeInsert(supabase, 'ai_oracle_messages', {
-                     user_id: userId,
-                     message_type: 'welcome',
-                     content: 'Welcome to Halaxa Pay! Your dashboard is ready.',
-                     is_read: false,
-                     priority: 'low',
-                     created_at: new Date().toISOString()
-                 }, 'Creating AI oracle welcome message');
-
-                 // 12. Initialize user_growth (OPTIONAL)
-                 initializationResults.user_growth = await safeInsert(supabase, 'user_growth', {
-                     user_id: userId,
-                     growth_stage: 'onboarding',
-                     metrics_score: 0,
-                     engagement_level: 'new',
-                     next_milestone: 'first_payment',
-                     recommendations: '["Complete your first payment link", "Set up wallet addresses"]',
-                     last_updated: new Date().toISOString()
-                 }, 'Creating user growth tracking');
-
-                 // 13. Initialize usdc_balances (OPTIONAL) - Network-specific entries
-                 console.log('💰 Creating USDC balances...');
-                 let usdcBalanceSuccess = true;
-                 
-                 for (const network of networks) {
-                     const success = await safeInsert(supabase, 'usdc_balances', {
-                         user_id: userId,
-                         network: network,
-                         balance: 0,
-                         wallet_address: '',
-                         last_sync: new Date().toISOString(),
-                         is_active: false
-                     }, `Creating ${network} USDC balance`);
-                     
-                     if (!success) usdcBalanceSuccess = false;
-                 }
-                 initializationResults.usdc_balances = usdcBalanceSuccess;
 
                                  // Log final results
                  const successCount = Object.values(initializationResults).filter(Boolean).length;
@@ -1543,7 +1432,7 @@
                  // Check core tables (critical for dashboard functionality)
                  const coreResults = {
                      user_profiles: initializationResults.user_profiles,
-                     user_plans: initializationResults.user_plans,
+                     user_subscriptions: initializationResults.user_subscriptions,
                      user_balances: initializationResults.user_balances,
                      user_metrics: initializationResults.user_metrics
                  };
@@ -1561,7 +1450,7 @@
                  const optionalSuccess = successCount - coreSuccessCount;
                  console.log(`📊 Optional tables: ${optionalSuccess}/${optionalTables} initialized`);
                  
-                 if (successCount >= 10) { // Most tables successful
+                 if (successCount >= 5) { // All core tables + optional successful
                      console.log('🌟 Excellent initialization! User dashboard fully prepared');
                  }
 

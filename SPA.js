@@ -1918,24 +1918,9 @@ function showPage(pageId) {
             nav.classList.add('active');
         }
     });
-    // Debug: Log visible/hidden pages
-    logPageVisibility();
 }
 
-function logPageVisibility() {
-    const allPages = document.querySelectorAll('.page-content');
-    const visible = [];
-    const hidden = [];
-    allPages.forEach(page => {
-        if (page.classList.contains('active-page')) {
-            visible.push(page.id);
-        } else {
-            hidden.push(page.id);
-        }
-    });
-    console.log('🔎 Visible pages:', visible);
-    console.log('🔎 Hidden pages:', hidden);
-}
+
 
 function initializeSPA() {
     // DISABLED: Navigation is now handled by accessControl.js
@@ -3291,11 +3276,7 @@ async function handlePaymentLinkCreation() {
         const accessToken = localStorage.getItem('accessToken');
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         
-        // 🚨 CRITICAL DEBUG: Check authentication data
-        console.log('🔐 DEBUG - Access Token exists:', !!accessToken);
-        console.log('🔐 DEBUG - Access Token preview:', accessToken ? accessToken.substring(0, 20) + '...' : 'null');
-        console.log('👤 DEBUG - User data:', user);
-        console.log('🆔 DEBUG - User ID:', user.id);
+
         
         if (!accessToken) {
             throw new Error('Authentication required');
@@ -3327,22 +3308,12 @@ async function handlePaymentLinkCreation() {
             }
         }
         
-        // 🚨 CRITICAL DEBUG: Validate all form data before sending
-        console.log('📝 DEBUG - Form data validation:');
-        console.log('💰 Amount:', amount, '-> Parsed:', parseFloat(amount));
-        console.log('🏦 Wallet Address:', walletAddress);
-        console.log('📛 Link Name:', linkName);
-        console.log('🌐 Network:', selectedNetwork);
-        
         const requestPayload = {
             amount_usdc: parseFloat(amount),
             wallet_address: walletAddress,
             link_name: linkName,
             network: selectedNetwork
         };
-        
-        console.log('📤 DEBUG - Request payload:', requestPayload);
-        console.log('🔗 DEBUG - Backend URL:', `${BACKEND_URL}/api/payment-links/create`);
         
         const response = await fetch(`${BACKEND_URL}/api/payment-links/create`, {
             method: 'POST',
@@ -3353,13 +3324,7 @@ async function handlePaymentLinkCreation() {
             body: JSON.stringify(requestPayload)
         });
         
-        // 🚨 CRITICAL DEBUG: Check response details
-        console.log('📡 DEBUG - Response status:', response.status);
-        console.log('📡 DEBUG - Response ok:', response.ok);
-        console.log('📡 DEBUG - Response headers:', Object.fromEntries(response.headers.entries()));
-        
         const result = await response.json();
-        console.log('📥 DEBUG - Response body:', result);
         
         if (response.ok && result.success) {
             // Wallet connection is now automatically handled by the backend
@@ -3371,8 +3336,7 @@ async function handlePaymentLinkCreation() {
             // Reload payment links to show the new one
             await reloadPaymentLinks();
             
-            // 🚨 CRITICAL: Refresh dashboard to show new wallet data immediately
-            console.log('🔄 Refreshing dashboard with new wallet data...');
+            // Refresh dashboard to show new wallet data immediately
             setTimeout(async () => {
                 try {
                     // Get current user ID from token or profile
@@ -3387,7 +3351,6 @@ async function handlePaymentLinkCreation() {
                             const profile = await profileResponse.json();
                             if (profile.id) {
                                 await initializeCalculationEngineFeatures(profile.id);
-                                console.log('✅ Dashboard refreshed with new wallet data');
                             }
                         }
                     }
@@ -5400,7 +5363,7 @@ function updatePlanStatusDisplay() {
 // Billing History Table, User Growth Metrics) have been removed as they are now 
 // handled by comprehensive Engine.js integration through initializeAllEngineFeatures()
 
-console.log('✅ SPA.JS: All Engine.js sophisticated display functions loaded successfully');
+
 /**
  * Update monthly constellation display with 12-month revenue analysis
  */
@@ -5653,137 +5616,12 @@ function updateOrderAnalyticsDisplay(orderData) {
 
 // All redundant features removed and replaced with Engine.js integration
 
-/**
- * Test function to verify page navigation works correctly
- */
-window.testPageNavigation = function(pageId) {
-    console.log(`🧪 Testing navigation to: ${pageId}`);
-    
-    if (window.HalaxaAccessControl) {
-        const plan = window.HalaxaAccessControl.getCurrentPlan();
-        const limits = window.HalaxaAccessControl.getPlanLimits(plan);
-        
-        console.log(`📋 Current plan: ${plan}`);
-        console.log(`🔒 Blocked pages: ${limits.blockedPages.join(', ')}`);
-        
-        if (limits.blockedPages.includes(pageId)) {
-            console.log(`❌ Page ${pageId} is blocked for ${plan} plan`);
-        } else {
-            console.log(`✅ Page ${pageId} is allowed for ${plan} plan`);
-            window.HalaxaAccessControl.loadPage(pageId);
-        }
-    } else {
-        console.error('❌ Access control not initialized');
-    }
-};
 
-/**
- * Force unlock all pages for testing (Elite simulation)
- */
-window.forceUnlockAllPages = function() {
-    console.log('🔓 Force unlocking all pages for testing...');
-    
-    // Remove all locked classes
-    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
-    navItems.forEach(item => {
-        item.classList.remove('locked-feature');
-    });
-    
-    // Make all pages visible
-    const pages = ['capital-page', 'automation-page', 'orders-page'];
-    pages.forEach(pageId => {
-        const page = document.getElementById(pageId);
-        if (page) {
-            console.log(`✅ Found and enabling: ${pageId}`);
-        } else {
-            console.error(`❌ Page not found: ${pageId}`);
-        }
-    });
-    
-    console.log('✅ All pages unlocked for testing');
-};
 
-/**
- * Debug function to check Plans page visibility
- */
-window.debugPlansPage = function() {
-    console.log('🔍 Debugging Plans page...');
-    
-    const plansPage = document.getElementById('plans-page');
-    if (plansPage) {
-        console.log('✅ Plans page found in DOM');
-        
-        const computedStyle = window.getComputedStyle(plansPage);
-        console.log('📋 Current styles:');
-        console.log('- Display:', computedStyle.display);
-        console.log('- Visibility:', computedStyle.visibility);
-        console.log('- Opacity:', computedStyle.opacity);
-        console.log('- Classes:', plansPage.className);
-        console.log('- Has active-page class:', plansPage.classList.contains('active-page'));
-        
-        // Try to force show it
-        console.log('🔧 Forcing plans page to show...');
-        
-        // Remove all active-page classes first
-        document.querySelectorAll('.page-content').forEach(page => {
-            page.classList.remove('active-page');
-        });
-        
-        // Add active-page class to plans page
-        plansPage.classList.add('active-page');
-        
-        // Remove any inline styles
-        plansPage.style.removeProperty('display');
-        plansPage.style.removeProperty('visibility');
-        plansPage.style.removeProperty('opacity');
-        
-        console.log('✅ Plans page should now be visible');
-    } else {
-        console.error('❌ Plans page not found in DOM!');
-    }
-};
 
-/**
- * Show plans page directly (emergency fix)
- */
-window.showPlansPageDirectly = function() {
-    console.log('🚨 Emergency: Showing plans page directly...');
-    
-    // Hide all pages
-    document.querySelectorAll('.page-content').forEach(page => {
-        page.classList.remove('active-page');
-    });
-    
-    // Show plans page
-    const plansPage = document.getElementById('plans-page');
-    if (plansPage) {
-        plansPage.classList.add('active-page');
-        
-        // Update navigation
-        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        
-        const plansNavItem = document.querySelector('[data-page="plans-page"]');
-        if (plansNavItem) {
-            plansNavItem.classList.add('active');
-        }
-        
-        console.log('✅ Plans page forced to show');
-    }
-};
-
-// Remove the plan refresh and database info buttons
-function removePlanRefreshAndDatabaseButtons() {
-    const refreshBtn = document.getElementById('refresh-plan-btn');
-    if (refreshBtn) refreshBtn.remove();
-    const dbBtn = document.getElementById('database-info-btn');
-    if (dbBtn) dbBtn.remove();
-}
 
 // Add profile picture button (blue, same size as golden one)
 function addProfileMenuButton() {
-    removePlanRefreshAndDatabaseButtons();
     if (document.getElementById('profile-menu-btn')) return;
     
     const btn = document.createElement('button');
@@ -6410,25 +6248,18 @@ window.addEventListener('DOMContentLoaded', () => {
 function setupEliteAutomationPlatforms() {
   console.log('🤖 Setting up elite automation platforms...');
   
-  // Debug: Check if elements exist
   const elitePlatforms = document.querySelector('.elite-automation-platforms');
-  console.log('🔍 Elite platforms element found:', !!elitePlatforms);
-  console.log('🔍 Elite platforms element:', elitePlatforms);
   
   if (elitePlatforms) {
     // Force show the platforms immediately
     elitePlatforms.style.display = 'grid';
     elitePlatforms.style.visibility = 'visible';
     elitePlatforms.style.opacity = '1';
-    console.log('✅ Forced elite platforms to show');
   }
   
   // Platform Cards
   const zapierCard = document.getElementById('zapier-platform-card');
   const shopifyCard = document.getElementById('shopify-platform-card');
-  
-  console.log('🔍 Zapier card found:', !!zapierCard);
-  console.log('🔍 Shopify card found:', !!shopifyCard);
   
   // Platform Pages
   const platformPages = document.querySelector('.platform-pages');
@@ -6445,10 +6276,8 @@ function setupEliteAutomationPlatforms() {
 
   // Simplified helper functions
   function showPlatformSelection() {
-    console.log('🔄 Showing platform selection...');
     if (elitePlatforms) {
       elitePlatforms.style.display = 'grid';
-      console.log('✅ Platform selection shown');
     }
     if (platformPages) platformPages.style.display = 'none';
     if (zapierConfigPage) zapierConfigPage.style.display = 'none';
@@ -6456,7 +6285,6 @@ function setupEliteAutomationPlatforms() {
   }
 
   function showZapierConfig() {
-    console.log('🔄 Showing Zapier config...');
     if (elitePlatforms) elitePlatforms.style.display = 'none';
     if (platformPages) platformPages.style.display = 'block';
     if (zapierConfigPage) zapierConfigPage.style.display = 'block';
@@ -6464,7 +6292,6 @@ function setupEliteAutomationPlatforms() {
   }
 
   function showShopifyConfig() {
-    console.log('🔄 Showing Shopify config...');
     if (elitePlatforms) elitePlatforms.style.display = 'none';
     if (platformPages) platformPages.style.display = 'block';
     if (zapierConfigPage) zapierConfigPage.style.display = 'none';
@@ -6479,7 +6306,6 @@ function setupEliteAutomationPlatforms() {
     zapierBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('🔗 Zapier button clicked - opening configuration...');
       showZapierConfig();
     });
   }
@@ -6488,7 +6314,6 @@ function setupEliteAutomationPlatforms() {
     shopifyBtn.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('🛒 Shopify button clicked - opening configuration...');
       showShopifyConfig();
     });
   }
@@ -6497,7 +6322,6 @@ function setupEliteAutomationPlatforms() {
   if (backToZapier) {
     backToZapier.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log('⬅️ Returning to platform selection...');
       showPlatformSelection();
     });
   }
@@ -6505,7 +6329,6 @@ function setupEliteAutomationPlatforms() {
   if (backToShopify) {
     backToShopify.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log('⬅️ Returning to platform selection...');
       showPlatformSelection();
     });
   }
@@ -6522,8 +6345,6 @@ function setupEliteAutomationPlatforms() {
         showAutomationNotification('Please fill in all required fields', 'error');
         return;
       }
-      
-      console.log('🔗 Connecting Zapier integration...', { webhookUrl, linkId });
       
       // Simulate API call
       const submitBtn = document.querySelector('.config-submit-btn.zapier');
@@ -6554,8 +6375,6 @@ function setupEliteAutomationPlatforms() {
         return;
       }
       
-      console.log('🛒 Connecting Shopify integration...', { storeUrl, apiKey, linkId });
-      
       // Simulate API call
       const submitBtn = document.querySelector('.config-submit-btn.shopify');
       const originalText = submitBtn.innerHTML;
@@ -6573,16 +6392,12 @@ function setupEliteAutomationPlatforms() {
   }
 
   // Initialize - show platform selection by default
-  console.log('🚀 Calling showPlatformSelection() to initialize...');
   showPlatformSelection();
   
   // Add a small delay and force show again
   setTimeout(() => {
-    console.log('🔄 Double-checking platform visibility after delay...');
     if (elitePlatforms) {
       elitePlatforms.style.display = 'grid';
-      console.log('🔍 Final elite platforms style:', elitePlatforms.style.display);
-      console.log('🔍 Final elite platforms computed style:', window.getComputedStyle(elitePlatforms).display);
     }
   }, 500);
   
@@ -6631,13 +6446,11 @@ function showAutomationNotification(message, type = 'info') {
   }, 4000);
 }
 
-// Simple fix: Make sure automation page shows when clicked
+// Make sure automation page shows when clicked
 document.addEventListener('DOMContentLoaded', function() {
   const automationNav = document.querySelector('[data-page="automation-page"]');
   if (automationNav) {
     automationNav.addEventListener('click', function() {
-      console.log('🎯 Automation nav clicked - forcing page to show');
-      
       // Hide all pages
       document.querySelectorAll('.page-content').forEach(page => {
         page.classList.remove('active-page');
@@ -6647,7 +6460,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const automationPage = document.getElementById('automation-page');
       if (automationPage) {
         automationPage.classList.add('active-page');
-        console.log('✅ Automation page should now be visible');
       }
     });
   }
@@ -6663,13 +6475,7 @@ if (document.readyState === 'loading') {
   setupEliteAutomationPlatforms();
 }
 
-// TEMPORARY: Simple plan function to bypass complex backend logic
-function getSimpleUserPlan() {
-    // For now, always return basic to get the system working
-    const cachedPlan = localStorage.getItem('userPlan') || 'basic';
-    console.log('🔧 TEMP: Using simple plan detection:', cachedPlan);
-    return cachedPlan;
-}
+
 
 // ==================== ACCOUNT PAGE ENHANCEMENT FUNCTIONS ==================== //
 

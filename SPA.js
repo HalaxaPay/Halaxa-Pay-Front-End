@@ -6255,6 +6255,17 @@ function setupEliteAutomationPlatforms() {
     elitePlatforms.style.display = 'grid';
     elitePlatforms.style.visibility = 'visible';
     elitePlatforms.style.opacity = '1';
+    
+    // Also ensure all platform cards are visible
+    const platformCards = elitePlatforms.querySelectorAll('.automation-platform-card');
+    platformCards.forEach(card => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    });
+    
+    console.log('✅ Elite platforms container and cards forced visible:', platformCards.length, 'cards found');
+  } else {
+    console.log('❌ Elite platforms container not found');
   }
   
   // Platform Cards

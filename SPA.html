@@ -3190,269 +3190,197 @@
                         <div class="automation-hero-content">
                             <h1 class="automation-title">
                                 <i class="fas fa-bolt"></i>
-                                Automations
+                                Choose Your Automation Platform
                             </h1>
-                            <p class="automation-subtitle">Connect your Halaxa Pay to Zapier or Make.com for seamless payment automation</p>
+                            <p class="automation-subtitle">Connect your Halaxa Pay with the world's most powerful automation tools</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main Content Grid -->
-                <div class="automation-main-section">
-                    <!-- Webhook Integration Card -->
-                    <div class="webhook-integration-card">
-                        <div class="integration-header">
-                            <div class="header-icon">
+                <!-- Elite Automation Platform Cards -->
+                <div class="elite-automation-platforms">
+                    <!-- Zapier Card -->
+                    <div class="automation-platform-card zapier" id="zapier-platform-card">
+                        <div class="platform-glow zapier-glow"></div>
+                        <div class="platform-header">
+                            <div class="platform-logo">
+                                <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier" class="logo-img">
+                            </div>
+                            <div class="platform-badge zapier-badge">
+                                <i class="fas fa-zap"></i>
+                                <span>6000+ Apps</span>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-content">
+                            <h3 class="platform-title">Zapier Integration</h3>
+                            <p class="platform-description">Connect to 6000+ apps and automate your entire business workflow. From spreadsheets to CRMs, email marketing to team messaging.</p>
+                            
+                            <div class="platform-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Instant payment notifications</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Customer data automation</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Multi-step workflows</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-footer">
+                            <button class="platform-btn zapier-btn">
                                 <i class="fas fa-plug"></i>
+                                <span>Connect with Zapier</span>
+                                <div class="btn-shine"></div>
+                            </button>
+                        </div>
+                        
+                        <div class="platform-stats">
+                            <div class="stat">
+                                <span class="stat-number">6K+</span>
+                                <span class="stat-label">Apps</span>
                             </div>
-                            <div class="header-content">
-                                <h3>Webhook Integration</h3>
-                                <p>Connect your payment automation endpoint</p>
+                            <div class="stat">
+                                <span class="stat-number">99.9%</span>
+                                <span class="stat-label">Uptime</span>
                             </div>
-                            <div class="webhook-status">
-                                <div class="status-indicator" data-webhook-status>
-                                    <div class="status-dot"></div>
-                                    <span class="status-text">Disconnected</span>
+                        </div>
+                    </div>
+
+                    <!-- Shopify Card -->
+                    <div class="automation-platform-card shopify" id="shopify-platform-card">
+                        <div class="platform-glow shopify-glow"></div>
+                        <div class="platform-header">
+                            <div class="platform-logo">
+                                <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify" class="logo-img">
+                            </div>
+                            <div class="platform-badge shopify-badge">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>E-commerce</span>
+                            </div>
+                        </div>
+                        
+                        <div class="platform-content">
+                            <h3 class="platform-title">Shopify Integration</h3>
+                            <p class="platform-description">Seamlessly integrate with your Shopify store for automated order processing, inventory management, and customer communication.</p>
+                            
+                            <div class="platform-features">
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Order fulfillment automation</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Inventory synchronization</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Customer journey tracking</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="webhook-form">
-                            <div class="form-group">
-                                <label for="webhook-url">Webhook URL</label>
-                                <div class="input-wrapper">
-                                    <input 
-                                        type="url" 
-                                        id="webhook-url" 
-                                        class="webhook-input" 
-                                        placeholder="https://hooks.zapier.com/hooks/catch/..."
-                                        data-current-webhook=""
-                                    >
-                                    <div class="input-icon">
-                                        <i class="fas fa-link"></i>
-                                    </div>
-                                </div>
+                        <div class="platform-footer">
+                            <button class="platform-btn shopify-btn">
+                                <i class="fas fa-store"></i>
+                                <span>Connect with Shopify</span>
+                                <div class="btn-shine"></div>
+                            </button>
+                        </div>
+                        
+                        <div class="platform-stats">
+                            <div class="stat">
+                                <span class="stat-number">2M+</span>
+                                <span class="stat-label">Stores</span>
                             </div>
-                            
-                            <div class="webhook-actions">
-                                <button class="connect-webhook-btn" id="connect-webhook-btn">
-                                    <div class="btn-content">
-                                        <i class="fas fa-plug"></i>
-                                        <span>Connect Webhook</span>
-                                    </div>
-                                    <div class="btn-loader">
-                                        <div class="spinner"></div>
-                                    </div>
-                                </button>
+                            <div class="stat">
+                                <span class="stat-number">100%</span>
+                                <span class="stat-label">Secure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden Platform Configuration Pages -->
+                <div class="platform-pages" style="display: none;">
+                    <!-- Zapier Configuration Page -->
+                    <div class="platform-config-page" id="zapier-config-page" style="display: none;">
+                        <div class="config-header">
+                            <button class="back-btn" id="back-to-platforms">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Platforms
+                            </button>
+                            <div class="config-title">
+                                <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier" class="config-logo">
+                                <h2>Zapier Integration Setup</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="config-content">
+                            <form class="automation-config-form" id="zapier-config-form">
+                                <div class="form-group">
+                                    <label for="zapier-webhook-url">Zapier Webhook URL</label>
+                                    <input type="url" id="zapier-webhook-url" class="form-input" placeholder="https://hooks.zapier.com/hooks/catch/..." required>
+                                    <div class="form-help">Get this URL from your Zapier trigger configuration</div>
+                                </div>
                                 
-                                <button class="test-webhook-btn" id="test-webhook-btn">
-                                    <i class="fas fa-vial"></i>
-                                    Send Test
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="webhook-success-message" id="webhook-success" style="display: none;">
-                            <div class="success-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="success-text">
-                                <h4>Webhook Connected Successfully!</h4>
-                                <p>Your automation is now active and will trigger on new payments.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Account Status Card -->
-                    <div class="account-status-card">
-                        <div class="account-profile-section">
-                            <div class="user-avatar">
-                                <i class="fas fa-user-circle"></i>
-                            </div>
-                            <div class="user-details">
-                                <h4 class="user-name" data-user-name>Your Account</h4>
-                                <p class="user-email" data-user-email>user@example.com</p>
-                            </div>
-                        </div>
-                        
-                        <div class="plan-section">
-                            <div class="plan-badge" data-user-plan>
-                                <i class="fas fa-crown"></i>
-                                <span>Pro Plan</span>
-                            </div>
-                        </div>
-                        
-                        <div class="automation-stats">
-                            <div class="stat-item">
-                                <div class="stat-icon">
+                                <div class="form-group">
+                                    <label for="zapier-link-id">Halaxa Link ID</label>
+                                    <input type="text" id="zapier-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required>
+                                    <div class="form-help">The payment link you want to automate</div>
+                                </div>
+                                
+                                <button type="submit" class="config-submit-btn zapier">
                                     <i class="fas fa-bolt"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-label">Active Automations</span>
-                                    <span class="stat-value" data-automation-count>0</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item">
-                                <div class="stat-icon">
-                                    <i class="fas fa-paper-plane"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-label">Webhooks Sent</span>
-                                    <span class="stat-value" data-webhook-count>0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Setup Guide and Examples -->
-                <div class="automation-tips-section">
-                    <!-- Setup Guide -->
-                    <div class="setup-guide-card">
-                        <div class="guide-header">
-                            <div class="guide-icon">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                            <div class="guide-content">
-                                <h3>Quick Setup Guide</h3>
-                                <p>Get your automations running in minutes</p>
-                            </div>
-                        </div>
-                        
-                        <div class="setup-steps">
-                            <div class="setup-step">
-                                <div class="step-number">1</div>
-                                <div class="step-content">
-                                    <h4>Create Webhook Trigger</h4>
-                                    <p>Set up a new webhook trigger in Zapier or Make.com</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setup-step">
-                                <div class="step-number">2</div>
-                                <div class="step-content">
-                                    <h4>Connect Your URL</h4>
-                                    <p>Paste the webhook URL into the field above</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setup-step">
-                                <div class="step-number">3</div>
-                                <div class="step-content">
-                                    <h4>Configure Actions</h4>
-                                    <p>Choose what happens when payments are received</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="guide-footer">
-                            <a href="#" class="help-link">
-                                <i class="fas fa-book"></i>
-                                View Documentation
-                            </a>
+                                    Connect Zapier Integration
+                                </button>
+                            </form>
                         </div>
                     </div>
 
-                    <!-- Popular Integrations -->
-                    <div class="integrations-card">
-                        <div class="integrations-header">
-                            <div class="integrations-icon">
-                                <i class="fas fa-puzzle-piece"></i>
-                            </div>
-                            <div class="integrations-content">
-                                <h3>Popular Integrations</h3>
-                                <p>Connect with your favorite tools</p>
+                    <!-- Shopify Configuration Page -->
+                    <div class="platform-config-page" id="shopify-config-page" style="display: none;">
+                        <div class="config-header">
+                            <button class="back-btn" id="back-to-platforms-shopify">
+                                <i class="fas fa-arrow-left"></i>
+                                Back to Platforms
+                            </button>
+                            <div class="config-title">
+                                <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify" class="config-logo">
+                                <h2>Shopify Integration Setup</h2>
                             </div>
                         </div>
                         
-                        <div class="integration-grid">
-                            <div class="integration-item">
-                                <div class="integration-icon email">
-                                    <i class="fas fa-envelope"></i>
+                        <div class="config-content">
+                            <form class="automation-config-form" id="shopify-config-form">
+                                <div class="form-group">
+                                    <label for="shopify-store-url">Shopify Store URL</label>
+                                    <input type="url" id="shopify-store-url" class="form-input" placeholder="https://yourstore.myshopify.com" required>
+                                    <div class="form-help">Your Shopify store's admin URL</div>
                                 </div>
-                                <div class="integration-details">
-                                    <h4>Email Alerts</h4>
-                                    <p>Instant notifications</p>
+                                
+                                <div class="form-group">
+                                    <label for="shopify-api-key">Shopify API Key</label>
+                                    <input type="text" id="shopify-api-key" class="form-input" placeholder="Enter your Shopify API Key" required>
+                                    <div class="form-help">Generate this from your Shopify admin panel</div>
                                 </div>
-                                <div class="integration-badge">
-                                    <i class="fas fa-arrow-right"></i>
+                                
+                                <div class="form-group">
+                                    <label for="shopify-link-id">Halaxa Link ID</label>
+                                    <input type="text" id="shopify-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required>
+                                    <div class="form-help">The payment link you want to connect</div>
                                 </div>
-                            </div>
-                            
-                            <div class="integration-item">
-                                <div class="integration-icon spreadsheet">
-                                    <i class="fas fa-table"></i>
-                                </div>
-                                <div class="integration-details">
-                                    <h4>Spreadsheets</h4>
-                                    <p>Automatic logging</p>
-                                </div>
-                                <div class="integration-badge">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="integration-item">
-                                <div class="integration-icon messaging">
-                                    <i class="fab fa-slack"></i>
-                                </div>
-                                <div class="integration-details">
-                                    <h4>Team Chat</h4>
-                                    <p>Real-time updates</p>
-                                </div>
-                                <div class="integration-badge">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="integration-item">
-                                <div class="integration-icon crm">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="integration-details">
-                                    <h4>CRM Systems</h4>
-                                    <p>Customer updates</p>
-                                </div>
-                                <div class="integration-badge">
-                                    <i class="fas fa-arrow-right"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Activity Monitor -->
-                <div class="activity-monitor-section">
-                    <div class="monitor-header">
-                        <div class="monitor-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="monitor-content">
-                            <h3>Webhook Activity</h3>
-                            <p>Monitor your automation triggers and responses</p>
-                        </div>
-                    </div>
-                    
-                    <div class="activity-table">
-                        <div class="table-header">
-                            <div class="table-cell">Timestamp</div>
-                            <div class="table-cell">Event</div>
-                            <div class="table-cell">Amount</div>
-                            <div class="table-cell">Status</div>
-                            <div class="table-cell">Response</div>
-                        </div>
-                        
-                        <div class="activity-list" id="webhook-history-list">
-                            <div class="no-activity-message">
-                                <div class="no-activity-icon">
-                                    <i class="fas fa-satellite-dish"></i>
-                                </div>
-                                <div class="no-activity-content">
-                                    <h4>No Activity Yet</h4>
-                                    <p>Connect your webhook to start monitoring automation triggers</p>
-                                </div>
-                            </div>
+                                
+                                <button type="submit" class="config-submit-btn shopify">
+                                    <i class="fas fa-store"></i>
+                                    Connect Shopify Integration
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -3516,73 +3444,6 @@
           <!-- Access control moved to backend-only for security -->
       <script type="module" src="./supabase-client.js"></script>
       <!-- Detection system moved to backend-only for security -->
-
-<!-- Automation Page Selection Modal/Panel -->
-<div class="automation-selection" id="automation-selection">
-  <h2 class="automation-select-title">Choose Your Automation Platform</h2>
-  <div class="automation-select-options">
-    <button class="automation-option zapier" id="select-zapier">
-      <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier Logo" class="automation-logo zapier-logo" />
-      <span>Zapier</span>
-    </button>
-    <button class="automation-option shopify" id="select-shopify">
-      <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify Logo" class="automation-logo shopify-logo" />
-      <span>Shopify</span>
-    </button>
-  </div>
-</div>
-
-<!-- Zapier Automation Page -->
-<div class="automation-platform-page" id="zapier-automation-page" style="display:none;">
-  <div class="automation-platform-header zapier">
-    <img src="https://cdn.worldvectorlogo.com/logos/zapier.svg" alt="Zapier Logo" class="automation-logo zapier-logo-large" />
-    <h2>Zapier Automation Integration</h2>
-    <button class="automation-back-btn" id="back-to-automation-selection-zapier"><i class="fas fa-arrow-left"></i> Back</button>
-  </div>
-  <form class="automation-form zapier-form" id="zapier-form">
-    <div class="form-group">
-      <label for="zapier-webhook-url">Zapier Webhook URL</label>
-      <input type="url" id="zapier-webhook-url" class="form-input" placeholder="https://hooks.zapier.com/hooks/catch/..." required />
-    </div>
-    <div class="form-group">
-      <label for="zapier-link-id">Halaxa Link ID</label>
-      <input type="text" id="zapier-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required />
-    </div>
-    <button type="submit" class="automation-submit-btn zapier">Connect Zapier</button>
-  </form>
-  <div class="automation-info zapier-info">
-    <p>Connect your Halaxa payment events to thousands of apps using Zapier. Enter your Zapier webhook and the Halaxa Link ID you want to automate.</p>
-  </div>
-</div>
-
-<!-- Shopify Automation Page -->
-<div class="automation-platform-page" id="shopify-automation-page" style="display:none;">
-  <div class="automation-platform-header shopify">
-    <img src="https://cdn.worldvectorlogo.com/logos/shopify.svg" alt="Shopify Logo" class="automation-logo shopify-logo-large" />
-    <h2>Shopify Automation Integration</h2>
-    <button class="automation-back-btn" id="back-to-automation-selection-shopify"><i class="fas fa-arrow-left"></i> Back</button>
-  </div>
-  <form class="automation-form shopify-form" id="shopify-form">
-    <div class="form-group">
-      <label for="shopify-store-url">Shopify Store URL</label>
-      <input type="url" id="shopify-store-url" class="form-input" placeholder="https://yourstore.myshopify.com" required />
-    </div>
-    <div class="form-group">
-      <label for="shopify-api-key">Shopify Store API Key</label>
-      <input type="text" id="shopify-api-key" class="form-input" placeholder="Enter your Shopify API Key" required />
-    </div>
-    <div class="form-group">
-      <label for="shopify-link-id">Halaxa Link ID</label>
-      <input type="text" id="shopify-link-id" class="form-input" placeholder="Enter your Halaxa Link ID" required />
-    </div>
-    <button type="submit" class="automation-submit-btn shopify">Connect Shopify</button>
-  </form>
-  <div class="automation-info shopify-info">
-    <p>Automate your Shopify store with Halaxa. Enter your store URL, API key, and the Halaxa Link ID to connect your payment flows.</p>
-  </div>
-</div>
-
-<!-- The rest of the automation page (tips, stats, etc.) can remain below or be hidden when a platform is selected. -->
 
 </body>
 </html>

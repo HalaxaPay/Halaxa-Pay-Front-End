@@ -6405,103 +6405,205 @@ window.addEventListener('DOMContentLoaded', () => {
     addDarkModeToggleButton();
 });
 
-// ==================== AUTOMATION PAGE SELECTION LOGIC ==================== //
+// ==================== ELITE AUTOMATION PLATFORM LOGIC ==================== //
 
-function setupAutomationPageSelection() {
-  // Elements
-  const automationSelection = document.getElementById('automation-selection');
-  const zapierPage = document.getElementById('zapier-automation-page');
-  const shopifyPage = document.getElementById('shopify-automation-page');
-  const zapierBtn = document.getElementById('select-zapier');
-  const shopifyBtn = document.getElementById('select-shopify');
-  const backZapier = document.getElementById('back-to-automation-selection-zapier');
-  const backShopify = document.getElementById('back-to-automation-selection-shopify');
-  const automationNav = document.querySelector('.nav-item[data-page="automation-page"]');
-  const mobileAutomationNav = document.querySelector('.mobile-nav-item[data-page="automation-page"]');
+function setupEliteAutomationPlatforms() {
+  console.log('🤖 Setting up elite automation platforms...');
+  
+  // Platform Cards
+  const zapierCard = document.getElementById('zapier-platform-card');
+  const shopifyCard = document.getElementById('shopify-platform-card');
+  
+  // Platform Pages
+  const platformPages = document.querySelector('.platform-pages');
+  const zapierConfigPage = document.getElementById('zapier-config-page');
+  const shopifyConfigPage = document.getElementById('shopify-config-page');
+  const elitePlatforms = document.querySelector('.elite-automation-platforms');
+  
+  // Back Buttons
+  const backToZapier = document.getElementById('back-to-platforms');
+  const backToShopify = document.getElementById('back-to-platforms-shopify');
+  
+  // Configuration Forms
+  const zapierForm = document.getElementById('zapier-config-form');
+  const shopifyForm = document.getElementById('shopify-config-form');
 
-  // Helper to show/hide
-  function showSelection() {
-    automationSelection.style.display = '';
-    zapierPage.style.display = 'none';
-    shopifyPage.style.display = 'none';
+  // Helper functions
+  function showPlatformSelection() {
+    if (elitePlatforms) elitePlatforms.style.display = 'grid';
+    if (platformPages) platformPages.style.display = 'none';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
   }
-  function showZapier() {
-    automationSelection.style.display = 'none';
-    zapierPage.style.display = '';
-    shopifyPage.style.display = 'none';
-  }
-  function showShopify() {
-    automationSelection.style.display = 'none';
-    zapierPage.style.display = 'none';
-    shopifyPage.style.display = '';
+
+  function showZapierConfig() {
+    if (elitePlatforms) elitePlatforms.style.display = 'none';
+    if (platformPages) platformPages.style.display = 'block';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'block';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
   }
 
-  // Initial state
-  showSelection();
-
-  // Button listeners
-  if (zapierBtn) zapierBtn.onclick = showZapier;
-  if (shopifyBtn) shopifyBtn.onclick = showShopify;
-  if (backZapier) backZapier.onclick = showSelection;
-  if (backShopify) backShopify.onclick = showSelection;
-
-  // Intercept navigation to automation page
-  function automationNavHandler(e) {
-    e.preventDefault();
-    // Hide all .page-content
-    document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active-page'));
-    // Show automation page
-    const automationPage = document.getElementById('automation-page');
-    if (automationPage) automationPage.classList.add('active-page');
-    // Always show selection first
-    showSelection();
-    // Set nav active
-    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(item => item.classList.remove('active'));
-    if (e.currentTarget) e.currentTarget.classList.add('active');
+  function showShopifyConfig() {
+    if (elitePlatforms) elitePlatforms.style.display = 'none';
+    if (platformPages) platformPages.style.display = 'block';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'block';
   }
-  if (automationNav) automationNav.addEventListener('click', automationNavHandler);
-  if (mobileAutomationNav) mobileAutomationNav.addEventListener('click', automationNavHandler);
 
-  // Form handlers (dummy)
-  const zapierForm = document.getElementById('zapier-form');
+  // Platform button click handlers
+  const zapierBtn = document.querySelector('.zapier-btn');
+  const shopifyBtn = document.querySelector('.shopify-btn');
+  
+  if (zapierBtn) {
+    zapierBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('🔗 Zapier button clicked - opening configuration...');
+      showZapierConfig();
+    });
+  }
+
+  if (shopifyBtn) {
+    shopifyBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('🛒 Shopify button clicked - opening configuration...');
+      showShopifyConfig();
+    });
+  }
+
+  // Back button handlers
+  if (backToZapier) {
+    backToZapier.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('⬅️ Returning to platform selection...');
+      showPlatformSelection();
+    });
+  }
+
+  if (backToShopify) {
+    backToShopify.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('⬅️ Returning to platform selection...');
+      showPlatformSelection();
+    });
+  }
+
+  // Form submission handlers
   if (zapierForm) {
-    zapierForm.onsubmit = function(e) {
+    zapierForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      showAutomationNotification('Zapier webhook connected! (demo)', 'success');
-      zapierForm.reset();
-    };
+      
+      const webhookUrl = document.getElementById('zapier-webhook-url').value;
+      const linkId = document.getElementById('zapier-link-id').value;
+      
+      if (!webhookUrl || !linkId) {
+        showAutomationNotification('Please fill in all required fields', 'error');
+        return;
+      }
+      
+      console.log('🔗 Connecting Zapier integration...', { webhookUrl, linkId });
+      
+      // Simulate API call
+      const submitBtn = document.querySelector('.config-submit-btn.zapier');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+      submitBtn.disabled = true;
+      
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        showAutomationNotification('Zapier integration connected successfully!', 'success');
+        zapierForm.reset();
+        setTimeout(() => showPlatformSelection(), 1500);
+      }, 2000);
+    });
   }
-  const shopifyForm = document.getElementById('shopify-form');
+
   if (shopifyForm) {
-    shopifyForm.onsubmit = function(e) {
+    shopifyForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      showAutomationNotification('Shopify automation connected! (demo)', 'success');
-      shopifyForm.reset();
-    };
+      
+      const storeUrl = document.getElementById('shopify-store-url').value;
+      const apiKey = document.getElementById('shopify-api-key').value;
+      const linkId = document.getElementById('shopify-link-id').value;
+      
+      if (!storeUrl || !apiKey || !linkId) {
+        showAutomationNotification('Please fill in all required fields', 'error');
+        return;
+      }
+      
+      console.log('🛒 Connecting Shopify integration...', { storeUrl, apiKey, linkId });
+      
+      // Simulate API call
+      const submitBtn = document.querySelector('.config-submit-btn.shopify');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+      submitBtn.disabled = true;
+      
+      setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        showAutomationNotification('Shopify integration connected successfully!', 'success');
+        shopifyForm.reset();
+        setTimeout(() => showPlatformSelection(), 1500);
+      }, 2000);
+    });
   }
+
+  // Initialize - show platform selection by default
+  showPlatformSelection();
+  
+  console.log('✅ Elite automation platforms setup complete');
 }
 
+// Enhanced automation notification helper
 function showAutomationNotification(message, type = 'info') {
-  // Simple notification for automation forms
+  // Create notification element
   const notification = document.createElement('div');
   notification.className = `automation-notification ${type}`;
-  notification.innerHTML = `<span>${message}</span>`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  // Style the notification
   Object.assign(notification.style, {
-    position: 'fixed', top: '30px', right: '30px', zIndex: 9999,
-    background: type === 'success' ? 'linear-gradient(90deg,#10b981,#059669)' : '#2563eb',
-    color: '#fff', padding: '16px 28px', borderRadius: '10px', fontWeight: 600,
-    boxShadow: '0 4px 16px rgba(16,185,129,0.15)', fontSize: '1rem',
-    transition: 'opacity 0.3s', opacity: 1
+    position: 'fixed',
+    top: '20px',
+    right: '20px',
+    background: type === 'success' ? 'linear-gradient(135deg, #10B981, #059669)' : 
+                type === 'error' ? 'linear-gradient(135deg, #EF4444, #DC2626)' : 
+                'linear-gradient(135deg, #3B82F6, #2563EB)',
+    color: 'white',
+    padding: '1rem 1.5rem',
+    borderRadius: '0.75rem',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+    zIndex: '10000',
+    animation: 'slideInRight 0.3s ease-out',
+    fontWeight: '500',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    minWidth: '300px'
   });
+  
   document.body.appendChild(notification);
-  setTimeout(() => { notification.style.opacity = 0; setTimeout(() => notification.remove(), 400); }, 3000);
+  
+  // Remove after 4 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+    setTimeout(() => notification.remove(), 300);
+  }, 4000);
 }
 
 // Attach after DOMContentLoaded
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupAutomationPageSelection);
+  document.addEventListener('DOMContentLoaded', setupEliteAutomationPlatforms);
 } else {
-  setupAutomationPageSelection();
+  setupEliteAutomationPlatforms();
 }
 
 // TEMPORARY: Simple plan function to bypass complex backend logic

@@ -8062,12 +8062,14 @@ html, body {
 
 /* === ELITE AUTOMATION PLATFORM CARDS === */
 .elite-automation-platforms {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
     max-width: 1200px;
     margin: 4rem auto;
     padding: 0 2rem;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 @media (max-width: 768px) {
@@ -8495,6 +8497,26 @@ html, body {
     background: linear-gradient(135deg, #7DA63D, #95BF47);
     transform: translateY(-2px);
     box-shadow: 0 12px 35px rgba(149, 191, 71, 0.4);
+}
+
+/* === AUTOMATION PAGE VISIBILITY FIX === */
+/* Ensure automation page is always visible when active - overrides security hiding */
+#automation-page.active-page {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#automation-page.active-page .elite-automation-platforms {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#automation-page.active-page .automation-header {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 /* Notification Animations */

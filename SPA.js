@@ -6631,9 +6631,34 @@ function showAutomationNotification(message, type = 'info') {
   }, 4000);
 }
 
+// Simple fix: Make sure automation page shows when clicked
+document.addEventListener('DOMContentLoaded', function() {
+  const automationNav = document.querySelector('[data-page="automation-page"]');
+  if (automationNav) {
+    automationNav.addEventListener('click', function() {
+      console.log('🎯 Automation nav clicked - forcing page to show');
+      
+      // Hide all pages
+      document.querySelectorAll('.page-content').forEach(page => {
+        page.classList.remove('active-page');
+      });
+      
+      // Show automation page
+      const automationPage = document.getElementById('automation-page');
+      if (automationPage) {
+        automationPage.classList.add('active-page');
+        console.log('✅ Automation page should now be visible');
+      }
+    });
+  }
+  
+  // Also setup the platforms
+  setupEliteAutomationPlatforms();
+});
+
 // Attach after DOMContentLoaded
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupEliteAutomationPlatforms);
+  // Already handled above
 } else {
   setupEliteAutomationPlatforms();
 }

@@ -8061,21 +8061,6 @@ html, body {
 }
 
 /* === ELITE AUTOMATION PLATFORM CARDS === */
-.elite-automation-platforms {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    max-width: 1200px;
-    margin: 4rem auto;
-    padding: 0 2rem;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* Hidden class for JavaScript control */
-.hidden {
-    display: none !important;
-}
 
 @media (max-width: 768px) {
     .elite-automation-platforms {
@@ -8504,24 +8489,23 @@ html, body {
     box-shadow: 0 12px 35px rgba(149, 191, 71, 0.4);
 }
 
-/* === AUTOMATION PAGE VISIBILITY FIX === */
-/* Ensure automation page is always visible when active - overrides security hiding */
-#automation-page.active-page {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+/* === AUTOMATION PAGE CLEAN STYLES === */
+#automation-page {
+    min-height: 100vh;
 }
 
-#automation-page.active-page .elite-automation-platforms {
-    display: grid !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+.elite-automation-platforms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 2rem;
 }
 
-#automation-page.active-page .automation-header {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+.automation-header {
+    width: 100%;
+    margin-bottom: 2rem;
 }
 
 /* Notification Animations */

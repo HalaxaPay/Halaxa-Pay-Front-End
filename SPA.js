@@ -6410,15 +6410,30 @@ window.addEventListener('DOMContentLoaded', () => {
 function setupEliteAutomationPlatforms() {
   console.log('🤖 Setting up elite automation platforms...');
   
+  // Debug: Check if elements exist
+  const elitePlatforms = document.querySelector('.elite-automation-platforms');
+  console.log('🔍 Elite platforms element found:', !!elitePlatforms);
+  console.log('🔍 Elite platforms element:', elitePlatforms);
+  
+  if (elitePlatforms) {
+    // Force show the platforms immediately
+    elitePlatforms.style.display = 'grid';
+    elitePlatforms.style.visibility = 'visible';
+    elitePlatforms.style.opacity = '1';
+    console.log('✅ Forced elite platforms to show');
+  }
+  
   // Platform Cards
   const zapierCard = document.getElementById('zapier-platform-card');
   const shopifyCard = document.getElementById('shopify-platform-card');
+  
+  console.log('🔍 Zapier card found:', !!zapierCard);
+  console.log('🔍 Shopify card found:', !!shopifyCard);
   
   // Platform Pages
   const platformPages = document.querySelector('.platform-pages');
   const zapierConfigPage = document.getElementById('zapier-config-page');
   const shopifyConfigPage = document.getElementById('shopify-config-page');
-  const elitePlatforms = document.querySelector('.elite-automation-platforms');
   
   // Back Buttons
   const backToZapier = document.getElementById('back-to-platforms');
@@ -6428,62 +6443,32 @@ function setupEliteAutomationPlatforms() {
   const zapierForm = document.getElementById('zapier-config-form');
   const shopifyForm = document.getElementById('shopify-config-form');
 
-  // Helper functions - using CSS classes instead of inline styles
+  // Simplified helper functions
   function showPlatformSelection() {
+    console.log('🔄 Showing platform selection...');
     if (elitePlatforms) {
-      elitePlatforms.style.removeProperty('display');
-      elitePlatforms.classList.remove('hidden');
+      elitePlatforms.style.display = 'grid';
+      console.log('✅ Platform selection shown');
     }
-    if (platformPages) {
-      platformPages.style.display = 'none';
-      platformPages.classList.add('hidden');
-    }
-    if (zapierConfigPage) {
-      zapierConfigPage.style.display = 'none';
-      zapierConfigPage.classList.add('hidden');
-    }
-    if (shopifyConfigPage) {
-      shopifyConfigPage.style.display = 'none';
-      shopifyConfigPage.classList.add('hidden');
-    }
+    if (platformPages) platformPages.style.display = 'none';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
   }
 
   function showZapierConfig() {
-    if (elitePlatforms) {
-      elitePlatforms.style.display = 'none';
-      elitePlatforms.classList.add('hidden');
-    }
-    if (platformPages) {
-      platformPages.style.removeProperty('display');
-      platformPages.classList.remove('hidden');
-    }
-    if (zapierConfigPage) {
-      zapierConfigPage.style.removeProperty('display');
-      zapierConfigPage.classList.remove('hidden');
-    }
-    if (shopifyConfigPage) {
-      shopifyConfigPage.style.display = 'none';
-      shopifyConfigPage.classList.add('hidden');
-    }
+    console.log('🔄 Showing Zapier config...');
+    if (elitePlatforms) elitePlatforms.style.display = 'none';
+    if (platformPages) platformPages.style.display = 'block';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'block';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
   }
 
   function showShopifyConfig() {
-    if (elitePlatforms) {
-      elitePlatforms.style.display = 'none';
-      elitePlatforms.classList.add('hidden');
-    }
-    if (platformPages) {
-      platformPages.style.removeProperty('display');
-      platformPages.classList.remove('hidden');
-    }
-    if (zapierConfigPage) {
-      zapierConfigPage.style.display = 'none';
-      zapierConfigPage.classList.add('hidden');
-    }
-    if (shopifyConfigPage) {
-      shopifyConfigPage.style.removeProperty('display');
-      shopifyConfigPage.classList.remove('hidden');
-    }
+    console.log('🔄 Showing Shopify config...');
+    if (elitePlatforms) elitePlatforms.style.display = 'none';
+    if (platformPages) platformPages.style.display = 'block';
+    if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+    if (shopifyConfigPage) shopifyConfigPage.style.display = 'block';
   }
 
   // Platform button click handlers
@@ -6588,7 +6573,18 @@ function setupEliteAutomationPlatforms() {
   }
 
   // Initialize - show platform selection by default
+  console.log('🚀 Calling showPlatformSelection() to initialize...');
   showPlatformSelection();
+  
+  // Add a small delay and force show again
+  setTimeout(() => {
+    console.log('🔄 Double-checking platform visibility after delay...');
+    if (elitePlatforms) {
+      elitePlatforms.style.display = 'grid';
+      console.log('🔍 Final elite platforms style:', elitePlatforms.style.display);
+      console.log('🔍 Final elite platforms computed style:', window.getComputedStyle(elitePlatforms).display);
+    }
+  }, 500);
   
   console.log('✅ Elite automation platforms setup complete');
 }

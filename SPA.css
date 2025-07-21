@@ -8585,6 +8585,11 @@ html, body {
 }
 
 /* Enhanced Form Styling for Zapier */
+#zapier-config-page .form-input {
+    border-color: #FF6A00;
+    box-shadow: 0 2px 8px rgba(255, 106, 0, 0.1);
+}
+
 #zapier-config-page .form-input:focus {
     border-color: #FF6A00;
     box-shadow: 
@@ -8603,6 +8608,11 @@ html, body {
 }
 
 /* Enhanced Form Styling for Shopify */
+#shopify-config-page .form-input {
+    border-color: #95BF47;
+    box-shadow: 0 2px 8px rgba(149, 191, 71, 0.1);
+}
+
 #shopify-config-page .form-input:focus {
     border-color: #95BF47;
     box-shadow: 

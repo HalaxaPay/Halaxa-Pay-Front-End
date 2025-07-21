@@ -3730,6 +3730,9 @@ async function initializeCalculationEngineFeatures(userId) {
                 console.log('✅ Calculation engine data loaded successfully');
                 updateDashboardWithCalculationEngineData(result.data);
                 updateAllDashboardElements(result.data);
+                
+                // Initialize post-calculation features
+                await initializeAllPostCalculationFeatures();
             } else {
                 console.error('❌ Calculation engine error:', result.error);
             }
@@ -3741,61 +3744,21 @@ async function initializeCalculationEngineFeatures(userId) {
         console.error('❌ Calculation engine initialization error:', error);
     }
 }
-        
-        // ⚡ PROCESS TRANSACTION VELOCITY
-        if (responses[3].status === 'fulfilled' && responses[3].value.ok) {
-            const velocityData = await responses[3].value.json();
-            console.log('✅ Transaction velocity data loaded');
-            updateTransactionVelocityDisplay(velocityData);
-        }
-        
-        // 🏦 PROCESS DIGITAL VAULT DATA
-        if (responses[4].status === 'fulfilled' && responses[4].value.ok) {
-            const vaultData = await responses[4].value.json();
-            console.log('✅ Digital vault data loaded');
-            updateDigitalVaultDisplay(vaultData);
-        }
-        
-        // 💰 PROCESS USDC FLOW DATA
-        if (responses[5].status === 'fulfilled' && responses[5].value.ok) {
-            const flowData = await responses[5].value.json();
-            console.log('✅ USDC flow data loaded');
-            updateUSDCFlowDisplay(flowData);
-        }
-        
-        // 📈 PROCESS USER GROWTH METRICS
-        if (responses[6].status === 'fulfilled' && responses[6].value.ok) {
-            const growthData = await responses[6].value.json();
-            console.log('✅ User growth metrics loaded');
-            updateUserGrowthDisplay(growthData);
-        }
-        
-        // 🧾 PROCESS BILLING HISTORY
-        if (responses[7].status === 'fulfilled' && responses[7].value.ok) {
-            const billingData = await responses[7].value.json();
-            console.log('✅ Billing history loaded');
-            updateBillingHistoryDisplay(billingData);
-        }
-        
-        // 📦 PROCESS ORDER ANALYTICS
-        if (responses[8].status === 'fulfilled' && responses[8].value.ok) {
-            const orderData = await responses[8].value.json();
-            console.log('✅ Order analytics loaded');
-            updateOrderAnalyticsDisplay(orderData);
-        }
-        
-        // 🔗 PROCESS PAYMENT LINKS (For compatibility)
-        if (responses[9].status === 'fulfilled' && responses[9].value.ok) {
-            const paymentLinksData = await responses[9].value.json();
-            console.log('✅ Payment links loaded');
-            updatePaymentLinksElements(paymentLinksData);
-        }
-        
+
+// Initialize calculation engine features
+async function initializeAllPostCalculationFeatures() {
+    try {
         // Initialize ALL interactive elements
         initializeAllInteractiveElements();
         
         // Initialize ALL charts and graphs
         initializeAllCharts();
+        
+        console.log('✅ All post-calculation features initialized');
+    } catch (error) {
+        console.error('❌ Error initializing post-calculation features:', error);
+    }
+}
         
         // Initialize ALL buttons and controls
         initializeAllButtons();

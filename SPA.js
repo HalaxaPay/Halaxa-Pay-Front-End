@@ -6379,26 +6379,71 @@ function setupEliteAutomationPlatforms() {
       
       const storeUrl = document.getElementById('shopify-store-url').value;
       const apiKey = document.getElementById('shopify-api-key').value;
+      const apiSecret = document.getElementById('shopify-api-secret').value;
+      const accessToken = document.getElementById('shopify-access-token').value;
       const linkId = document.getElementById('shopify-link-id').value;
       
-      if (!storeUrl || !apiKey || !linkId) {
+      if (!storeUrl || !apiKey || !apiSecret || !accessToken || !linkId) {
         showAutomationNotification('Please fill in all required fields', 'error');
         return;
       }
       
-      // Simulate API call
+      // Validate store URL format
+      if (!storeUrl.includes('.myshopify.com') && !storeUrl.match(/^[a-zA-Z0-9-]+$/)) {
+        showAutomationNotification('Invalid Shopify store URL format', 'error');
+        return;
+      }
+      
+      // Call actual backend API
       const submitBtn = document.querySelector('.config-submit-btn.shopify');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
       submitBtn.disabled = true;
       
-      setTimeout(() => {
+      // Get auth token
+      const token = localStorage.getItem('halaxa_token');
+      if (!token) {
+        showAutomationNotification('Authentication required. Please log in again.', 'error');
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
-        showAutomationNotification('Shopify integration connected successfully!', 'success');
-        shopifyForm.reset();
-        setTimeout(() => showPlatformSelection(), 1500);
-      }, 2000);
+        return;
+      }
+      
+      // Send to backend
+      fetch('/api/shopify/hooks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          link_id: linkId,
+          shop_url: storeUrl,
+          api_key: apiKey,
+          api_secret: apiSecret,
+          access_token: accessToken,
+          product_name: '' // Optional field - can be enhanced later
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        if (data.success) {
+          showAutomationNotification('Shopify integration connected successfully!', 'success');
+          shopifyForm.reset();
+          setTimeout(() => showPlatformSelection(), 1500);
+        } else {
+          showAutomationNotification(data.error || 'Failed to connect Shopify integration', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Shopify integration error:', error);
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        showAutomationNotification('Network error. Please try again.', 'error');
+      });
     });
   }
 

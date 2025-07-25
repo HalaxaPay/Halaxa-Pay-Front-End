@@ -6354,7 +6354,7 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 // Call after DOMContentLoaded
 window.addEventListener('DOMContentLoaded', () => {
-    addDarkModeToggleButton();
+    // Dark mode toggle button removed as requested
 });
 
 // ==================== ELITE AUTOMATION PLATFORM LOGIC ==================== //
@@ -6664,8 +6664,8 @@ if (document.readyState === 'loading') {
 // Update account plan details in the account page
 function updateAccountPlanDetails(planData) {
     try {
-        // Update plan name
-        const planNameElements = document.querySelectorAll('.current-plan-name, .plan-name');
+        // Update plan name (only for account page, not pricing cards)
+        const planNameElements = document.querySelectorAll('.current-plan-name');
         planNameElements.forEach(el => {
             if (el) el.textContent = planData.planDetails?.name || `${planData.currentPlan.charAt(0).toUpperCase() + planData.currentPlan.slice(1)} Plan`;
         });

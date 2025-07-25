@@ -397,6 +397,19 @@ class HalaxaAccessControl {
     console.log(`🔄 Loading page content for: ${pageId}`);
     console.log(`📋 Current plan: ${this.getCurrentPlan()}`);
     
+    // CRITICAL: Check access control before loading page
+    const plan = this.getCurrentPlan();
+    const limits = this.getPlanLimits(plan);
+    
+    // Check if page is blocked for current plan
+    if (limits.blockedPages.includes(pageId)) {
+      console.log(`🔒 ACCESS DENIED: Page ${pageId} is locked for ${plan} plan - redirecting to plans`);
+      this.redirectToPlans();
+      return;
+    }
+    
+    console.log(`✅ ACCESS GRANTED: Loading page ${pageId} for ${plan} plan`);
+    
     // Get all pages
     const allPages = document.querySelectorAll('.page-content');
     console.log(`📄 Total pages found: ${allPages.length}`);

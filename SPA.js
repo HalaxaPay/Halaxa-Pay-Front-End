@@ -329,9 +329,9 @@ async function getUserPlanSync() {
             
             // Try multiple backend endpoints for plan data
             const endpoints = [
-                'https://halaxa-backend.onrender.com/api/account/plan',
-                'https://halaxa-backend.onrender.com/api/account/user-data',
-                'https://halaxa-backend.onrender.com/api/auth/profile'
+                `${BACKEND_URL}/api/account/plan-status`,
+                `${BACKEND_URL}/api/account/profile`,
+                `${BACKEND_URL}/api/account/details`
             ];
             
             for (const endpoint of endpoints) {
@@ -3030,7 +3030,14 @@ function handleBasicPlan() {
 async function loadCurrentPlanStatus() {
     try {
         const token = localStorage.getItem('accessToken');
-        if (!token) return;
+        const userActive = localStorage.getItem('userActive');
+        
+        // Check if user is properly authenticated
+        if (!token || userActive !== 'true') {
+            console.log('⚠️ User not authenticated, redirecting to login');
+            redirectToLogin();
+            return;
+        }
 
         console.log('📋 Loading comprehensive account data...');
         
@@ -3046,18 +3053,28 @@ async function loadCurrentPlanStatus() {
             })
         ]);
         
-        if (planResponse.ok) {
+        // Handle 403 errors gracefully
+        if (planResponse.status === 403) {
+            console.warn('⚠️ Access denied to plan-status endpoint - user may need to re-authenticate');
+            handleAuthenticationError();
+        } else if (planResponse.ok) {
             const planData = await planResponse.json();
             updatePlanDisplay(planData.currentPlan);
             updateAccountPlanDetails(planData);
         }
         
-        if (billingResponse.ok) {
+        if (billingResponse.status === 403) {
+            console.warn('⚠️ Access denied to billing-history endpoint - user may need to re-authenticate');
+            handleAuthenticationError();
+        } else if (billingResponse.ok) {
             const billingData = await billingResponse.json();
             updateAccountBillingHistory(billingData);
         }
         
-        if (accountResponse.ok) {
+        if (accountResponse.status === 403) {
+            console.warn('⚠️ Access denied to account details endpoint - user may need to re-authenticate');
+            handleAuthenticationError();
+        } else if (accountResponse.ok) {
             const accountData = await accountResponse.json();
             updateAccountDetails(accountData);
         }
@@ -3065,6 +3082,17 @@ async function loadCurrentPlanStatus() {
     } catch (error) {
         console.error('Error loading account data:', error);
     }
+}
+
+// Handle authentication errors by redirecting to login
+function handleAuthenticationError() {
+    console.log('🔐 Authentication error detected, redirecting to login...');
+    // Clear invalid tokens
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userActive');
+    // Redirect to login
+    redirectToLogin();
 }
 
 function updatePlanDisplay(currentPlan) {

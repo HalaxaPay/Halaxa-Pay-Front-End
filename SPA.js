@@ -613,11 +613,10 @@ function applyFOMOLockedStyling(userPlan) {
     const lockedFeatures = {
         'basic': [
             { page: 'capital-page', requiredPlan: 'pro' },
-            { page: 'automation-page', requiredPlan: 'elite' },
+            { page: 'automation-page', requiredPlan: 'pro' },
             { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'pro': [
-            { page: 'automation-page', requiredPlan: 'elite' },
             { page: 'orders-page', requiredPlan: 'elite' }
         ],
         'elite': [] // Elite users see no locked features
@@ -1994,7 +1993,7 @@ function showPage(pageId) {
     // Define premium pages that require access control
     const premiumPages = {
         'capital-page': ['pro', 'elite'],
-        'automation-page': ['elite'], 
+        'automation-page': ['pro', 'elite'], 
         'orders-page': ['elite']
     };
     
@@ -2396,7 +2395,7 @@ function forceShowPage(pageId) {
     // Define premium pages that require access control
     const premiumPages = {
         'capital-page': ['pro', 'elite'],
-        'automation-page': ['elite'], 
+        'automation-page': ['pro', 'elite'], 
         'orders-page': ['elite']
     };
     
@@ -5229,7 +5228,7 @@ function navigateToPage(pageId) {
     // Define premium pages that require access control
     const premiumPages = {
         'capital-page': ['pro', 'elite'],
-        'automation-page': ['elite'], 
+        'automation-page': ['pro', 'elite'], 
         'orders-page': ['elite']
     };
     
@@ -6361,19 +6360,19 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==================== ELITE AUTOMATION PLATFORM LOGIC ==================== //
 
 function setupEliteAutomationPlatforms() {
-  console.log('🔒 ACCESS CONTROL: Setting up elite automation platforms...');
+  console.log('🔒 ACCESS CONTROL: Setting up automation platforms...');
   
   // Get current user plan
   const currentPlan = localStorage.getItem('userPlan') || 'basic';
   console.log('🔍 User plan for automation setup:', currentPlan);
   
   // Check if user has access to automation features
-  if (currentPlan !== 'elite') {
-    console.log('🔒 ACCESS DENIED: Automation platforms require Elite plan, user has', currentPlan);
-    return; // Exit early - don't set up automation for non-elite users
+  if (currentPlan !== 'elite' && currentPlan !== 'pro') {
+    console.log('🔒 ACCESS DENIED: Automation platforms require Pro or Elite plan, user has', currentPlan);
+    return; // Exit early - don't set up automation for basic users
   }
   
-  console.log('✅ ACCESS GRANTED: Setting up automation platforms for Elite user');
+  console.log('✅ ACCESS GRANTED: Setting up automation platforms for', currentPlan, 'user');
   
   const elitePlatforms = document.querySelector('.elite-automation-platforms');
   
@@ -6390,9 +6389,9 @@ function setupEliteAutomationPlatforms() {
       card.style.transform = 'translateY(0)';
     });
     
-    console.log('✅ Elite platforms container and cards forced visible:', platformCards.length, 'cards found');
+    console.log('✅ Automation platforms container and cards forced visible:', platformCards.length, 'cards found');
   } else {
-    console.log('❌ Elite platforms container not found');
+    console.log('❌ Automation platforms container not found');
   }
   
   // Platform Cards

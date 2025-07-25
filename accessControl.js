@@ -29,13 +29,13 @@ class HalaxaAccessControl {
         maxPaymentLinks: 30,
         maxMonthlyVolume: 30000,
         allowedNetworks: ['polygon', 'solana'],
-        blockedPages: ['automation-page'],
+        blockedPages: [],
         features: {
           advancedAnalytics: true,
           multipleWallets: true,
           customBranding: false,
           prioritySupport: true,
-          automations: false
+          automations: true
         }
       },
       elite: {

@@ -1985,6 +1985,31 @@ async function triggerDetectionRefresh(button) {
 // ==================== SPA NAVIGATION - FINAL ROBUST VERSION ==================== //
 
 function showPage(pageId) {
+    console.log('🔒 ACCESS CONTROL: Checking access for page:', pageId);
+    
+    // Get current user plan
+    const currentPlan = localStorage.getItem('userPlan') || 'basic';
+    console.log('🔍 User plan for page access:', currentPlan);
+    
+    // Define premium pages that require access control
+    const premiumPages = {
+        'capital-page': ['pro', 'elite'],
+        'automation-page': ['elite'], 
+        'orders-page': ['elite']
+    };
+    
+    // Check if page requires premium access
+    if (premiumPages[pageId]) {
+        const requiredPlans = premiumPages[pageId];
+        if (!requiredPlans.includes(currentPlan)) {
+            console.log('🔒 ACCESS DENIED: Page requires', requiredPlans.join(' or '), 'plan, user has', currentPlan);
+            showAccessDeniedModal(pageId, requiredPlans);
+            return;
+        }
+    }
+    
+    console.log('✅ ACCESS GRANTED: Proceeding to page:', pageId);
+    
     // Only toggle .active-page class, do not set display:none
     document.querySelectorAll('.page-content').forEach(page => {
         page.classList.remove('active-page');
@@ -2161,6 +2186,9 @@ function initializeMobileHamburgerMenu() {
                         navigateToPage(pageId);
                     } else if (typeof showPage === 'function') {
                         showPage(pageId);
+                    } else if (window.HalaxaAccessControl && typeof window.HalaxaAccessControl.loadPage === 'function') {
+                        // Use access control system as final fallback
+                        window.HalaxaAccessControl.loadPage(pageId);
                     }
                 }, 300); // Wait for sidebar to close
                 
@@ -2359,6 +2387,31 @@ function smoothPageTransition(targetPageId, allPages) {
 
 // Enhanced page show function that ensures visibility
 function forceShowPage(pageId) {
+    console.log('🔒 ACCESS CONTROL: Force showing page:', pageId);
+    
+    // Get current user plan
+    const currentPlan = localStorage.getItem('userPlan') || 'basic';
+    console.log('🔍 User plan for force page access:', currentPlan);
+    
+    // Define premium pages that require access control
+    const premiumPages = {
+        'capital-page': ['pro', 'elite'],
+        'automation-page': ['elite'], 
+        'orders-page': ['elite']
+    };
+    
+    // Check if page requires premium access
+    if (premiumPages[pageId]) {
+        const requiredPlans = premiumPages[pageId];
+        if (!requiredPlans.includes(currentPlan)) {
+            console.log('🔒 ACCESS DENIED: Force page requires', requiredPlans.join(' or '), 'plan, user has', currentPlan);
+            showAccessDeniedModal(pageId, requiredPlans);
+            return;
+        }
+    }
+    
+    console.log('✅ ACCESS GRANTED: Force showing page:', pageId);
+    
     const page = document.getElementById(pageId);
     if (page) {
         // Remove any inline styles that might hide it
@@ -5867,55 +5920,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Add dark mode toggle switch next to profile picture button
-function addDarkModeToggleButton() {
-    if (document.getElementById('dark-mode-toggle')) return;
-    const btn = document.createElement('button');
-    btn.id = 'dark-mode-toggle';
-    btn.title = 'Toggle dark mode';
-    btn.style.cssText = `
-        position: fixed;
-        top: 15px;
-        right: 75px;
-        z-index: 10000;
-        width: 48px;
-        height: 48px;
-        background: none;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        padding: 0;
-    `;
-    // iOS-style toggle
-    btn.innerHTML = `
-      <div id="dark-toggle-track" style="width: 38px; height: 22px; border-radius: 12px; background: #e5e7eb; position: relative; transition: background 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-        <div id="dark-toggle-ball" style="width: 18px; height: 18px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: left 0.3s, background 0.3s;"></div>
-      </div>
-    `;
-    function setDarkMode(enabled) {
-        if (enabled) {
-            document.body.classList.add('dark-mode');
-            localStorage.setItem('darkMode', 'true');
-            btn.querySelector('#dark-toggle-track').style.background = '#2563eb';
-            btn.querySelector('#dark-toggle-ball').style.left = '18px';
-            btn.querySelector('#dark-toggle-ball').style.background = '#fff';
-        } else {
-            document.body.classList.remove('dark-mode');
-            localStorage.setItem('darkMode', 'false');
-            btn.querySelector('#dark-toggle-track').style.background = '#e5e7eb';
-            btn.querySelector('#dark-toggle-ball').style.left = '2px';
-            btn.querySelector('#dark-toggle-ball').style.background = '#fff';
-        }
-    }
-    // Initial state from localStorage
-    setDarkMode(localStorage.getItem('darkMode') === 'true');
-    btn.onclick = () => {
-        const enabled = !document.body.classList.contains('dark-mode');
-        setDarkMode(enabled);
-    };
-    document.body.appendChild(btn);
-}
+// Dark mode toggle button removed as requested
 // Add dark mode CSS
 (function injectDarkModeCSS() {
     if (document.getElementById('halaxa-dark-mode-style')) return;
@@ -6356,7 +6361,19 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==================== ELITE AUTOMATION PLATFORM LOGIC ==================== //
 
 function setupEliteAutomationPlatforms() {
-  console.log('🤖 Setting up elite automation platforms...');
+  console.log('🔒 ACCESS CONTROL: Setting up elite automation platforms...');
+  
+  // Get current user plan
+  const currentPlan = localStorage.getItem('userPlan') || 'basic';
+  console.log('🔍 User plan for automation setup:', currentPlan);
+  
+  // Check if user has access to automation features
+  if (currentPlan !== 'elite') {
+    console.log('🔒 ACCESS DENIED: Automation platforms require Elite plan, user has', currentPlan);
+    return; // Exit early - don't set up automation for non-elite users
+  }
+  
+  console.log('✅ ACCESS GRANTED: Setting up automation platforms for Elite user');
   
   const elitePlatforms = document.querySelector('.elite-automation-platforms');
   

@@ -356,37 +356,45 @@ document.getElementById('signupForm').addEventListener('submit', async function(
 // ⚠️ WARNING: This can be easily bypassed by disabling JavaScript
 // Server-side blocking provides the real security
 
-const BLOCKED_COUNTRIES = ['SY', 'KP', 'CU', 'IR', 'UA', 'RU'];
-
 async function checkGeoBlocking() {
   try {
-    // Using ipapi.co for frontend geo detection
-    const response = await fetch('https://ipapi.co/json/');
-    const data = await response.json();
+    // Use backend geo-check endpoint instead of direct ipapi.co call
+    const response = await fetch('https://halaxa-backend.onrender.com/api/geo/check', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     
-    if (BLOCKED_COUNTRIES.includes(data.country_code)) {
-                    document.body.innerHTML = `
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.blocked) {
+        document.body.innerHTML = `
         <div class="geo-blocked-container">
           <div class="geo-blocked-card">
             <div class="geo-blocked-icon">🚫</div>
             <h1 class="geo-blocked-title">Access Denied</h1>
             <p class="geo-blocked-message">Service not available in your region</p>
-            <p class="geo-blocked-location">Location: ${data.country_name}</p>
+            <p class="geo-blocked-location">Location: ${data.country_name || 'Unknown'}</p>
             <div class="geo-blocked-warning-badge">
               <i class="fas fa-exclamation-triangle"></i>
               Regional Restriction
             </div>
-            <p class="geo-blocked-error-code">Error Code: GEO_BLOCKED_FRONTEND</p>
+            <p class="geo-blocked-error-code">Error Code: GEO_BLOCKED_BACKEND</p>
           </div>
         </div>
       `;
-      console.log('🚫 Frontend geo-blocking: Access blocked for country:', data.country_name);
+        console.log('🚫 Backend geo-blocking: Access blocked for country:', data.country_name);
+      } else {
+        console.log('✅ Backend geo-blocking: Access allowed for country:', data.country_name);
+      }
     } else {
-      console.log('✅ Frontend geo-blocking: Access allowed for country:', data.country_name);
+      console.log('⚠️ Backend geo-check failed, allowing access as fallback');
     }
   } catch (error) {
-    console.log('⚠️ Frontend geo-blocking check failed:', error);
-    // Fail silently to maintain functionality
+    console.log('⚠️ Geo-blocking check failed, allowing access as fallback:', error);
+    // Fail gracefully - allow access if geo-check fails
   }
 }
 

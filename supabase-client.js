@@ -430,8 +430,6 @@ async function handleOAuthRedirect() {
     }
     
     console.log('✅ OAuth session found, syncing with backend...');
-    console.log('👤 User:', session.user.email);
-    console.log('🔑 Access Token:', session.access_token ? 'Present' : 'Missing');
     
     // Sync with backend to ensure user is in all tables
     const response = await fetch('https://halaxa-backend.onrender.com/api/auth/oauth-sync', {
@@ -449,11 +447,6 @@ async function handleOAuthRedirect() {
     }
     
     console.log('✅ Backend sync successful');
-    console.log('🎫 Received tokens:', {
-      accessToken: result.accessToken ? 'Present' : 'Missing',
-      refreshToken: result.refreshToken ? 'Present' : 'Missing',
-      user: result.user ? 'Present' : 'Missing'
-    });
     
     // Store ALL session data properly (same as normal signup)
     if (result.user) {

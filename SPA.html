@@ -89,11 +89,6 @@
                     <span>Automations</span>
                     <div class="nav-indicator"></div>
                 </li>
-                <li class="nav-item" data-page="orders-page">
-                    <i class="fas fa-shipping-fast"></i>
-                    <span>Orders & Shipping</span>
-                    <div class="nav-indicator"></div>
-                </li>
                 <li class="nav-item" data-page="help-page">
                     <i class="fas fa-question-circle"></i>
                     <span>Help</span>
@@ -148,10 +143,6 @@
                     <li class="mobile-nav-item" data-page="automation-page">
                         <i class="fas fa-robot"></i>
                         <span>Automations</span>
-                    </li>
-                    <li class="mobile-nav-item" data-page="orders-page">
-                        <i class="fas fa-shipping-fast"></i>
-                        <span>Orders & Shipping</span>
                     </li>
                     <li class="mobile-nav-item" data-page="help-page">
                         <i class="fas fa-question-circle"></i>
@@ -1224,12 +1215,11 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="wallet-address" class="form-label">Your Wallet Address</label>
+                                <label for="wallet-address-select" class="form-label">Your Wallet Address</label>
                                 <div class="input-wrapper">
-                                    <input type="text" id="wallet-address" class="form-input" placeholder="0x... or 5DgV...">
-                                    <button type="button" class="paste-btn">
-                                        <i class="fas fa-paste"></i>
-                                    </button>
+                                    <select id="wallet-address-select" class="form-input" disabled>
+                                        <option value="">Select your locked wallet address</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -1950,6 +1940,18 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Email Verification Card -->
+                <div class="email-verification-card" style="margin-top: 2rem; display: flex; justify-content: center;">
+                  <div style="background: linear-gradient(90deg, #10b981 0%, #34d399 100%); border-radius: 1.25rem; box-shadow: 0 2px 16px rgba(16,185,129,0.08); padding: 2rem 2.5rem; max-width: 420px; width: 100%; text-align: center; color: #fff;">
+                    <div style="font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: -0.5px;">Verify your email to unlock maximum performance and speed</div>
+                    <div style="font-size: 1rem; opacity: 0.92; margin-bottom: 1.5rem;">Get instant notifications, faster support, and full access to all features.</div>
+                    <button id="send-verification-email-btn" style="background: linear-gradient(90deg, #10b981 0%, #34d399 100%); border: none; color: #fff; font-weight: 600; font-size: 1.1rem; padding: 0.85rem 2.2rem; border-radius: 2rem; box-shadow: 0 2px 8px rgba(16,185,129,0.12); cursor: pointer; transition: background 0.2s; outline: none;">
+                      <i class="fas fa-envelope-open-text" style="margin-right: 0.7em;"></i> Send Verification Email
+                    </button>
+                    <div id="verification-email-status" style="margin-top: 1rem; font-size: 0.98rem; min-height: 1.5em;"></div>
+                  </div>
                 </div>
             </div>
             
@@ -2777,407 +2779,6 @@
                 </div>
             </div>
 
-            <!-- Orders & Shipping Page -->
-            <div class="page-content" id="orders-page">
-                <!-- Header -->
-                <div class="orders-header">
-                    <div class="orders-hero">
-                        <div class="orders-hero-content">
-                            <h1 class="orders-title">
-                                <i class="fas fa-box"></i>
-                                Orders & Customer Information
-                            </h1>
-                            <p class="orders-subtitle">Manage customer information for physical product orders</p>
-                            <div class="orders-metrics">
-                                <div class="orders-metric">
-                                    <div class="metric-number">247</div>
-                                    <div class="metric-label">Total Orders</div>
-                                </div>
-                                <div class="orders-metric">
-                                    <div class="metric-number">156</div>
-                                    <div class="metric-label">Ready to Ship</div>
-                                </div>
-                                <div class="orders-metric">
-                                    <div class="metric-number">24</div>
-                                    <div class="metric-label">Countries</div>
-                                </div>
-                                <div class="orders-metric">
-                                    <div class="metric-number">$89,420</div>
-                                    <div class="metric-label">Total Revenue</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="shipping-visual">
-                            <div class="globe-container">
-                                <div class="delivery-globe">
-                                    <div class="shipping-route route-1"></div>
-                                    <div class="shipping-route route-2"></div>
-                                    <div class="shipping-route route-3"></div>
-                                    <div class="delivery-pin pin-1">📦</div>
-                                    <div class="delivery-pin pin-2">🚚</div>
-                                    <div class="delivery-pin pin-3">✈️</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="orders-stats-section">
-                    <div class="stats-grid">
-                        <div class="order-stat-card pending">
-                            <div class="stat-icon">
-                                <i class="fas fa-box-open"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">156</div>
-                                <div class="stat-label">New Orders</div>
-                                <div class="stat-trend">+5 today</div>
-                            </div>
-                        </div>
-                        
-                        <div class="order-stat-card shipped">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">247</div>
-                                <div class="stat-label">Total Customers</div>
-                                <div class="stat-trend">+12 this week</div>
-                            </div>
-                        </div>
-                        
-                        <div class="order-stat-card delivered">
-                            <div class="stat-icon">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">24</div>
-                                <div class="stat-label">Countries</div>
-                                <div class="stat-trend">+2 this month</div>
-                            </div>
-                        </div>
-                        
-                        <div class="order-stat-card revenue">
-                            <div class="stat-icon">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-value">$89,420</div>
-                                <div class="stat-label">Total Revenue</div>
-                                <div class="stat-trend">+24% growth</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Orders Management -->
-                <div class="orders-management-section">
-                    <div class="management-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-list-alt"></i>
-                            Order Management Hub
-                        </h2>
-                        <div class="management-actions">
-                            <button class="filter-btn active" data-filter="all">
-                                <i class="fas fa-layer-group"></i>
-                                All Orders
-                            </button>
-                            <button class="filter-btn" data-filter="new">
-                                <i class="fas fa-box-open"></i>
-                                New Orders
-                            </button>
-                            <button class="filter-btn" data-filter="shipped">
-                                <i class="fas fa-check"></i>
-                                Shipped
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="orders-grid">
-                        <!-- Order Card 1 -->
-                        <div class="order-card" data-status="new">
-                            <div class="order-header">
-                                <div class="order-id">#TXN-4A7B9C2E</div>
-                                <div class="order-status status-new">
-                                    <i class="fas fa-box-open"></i>
-                                    New Order
-                                </div>
-                            </div>
-                            
-                            <div class="customer-info">
-                                <div class="customer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="customer-details">
-                                    <div class="customer-name">Sarah Johnson</div>
-                                    <div class="customer-email">sarah.j@email.com</div>
-                                    <div class="order-value">$249.99 USDC</div>
-                                </div>
-                            </div>
-                            
-                            <div class="shipping-address">
-                                <div class="address-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="address-details">
-                                    <div class="address-line">123 Oak Street, Apt 4B</div>
-                                    <div class="address-city">San Francisco, CA 94102</div>
-                                    <div class="address-country">🇺🇸 United States</div>
-                                </div>
-                            </div>
-                            
-                            <div class="order-actions">
-                                <button class="action-btn ship-btn">
-                                    <i class="fas fa-shipping-fast"></i>
-                                    Ship Now
-                                </button>
-                                <button class="action-btn view-btn">
-                                    <i class="fas fa-eye"></i>
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Order Card 2 -->
-                        <div class="order-card" data-status="shipped">
-                            <div class="order-header">
-                                <div class="order-id">#TXN-8F3D5E1A</div>
-                                <div class="order-status status-shipped">
-                                    <i class="fas fa-check"></i>
-                                    Shipped
-                                </div>
-                            </div>
-                            
-                            <div class="customer-info">
-                                <div class="customer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="customer-details">
-                                    <div class="customer-name">Marcus Chen</div>
-                                    <div class="customer-email">m.chen@techcorp.com</div>
-                                    <div class="order-value">$599.99 USDC</div>
-                                </div>
-                            </div>
-                            
-                            <div class="shipping-address">
-                                <div class="address-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="address-details">
-                                    <div class="address-line">456 Tech Avenue, Suite 100</div>
-                                    <div class="address-city">Austin, TX 73301</div>
-                                    <div class="address-country">🇺🇸 United States</div>
-                                </div>
-                            </div>
-                            
-                            <div class="order-actions">
-                                <button class="action-btn view-btn">
-                                    <i class="fas fa-eye"></i>
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Order Card 3 -->
-                        <div class="order-card" data-status="shipped">
-                            <div class="order-header">
-                                <div class="order-id">#TXN-B6E2C9F4</div>
-                                <div class="order-status status-shipped">
-                                    <i class="fas fa-check"></i>
-                                    Shipped
-                                </div>
-                            </div>
-                            
-                            <div class="customer-info">
-                                <div class="customer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="customer-details">
-                                    <div class="customer-name">Emma Rodriguez</div>
-                                    <div class="customer-email">emma.r@design.studio</div>
-                                    <div class="order-value">$149.99 USDC</div>
-                                </div>
-                            </div>
-                            
-                            <div class="shipping-address">
-                                <div class="address-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="address-details">
-                                    <div class="address-line">789 Design Boulevard</div>
-                                    <div class="address-city">Miami, FL 33101</div>
-                                    <div class="address-country">🇺🇸 United States</div>
-                                </div>
-                            </div>
-                            
-                            <div class="order-actions">
-                                <button class="action-btn view-btn">
-                                    <i class="fas fa-eye"></i>
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Order Card 4 -->
-                        <div class="order-card" data-status="new">
-                            <div class="order-header">
-                                <div class="order-id">#TXN-D1A8F7B3</div>
-                                <div class="order-status status-new">
-                                    <i class="fas fa-box-open"></i>
-                                    New Order
-                                </div>
-                            </div>
-                            
-                            <div class="customer-info">
-                                <div class="customer-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="customer-details">
-                                    <div class="customer-name">Alexander Kumar</div>
-                                    <div class="customer-email">alex.kumar@startup.io</div>
-                                    <div class="order-value">$899.99 USDC</div>
-                                </div>
-                            </div>
-                            
-                            <div class="shipping-address">
-                                <div class="address-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="address-details">
-                                    <div class="address-line">321 Innovation Drive</div>
-                                    <div class="address-city">Seattle, WA 98101</div>
-                                    <div class="address-country">🇺🇸 United States</div>
-                                </div>
-                            </div>
-                            
-                            <div class="order-actions">
-                                <button class="action-btn ship-btn">
-                                    <i class="fas fa-shipping-fast"></i>
-                                    Ship Now
-                                </button>
-                                <button class="action-btn view-btn">
-                                    <i class="fas fa-eye"></i>
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Customer Locations Map -->
-                <div class="shipping-map-section">
-                    <div class="map-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-globe-americas"></i>
-                            Customer Locations
-                        </h2>
-                        <p class="section-subtitle">View where your customers are located worldwide</p>
-                    </div>
-                    
-                    <div class="interactive-map">
-                        <div class="map-container">
-                            <div class="world-map">
-                                <!-- Delivery Locations -->
-                                <div class="delivery-marker marker-usa" data-country="United States" data-orders="156">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">156</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="delivery-marker marker-canada" data-country="Canada" data-orders="23">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">23</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="delivery-marker marker-uk" data-country="United Kingdom" data-orders="45">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">45</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="delivery-marker marker-germany" data-country="Germany" data-orders="38">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">38</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="delivery-marker marker-australia" data-country="Australia" data-orders="19">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">19</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="delivery-marker marker-japan" data-country="Japan" data-orders="31">
-                                    <div class="marker-pin">
-                                        <i class="fas fa-map-pin"></i>
-                                        <span class="marker-count">31</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="map-sidebar">
-                            <div class="countries-list">
-                                <h3>Top Customer Locations</h3>
-                                <div class="country-item">
-                                    <div class="country-flag">🇺🇸</div>
-                                    <div class="country-info">
-                                        <div class="country-name">United States</div>
-                                        <div class="country-orders">156 customers</div>
-                                    </div>
-                                    <div class="country-revenue">$45,680</div>
-                                </div>
-                                
-                                <div class="country-item">
-                                    <div class="country-flag">🇬🇧</div>
-                                    <div class="country-info">
-                                        <div class="country-name">United Kingdom</div>
-                                        <div class="country-orders">45 customers</div>
-                                    </div>
-                                    <div class="country-revenue">$13,230</div>
-                                </div>
-                                
-                                <div class="country-item">
-                                    <div class="country-flag">🇩🇪</div>
-                                    <div class="country-info">
-                                        <div class="country-name">Germany</div>
-                                        <div class="country-orders">38 customers</div>
-                                    </div>
-                                    <div class="country-revenue">$11,140</div>
-                                </div>
-                                
-                                <div class="country-item">
-                                    <div class="country-flag">🇯🇵</div>
-                                    <div class="country-info">
-                                        <div class="country-name">Japan</div>
-                                        <div class="country-orders">31 customers</div>
-                                    </div>
-                                    <div class="country-revenue">$9,080</div>
-                                </div>
-                                
-                                <div class="country-item">
-                                    <div class="country-flag">🇨🇦</div>
-                                    <div class="country-info">
-                                        <div class="country-name">Canada</div>
-                                        <div class="country-orders">23 customers</div>
-                                    </div>
-                                    <div class="country-revenue">$6,740</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-            
             <!-- Automation Page -->
             <div class="page-content" id="automation-page">
                 <!-- Automation Header -->
@@ -3448,6 +3049,34 @@
           <!-- Access control moved to backend-only for security -->
       <script type="module" src="./supabase-client.js"></script>
       <!-- Detection system moved to backend-only for security -->
+
+      <!-- Wallet Locking Card (shown only if user hasn't locked addresses) -->
+      <div id="wallet-locking-section" class="wallet-locking-section" style="display: none;">
+        <div class="wallet-locking-card">
+          <h3>Lock Your Wallet Addresses</h3>
+          <p>Enter your Solana and Polygon wallet addresses. You can only do this once, and they will be locked forever.</p>
+          <form id="wallet-locking-form">
+            <div class="form-group">
+              <label for="solana-wallet" class="form-label">Solana Wallet Address</label>
+              <input type="text" id="solana-wallet" class="form-input" placeholder="Enter Solana address" required>
+            </div>
+            <div class="form-group">
+              <label for="polygon-wallet" class="form-label">Polygon Wallet Address</label>
+              <input type="text" id="polygon-wallet" class="form-input" placeholder="Enter Polygon address" required>
+            </div>
+            <button type="submit" class="lock-wallets-btn">Lock Wallets</button>
+          </form>
+        </div>
+      </div>
+      <!-- Confirmation Popup -->
+      <div id="wallet-lock-confirm-popup" class="wallet-lock-confirm-popup" style="display: none;">
+        <div class="popup-content">
+          <h4>Confirm Wallet Lock</h4>
+          <p>Are you sure? You cannot change these addresses later.</p>
+          <button id="confirm-lock-btn" class="confirm-btn">Yes, Lock Forever</button>
+          <button id="cancel-lock-btn" class="cancel-btn">Cancel</button>
+        </div>
+      </div>
 
 </body>
 </html>

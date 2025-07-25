@@ -17,28 +17,62 @@
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
+    :root {
+        /* Dashboard Theme Colors (copied from Payment Page.html) */
+        --primary-color: #1a1a2e;
+        --secondary-color: #16213e;
+        --accent-primary: #10b981;
+        --accent-secondary: #3498db;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --text-light: #9ca3af;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --border-light: rgba(229, 231, 235, 0.8);
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.15);
+        --gradient-primary: linear-gradient(135deg, #10b981, #059669);
+        --gradient-secondary: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --gradient-mixed: linear-gradient(135deg, #10b981, #3b82f6);
+        --gradient-mixed-secondary: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        --gradient-shine: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --duration-fast: 150ms;
+        --duration-normal: 300ms;
+        --duration-slow: 500ms;
+        --font-primary: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    }
+
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Satoshi', sans-serif;
-    }
-
-    :root {
-        --primary-color: #2C3E50;
-        --secondary-color: #3498db;
-        --accent-color: #2ecc71;
-        --gradient-start: #2C3E50;
-        --gradient-end: #1a2530;
+        font-family: var(--font-primary);
     }
 
     body {
-        background-color: #FFFFFF;
+        background-color: var(--bg-primary);
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
+        padding: var(--space-4);
         position: relative;
         overflow: hidden;
     }
@@ -48,14 +82,18 @@
         position: absolute;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, rgba(52, 152, 219, 0.05) 0%, rgba(46, 204, 113, 0.05) 100%);
-        animation: gradientFlow 15s ease infinite;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+        animation: gradientFlow 20s ease infinite;
         z-index: 0;
     }
 
     @keyframes gradientFlow {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
+        0%, 100% { 
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+        }
+        50% { 
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
+        }
     }
 
     .floating-shapes {
@@ -81,7 +119,7 @@
         height: 300px;
         top: 20%;
         left: 20%;
-        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        background: var(--gradient-secondary);
         animation-delay: 0s;
     }
 
@@ -90,7 +128,7 @@
         height: 200px;
         top: 60%;
         left: 70%;
-        background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+        background: var(--gradient-primary);
         animation-delay: 2s;
     }
 
@@ -99,7 +137,7 @@
         height: 150px;
         top: 30%;
         left: 60%;
-        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        background: var(--gradient-mixed);
         animation-delay: 4s;
     }
 
@@ -117,10 +155,10 @@
         width: 100%;
         margin: 0 auto;
         display: flex;
-        gap: 3rem;
+        gap: var(--space-8);
         background: rgba(255, 255, 255, 0.95);
-        border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(44, 62, 80, 0.08);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-lg);
         overflow: hidden;
         position: relative;
         z-index: 2;
@@ -130,7 +168,7 @@
 
     .buyer-details-column {
         flex: 1;
-        padding: 3rem;
+        padding: var(--space-8);
         background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(5px);
     }
@@ -138,7 +176,7 @@
     .payment-summary-column {
         flex: 0 0 400px;
         background: rgba(255, 255, 255, 0.5);
-        padding: 3rem;
+        padding: var(--space-8);
         border-left: 1px solid rgba(44, 62, 80, 0.08);
         display: flex;
         flex-direction: column;
@@ -146,35 +184,35 @@
     }
 
     .header-section {
-        margin-bottom: 2.5rem;
+        margin-bottom: var(--space-8);
     }
 
     .headline {
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        background: var(--gradient-mixed);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-size: 2.2rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-4);
         line-height: 1.2;
     }
 
     .subheading {
-        color: var(--primary-color);
+        color: var(--text-primary);
         font-size: 1.1rem;
         line-height: 1.6;
         opacity: 0.9;
     }
 
     .form-group {
-        margin-bottom: 1.8rem;
+        margin-bottom: var(--space-8);
     }
 
     .form-group label {
         display: flex;
         align-items: center;
-        color: var(--primary-color);
-        margin-bottom: 0.8rem;
+        color: var(--text-primary);
+        margin-bottom: var(--space-4);
         font-weight: 500;
         font-size: 1rem;
     }
@@ -182,14 +220,14 @@
     .input-wrapper {
         position: relative;
         border: 2px solid rgba(44, 62, 80, 0.1);
-        border-radius: 16px;
+        border-radius: var(--radius-xl);
         transition: all 0.3s ease;
         background: rgba(255, 255, 255, 0.9);
         overflow: hidden;
     }
 
     .input-wrapper:focus-within {
-        border-color: var(--secondary-color);
+        border-color: var(--accent-secondary);
         box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
         transform: translateY(-2px);
     }
@@ -198,37 +236,37 @@
         width: 100%;
         border: none;
         outline: none;
-        padding: 1rem 1.2rem;
+        padding: var(--space-4) var(--space-6);
         font-size: 1rem;
-        color: var(--primary-color);
+        color: var(--text-primary);
         background: transparent;
     }
 
     .form-group input::placeholder {
-        color: rgba(44, 62, 80, 0.5);
+        color: var(--text-secondary);
     }
 
     .city-country-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
+        gap: var(--space-6);
+        margin-bottom: var(--space-6);
     }
 
     .privacy-note {
         text-align: center;
-        color: var(--primary-color);
+        color: var(--text-primary);
         font-size: 0.9rem;
-        margin-top: 2rem;
-        padding: 1rem;
+        margin-top: var(--space-8);
+        padding: var(--space-4);
         background: rgba(52, 152, 219, 0.1);
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         backdrop-filter: blur(5px);
     }
 
     .summary-icon-container {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-8);
         position: relative;
         height: 80px;
         display: flex;
@@ -238,7 +276,7 @@
 
     .summary-icon-container .outer-shield {
         font-size: 3.5rem;
-        color: var(--secondary-color);
+        color: var(--accent-secondary);
         position: absolute;
         opacity: 0.1;
         animation: pulse 2s infinite ease-in-out;
@@ -246,7 +284,7 @@
 
     .summary-icon-container .inner-shield {
         font-size: 2rem;
-        color: var(--secondary-color);
+        color: var(--accent-secondary);
         position: absolute;
         animation: float 3s infinite ease-in-out;
     }
@@ -262,34 +300,34 @@
     }
 
     .total-heading {
-        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        background: var(--gradient-mixed);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-size: 2rem;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-4);
     }
 
     .network-badge-container {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: var(--space-8);
     }
 
     .network-badge {
         display: inline-block;
-        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        background: var(--gradient-mixed);
         color: #FFFFFF;
         font-size: 0.9rem;
         font-weight: 600;
-        padding: 0.5rem 1.2rem;
+        padding: var(--space-2) var(--space-6);
         border-radius: 20px;
         text-transform: uppercase;
         box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
     }
 
     .payment-assurances {
-        margin: 2rem 0;
+        margin: var(--space-8) 0;
         padding: 0;
         list-style: none;
     }
@@ -297,13 +335,13 @@
     .payment-assurances li {
         display: flex;
         align-items: center;
-        color: var(--primary-color);
+        color: var(--text-primary);
         font-size: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: var(--space-4);
         line-height: 1.5;
-        padding: 0.8rem;
+        padding: var(--space-4);
         background: rgba(52, 152, 219, 0.1);
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         transition: all 0.3s ease;
     }
 
@@ -312,31 +350,25 @@
         background: rgba(52, 152, 219, 0.15);
     }
 
-    .payment-assurances li::before {
-        content: "✅";
-        margin-right: 1rem;
-        font-size: 1.1rem;
-    }
-
     .reminder-box {
-        background: linear-gradient(45deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
-        border-radius: 16px;
-        padding: 1.2rem;
-        margin-bottom: 2rem;
+        background: linear-gradient(45deg, rgba(52, 152, 219, 0.1), rgba(16, 185, 129, 0.1));
+        border-radius: var(--radius-xl);
+        padding: var(--space-4);
+        margin-bottom: var(--space-8);
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: var(--space-4);
         box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
         backdrop-filter: blur(5px);
     }
 
     .reminder-box i {
-        color: var(--secondary-color);
+        color: var(--accent-secondary);
         font-size: 1.2rem;
     }
 
     .reminder-text {
-        color: var(--primary-color);
+        color: var(--text-primary);
         font-size: 0.95rem;
         line-height: 1.5;
         margin: 0;
@@ -345,11 +377,11 @@
 
     .continue-button-right {
         width: 100%;
-        padding: 1.2rem 2rem;
-        background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+        padding: var(--space-4) var(--space-8);
+        background: var(--gradient-mixed);
         color: #FFFFFF;
         border: none;
-        border-radius: 16px;
+        border-radius: var(--radius-xl);
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
@@ -357,7 +389,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 0.8rem;
+        gap: var(--space-4);
         margin-top: auto;
         box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         position: relative;
@@ -380,12 +412,7 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.2),
-            transparent
-        );
+        background: var(--gradient-shine);
         transition: 0.5s;
     }
 
@@ -396,24 +423,24 @@
     @media (max-width: 1024px) {
         .checkout-container {
             flex-direction: column;
-            gap: 2rem;
-            margin: 1rem;
+            gap: var(--space-6);
+            margin: var(--space-4);
         }
         
         .buyer-details-column,
         .payment-summary-column {
-            padding: 2rem;
+            padding: var(--space-6);
         }
     }
 
     @media (max-width: 768px) {
         body {
-            padding: 1rem;
+            padding: var(--space-2);
         }
 
         .checkout-container {
             margin: 0;
-            border-radius: 16px;
+            border-radius: var(--radius-xl);
         }
 
         .city-country-group {
@@ -425,11 +452,7 @@
         }
     }
 </style>
-    <script>
-        console.log('Script executed early!');
-        console.log('Early URL check - href:', window.location.href);
-        console.log('Early URL check - search:', window.location.search);
-    </script>
+
 <div class="floating-shapes">
     <div class="shape"></div>
     <div class="shape"></div>
@@ -504,9 +527,9 @@
             </div>
 
             <ul class="payment-assurances">
-                <li>Secure blockchain verification</li>
-                <li>0% transaction fees</li>
-                <li>Data never stored or shared</li>
+                <li><i class="fas fa-check-square" style="color: var(--accent-primary); margin-right: 0.75rem;"></i>Secure blockchain verification</li>
+                <li><i class="fas fa-check-square" style="color: var(--accent-primary); margin-right: 0.75rem;"></i>0% transaction fees</li>
+                <li><i class="fas fa-check-square" style="color: var(--accent-primary); margin-right: 0.75rem;"></i>Data never stored or shared</li>
             </ul>
 
             <div class="reminder-box">
@@ -519,107 +542,7 @@
         </button>
     </div>
 </div>
-<script>
-    // Function to get link_id from URL
-    function getLinkIdFromUrl() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('link_id') || '';
-    }
-
-    // Function to fetch payment link details from backend
-    async function fetchPaymentLinkDetails(linkId) {
-        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/payment-links/${linkId}`);
-            const result = await response.json();
-            if (result.success && result.data) {
-                return result.data;
-            } else {
-                throw new Error(result.error || 'Payment link not found');
-            }
-        } catch (error) {
-            console.error('Error fetching payment link details:', error);
-            return null;
-        }
-    }
-
-    // Function to initialize the form and payment summary
-    async function initializeForm() {
-        const linkId = getLinkIdFromUrl();
-        if (!linkId) {
-            alert('Invalid or missing payment link.');
-            return;
-        }
-        const paymentData = await fetchPaymentLinkDetails(linkId);
-        if (!paymentData) {
-            alert('Payment link not found or expired.');
-            return;
-        }
-        // Display payment details
-        const totalHeading = document.getElementById('total-heading');
-        const paymentChain = document.getElementById('payment-chain');
-        if (totalHeading) {
-            const formattedAmount = parseFloat(paymentData.amount_usdc).toFixed(2);
-            totalHeading.textContent = `$${formattedAmount} USDC`;
-        }
-        if (paymentChain) {
-            paymentChain.textContent = paymentData.network.charAt(0).toUpperCase() + paymentData.network.slice(1);
-        }
-        // Store the current payment details (from backend only)
-        const paymentDetails = {
-            amount: paymentData.amount_usdc,
-            chain: paymentData.network,
-            link_id: paymentData.link_id,
-            wallet_address: paymentData.wallet_address
-        };
-        localStorage.setItem('currentPayment', JSON.stringify(paymentDetails));
-    }
-
-    // Function to handle form submission
-    function handleFormSubmit(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const buyerDetails = {
-            name: formData.get('full-name'),
-            email: formData.get('email'),
-            address: {
-                line1: formData.get('address-line-1'),
-                line2: formData.get('address-line-2'),
-                city: formData.get('city'),
-                country: formData.get('country')
-            }
-        };
-        // Store buyer details
-        localStorage.setItem('buyerDetails', JSON.stringify(buyerDetails));
-        // Get current payment details (from backend only)
-        const currentPayment = JSON.parse(localStorage.getItem('currentPayment') || '{}');
-        // Redirect to payment page with only link_id in the URL
-        const baseUrl = window.location.origin;
-        const paymentUrl = `${baseUrl}/Payment Page.html?link_id=${currentPayment.link_id}`;
-        window.location.href = paymentUrl;
-        // Optional: Also save to backend in background (non-blocking)
-        const BACKEND_URL = 'https://halaxa-backend.onrender.com';
-        fetch(`${BACKEND_URL}/api/payment-links/${currentPayment.link_id}/buyer`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(buyerDetails)
-        }).catch(error => {
-            console.warn('Background save to backend failed:', error);
-        });
-    }
-
-    // Initialize the form when the page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeForm();
-        // Add form submit handler
-        const form = document.getElementById('buyer-form');
-        if (form) {
-            form.addEventListener('submit', handleFormSubmit);
-        }
-    });
-</script>
+<script src="./Buyer Form.js" defer></script>
 <script type="module" src="./supabase-client.js"></script>
 </body>
 </html>

@@ -112,7 +112,89 @@ function hideAllPremiumContentImmediately() {
     document.head.appendChild(securityStyle);
 }
 
-
+document.addEventListener('DOMContentLoaded', function() {
+    initializeWalletLockingUI();
+  });
+  
+  async function initializeWalletLockingUI() {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) return;
+    let lockedWallets = null;
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/wallet-connections/locked`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (res.ok) {
+        lockedWallets = await res.json();
+      }
+    } catch (e) { console.error('Failed to fetch locked wallets', e); }
+  
+    const walletLockingSection = document.getElementById('wallet-locking-section');
+    const paymentForm = document.getElementById('payment-form');
+    const walletSelect = document.getElementById('wallet-address-select');
+  
+    if (!lockedWallets || !lockedWallets.locked || !lockedWallets.addresses) {
+      if (walletLockingSection) walletLockingSection.style.display = 'block';
+      if (paymentForm) paymentForm.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+      setupWalletLockingHandlers();
+    } else {
+        if (walletSelect) {
+            walletSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select your locked wallet address';
+            walletSelect.appendChild(defaultOption);
+          
+            lockedWallets.addresses.forEach(addr => {
+              const option = document.createElement('option');
+              option.value = addr.wallet_address;
+              option.textContent = `${addr.network.charAt(0).toUpperCase() + addr.network.slice(1)}: ${addr.wallet_address}`;
+              walletSelect.appendChild(option);
+            });
+            walletSelect.disabled = false;
+          }
+        }
+      
+  }
+  
+  function setupWalletLockingHandlers() {
+    const form = document.getElementById('wallet-locking-form');
+    const popup = document.getElementById('wallet-lock-confirm-popup');
+    let solana = '', polygon = '';
+    if (!form || !popup) return;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      solana = document.getElementById('solana-wallet').value.trim();
+      polygon = document.getElementById('polygon-wallet').value.trim();
+      if (!solana || !polygon) {
+        alert('Please enter both wallet addresses.');
+        return;
+      }
+      popup.style.display = 'block';
+    });
+    document.getElementById('confirm-lock-btn').onclick = async function() {
+      const accessToken = localStorage.getItem('accessToken');
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/wallet-connections/lock`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ solana_wallet: solana, polygon_wallet: polygon })
+        });
+        if (res.ok) {
+          popup.style.display = 'none';
+          document.getElementById('wallet-locking-section').style.display = 'none';
+          initializeWalletLockingUI();
+        } else {
+          alert('Failed to lock wallets. Please try again.');
+        }
+      } catch (e) {
+        alert('Error locking wallets.');
+      }
+    };
+    document.getElementById('cancel-lock-btn').onclick = function() {
+      popup.style.display = 'none';
+    };
+  }
 
 /**
  * CRITICAL: Initialize access control with enhanced security
@@ -6431,9 +6513,9 @@ function setupEliteAutomationPlatforms() {
         submitBtn.disabled = false;
         
         if (data.success) {
-          showAutomationNotification('Shopify integration connected successfully!', 'success');
-          shopifyForm.reset();
-          setTimeout(() => showPlatformSelection(), 1500);
+        showAutomationNotification('Shopify integration connected successfully!', 'success');
+        shopifyForm.reset();
+        setTimeout(() => showPlatformSelection(), 1500);
         } else {
           showAutomationNotification(data.error || 'Failed to connect Shopify integration', 'error');
         }
@@ -6628,4 +6710,39 @@ function updateAccountDetails(accountData) {
     } catch (error) {
         console.error('❌ Error updating account details:', error);
     }
+}
+
+// Email Verification Card Logic
+const verifyBtn = document.getElementById('send-verification-email-btn');
+const statusDiv = document.getElementById('verification-email-status');
+if (verifyBtn && statusDiv) {
+  verifyBtn.addEventListener('click', async function() {
+    verifyBtn.disabled = true;
+    const originalText = verifyBtn.innerHTML;
+    verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    statusDiv.textContent = '';
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`${BACKEND_URL}/api/auth/send-verification-email`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        statusDiv.textContent = 'Verification email sent! Please check your inbox.';
+        statusDiv.style.color = '#10b981';
+      } else {
+        statusDiv.textContent = data.error || 'Failed to send verification email.';
+        statusDiv.style.color = '#f87171';
+      }
+    } catch (err) {
+      statusDiv.textContent = 'An error occurred. Please try again.';
+      statusDiv.style.color = '#f87171';
+    }
+    verifyBtn.disabled = false;
+    verifyBtn.innerHTML = originalText;
+  });
 }

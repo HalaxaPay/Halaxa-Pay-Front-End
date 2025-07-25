@@ -16,7 +16,7 @@ class HalaxaAccessControl {
         maxPaymentLinks: 1,
         maxMonthlyVolume: 500,
         allowedNetworks: ['polygon'],
-        blockedPages: ['capital-page', 'orders-page', 'automation-page'],
+        blockedPages: ['capital-page', 'automation-page'],
         features: {
           advancedAnalytics: false,
           multipleWallets: false,
@@ -29,7 +29,7 @@ class HalaxaAccessControl {
         maxPaymentLinks: 30,
         maxMonthlyVolume: 30000,
         allowedNetworks: ['polygon', 'solana'],
-        blockedPages: ['orders-page', 'automation-page'],
+        blockedPages: ['automation-page'],
         features: {
           advancedAnalytics: true,
           multipleWallets: true,
@@ -490,10 +490,6 @@ class HalaxaAccessControl {
         console.log('💰 Initializing Capital page features');
         this.initializeCapitalPage();
         break;
-      case 'orders-page':
-        console.log('📦 Initializing Orders page features');
-        this.initializeOrdersPage();
-        break;
       case 'automation-page':
         console.log('🤖 Initializing Automation page features');
         this.initializeAutomationPage();
@@ -529,21 +525,6 @@ class HalaxaAccessControl {
     
     // Initialize any capital-specific charts or components
     this.initializeCapitalCharts();
-  }
-  
-  initializeOrdersPage() {
-    console.log('📦 Loading orders page data...');
-    
-    // Initialize orders page with sample data
-    const ordersData = {
-      total_orders: 247,
-      ready_to_ship: 156,
-      countries: 24,
-      total_revenue: 89420
-    };
-    
-    // Update orders metrics
-    this.updateOrdersMetrics(ordersData);
   }
   
   initializeAutomationPage() {

@@ -1276,6 +1276,33 @@
                             </button>
                         </form>
                     </div>
+
+                    <!-- Wallet Locking Card (shown only if user hasn't locked addresses) -->
+                    <div id="wallet-locking-section" class="wallet-locking-section" style="display: none;">
+                        <div class="wallet-locking-card">
+                            <div class="wallet-locking-header">
+                                <div class="wallet-locking-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h3 class="wallet-locking-title">Lock Your Wallets</h3>
+                            </div>
+                            <p class="wallet-locking-description">Secure your wallet addresses for payment links. This can only be done once.</p>
+                            <form id="wallet-locking-form" class="wallet-locking-form">
+                                <div class="form-group">
+                                    <label for="solana-wallet" class="form-label">Solana Address</label>
+                                    <input type="text" id="solana-wallet" class="form-input" placeholder="Enter Solana address" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="polygon-wallet" class="form-label">Polygon Address</label>
+                                    <input type="text" id="polygon-wallet" class="form-input" placeholder="Enter Polygon address" required>
+                                </div>
+                                <button type="submit" class="lock-wallets-btn">
+                                    <i class="fas fa-lock"></i>
+                                    Lock Wallets
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Halaxa Pay Branding -->
@@ -3004,37 +3031,45 @@
     // ⚠️ WARNING: This can be easily bypassed by disabling JavaScript
     // Server-side blocking provides the real security
     
-    const BLOCKED_COUNTRIES = ['SY', 'KP', 'CU', 'IR', 'UA', 'RU'];
-    
     async function checkGeoBlocking() {
       try {
-        // Using ipapi.co for frontend geo detection
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
+        // Use backend geo-check endpoint instead of direct ipapi.co call
+        const response = await fetch('https://halaxa-backend.onrender.com/api/geo/check', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         
-        if (BLOCKED_COUNTRIES.includes(data.country_code)) {
-                        document.body.innerHTML = `
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.blocked) {
+            document.body.innerHTML = `
             <div class="geo-blocked-container">
               <div class="geo-blocked-card">
                 <div class="geo-blocked-icon">🚫</div>
                 <h1 class="geo-blocked-title">Access Denied</h1>
                 <p class="geo-blocked-message">Service not available in your region</p>
-                <p class="geo-blocked-location">Location: ${data.country_name}</p>
+                <p class="geo-blocked-location">Location: ${data.country_name || 'Unknown'}</p>
                 <div class="geo-blocked-warning-badge">
                   <i class="fas fa-exclamation-triangle"></i>
                   Regional Restriction
                 </div>
-                <p class="geo-blocked-error-code">Error Code: GEO_BLOCKED_FRONTEND</p>
+                <p class="geo-blocked-error-code">Error Code: GEO_BLOCKED_BACKEND</p>
               </div>
             </div>
           `;
-          console.log('🚫 Frontend geo-blocking: Access blocked for country:', data.country_name);
+            console.log('🚫 Backend geo-blocking: Access blocked for country:', data.country_name);
+          } else {
+            console.log('✅ Backend geo-blocking: Access allowed for country:', data.country_name);
+          }
         } else {
-          console.log('✅ Frontend geo-blocking: Access allowed for country:', data.country_name);
+          console.log('⚠️ Backend geo-check failed, allowing access as fallback');
         }
       } catch (error) {
-        console.log('⚠️ Frontend geo-blocking check failed:', error);
-        // Fail silently to maintain functionality
+        console.log('⚠️ Geo-blocking check failed, allowing access as fallback:', error);
+        // Fail gracefully - allow access if geo-check fails
       }
     }
     
@@ -3050,24 +3085,6 @@
       <script type="module" src="./supabase-client.js"></script>
       <!-- Detection system moved to backend-only for security -->
 
-      <!-- Wallet Locking Card (shown only if user hasn't locked addresses) -->
-      <div id="wallet-locking-section" class="wallet-locking-section" style="display: none;">
-        <div class="wallet-locking-card">
-          <h3>Lock Your Wallet Addresses</h3>
-          <p>Enter your Solana and Polygon wallet addresses. You can only do this once, and they will be locked forever.</p>
-          <form id="wallet-locking-form">
-            <div class="form-group">
-              <label for="solana-wallet" class="form-label">Solana Wallet Address</label>
-              <input type="text" id="solana-wallet" class="form-input" placeholder="Enter Solana address" required>
-            </div>
-            <div class="form-group">
-              <label for="polygon-wallet" class="form-label">Polygon Wallet Address</label>
-              <input type="text" id="polygon-wallet" class="form-input" placeholder="Enter Polygon address" required>
-            </div>
-            <button type="submit" class="lock-wallets-btn">Lock Wallets</button>
-          </form>
-        </div>
-      </div>
       <!-- Confirmation Popup -->
       <div id="wallet-lock-confirm-popup" class="wallet-lock-confirm-popup" style="display: none;">
         <div class="popup-content">

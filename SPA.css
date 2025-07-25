@@ -13779,3 +13779,410 @@ body.dark-mode .setup-guide-card .icon {
   filter: brightness(1.2) invert(0.85);
 }
 }
+
+/* ==================== WALLET LOCKING SECTION ==================== */
+
+/* Payment Form Section Layout */
+.payment-form-section {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.payment-form-card {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Wallet Locking Section */
+.wallet-locking-section {
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+}
+
+.wallet-locking-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-normal) ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.wallet-locking-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-blue));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.wallet-locking-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-primary);
+}
+
+.wallet-locking-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.wallet-locking-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    box-shadow: var(--shadow-sm);
+    animation: walletIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes walletIconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.wallet-locking-title {
+    font-family: var(--font-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.wallet-locking-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.wallet-locking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.wallet-locking-form .form-group {
+    margin: 0;
+}
+
+.wallet-locking-form .form-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.wallet-locking-form .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    transition: all var(--duration-fast) ease;
+    background: var(--bg-tertiary);
+}
+
+.wallet-locking-form .form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+    background: var(--bg-secondary);
+}
+
+.wallet-locking-form .form-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.lock-wallets-btn {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--duration-fast) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.lock-wallets-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.lock-wallets-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.lock-wallets-btn:hover::before {
+    left: 100%;
+}
+
+.lock-wallets-btn:active {
+    transform: translateY(0);
+}
+
+.lock-wallets-btn i {
+    font-size: 0.9rem;
+}
+
+/* Confirmation Popup */
+.wallet-lock-confirm-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.popup-content {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    animation: popupSlideIn 0.3s ease;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.popup-content h4 {
+    font-family: var(--font-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.popup-content p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.confirm-btn, .cancel-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--duration-fast) ease;
+    border: none;
+    margin: 0 0.5rem;
+}
+
+.confirm-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.confirm-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.cancel-btn {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-medium);
+}
+
+.cancel-btn:hover {
+    background: var(--border-light);
+    color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .payment-form-section {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .wallet-locking-section {
+        width: 100%;
+        position: static;
+    }
+    
+    .wallet-locking-card {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-form-section {
+        gap: 1rem;
+    }
+    
+    .wallet-locking-card {
+        padding: 1.25rem;
+    }
+    
+    .wallet-locking-header {
+        margin-bottom: 0.75rem;
+    }
+    
+    .wallet-locking-title {
+        font-size: 1.1rem;
+    }
+    
+    .wallet-locking-description {
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .popup-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .confirm-btn, .cancel-btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.85rem;
+        margin: 0 0.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wallet-locking-card {
+        padding: 1rem;
+    }
+    
+    .wallet-locking-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .wallet-locking-title {
+        font-size: 1rem;
+    }
+    
+    .lock-wallets-btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .popup-content {
+        padding: 1.25rem;
+    }
+    
+    .popup-content h4 {
+        font-size: 1.1rem;
+    }
+    
+    .confirm-btn, .cancel-btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* Dark Mode Support */
+body.dark-mode .wallet-locking-card {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+body.dark-mode .wallet-locking-card:hover {
+    border-color: var(--accent-primary);
+}
+
+body.dark-mode .wallet-locking-title {
+    color: #ffffff;
+}
+
+body.dark-mode .wallet-locking-description {
+    color: #a0a0a0;
+}
+
+body.dark-mode .wallet-locking-form .form-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #ffffff;
+}
+
+body.dark-mode .wallet-locking-form .form-input:focus {
+    background: #333;
+    border-color: var(--accent-primary);
+}
+
+body.dark-mode .wallet-locking-form .form-input::placeholder {
+    color: #666;
+}
+
+body.dark-mode .popup-content {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+body.dark-mode .popup-content h4 {
+    color: #ffffff;
+}
+
+body.dark-mode .popup-content p {
+    color: #a0a0a0;
+}
+
+body.dark-mode .cancel-btn {
+    background: #2a2a2a;
+    color: #a0a0a0;
+    border-color: #444;
+}
+
+body.dark-mode .cancel-btn:hover {
+    background: #333;
+    color: #ffffff;
+}

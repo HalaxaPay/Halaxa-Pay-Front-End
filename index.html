@@ -14,9 +14,45 @@
     <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     
-    <!-- Remove the client-side redirect script. Let backend handle redirects. -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .redirect-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to signup page...</p>
+    <div class="redirect-container">
+        <div class="spinner"></div>
+        <p>Redirecting to signup page...</p>
+    </div>
+
+    <script>
+        // Immediate redirect to signup page
+        window.location.href = './signup.html';
+    </script>
 </body>
 </html> 

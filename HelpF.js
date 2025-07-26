@@ -19,8 +19,6 @@ export function initializeSupportBot() {
     const sendButton = document.getElementById('send-message-btn');
     const chatMessages = document.getElementById('chat-messages');
     const typingIndicator = document.getElementById('typing-indicator');
-    const clearChatBtn = document.getElementById('clear-chat-btn');
-    const exportChatBtn = document.getElementById('export-chat-btn');
     
     if (!chatInput || !sendButton || !chatMessages) {
         console.error('❌ Required chat elements not found');
@@ -30,7 +28,6 @@ export function initializeSupportBot() {
     // Set up event listeners
     setupChatEventListeners(chatInput, sendButton, chatMessages, typingIndicator);
     setupQuickActionButtons(chatMessages);
-    setupFooterButtons(clearChatBtn, exportChatBtn, chatMessages);
     setupAutoResizeTextarea(chatInput);
     
     console.log('✅ HP Support Bot initialized successfully');
@@ -79,22 +76,7 @@ function setupQuickActionButtons(chatMessages) {
     });
 }
 
-/**
- * Set up footer buttons
- */
-function setupFooterButtons(clearChatBtn, exportChatBtn, chatMessages) {
-    if (clearChatBtn) {
-        clearChatBtn.addEventListener('click', () => {
-            clearChat(chatMessages);
-        });
-    }
-    
-    if (exportChatBtn) {
-        exportChatBtn.addEventListener('click', () => {
-            exportChat();
-        });
-    }
-}
+
 
 /**
  * Set up auto-resize textarea
@@ -246,6 +228,11 @@ function createMessageElement(sender, content) {
     
     if (sender === 'user') {
         messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
             <div class="message-content">
                 <div class="message-header">
                     <span class="message-sender">You</span>
@@ -255,16 +242,11 @@ function createMessageElement(sender, content) {
                     <p>${escapeHtml(content)}</p>
                 </div>
             </div>
-            <div class="message-avatar">
-                <div class="user-avatar-small">
-                    <i class="fas fa-user"></i>
-                </div>
-            </div>
         `;
     } else {
         messageDiv.innerHTML = `
             <div class="message-avatar">
-                <div class="bot-avatar-small">
+                <div class="bot-avatar">
                     <i class="fas fa-robot"></i>
                 </div>
             </div>

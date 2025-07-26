@@ -380,10 +380,14 @@ function isPaymentLinkPage() {
     'buyer form.html',
     'payment page.html', 
     'success page.html',
-    'failure page.html'
+    'failure page.html',
+    'buyer%20form.html',
+    'payment%20page.html',
+    'success%20page.html',
+    'failure%20page.html'
   ];
   
-  return paymentLinkPages.some(page => currentPath.includes(page));
+  return paymentLinkPages.some(page => currentPath.includes(page.replace('%20', ' ')));
 }
 
 // Safe localStorage operations that don't interfere with payment link pages

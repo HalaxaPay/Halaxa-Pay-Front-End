@@ -4171,7 +4171,15 @@ function updateAllDashboardElements(dashboardData) {
         
         // Update comprehensive metrics for all UI elements
         if (dashboardData.comprehensive_metrics) {
-            updateComprehensiveMetrics(dashboardData.comprehensive_metrics);
+            // Pass balance data to comprehensive metrics
+            const enhancedMetrics = {
+                ...dashboardData.comprehensive_metrics,
+                balance_chart: {
+                    ...dashboardData.comprehensive_metrics.balance_chart,
+                    current: dashboardData.balances?.total || 0
+                }
+            };
+            updateComprehensiveMetrics(enhancedMetrics);
         }
         
         console.log('✅ All dashboard elements updated');
@@ -7000,18 +7008,63 @@ function updateComprehensiveMetrics(metrics) {
         
         // ==================== HOME PAGE METRICS ==================== //
         
-        // Update Digital Vault (main balance)
-        updateElement('[data-metric="total_balance"]', formatCurrency(metrics.total_incoming));
-        updateElement('[data-balance="usd-main"]', Math.floor(metrics.total_incoming).toString());
-        updateElement('[data-balance="usd-decimal"]', `.${Math.round((metrics.total_incoming % 1) * 100).toString().padStart(2, '0')}`);
-        updateElement('[data-balance="usdc-total"]', `${metrics.total_incoming.toFixed(2)} USDC`);
+        // Update Digital Vault (main balance) - Use actual balance data
+        const actualBalance = metrics.balance_chart?.current || metrics.total_incoming || 0;
+        console.log('[SPA] Using actual balance for Digital Vault:', actualBalance);
+        updateElement('[data-metric="total_balance"]', formatCurrency(actualBalance));
+        updateElement('[data-balance="usd-main"]', Math.floor(actualBalance).toString());
+        updateElement('[data-balance="usd-decimal"]', `.${Math.round((actualBalance % 1) * 100).toString().padStart(2, '0')}`);
+        updateElement('[data-balance="usdc-total"]', `${actualBalance.toFixed(2)} USDC`);
         
-        // Update Empire Analytics cards
-        updateElement('[data-metric="total_executions"]', metrics.velocity.toString());
-        updateElement('[data-metric="precision_percentage"]', `${metrics.precision}%`);
-        updateElement('[data-metric="average_amount"]', formatCurrency(metrics.magnitude));
-        updateElement('[data-metric="active_links"]', metrics.active_links.toString());
-        updateElement('[data-metric="monthly_revenue"]', formatCurrency(metrics.monthly_revenue));
+        // Also update the Digital Treasury card directly
+        const digitalVaultAmount = document.querySelector('.digital-vault-amount');
+        if (digitalVaultAmount) {
+            digitalVaultAmount.textContent = actualBalance.toFixed(2);
+        }
+        
+        // Update the balance subtitle
+        const balanceSubtitle = document.querySelector('.balance-subtitle');
+        if (balanceSubtitle) {
+            balanceSubtitle.textContent = `${actualBalance.toFixed(2)} USDC`;
+        }
+        
+        // Update Empire Analytics cards - Use actual data from metrics
+        updateElement('[data-metric="total_executions"]', (metrics.velocity || 0).toString());
+        updateElement('[data-metric="precision_percentage"]', `${metrics.precision || 0}%`);
+        updateElement('[data-metric="average_amount"]', formatCurrency(metrics.magnitude || 0));
+        updateElement('[data-metric="active_links"]', (metrics.active_links || 0).toString());
+        updateElement('[data-metric="monthly_revenue"]', formatCurrency(metrics.monthly_revenue || 0));
+        
+        // Also update Empire Analytics cards directly using class selectors
+        const digitalVaultCard = document.querySelector('.metric-card.wealth .metric-value');
+        if (digitalVaultCard) {
+            digitalVaultCard.textContent = `$${formatCurrency(actualBalance)}`;
+        }
+        
+        const velocityCard = document.querySelector('.metric-card.velocity .metric-value');
+        if (velocityCard) {
+            velocityCard.textContent = (metrics.velocity || 0).toString();
+        }
+        
+        const precisionCard = document.querySelector('.metric-card.precision .metric-value');
+        if (precisionCard) {
+            precisionCard.textContent = `${metrics.precision || 0}%`;
+        }
+        
+        const magnitudeCard = document.querySelector('.metric-card.magnitude .metric-value');
+        if (magnitudeCard) {
+            magnitudeCard.textContent = `$${formatCurrency(metrics.magnitude || 0)}`;
+        }
+        
+        const activeLinksCard = document.querySelector('.metric-card.conduits .metric-value');
+        if (activeLinksCard) {
+            activeLinksCard.textContent = (metrics.active_links || 0).toString();
+        }
+        
+        const monthlyRevenueCard = document.querySelector('.metric-card.revenue .metric-value');
+        if (monthlyRevenueCard) {
+            monthlyRevenueCard.textContent = `$${formatCurrency(metrics.monthly_revenue || 0)}`;
+        }
         
         // Update Performance Observatory
         updateElement('[data-chart="current-month"]', metrics.performance_data.current_month);

@@ -1032,8 +1032,8 @@ function updateDashboardWithRealData(dashboardData) {
         }
         
         // Update Network Distribution
-        if (dashboardData.network_distributions && dashboardData.network_distributions.length > 0) {
-            updateNetworkDistribution(dashboardData.network_distributions);
+        if (dashboardData.network_distribution && dashboardData.network_distribution.networks && dashboardData.network_distribution.networks.length > 0) {
+            updateNetworkDistribution(dashboardData.network_distribution.networks);
         }
         
         // **NEW: Replace ALL hardcoded values with real data**
@@ -1082,8 +1082,8 @@ function updateDashboardWithCalculationEngineData(dashboardData) {
         }
         
         // Update networks
-        if (dashboardData.networks) {
-            updateNetworkDistributionCards(dashboardData.networks);
+        if (dashboardData.network_distribution) {
+            updateNetworkDistributionCards(dashboardData);
         }
         
         // Update capital flow
@@ -1836,17 +1836,29 @@ function updatePaymentLinksList(paymentLinks) {
 }
 
 function updateNetworkDistribution(distributions) {
+    // Ensure distributions is an array before using forEach
+    if (!Array.isArray(distributions)) {
+        console.warn('⚠️ Network distributions data is not an array:', distributions);
+        return;
+    }
+    
     distributions.forEach(dist => {
+        // Ensure distribution object has required properties
+        if (!dist || typeof dist !== 'object') {
+            console.warn('⚠️ Invalid distribution object:', dist);
+            return;
+        }
+        
         const networkElement = document.querySelector(`[data-network="${dist.network}"]`);
         if (networkElement) {
             const percentElement = networkElement.querySelector('.network-percent');
             const volumeElement = networkElement.querySelector('.network-volume');
             
             if (percentElement) {
-                percentElement.textContent = `${dist.percent_usage.toFixed(1)}%`;
+                percentElement.textContent = `${(dist.percent_usage || 0).toFixed(1)}%`;
             }
             if (volumeElement) {
-                volumeElement.textContent = `$${dist.volume_usdc.toFixed(2)}`;
+                volumeElement.textContent = `$${(dist.volume_usdc || 0).toFixed(2)}`;
             }
         }
     });
@@ -4270,23 +4282,37 @@ function updateTransactionInsightCards(dashboardData) {
 function updateNetworkDistributionCards(dashboardData) {
     try {
         // Use live Alchemy network data from calculation engine
-        const networks = dashboardData.networks || [];
+        const networkDistributions = dashboardData.network_distribution || {};
+        const networks = networkDistributions.networks || [];
         const balances = dashboardData.balances || {};
         
         // Calculate total volume for percentage calculations
         const totalVolume = balances.total || 0;
         
+        // Ensure networks is an array before using forEach
+        if (!Array.isArray(networks)) {
+            console.warn('⚠️ Networks data is not an array:', networks);
+            console.warn('⚠️ Network distribution data structure:', networkDistributions);
+            return;
+        }
+        
         networks.forEach(network => {
+            // Ensure network object has required properties
+            if (!network || typeof network !== 'object') {
+                console.warn('⚠️ Invalid network object:', network);
+                return;
+            }
+            
             const networkElement = document.querySelector(`.network-stat.${network.network}`);
             if (networkElement) {
                 const valueElement = networkElement.querySelector('.network-value');
                 const percentElement = networkElement.querySelector('.network-percent');
                 
                 if (valueElement) {
-                    valueElement.textContent = `$${(network.total_volume || 0).toLocaleString()}`;
+                    valueElement.textContent = `$${(network.volume_usdc || 0).toLocaleString()}`;
                 }
                 if (percentElement) {
-                    const percentage = totalVolume > 0 ? ((network.total_volume || 0) / totalVolume) * 100 : 0;
+                    const percentage = totalVolume > 0 ? ((network.volume_usdc || 0) / totalVolume) * 100 : 0;
                     percentElement.textContent = `${percentage.toFixed(1)}%`;
                 }
             }
@@ -4305,6 +4331,7 @@ function updateNetworkDistributionCards(dashboardData) {
         }
         
         console.log('✅ Network distribution cards updated with live Alchemy data:', {
+            network_distribution: networkDistributions,
             networks: networks,
             balances: balances
         });

@@ -371,11 +371,45 @@ export const database = {
   }
 };
 
+// ==================== UTILITY FUNCTIONS ==================== //
+
+// Check if current page is a payment link page (should not run auth logic)
+function isPaymentLinkPage() {
+  const currentPath = window.location.pathname.toLowerCase();
+  const paymentLinkPages = [
+    'buyer form.html',
+    'payment page.html', 
+    'success page.html',
+    'failure page.html'
+  ];
+  
+  return paymentLinkPages.some(page => currentPath.includes(page));
+}
+
+// Safe localStorage operations that don't interfere with payment link pages
+function safeSetItem(key, value) {
+  if (!isPaymentLinkPage()) {
+    localStorage.setItem(key, value);
+  }
+}
+
+function safeRemoveItem(key) {
+  if (!isPaymentLinkPage()) {
+    localStorage.removeItem(key);
+  }
+}
+
 // ==================== INITIALIZATION ==================== //
 
 // Initialize auth state on load
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    // Check if we're on a payment link page (should not run auth logic)
+    if (isPaymentLinkPage()) {
+      console.log('🔒 Payment link page detected - skipping authentication logic');
+      return;
+    }
+    
     // Check if this is an OAuth redirect
     const urlParams = new URLSearchParams(window.location.search);
     const isOAuthRedirect = urlParams.get('oauth') === 'google';
@@ -390,15 +424,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (session?.user) {
-      // Store user data
-      localStorage.setItem('user', JSON.stringify({
+      // Store user data (safely)
+      safeSetItem('user', JSON.stringify({
         id: session.user.id,
         email: session.user.email,
         ...session.user.user_metadata
       }));
       
-      // Get user plan
-      await database.getUserPlan(session.user.id);
+      // Get user plan (only if not on payment link page)
+      if (!isPaymentLinkPage()) {
+        await database.getUserPlan(session.user.id);
+      }
       
       console.log('✅ User session restored');
     } else {
@@ -448,27 +484,27 @@ async function handleOAuthRedirect() {
     
     console.log('✅ Backend sync successful');
     
-    // Store ALL session data properly (same as normal signup)
+    // Store ALL session data properly (same as normal signup) - safely
     if (result.user) {
-      localStorage.setItem('user', JSON.stringify(result.user));
-      localStorage.setItem('userPlan', result.user.plan || 'basic');
+      safeSetItem('user', JSON.stringify(result.user));
+      safeSetItem('userPlan', result.user.plan || 'basic');
     }
     
     if (result.accessToken) {
-      localStorage.setItem('accessToken', result.accessToken);
+      safeSetItem('accessToken', result.accessToken);
     }
     if (result.refreshToken) {
-      localStorage.setItem('refreshToken', result.refreshToken);
+      safeSetItem('refreshToken', result.refreshToken);
     }
     
     // Mark user as active (critical for authentication checks)
-    localStorage.setItem('userActive', 'true');
-    localStorage.setItem('isPreview', 'false');
+    safeSetItem('userActive', 'true');
+    safeSetItem('isPreview', 'false');
     
     // Clean up any old session data
-    localStorage.removeItem('sellerId');
-    localStorage.removeItem('halaxa_token');
-    localStorage.removeItem('token');
+    safeRemoveItem('sellerId');
+    safeRemoveItem('halaxa_token');
+    safeRemoveItem('token');
     
     console.log('✅ Session data stored successfully');
     
@@ -487,10 +523,12 @@ async function handleOAuthRedirect() {
     successMsg.textContent = '✅ Google sign-in successful! Redirecting to dashboard...';
     document.body.appendChild(successMsg);
     
-    // Trigger a page refresh to initialize the dashboard properly
+    // Trigger a page refresh to initialize the dashboard properly (only if not on payment link page)
     setTimeout(() => {
       document.body.removeChild(successMsg);
-      window.location.reload();
+      if (!isPaymentLinkPage()) {
+        window.location.reload();
+      }
     }, 1500);
     
   } catch (error) {
@@ -545,13 +583,17 @@ async function handlePostAuthRedirect(session) {
     });
     const result = await response.json();
     if (!response.ok || !result.accessToken || !result.user) throw new Error(result.error || 'OAuth sync failed');
-    // Store backend JWTs
-    localStorage.setItem('accessToken', result.accessToken);
-    if (result.refreshToken) localStorage.setItem('refreshToken', result.refreshToken);
-    localStorage.setItem('userActive', 'true');
-    localStorage.setItem('user', JSON.stringify(result.user));
-    // Redirect to personalized dashboard (correct format)
-    window.location.href = `/SPA.html?userid=${result.user.id}`;
+    // Store backend JWTs (safely)
+    safeSetItem('accessToken', result.accessToken);
+    if (result.refreshToken) safeSetItem('refreshToken', result.refreshToken);
+    safeSetItem('userActive', 'true');
+    safeSetItem('user', JSON.stringify(result.user));
+    
+    // Only redirect if not on a payment link page
+    if (!isPaymentLinkPage()) {
+      // Redirect to personalized dashboard (correct format)
+      window.location.href = `/SPA.html?userid=${result.user.id}`;
+    }
   } catch (err) {
     // Optionally show error UI
     console.error('OAuth sync failed:', err);
@@ -562,8 +604,8 @@ async function handlePostAuthRedirect(session) {
 // Listen for all auth state changes (including Google OAuth)
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN' && session && session.user) {
-    // Only redirect if not already on the dashboard
-    if (!window.location.pathname.startsWith('/spa')) {
+    // Only redirect if not already on the dashboard AND not on a payment link page
+    if (!window.location.pathname.startsWith('/spa') && !isPaymentLinkPage()) {
       await handlePostAuthRedirect(session);
     }
   }

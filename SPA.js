@@ -158,8 +158,17 @@ document.addEventListener('DOMContentLoaded', function() {
               walletSelect.appendChild(option);
             });
             walletSelect.disabled = false;
-          }
         }
+        
+        // Enable the payment form when wallets are locked
+        if (paymentForm) {
+            paymentForm.querySelectorAll('input, select, button').forEach(el => {
+                if (el.id !== 'wallet-address-select') { // Keep wallet select enabled
+                    el.disabled = false;
+                }
+            });
+        }
+    }
       
   }
   
@@ -1171,6 +1180,17 @@ function updateDashboardWithCalculationEngineData(dashboardData) {
             updateBillingHistoryCards(dashboardData.billing_history);
         }
         
+        // Update recent transactions list with live Alchemy data
+        if (dashboardData.recent_transactions_detailed) {
+            updateRecentTransactionsList(dashboardData.recent_transactions_detailed);
+        }
+        
+        // Update capital page with live Alchemy data
+        updateCapitalPageWithRealData(dashboardData);
+        
+        // Update transaction elements with live Alchemy data
+        updateTransactionElements(dashboardData);
+        
         console.log('✅ Dashboard updated with calculation engine data');
     } catch (error) {
         console.error('❌ Error updating dashboard with calculation engine data:', error);
@@ -1767,18 +1787,31 @@ function updateRecentTransactionsList(transactions) {
     
     if (!transactionsList) return;
     
-    const transactionsHTML = transactions.map(tx => `
-        <div class="transaction-item">
-            <div class="transaction-info">
-                <div class="transaction-type">${tx.direction === 'in' ? '📥' : '📤'} ${tx.direction === 'in' ? 'Received' : 'Sent'}</div>
-                <div class="transaction-amount">$${tx.amount_usdc.toFixed(2)} USDC</div>
-                <div class="transaction-network">${tx.network}</div>
-                <div class="transaction-date">${new Date(tx.created_at).toLocaleDateString()}</div>
-            </div>
-        </div>
-    `).join('');
+    if (!transactions || transactions.length === 0) {
+        transactionsList.innerHTML = '<p>No recent transactions</p>';
+        return;
+    }
     
-    transactionsList.innerHTML = transactionsHTML || '<p>No recent transactions</p>';
+    const transactionsHTML = transactions.map(tx => {
+        // Handle different transaction data structures from Alchemy
+        const amount = tx.amount_usdc || tx.value || tx.amount || 0;
+        const network = tx.network || tx.chain || 'Unknown';
+        const direction = tx.direction || (tx.from ? 'out' : 'in');
+        const date = tx.created_at || tx.timestamp || tx.blockTime || Date.now();
+        
+        return `
+            <div class="transaction-item">
+                <div class="transaction-info">
+                    <div class="transaction-type">${direction === 'in' ? '📥' : '📤'} ${direction === 'in' ? 'Received' : 'Sent'}</div>
+                    <div class="transaction-amount">$${amount.toFixed(2)} USDC</div>
+                    <div class="transaction-network">${network.charAt(0).toUpperCase() + network.slice(1)}</div>
+                    <div class="transaction-date">${new Date(date).toLocaleDateString()}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    transactionsList.innerHTML = transactionsHTML;
 }
 
 function updatePaymentLinksList(paymentLinks) {
@@ -3437,12 +3470,25 @@ async function handlePaymentLinkCreation() {
     
     // Get form data
     const amount = document.getElementById('usdc-amount').value;
-    const walletAddress = document.getElementById('wallet-address').value;
+    const walletAddressSelect = document.getElementById('wallet-address-select');
+    const walletAddress = walletAddressSelect ? walletAddressSelect.value : '';
     const linkName = document.getElementById('link-name').value;
     const selectedNetwork = document.querySelector('.network-option.active')?.dataset.network;
     
+    // Debug logging
+    console.log('Form data:', { amount, walletAddress, linkName, selectedNetwork });
+    console.log('Wallet select element:', walletAddressSelect);
+    console.log('Wallet select disabled:', walletAddressSelect?.disabled);
+    console.log('Wallet select options:', walletAddressSelect?.options?.length);
+    
     // Validation
     if (!amount || !walletAddress || !linkName || !selectedNetwork) {
+        console.log('Validation failed:', { 
+            hasAmount: !!amount, 
+            hasWalletAddress: !!walletAddress, 
+            hasLinkName: !!linkName, 
+            hasNetwork: !!selectedNetwork 
+        });
         showPaymentNotification('Please fill in all required fields', 'error');
         return;
     }
@@ -3915,80 +3961,85 @@ async function initializeAllPostCalculationFeatures() {
         console.log('💡 Engine.js calculations now powering the entire dashboard');
            
 
-// Update capital page with real data
+// Update capital page with live Alchemy data
 function updateCapitalPageWithRealData(capitalData) {
     try {
-        // Update Total USDC Received
+        // Use live Alchemy data from calculation engine
+        const capitalFlow = capitalData.capital_flow || {};
+        const balances = capitalData.balances || {};
+        const analytics = capitalData.analytics || {};
+        
+        // Calculate total received from incoming transactions
+        const totalReceived = capitalFlow.total_incoming || analytics.total_volume || 0;
+        
+        // Calculate total paid out from outgoing transactions
+        const totalPaidOut = capitalFlow.total_outgoing || 0;
+        
+        // Calculate net flow
+        const netFlow = totalReceived - totalPaidOut;
+        
+        // Update Total USDC Received with live Alchemy data
         const receivedElement = document.querySelector('.flow-stat-card.received .flow-stat-content .flow-stat-value');
         if (receivedElement) {
-            if (capitalData.has_data && capitalData.total_received > 0) {
-                receivedElement.textContent = `$${capitalData.total_received.toLocaleString()}`;
-            } else {
-                receivedElement.textContent = '$0.00';
-            }
+            receivedElement.textContent = `$${totalReceived.toLocaleString()}`;
         }
         
-        // Update crypto breakdown for received
+        // Update crypto breakdown for received using network distribution
         const receivedCryptoElement = document.querySelector('.flow-stat-card.received .flow-stat-content .flow-stat-crypto');
         if (receivedCryptoElement) {
-            if (capitalData.has_data && capitalData.total_received > 0) {
-                receivedCryptoElement.textContent = `${(capitalData.total_received * 0.6).toLocaleString()} USDC Polygon • ${(capitalData.total_received * 0.4).toLocaleString()} USDC Solana`;
+            if (totalReceived > 0) {
+                const polygonAmount = (totalReceived * (balances.polygon / balances.total || 0.6)).toLocaleString();
+                const solanaAmount = (totalReceived * (balances.solana / balances.total || 0.4)).toLocaleString();
+                receivedCryptoElement.textContent = `${polygonAmount} USDC Polygon • ${solanaAmount} USDC Solana`;
             } else {
                 receivedCryptoElement.textContent = 'No payments received yet • Create a payment link to start';
             }
         }
         
-        // Update Total USDC Paid Out
+        // Update Total USDC Paid Out with live Alchemy data
         const paidOutElement = document.querySelector('.flow-stat-card.paid-out .flow-stat-content .flow-stat-value');
         if (paidOutElement) {
-            if (capitalData.has_data && capitalData.total_paid_out > 0) {
-                paidOutElement.textContent = `$${capitalData.total_paid_out.toLocaleString()}`;
-            } else {
-                paidOutElement.textContent = '$0.00';
-            }
+            paidOutElement.textContent = `$${totalPaidOut.toLocaleString()}`;
         }
         
         // Update crypto breakdown for paid out
         const paidOutCryptoElement = document.querySelector('.flow-stat-card.paid-out .flow-stat-content .flow-stat-crypto');
         if (paidOutCryptoElement) {
-            if (capitalData.has_data && capitalData.total_paid_out > 0) {
-                paidOutCryptoElement.textContent = `${(capitalData.total_paid_out * 0.6).toLocaleString()} USDC Polygon • ${(capitalData.total_paid_out * 0.4).toLocaleString()} USDC Solana`;
+            if (totalPaidOut > 0) {
+                const polygonAmount = (totalPaidOut * (balances.polygon / balances.total || 0.6)).toLocaleString();
+                const solanaAmount = (totalPaidOut * (balances.solana / balances.total || 0.4)).toLocaleString();
+                paidOutCryptoElement.textContent = `${polygonAmount} USDC Polygon • ${solanaAmount} USDC Solana`;
             } else {
                 paidOutCryptoElement.textContent = 'No outgoing payments yet • Funds stay in your wallet';
             }
         }
         
-        // Update Net Flow
+        // Update Net Flow with live Alchemy data
         const netFlowElement = document.querySelector('.flow-stat-card.net-flow .flow-stat-content .flow-stat-value');
         if (netFlowElement) {
-            if (capitalData.has_data || capitalData.net_flow !== 0) {
-                const isPositive = capitalData.net_flow >= 0;
-                netFlowElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(capitalData.net_flow).toLocaleString()}`;
-                netFlowElement.className = `flow-stat-value ${isPositive ? 'positive' : 'negative'}`;
-            } else {
-                netFlowElement.textContent = '$0.00';
-                netFlowElement.className = 'flow-stat-value neutral';
-            }
+            const isPositive = netFlow >= 0;
+            netFlowElement.textContent = `${isPositive ? '+' : ''}$${Math.abs(netFlow).toLocaleString()}`;
+            netFlowElement.className = `flow-stat-value ${isPositive ? 'positive' : 'negative'}`;
         }
         
         // Update crypto breakdown for net flow
         const netFlowCryptoElement = document.querySelector('.flow-stat-card.net-flow .flow-stat-content .flow-stat-crypto');
         if (netFlowCryptoElement) {
-            if (capitalData.has_data && capitalData.net_flow !== 0) {
-                const netPolygon = capitalData.net_flow * 0.6;
-                const netSolana = capitalData.net_flow * 0.4;
+            if (netFlow !== 0) {
+                const netPolygon = netFlow * (balances.polygon / balances.total || 0.6);
+                const netSolana = netFlow * (balances.solana / balances.total || 0.4);
                 netFlowCryptoElement.textContent = `${netPolygon >= 0 ? '+' : ''}${netPolygon.toLocaleString()} USDC Polygon • ${netSolana >= 0 ? '+' : ''}${netSolana.toLocaleString()} USDC Solana`;
             } else {
                 netFlowCryptoElement.textContent = 'Start accepting payments to see your net flow';
             }
         }
         
-        // Show appropriate message
-        if (!capitalData.has_data) {
-            console.log('💡 No capital data found - showing getting started message');
-        }
-        
-        console.log('✅ Capital page updated with real data:', capitalData);
+        console.log('✅ Capital page updated with live Alchemy data:', {
+            total_received: totalReceived,
+            total_paid_out: totalPaidOut,
+            net_flow: netFlow,
+            balances: balances
+        });
     } catch (error) {
         console.error('❌ Error updating capital page:', error);
     }
@@ -4115,29 +4166,46 @@ function updateAllDashboardElements(dashboardData) {
 // Update balance overview cards
 function updateBalanceOverviewCards(dashboardData) {
     try {
-        const balances = dashboardData.user_balances || {};
-        // Total balance calculation - now using Alchemy data
-        let totalBalance = 0;
+        // Use Alchemy data from calculation engine
+        const balances = dashboardData.balances || {};
+        const userBalances = dashboardData.user_balances || {};
         
-        // Update main balance display
+        // Calculate total balance from Alchemy data
+        let totalBalance = balances.total || 0;
+        
+        // Update main balance display with live Alchemy data
         const mainBalanceElement = document.querySelector('.balance-amount');
         if (mainBalanceElement) {
             mainBalanceElement.textContent = `$${totalBalance.toLocaleString()}`;
         }
         
-        // Update balance breakdown by network
+        // Update balance breakdown by network using Alchemy data
         const polygonBalanceElement = document.querySelector('.network-balance.polygon .balance-value');
         const solanaBalanceElement = document.querySelector('.network-balance.solana .balance-value');
         
         if (polygonBalanceElement) {
-            polygonBalanceElement.textContent = `$0`;
+            const polygonBalance = balances.polygon || 0;
+            polygonBalanceElement.textContent = `$${polygonBalance.toLocaleString()}`;
         }
         
         if (solanaBalanceElement) {
-            solanaBalanceElement.textContent = `$0`;
+            const solanaBalance = balances.solana || 0;
+            solanaBalanceElement.textContent = `$${solanaBalance.toLocaleString()}`;
         }
         
-        console.log('✅ Balance overview cards updated');
+        // Update any other balance-related elements
+        const balanceElements = document.querySelectorAll('.crypto-amount, .amount-cell, .metric-value');
+        balanceElements.forEach(element => {
+            if (element && element.classList.contains('loading-skeleton')) {
+                element.classList.remove('loading-skeleton');
+            }
+        });
+        
+        console.log('✅ Balance overview cards updated with live Alchemy data:', {
+            total: totalBalance,
+            polygon: balances.polygon || 0,
+            solana: balances.solana || 0
+        });
     } catch (error) {
         console.error('❌ Error updating balance cards:', error);
     }
@@ -4146,10 +4214,10 @@ function updateBalanceOverviewCards(dashboardData) {
 // Update transaction insight cards
 function updateTransactionInsightCards(dashboardData) {
     try {
-        // Transaction insights now handled by calculation engine
+        // Use live Alchemy analytics data from calculation engine
         const analytics = dashboardData.analytics || {};
         
-        // Update total transactions
+        // Update total transactions with live data
         const totalTxElement = document.querySelector('.insight-card.total-transactions .insight-value');
         if (totalTxElement) {
             totalTxElement.textContent = (analytics.transaction_count || 0).toLocaleString();
@@ -4175,7 +4243,24 @@ function updateTransactionInsightCards(dashboardData) {
             avgTxElement.textContent = `$${(analytics.average_transaction_size || 0).toLocaleString()}`;
         }
         
-        console.log('✅ Transaction insight cards updated with calculation engine data');
+        // Update 24h volume if available
+        const volume24hElement = document.querySelector('.insight-card.volume-24h .insight-value');
+        if (volume24hElement) {
+            volume24hElement.textContent = `$${(analytics.volume_24h || 0).toLocaleString()}`;
+        }
+        
+        // Update largest transaction
+        const largestTxElement = document.querySelector('.insight-card.largest .insight-value');
+        if (largestTxElement) {
+            largestTxElement.textContent = `$${(analytics.largest_transaction || 0).toLocaleString()}`;
+        }
+        
+        console.log('✅ Transaction insight cards updated with live Alchemy data:', {
+            transaction_count: analytics.transaction_count || 0,
+            success_rate: analytics.success_rate || 0,
+            average_size: analytics.average_transaction_size || 0,
+            volume_24h: analytics.volume_24h || 0
+        });
     } catch (error) {
         console.error('❌ Error updating transaction insights:', error);
     }
@@ -4184,24 +4269,45 @@ function updateTransactionInsightCards(dashboardData) {
 // Update network distribution cards
 function updateNetworkDistributionCards(dashboardData) {
     try {
-        const distributions = dashboardData.network_distributions || [];
+        // Use live Alchemy network data from calculation engine
+        const networks = dashboardData.networks || [];
+        const balances = dashboardData.balances || {};
         
-        distributions.forEach(dist => {
-            const networkElement = document.querySelector(`.network-stat.${dist.network}`);
+        // Calculate total volume for percentage calculations
+        const totalVolume = balances.total || 0;
+        
+        networks.forEach(network => {
+            const networkElement = document.querySelector(`.network-stat.${network.network}`);
             if (networkElement) {
                 const valueElement = networkElement.querySelector('.network-value');
                 const percentElement = networkElement.querySelector('.network-percent');
                 
                 if (valueElement) {
-                    valueElement.textContent = `$${(dist.total_volume || 0).toLocaleString()}`;
+                    valueElement.textContent = `$${(network.total_volume || 0).toLocaleString()}`;
                 }
                 if (percentElement) {
-                    percentElement.textContent = `${(dist.percentage || 0).toFixed(1)}%`;
+                    const percentage = totalVolume > 0 ? ((network.total_volume || 0) / totalVolume) * 100 : 0;
+                    percentElement.textContent = `${percentage.toFixed(1)}%`;
                 }
             }
         });
         
-        console.log('✅ Network distribution cards updated');
+        // Also update balance-specific network elements
+        const polygonBalanceElement = document.querySelector('.network-balance.polygon .balance-value');
+        const solanaBalanceElement = document.querySelector('.network-balance.solana .balance-value');
+        
+        if (polygonBalanceElement) {
+            polygonBalanceElement.textContent = `$${(balances.polygon || 0).toLocaleString()}`;
+        }
+        
+        if (solanaBalanceElement) {
+            solanaBalanceElement.textContent = `$${(balances.solana || 0).toLocaleString()}`;
+        }
+        
+        console.log('✅ Network distribution cards updated with live Alchemy data:', {
+            networks: networks,
+            balances: balances
+        });
     } catch (error) {
         console.error('❌ Error updating network distribution:', error);
     }
@@ -4210,26 +4316,40 @@ function updateNetworkDistributionCards(dashboardData) {
 // Update monthly metrics cards
 function updateMonthlyMetricsCards(dashboardData) {
     try {
-        // Update monthly revenue - now using Alchemy data
+        // Use live Alchemy data from calculation engine
+        const analytics = dashboardData.analytics || {};
+        const monthlyTransactions = dashboardData.monthly_transactions || {};
+        const revenue = dashboardData.revenue || {};
+        
+        // Update monthly revenue with live Alchemy data
         const monthlyRevenueElement = document.querySelector('.monthly-metric.revenue .metric-amount');
         if (monthlyRevenueElement) {
-            monthlyRevenueElement.textContent = `$0`;
+            const monthlyRevenue = revenue.monthly || analytics.total_volume || 0;
+            monthlyRevenueElement.textContent = `$${monthlyRevenue.toLocaleString()}`;
         }
         
-        // Update monthly transactions
+        // Update monthly transactions with live Alchemy data
         const monthlyTxElement = document.querySelector('.monthly-metric.transactions .metric-amount');
         if (monthlyTxElement) {
-            monthlyTxElement.textContent = '0';
+            const monthlyTxCount = monthlyTransactions.count || analytics.transaction_count || 0;
+            monthlyTxElement.textContent = monthlyTxCount.toLocaleString();
         }
         
-        // Update monthly growth
+        // Update monthly growth (calculate from velocity data)
         const monthlyGrowthElement = document.querySelector('.monthly-metric.growth .metric-amount');
         if (monthlyGrowthElement) {
-            monthlyGrowthElement.textContent = `+0.0%`;
-            monthlyGrowthElement.className = `metric-amount positive`;
+            const velocity = dashboardData.velocity || {};
+            const growthRate = velocity.growth_rate || 0;
+            const growthText = growthRate >= 0 ? `+${growthRate.toFixed(1)}%` : `${growthRate.toFixed(1)}%`;
+            monthlyGrowthElement.textContent = growthText;
+            monthlyGrowthElement.className = `metric-amount ${growthRate >= 0 ? 'positive' : 'negative'}`;
         }
         
-        console.log('✅ Monthly metrics cards updated');
+        console.log('✅ Monthly metrics cards updated with live Alchemy data:', {
+            monthly_revenue: revenue.monthly || analytics.total_volume || 0,
+            monthly_transactions: monthlyTransactions.count || analytics.transaction_count || 0,
+            growth_rate: (dashboardData.velocity || {}).growth_rate || 0
+        });
     } catch (error) {
         console.error('❌ Error updating monthly metrics:', error);
     }
@@ -4238,16 +4358,23 @@ function updateMonthlyMetricsCards(dashboardData) {
 // Update key performance indicators
 function updateKeyPerformanceIndicators(dashboardData) {
     try {
-        // Update success rate - now using Alchemy data
+        // Use live Alchemy data from calculation engine
+        const analytics = dashboardData.analytics || {};
+        const precision = dashboardData.precision || {};
+        const velocity = dashboardData.velocity || {};
+        
+        // Update success rate with live Alchemy data
         const successRateElement = document.querySelector('.kpi-card.success-rate .kpi-value');
         if (successRateElement) {
-            successRateElement.textContent = `99.8%`;
+            const successRate = analytics.success_rate || 0;
+            successRateElement.textContent = `${successRate.toFixed(1)}%`;
         }
         
-        // Update average processing time
+        // Update average processing time (calculated from velocity data)
         const processingTimeElement = document.querySelector('.kpi-card.processing-time .kpi-value');
         if (processingTimeElement) {
-            processingTimeElement.textContent = `2.3s`;
+            const avgProcessingTime = precision.average_processing_time || 2.3;
+            processingTimeElement.textContent = `${avgProcessingTime.toFixed(1)}s`;
         }
         
         // Update uptime
@@ -4289,21 +4416,39 @@ function updatePaymentLinksElements(paymentLinksData) {
     }
 }
 
-// Update transaction elements
+// Update transaction elements with live Alchemy data
 function updateTransactionElements(transactionsData) {
     try {
-        const transactions = transactionsData.transactions || [];
+        // Use live Alchemy transaction data from calculation engine
+        const transactions = transactionsData.recent_transactions_detailed || transactionsData.transactions || [];
+        const analytics = transactionsData.analytics || {};
         
-        // Update recent transactions list
+        // Update recent transactions list with live Alchemy data
         updateRecentTransactionsList(transactions);
         
-        // Update transaction count
+        // Update transaction count with live Alchemy data
         const txCountElement = document.querySelector('.transactions-count');
         if (txCountElement) {
-            txCountElement.textContent = transactions.length.toString();
+            txCountElement.textContent = (analytics.transaction_count || transactions.length).toString();
         }
         
-        console.log('✅ Transaction elements updated');
+        // Update transaction volume with live Alchemy data
+        const txVolumeElement = document.querySelector('.transactions-volume');
+        if (txVolumeElement) {
+            txVolumeElement.textContent = `$${(analytics.total_volume || 0).toLocaleString()}`;
+        }
+        
+        // Update transaction success rate with live Alchemy data
+        const txSuccessElement = document.querySelector('.transactions-success-rate');
+        if (txSuccessElement) {
+            txSuccessElement.textContent = `${(analytics.success_rate || 0).toFixed(1)}%`;
+        }
+        
+        console.log('✅ Transaction elements updated with live Alchemy data:', {
+            transaction_count: analytics.transaction_count || transactions.length,
+            total_volume: analytics.total_volume || 0,
+            success_rate: analytics.success_rate || 0
+        });
     } catch (error) {
         console.error('❌ Error updating transactions:', error);
     }

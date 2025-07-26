@@ -418,8 +418,8 @@ function escapeHtml(text) {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         // The initialization will be called from SPA.js
-        console.log('📋 Help.js loaded and ready for initialization');
+        console.log('📋 HelpF.js loaded and ready for initialization');
     });
 } else {
-    console.log('📋 Help.js loaded and ready for initialization');
+    console.log('📋 HelpF.js loaded and ready for initialization');
 } 

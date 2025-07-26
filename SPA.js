@@ -68,14 +68,95 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('⚠️ User personalization failed, but access control is active:', error);
         });
         
-
+        // Start plan change detection
+        startPlanChangeDetection();
         
+        // Add manual refresh button for testing (development only)
+        addManualPlanRefreshButton();
         
     } catch (error) {
         console.error('🚨 CRITICAL: Access control initialization failed:', error);
         showEmergencyAccessDenied();
     }
 });
+
+// ==================== PLAN CHANGE DETECTION ==================== //
+
+// Check for plan changes every 30 seconds
+function startPlanChangeDetection() {
+  console.log('🔄 Starting plan change detection...');
+  
+  setInterval(async () => {
+    try {
+      // Get current cached plan
+      const cachedPlan = localStorage.getItem('userPlan') || 'basic';
+      
+      // Get fresh plan from database
+      const userData = localStorage.getItem('user');
+      if (!userData) return;
+      
+      const user = JSON.parse(userData);
+      const { data: userSubscription, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan_tier')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (!error && userSubscription) {
+        const freshPlan = userSubscription.plan_tier || 'basic';
+        
+        // If plan has changed, force refresh
+        if (freshPlan !== cachedPlan) {
+          console.log(`🔄 PLAN CHANGE DETECTED: ${cachedPlan} → ${freshPlan}`);
+          console.log('🔄 Triggering force refresh...');
+          
+          // Force refresh the plan
+          if (window.forceRefreshUserPlan) {
+            await window.forceRefreshUserPlan();
+            
+            // Show notification
+            showUpgradeNotification(`Plan updated to ${freshPlan.toUpperCase()}!`, 'success');
+          }
+        }
+      }
+    } catch (error) {
+      console.log('⚠️ Plan change detection error:', error.message);
+    }
+  }, 30000); // Check every 30 seconds
+}
+
+// Add manual refresh button for testing (only in development)
+function addManualPlanRefreshButton() {
+  // Only add in development or when explicitly enabled
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    const refreshButton = document.createElement('button');
+    refreshButton.textContent = '🔄 Refresh Plan';
+    refreshButton.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 10000;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    `;
+    
+    refreshButton.addEventListener('click', async () => {
+      console.log('🔄 Manual plan refresh triggered');
+      if (window.refreshPlanCompletely) {
+        const result = await window.refreshPlanCompletely();
+        showUpgradeNotification(`Plan refreshed: ${result.newPlan.toUpperCase()} (Backend: ${result.backendSuccess ? '✅' : '❌'})`, 'info');
+      }
+    });
+    
+    document.body.appendChild(refreshButton);
+    console.log('✅ Manual plan refresh button added');
+  }
+}
 
 // ==================== CRITICAL SECURITY FUNCTIONS ==================== //
 
@@ -6836,31 +6917,17 @@ function showAutomationNotification(message, type = 'info') {
   }, 4000);
 }
 
-// Make sure automation page shows when clicked
+// REMOVED: Duplicate automation page event listener - now handled by accessControl.js
+// The access control system properly handles all navigation with plan-based restrictions
+
+// Setup automation platforms when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  const automationNav = document.querySelector('[data-page="automation-page"]');
-  if (automationNav) {
-    automationNav.addEventListener('click', function() {
-      // Hide all pages
-      document.querySelectorAll('.page-content').forEach(page => {
-        page.classList.remove('active-page');
-      });
-      
-      // Show automation page
-      const automationPage = document.getElementById('automation-page');
-      if (automationPage) {
-        automationPage.classList.add('active-page');
-      }
-    });
-  }
-  
-  // Also setup the platforms
   setupEliteAutomationPlatforms();
 });
 
-// Attach after DOMContentLoaded
+// Also setup if DOM is already loaded
 if (document.readyState === 'loading') {
-  // Already handled above
+  // Will be handled by DOMContentLoaded above
 } else {
   setupEliteAutomationPlatforms();
 }

@@ -189,6 +189,114 @@ class HalaxaAccessControl {
     return 'basic';
   }
 
+  // ==================== FORCE PLAN REFRESH ==================== //
+  
+  async forceRefreshUserPlan() {
+    console.log('🔄 FORCE REFRESH: Clearing all plan caches and fetching fresh data...');
+    
+    // Clear all caches
+    localStorage.removeItem('userPlan');
+    
+    // Try backend API first (most reliable)
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        console.log('🔄 Force refreshing plan from backend API...');
+        const response = await fetch('https://halaxa-backend.onrender.com/api/account/refresh-plan', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 5000
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const plan = result.plan || 'basic';
+          console.log('✅ Fresh plan from backend API:', plan);
+          localStorage.setItem('userPlan', plan);
+          this.userPlan = plan;
+          
+          // Re-apply restrictions with new plan
+          this.setupPageAccessControl();
+          this.applyVisualLocks();
+          
+          return plan;
+        }
+      }
+    } catch (apiError) {
+      console.log('⚠️ Backend API force refresh failed:', apiError.message);
+    }
+    
+    // Fallback to direct database query
+    try {
+      console.log('🔄 Force refreshing plan from database...');
+      const { data: userSubscription, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan_tier')
+        .eq('user_id', this.currentUser.id)
+        .maybeSingle();
+
+      if (!error && userSubscription) {
+        const plan = userSubscription.plan_tier || 'basic';
+        console.log('✅ Fresh plan from database:', plan);
+        localStorage.setItem('userPlan', plan);
+        this.userPlan = plan;
+        
+        // Re-apply restrictions with new plan
+        this.setupPageAccessControl();
+        this.applyVisualLocks();
+        
+        return plan;
+      } else if (error) {
+        console.log('⚠️ Force refresh database error:', error.message);
+      }
+    } catch (dbError) {
+      console.log('⚠️ Force refresh database failed:', dbError.message);
+    }
+    
+    // Final fallback to basic
+    console.log('⚠️ Force refresh failed, defaulting to basic');
+    localStorage.setItem('userPlan', 'basic');
+    this.userPlan = 'basic';
+    return 'basic';
+  }
+
+  // ==================== BACKEND PLAN REFRESH ==================== //
+  
+  async refreshPlanFromBackend() {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        console.log('⚠️ No access token available for backend refresh');
+        return false;
+      }
+      
+      console.log('🔄 Calling backend plan refresh endpoint...');
+      const response = await fetch('https://halaxa-backend.onrender.com/api/account/refresh-plan', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 5000
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Backend plan refresh successful:', result);
+        return true;
+      } else {
+        console.log('⚠️ Backend plan refresh failed:', response.status);
+        return false;
+      }
+    } catch (error) {
+      console.log('⚠️ Backend plan refresh error:', error.message);
+      return false;
+    }
+  }
+
   getCurrentPlan() {
     return this.userPlan || 'basic';
   }
@@ -365,32 +473,33 @@ class HalaxaAccessControl {
     navItems.forEach(navItem => {
       const pageId = navItem.dataset.page;
       
-      // Remove any existing click listeners
+      // Remove any existing click listeners by cloning the element
       const newNavItem = navItem.cloneNode(true);
       navItem.parentNode.replaceChild(newNavItem, navItem);
       
       // Add new click listener with proper plan-based access control
       newNavItem.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling
+        
+        console.log(`🔒 ACCESS CHECK: User (${plan}) trying to access ${pageId}`);
         
         // Check if page is blocked for current plan
         if (limits.blockedPages.includes(pageId)) {
-          console.log(`🔒 Page ${pageId} is locked for ${plan} plan - redirecting to plans`);
+          console.log(`🔒 ACCESS DENIED: Page ${pageId} is locked for ${plan} plan - redirecting to plans`);
           // For locked pages, immediately redirect to plans page
           this.redirectToPlans();
           return;
         }
         
         // Page is allowed - load it normally
-        console.log(`✅ Loading allowed page: ${pageId} for ${plan} plan`);
+        console.log(`✅ ACCESS GRANTED: Loading allowed page: ${pageId} for ${plan} plan`);
         this.loadPage(pageId);
       });
     });
     
     // Also handle direct URL navigation
     this.handleDirectNavigation();
-    
-
   }
   
   loadPage(pageId) {
@@ -414,48 +523,32 @@ class HalaxaAccessControl {
     const allPages = document.querySelectorAll('.page-content');
     console.log(`📄 Total pages found: ${allPages.length}`);
     
+    // Hide all pages first
+    allPages.forEach(page => {
+      page.classList.remove('active-page');
+      page.style.display = 'none';
+    });
+    
     // Show target page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
-      console.log(`✅ Found target page: ${pageId}`);
-      
-      // Hide all pages first
-      allPages.forEach(page => {
-        page.classList.remove('active-page');
-        // Remove inline styles to let CSS handle visibility
-        page.style.removeProperty('display');
-        page.style.removeProperty('visibility');
-        page.style.removeProperty('opacity');
-      });
-      
-      // Show the target page by adding active class
+      targetPage.style.display = 'block';
       targetPage.classList.add('active-page');
-      
-      // Remove any inline styles that might override CSS
-      targetPage.style.removeProperty('display');
-      targetPage.style.removeProperty('visibility');
-      targetPage.style.removeProperty('opacity');
-      
-      // Force a reflow to ensure styles are applied
-      void targetPage.offsetHeight;
-      
-      // Verify it's visible
-      const computedStyle = window.getComputedStyle(targetPage);
-      console.log(`🔍 Page display: ${computedStyle.display}, visibility: ${computedStyle.visibility}`);
-      
-      console.log(`✅ Page ${pageId} is now active and visible`);
-      
-      // Update navigation indicators
-      this.updateNavigationIndicators(pageId);
-      
-      // Initialize page-specific features
-      this.initializePageFeatures(pageId);
-      
-      // Ensure sidebar extends properly
-      this.fixSidebarHeight();
+      console.log(`✅ Page ${pageId} loaded successfully`);
     } else {
-      console.error(`❌ Page ${pageId} not found in DOM`);
+      console.error(`❌ Page ${pageId} not found`);
     }
+    
+    // Update navigation active state
+    document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(nav => {
+      nav.classList.remove('active');
+      if (nav.dataset.page === pageId) {
+        nav.classList.add('active');
+      }
+    });
+    
+    // Initialize page-specific features
+    this.initializePageFeatures(pageId);
   }
   
   fixSidebarHeight() {
@@ -1077,6 +1170,45 @@ window.getUserPlan = () => {
 
 window.getUserPlanInfo = () => {
   return halaxaAccessControl.getUserPlanInfo();
+};
+
+// Force refresh user plan (for when plan is changed in Supabase)
+window.forceRefreshUserPlan = async () => {
+  console.log('🔄 Global force refresh triggered...');
+  if (window.HalaxaAccessControl) {
+    return await window.HalaxaAccessControl.forceRefreshUserPlan();
+  } else {
+    console.error('❌ Access control not available');
+    return 'basic';
+  }
+};
+
+// Backend plan refresh (for testing and manual refresh)
+window.refreshPlanFromBackend = async () => {
+  console.log('🔄 Global backend refresh triggered...');
+  if (window.HalaxaAccessControl) {
+    return await window.HalaxaAccessControl.refreshPlanFromBackend();
+  } else {
+    console.error('❌ Access control not available');
+    return false;
+  }
+};
+
+// Combined refresh (backend + frontend)
+window.refreshPlanCompletely = async () => {
+  console.log('🔄 Complete plan refresh triggered...');
+  
+  // First refresh backend cache
+  const backendSuccess = await window.refreshPlanFromBackend();
+  
+  // Then refresh frontend
+  const newPlan = await window.forceRefreshUserPlan();
+  
+  return {
+    backendSuccess,
+    newPlan,
+    timestamp: new Date().toISOString()
+  };
 };
 
 // Auto-update usage displays every 30 seconds

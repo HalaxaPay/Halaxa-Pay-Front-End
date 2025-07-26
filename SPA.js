@@ -4169,6 +4169,11 @@ function updateAllDashboardElements(dashboardData) {
         // Update key performance indicators
         updateKeyPerformanceIndicators(dashboardData);
         
+        // Update comprehensive metrics for all UI elements
+        if (dashboardData.comprehensive_metrics) {
+            updateComprehensiveMetrics(dashboardData.comprehensive_metrics);
+        }
+        
         console.log('✅ All dashboard elements updated');
     } catch (error) {
         console.error('❌ Error updating dashboard elements:', error);
@@ -6984,4 +6989,272 @@ if (verifyBtn && statusDiv) {
     verifyBtn.disabled = false;
     verifyBtn.innerHTML = originalText;
   });
+}
+
+/**
+ * Update ALL comprehensive metrics for every UI element
+ */
+function updateComprehensiveMetrics(metrics) {
+    try {
+        console.log('[SPA] Updating comprehensive metrics for all UI elements:', metrics);
+        
+        // ==================== HOME PAGE METRICS ==================== //
+        
+        // Update Digital Vault (main balance)
+        updateElement('[data-metric="total_balance"]', formatCurrency(metrics.total_incoming));
+        updateElement('[data-balance="usd-main"]', Math.floor(metrics.total_incoming).toString());
+        updateElement('[data-balance="usd-decimal"]', `.${Math.round((metrics.total_incoming % 1) * 100).toString().padStart(2, '0')}`);
+        updateElement('[data-balance="usdc-total"]', `${metrics.total_incoming.toFixed(2)} USDC`);
+        
+        // Update Empire Analytics cards
+        updateElement('[data-metric="total_executions"]', metrics.velocity.toString());
+        updateElement('[data-metric="precision_percentage"]', `${metrics.precision}%`);
+        updateElement('[data-metric="average_amount"]', formatCurrency(metrics.magnitude));
+        updateElement('[data-metric="active_links"]', metrics.active_links.toString());
+        updateElement('[data-metric="monthly_revenue"]', formatCurrency(metrics.monthly_revenue));
+        
+        // Update Performance Observatory
+        updateElement('[data-chart="current-month"]', metrics.performance_data.current_month);
+        updateElement('[data-chart="monthly-delta"]', metrics.performance_data.monthly_delta);
+        
+        // Update AI Insights
+        updateElement('[data-insight="title-1"]', metrics.ai_insights.title_1);
+        updateElement('[data-insight="desc-1"]', metrics.ai_insights.desc_1);
+        updateElement('[data-insight="title-2"]', metrics.ai_insights.title_2);
+        updateElement('[data-insight="desc-2"]', metrics.ai_insights.desc_2);
+        updateElement('[data-insight="title-3"]', metrics.ai_insights.title_3);
+        updateElement('[data-insight="desc-3"]', metrics.ai_insights.desc_3);
+        
+        // Update Key Metrics Panel
+        updateElement('[data-key-metric="conversion-rate"]', `${metrics.key_metrics.conversion_rate}%`);
+        updateElement('[data-key-metric="processing-time"]', `${metrics.key_metrics.avg_processing_time}s`);
+        updateElement('[data-key-metric="active-wallets"]', metrics.key_metrics.active_wallets.toString());
+        updateElement('[data-key-metric="daily-volume"]', formatCurrency(metrics.key_metrics.volume_24h));
+        updateElement('[data-key-metric="gas-optimization"]', `${metrics.key_metrics.gas_optimization_score}%`);
+        
+        // Update Transaction Insights
+        updateElement('[data-tx-insight="peak-volume"]', formatCurrency(metrics.transaction_insights.peak_volume));
+        updateElement('[data-tx-insight="cross-chain"]', metrics.transaction_insights.cross_chain.toString());
+        updateElement('[data-tx-insight="contract-calls"]', metrics.transaction_insights.contract_calls.toString());
+        updateElement('[data-tx-insight="response-time"]', `${metrics.transaction_insights.response_time}ms`);
+        updateElement('[data-tx-insight="security-score"]', `${metrics.transaction_insights.security_score}%`);
+        updateElement('[data-tx-insight="satisfaction"]', `${metrics.transaction_insights.satisfaction}/5`);
+        
+        // Update Market Heartbeat
+        updateElement('[data-market="btc-price"]', `$${metrics.market_data.btc_price.toLocaleString()}`);
+        updateElement('[data-market="btc-change"]', `${metrics.market_data.btc_change > 0 ? '+' : ''}${metrics.market_data.btc_change}%`);
+        updateElement('[data-market="eth-price"]', `$${metrics.market_data.eth_price.toLocaleString()}`);
+        updateElement('[data-market="eth-change"]', `${metrics.market_data.eth_change > 0 ? '+' : ''}${metrics.market_data.eth_change}%`);
+        updateElement('[data-market="usdc-price"]', `$${metrics.market_data.usdc_price.toFixed(2)}`);
+        updateElement('[data-market="usdc-change"]', `${metrics.market_data.usdc_change > 0 ? '+' : ''}${metrics.market_data.usdc_change}%`);
+        
+        // Update Performance indicators
+        updateElement('[data-performance="treasury-change"]', metrics.performance_data.treasury_change);
+        updateElement('[data-performance="treasury-period"]', metrics.performance_data.treasury_period);
+        
+        // ==================== TRANSACTIONS PAGE METRICS ==================== //
+        
+        // Update Transaction Stats
+        updateElement('[data-tx-stat="total-transactions"]', metrics.transaction_stats.total_transactions.toString());
+        updateElement('[data-tx-stat="total-volume"]', formatCurrency(metrics.transaction_stats.total_volume));
+        updateElement('[data-tx-stat="fees-saved"]', `${metrics.transaction_stats.savings_percentage}%`);
+        updateElement('[data-tx-stat="weekly-count"]', metrics.transaction_stats.weekly_transactions.toString());
+        
+        // ==================== CAPITAL PAGE METRICS ==================== //
+        
+        // Update Capital Flow Overview
+        updateElement('[data-capital="total-received"]', formatCurrency(metrics.total_incoming));
+        updateElement('[data-capital="total-received-crypto"]', `${metrics.total_incoming.toFixed(2)} USDC Polygon • ${metrics.total_incoming.toFixed(2)} USDC Solana`);
+        updateElement('[data-capital="total-paid"]', formatCurrency(metrics.total_outgoing));
+        updateElement('[data-capital="total-paid-crypto"]', `${metrics.total_outgoing.toFixed(2)} USDC Polygon • ${metrics.total_outgoing.toFixed(2)} USDC Solana`);
+        updateElement('[data-capital="net-flow"]', `${metrics.net_flow >= 0 ? '+' : ''}${formatCurrency(metrics.net_flow)}`);
+        updateElement('[data-capital="net-flow-crypto"]', `${metrics.net_flow >= 0 ? '+' : ''}${metrics.net_flow.toFixed(2)} USDC Polygon • ${metrics.net_flow >= 0 ? '+' : ''}${metrics.net_flow.toFixed(2)} USDC Solana`);
+        
+        // Update Fees Collected
+        updateElement('[data-fees="total"]', formatCurrency(metrics.total_savings));
+        updateElement('[data-fees="avg-percentage"]', `${metrics.savings_percentage}%`);
+        
+        // Update Network Distribution
+        updateElement('[data-network="polygon-volume"]', formatCurrency(metrics.network_distribution.polygon_volume));
+        updateElement('[data-network="polygon-bar"]', `${metrics.network_distribution.polygon_percent}%`);
+        updateElement('[data-network="polygon-percent"]', `${metrics.network_distribution.polygon_percent.toFixed(1)}%`);
+        updateElement('[data-network="solana-volume"]', formatCurrency(metrics.network_distribution.solana_volume));
+        updateElement('[data-network="solana-bar"]', `${metrics.network_distribution.solana_percent}%`);
+        updateElement('[data-network="solana-percent"]', `${metrics.network_distribution.solana_percent.toFixed(1)}%`);
+        
+        // Update Growth Metrics
+        updateElement('[data-growth="active-users"]', metrics.growth_metrics.active_users.toString());
+        updateElement('[data-growth="users-change"]', `${metrics.growth_metrics.users_change > 0 ? '+' : ''}${metrics.growth_metrics.users_change}%`);
+        updateElement('[data-growth="avg-volume"]', formatCurrency(metrics.growth_metrics.avg_volume));
+        updateElement('[data-growth="volume-change"]', `${metrics.growth_metrics.volume_change > 0 ? '+' : ''}${metrics.growth_metrics.volume_change}%`);
+        
+        // Update Status Metrics
+        updateElement('[data-status-legend="completed"]', `Completed (${metrics.status_metrics.completed})`);
+        updateElement('[data-status-legend="pending"]', `Pending (${metrics.status_metrics.pending})`);
+        updateElement('[data-status-legend="failed"]', `Failed (${metrics.status_metrics.failed})`);
+        updateElement('[data-status-total="total"]', metrics.status_metrics.total.toString());
+        
+        // ==================== ACCOUNT PAGE METRICS ==================== //
+        
+        // Update Account Stats
+        updateElement('[data-account-stat="total-transactions"]', metrics.account_stats.total_transactions.toString());
+        updateElement('[data-account-stat="total-usdc-received"]', formatCurrency(metrics.account_stats.total_usdc_received));
+        updateElement('[data-account-stat="largest-payment"]', formatCurrency(metrics.account_stats.largest_payment));
+        updateElement('[data-account-stat="average-payment"]', formatCurrency(metrics.account_stats.average_payment));
+        updateElement('[data-account-stat="transactions-trend"]', metrics.account_stats.transactions_trend);
+        updateElement('[data-account-stat="usdc-trend"]', metrics.account_stats.usdc_trend);
+        updateElement('[data-account-stat="largest-payment-date"]', metrics.account_stats.largest_payment_date);
+        updateElement('[data-account-stat="average-trend"]', metrics.account_stats.average_trend);
+        
+        // Update Billing Metrics
+        updateElement('[data-billing="total-paid"]', formatCurrency(metrics.billing_metrics.total_paid));
+        
+        // ==================== CHART DATA UPDATES ==================== //
+        
+        // Update Monthly Constellation Chart
+        updateMonthlyConstellationChart(metrics.monthly_constellation);
+        
+        // Update Balance Chart
+        updateBalanceChart(metrics.balance_chart);
+        
+        // Update Transaction Chart
+        updateTransactionChart(metrics.transaction_chart);
+        
+        // Update Network Distribution Chart
+        updateNetworkDistributionChart(metrics.network_distribution);
+        
+        console.log('[SPA] Comprehensive metrics updated successfully for all UI elements');
+        
+    } catch (error) {
+        console.error('[SPA] Error updating comprehensive metrics:', error);
+    }
+}
+
+/**
+ * Helper function to update elements safely
+ */
+function updateElement(selector, value) {
+    try {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = value;
+        }
+    } catch (error) {
+        console.warn(`[SPA] Could not update element ${selector}:`, error);
+    }
+}
+
+/**
+ * Update Monthly Constellation Chart
+ */
+function updateMonthlyConstellationChart(constellationData) {
+    try {
+        const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+        const maxValue = Math.max(...Object.values(constellationData));
+        
+        months.forEach(month => {
+            const bar = document.querySelector(`[data-month-value="${month}"]`);
+            if (bar) {
+                const value = constellationData[month] || 0;
+                const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
+                bar.textContent = formatCurrency(value);
+                
+                // Update bar height
+                const barCore = bar.closest('.stellar-bar')?.querySelector('.bar-core');
+                if (barCore) {
+                    barCore.style.height = `${percentage}%`;
+                }
+            }
+        });
+    } catch (error) {
+        console.error('[SPA] Error updating monthly constellation chart:', error);
+    }
+}
+
+/**
+ * Update Balance Chart
+ */
+function updateBalanceChart(balanceData) {
+    try {
+        const chartSvg = document.getElementById('balance-chart-svg');
+        if (chartSvg && balanceData.data_points && balanceData.data_points.length > 0) {
+            // Update chart value display
+            updateElement('[data-balance-chart="current"]', formatCurrency(balanceData.current));
+            updateElement('[data-balance-chart="change"]', balanceData.change);
+            
+            // Generate SVG path for the chart
+            const width = 300;
+            const height = 120;
+            const maxValue = Math.max(...balanceData.data_points);
+            const points = balanceData.data_points.map((value, index) => {
+                const x = (index / (balanceData.data_points.length - 1)) * width;
+                const y = height - ((value / maxValue) * height);
+                return `${x},${y}`;
+            }).join(' ');
+            
+            // Create or update the path element
+            let path = chartSvg.querySelector('.balance-line');
+            if (!path) {
+                path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('class', 'balance-line');
+                path.setAttribute('stroke', '#10b981');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                chartSvg.appendChild(path);
+            }
+            
+            path.setAttribute('d', `M ${points}`);
+        }
+    } catch (error) {
+        console.error('[SPA] Error updating balance chart:', error);
+    }
+}
+
+/**
+ * Update Transaction Chart
+ */
+function updateTransactionChart(transactionData) {
+    try {
+        const chartBars = document.querySelectorAll('.chart-bar');
+        if (chartBars.length > 0 && transactionData.data && transactionData.data.length > 0) {
+            const maxValue = Math.max(...transactionData.data);
+            
+            transactionData.data.forEach((value, index) => {
+                if (chartBars[index]) {
+                    const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
+                    chartBars[index].style.height = `${percentage}%`;
+                    chartBars[index].setAttribute('data-value', value);
+                    
+                    // Update tooltip
+                    const tooltip = chartBars[index].querySelector('.bar-tooltip');
+                    if (tooltip) {
+                        tooltip.textContent = `${value} transactions`;
+                    }
+                }
+            });
+        }
+    } catch (error) {
+        console.error('[SPA] Error updating transaction chart:', error);
+    }
+}
+
+/**
+ * Update Network Distribution Chart
+ */
+function updateNetworkDistributionChart(networkData) {
+    try {
+        // Update network volume bars
+        const polygonBar = document.querySelector('[data-network="polygon-bar"]');
+        const solanaBar = document.querySelector('[data-network="solana-bar"]');
+        
+        if (polygonBar) {
+            polygonBar.style.width = `${networkData.polygon_percent}%`;
+        }
+        
+        if (solanaBar) {
+            solanaBar.style.width = `${networkData.solana_percent}%`;
+        }
+    } catch (error) {
+        console.error('[SPA] Error updating network distribution chart:', error);
+    }
 }

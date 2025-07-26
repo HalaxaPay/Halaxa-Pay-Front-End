@@ -1,5 +1,8 @@
 // ==================== PREMIUM ANIMATED SPA JAVASCRIPT ==================== //
 
+// Import Support Bot functionality
+import { initializeSupportBot } from './HelpF.js';
+
 // BACKEND URL CONFIGURATION - Use environment variable or fallback
 const BACKEND_URL = import.meta.env?.VITE_BACKEND_URL || 'https://halaxa-backend.onrender.com';
 
@@ -49,6 +52,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         initializeAnimations();
         initializeParticles();
         initializeCardEffects();
+        
+        // Initialize Support Bot functionality
+        initializeSupportBot();
         
         // Initialize pricing toggle after DOM is ready
         setTimeout(async () => {
@@ -2950,8 +2956,8 @@ async function fetchGeoPricing() {
         
         // Fallback to default pricing
         currentGeoPricing = {
-            pro: { monthly: 29, yearly: 20 },
-            elite: { monthly: 59, yearly: 49 }
+            pro: { monthly: 12, yearly: 10 },
+            elite: { monthly: 25, yearly: 20 }
         };
         
         return { 

@@ -7026,102 +7026,112 @@ function updateComprehensiveMetrics(metrics) {
         updateElement('[data-insight="desc-3"]', metrics.ai_insights.desc_3);
         
         // Update Key Metrics Panel
-        updateElement('[data-key-metric="conversion-rate"]', `${metrics.key_metrics.conversion_rate}%`);
-        updateElement('[data-key-metric="processing-time"]', `${metrics.key_metrics.avg_processing_time}s`);
-        updateElement('[data-key-metric="active-wallets"]', metrics.key_metrics.active_wallets.toString());
-        updateElement('[data-key-metric="daily-volume"]', formatCurrency(metrics.key_metrics.volume_24h));
-        updateElement('[data-key-metric="gas-optimization"]', `${metrics.key_metrics.gas_optimization_score}%`);
+        if (metrics.key_metrics) {
+            updateElement('[data-key-metric="conversion-rate"]', `${metrics.key_metrics.conversion_rate || 0}%`);
+            updateElement('[data-key-metric="processing-time"]', `${metrics.key_metrics.avg_processing_time || 0}s`);
+            updateElement('[data-key-metric="active-wallets"]', (metrics.key_metrics.active_wallets || 0).toString());
+            updateElement('[data-key-metric="daily-volume"]', formatCurrency(metrics.key_metrics.volume_24h || 0));
+            updateElement('[data-key-metric="gas-optimization"]', `${metrics.key_metrics.gas_optimization_score || 0}%`);
+        }
         
-        // Update Transaction Insights
-        updateElement('[data-tx-insight="peak-volume"]', formatCurrency(metrics.transaction_insights.peak_volume));
-        updateElement('[data-tx-insight="cross-chain"]', metrics.transaction_insights.cross_chain.toString());
-        updateElement('[data-tx-insight="contract-calls"]', metrics.transaction_insights.contract_calls.toString());
-        updateElement('[data-tx-insight="response-time"]', `${metrics.transaction_insights.response_time}ms`);
-        updateElement('[data-tx-insight="security-score"]', `${metrics.transaction_insights.security_score}%`);
-        updateElement('[data-tx-insight="satisfaction"]', `${metrics.transaction_insights.satisfaction}/5`);
+        // Transaction insights removed - not needed for Alchemy data
         
-        // Update Market Heartbeat
-        updateElement('[data-market="btc-price"]', `$${metrics.market_data.btc_price.toLocaleString()}`);
-        updateElement('[data-market="btc-change"]', `${metrics.market_data.btc_change > 0 ? '+' : ''}${metrics.market_data.btc_change}%`);
-        updateElement('[data-market="eth-price"]', `$${metrics.market_data.eth_price.toLocaleString()}`);
-        updateElement('[data-market="eth-change"]', `${metrics.market_data.eth_change > 0 ? '+' : ''}${metrics.market_data.eth_change}%`);
-        updateElement('[data-market="usdc-price"]', `$${metrics.market_data.usdc_price.toFixed(2)}`);
-        updateElement('[data-market="usdc-change"]', `${metrics.market_data.usdc_change > 0 ? '+' : ''}${metrics.market_data.usdc_change}%`);
+        // Market data removed - using existing CoinGecko integration
         
         // Update Performance indicators
-        updateElement('[data-performance="treasury-change"]', metrics.performance_data.treasury_change);
-        updateElement('[data-performance="treasury-period"]', metrics.performance_data.treasury_period);
+        if (metrics.performance_data) {
+            updateElement('[data-performance="treasury-change"]', metrics.performance_data.treasury_change || '+0%');
+            updateElement('[data-performance="treasury-period"]', metrics.performance_data.treasury_period || '30-Day Performance');
+        }
         
         // ==================== TRANSACTIONS PAGE METRICS ==================== //
         
-        // Update Transaction Stats
-        updateElement('[data-tx-stat="total-transactions"]', metrics.transaction_stats.total_transactions.toString());
-        updateElement('[data-tx-stat="total-volume"]', formatCurrency(metrics.transaction_stats.total_volume));
-        updateElement('[data-tx-stat="fees-saved"]', `${metrics.transaction_stats.savings_percentage}%`);
-        updateElement('[data-tx-stat="weekly-count"]', metrics.transaction_stats.weekly_transactions.toString());
+        // Transaction stats removed - using existing analytics
         
         // ==================== CAPITAL PAGE METRICS ==================== //
         
         // Update Capital Flow Overview
-        updateElement('[data-capital="total-received"]', formatCurrency(metrics.total_incoming));
-        updateElement('[data-capital="total-received-crypto"]', `${metrics.total_incoming.toFixed(2)} USDC Polygon • ${metrics.total_incoming.toFixed(2)} USDC Solana`);
-        updateElement('[data-capital="total-paid"]', formatCurrency(metrics.total_outgoing));
-        updateElement('[data-capital="total-paid-crypto"]', `${metrics.total_outgoing.toFixed(2)} USDC Polygon • ${metrics.total_outgoing.toFixed(2)} USDC Solana`);
-        updateElement('[data-capital="net-flow"]', `${metrics.net_flow >= 0 ? '+' : ''}${formatCurrency(metrics.net_flow)}`);
-        updateElement('[data-capital="net-flow-crypto"]', `${metrics.net_flow >= 0 ? '+' : ''}${metrics.net_flow.toFixed(2)} USDC Polygon • ${metrics.net_flow >= 0 ? '+' : ''}${metrics.net_flow.toFixed(2)} USDC Solana`);
+        const totalIncoming = metrics.total_incoming || 0;
+        const totalOutgoing = metrics.total_outgoing || 0;
+        const netFlow = metrics.net_flow || 0;
+        
+        updateElement('[data-capital="total-received"]', formatCurrency(totalIncoming));
+        updateElement('[data-capital="total-received-crypto"]', `${totalIncoming.toFixed(2)} USDC Polygon • ${totalIncoming.toFixed(2)} USDC Solana`);
+        updateElement('[data-capital="total-paid"]', formatCurrency(totalOutgoing));
+        updateElement('[data-capital="total-paid-crypto"]', `${totalOutgoing.toFixed(2)} USDC Polygon • ${totalOutgoing.toFixed(2)} USDC Solana`);
+        updateElement('[data-capital="net-flow"]', `${netFlow >= 0 ? '+' : ''}${formatCurrency(netFlow)}`);
+        updateElement('[data-capital="net-flow-crypto"]', `${netFlow >= 0 ? '+' : ''}${netFlow.toFixed(2)} USDC Polygon • ${netFlow >= 0 ? '+' : ''}${netFlow.toFixed(2)} USDC Solana`);
         
         // Update Fees Collected
-        updateElement('[data-fees="total"]', formatCurrency(metrics.total_savings));
-        updateElement('[data-fees="avg-percentage"]', `${metrics.savings_percentage}%`);
+        updateElement('[data-fees="total"]', formatCurrency(metrics.total_savings || 0));
+        updateElement('[data-fees="avg-percentage"]', `${metrics.savings_percentage || 0}%`);
         
         // Update Network Distribution
-        updateElement('[data-network="polygon-volume"]', formatCurrency(metrics.network_distribution.polygon_volume));
-        updateElement('[data-network="polygon-bar"]', `${metrics.network_distribution.polygon_percent}%`);
-        updateElement('[data-network="polygon-percent"]', `${metrics.network_distribution.polygon_percent.toFixed(1)}%`);
-        updateElement('[data-network="solana-volume"]', formatCurrency(metrics.network_distribution.solana_volume));
-        updateElement('[data-network="solana-bar"]', `${metrics.network_distribution.solana_percent}%`);
-        updateElement('[data-network="solana-percent"]', `${metrics.network_distribution.solana_percent.toFixed(1)}%`);
+        if (metrics.network_distribution) {
+            updateElement('[data-network="polygon-volume"]', formatCurrency(metrics.network_distribution.polygon_volume || 0));
+            updateElement('[data-network="polygon-bar"]', `${metrics.network_distribution.polygon_percent || 0}%`);
+            updateElement('[data-network="polygon-percent"]', `${(metrics.network_distribution.polygon_percent || 0).toFixed(1)}%`);
+            updateElement('[data-network="solana-volume"]', formatCurrency(metrics.network_distribution.solana_volume || 0));
+            updateElement('[data-network="solana-bar"]', `${metrics.network_distribution.solana_percent || 0}%`);
+            updateElement('[data-network="solana-percent"]', `${(metrics.network_distribution.solana_percent || 0).toFixed(1)}%`);
+        }
         
         // Update Growth Metrics
-        updateElement('[data-growth="active-users"]', metrics.growth_metrics.active_users.toString());
-        updateElement('[data-growth="users-change"]', `${metrics.growth_metrics.users_change > 0 ? '+' : ''}${metrics.growth_metrics.users_change}%`);
-        updateElement('[data-growth="avg-volume"]', formatCurrency(metrics.growth_metrics.avg_volume));
-        updateElement('[data-growth="volume-change"]', `${metrics.growth_metrics.volume_change > 0 ? '+' : ''}${metrics.growth_metrics.volume_change}%`);
+        if (metrics.growth_metrics) {
+            updateElement('[data-growth="active-users"]', (metrics.growth_metrics.active_users || 0).toString());
+            updateElement('[data-growth="users-change"]', `${(metrics.growth_metrics.users_change || 0) > 0 ? '+' : ''}${metrics.growth_metrics.users_change || 0}%`);
+            updateElement('[data-growth="avg-volume"]', formatCurrency(metrics.growth_metrics.avg_volume || 0));
+            updateElement('[data-growth="volume-change"]', `${(metrics.growth_metrics.volume_change || 0) > 0 ? '+' : ''}${metrics.growth_metrics.volume_change || 0}%`);
+        }
         
         // Update Status Metrics
-        updateElement('[data-status-legend="completed"]', `Completed (${metrics.status_metrics.completed})`);
-        updateElement('[data-status-legend="pending"]', `Pending (${metrics.status_metrics.pending})`);
-        updateElement('[data-status-legend="failed"]', `Failed (${metrics.status_metrics.failed})`);
-        updateElement('[data-status-total="total"]', metrics.status_metrics.total.toString());
+        if (metrics.status_metrics) {
+            updateElement('[data-status-legend="completed"]', `Completed (${metrics.status_metrics.completed || 0})`);
+            updateElement('[data-status-legend="pending"]', `Pending (${metrics.status_metrics.pending || 0})`);
+            updateElement('[data-status-legend="failed"]', `Failed (${metrics.status_metrics.failed || 0})`);
+            updateElement('[data-status-total="total"]', (metrics.status_metrics.total || 0).toString());
+        }
         
         // ==================== ACCOUNT PAGE METRICS ==================== //
         
         // Update Account Stats
-        updateElement('[data-account-stat="total-transactions"]', metrics.account_stats.total_transactions.toString());
-        updateElement('[data-account-stat="total-usdc-received"]', formatCurrency(metrics.account_stats.total_usdc_received));
-        updateElement('[data-account-stat="largest-payment"]', formatCurrency(metrics.account_stats.largest_payment));
-        updateElement('[data-account-stat="average-payment"]', formatCurrency(metrics.account_stats.average_payment));
-        updateElement('[data-account-stat="transactions-trend"]', metrics.account_stats.transactions_trend);
-        updateElement('[data-account-stat="usdc-trend"]', metrics.account_stats.usdc_trend);
-        updateElement('[data-account-stat="largest-payment-date"]', metrics.account_stats.largest_payment_date);
-        updateElement('[data-account-stat="average-trend"]', metrics.account_stats.average_trend);
+        if (metrics.account_stats) {
+            updateElement('[data-account-stat="total-transactions"]', (metrics.account_stats.total_transactions || 0).toString());
+            updateElement('[data-account-stat="total-usdc-received"]', formatCurrency(metrics.account_stats.total_usdc_received || 0));
+            updateElement('[data-account-stat="largest-payment"]', formatCurrency(metrics.account_stats.largest_payment || 0));
+            updateElement('[data-account-stat="average-payment"]', formatCurrency(metrics.account_stats.average_payment || 0));
+            updateElement('[data-account-stat="transactions-trend"]', metrics.account_stats.transactions_trend || '+0%');
+            updateElement('[data-account-stat="usdc-trend"]', metrics.account_stats.usdc_trend || '+0%');
+            updateElement('[data-account-stat="largest-payment-date"]', metrics.account_stats.largest_payment_date || 'N/A');
+            updateElement('[data-account-stat="average-trend"]', metrics.account_stats.average_trend || '+0%');
+        }
         
         // Update Billing Metrics
-        updateElement('[data-billing="total-paid"]', formatCurrency(metrics.billing_metrics.total_paid));
+        if (metrics.billing_metrics) {
+            updateElement('[data-billing="total-paid"]', formatCurrency(metrics.billing_metrics.total_paid || 0));
+        }
         
         // ==================== CHART DATA UPDATES ==================== //
         
         // Update Monthly Constellation Chart
-        updateMonthlyConstellationChart(metrics.monthly_constellation);
+        if (metrics.monthly_constellation) {
+            updateMonthlyConstellationChart(metrics.monthly_constellation);
+        }
         
         // Update Balance Chart
-        updateBalanceChart(metrics.balance_chart);
+        if (metrics.balance_chart) {
+            updateBalanceChart(metrics.balance_chart);
+        }
         
         // Update Transaction Chart
-        updateTransactionChart(metrics.transaction_chart);
+        if (metrics.transaction_chart) {
+            updateTransactionChart(metrics.transaction_chart);
+        }
         
         // Update Network Distribution Chart
-        updateNetworkDistributionChart(metrics.network_distribution);
+        if (metrics.network_distribution) {
+            updateNetworkDistributionChart(metrics.network_distribution);
+        }
         
         console.log('[SPA] Comprehensive metrics updated successfully for all UI elements');
         

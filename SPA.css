@@ -9352,7 +9352,38 @@ html, body {
 
 /* Support Bot Header */
 .support-bot-header {
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .support-bot-header {
+        margin-bottom: var(--space-4);
+    }
+    
+    .support-chat-container {
+        height: 400px;
+        max-height: 50vh;
+        margin: 0 var(--space-3);
+    }
+    
+    .chat-messages {
+        padding: var(--space-4);
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+    }
+    
+    .support-footer {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+    
+    .support-stats {
+        justify-content: center;
+    }
 }
 
 .support-bot-hero {
@@ -9510,8 +9541,11 @@ html, body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 600px;
-    max-height: 70vh;
+    height: 500px;
+    max-height: 60vh;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .chat-messages {

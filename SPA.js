@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('wallet-lock-confirm-popup');
     let solana = '', polygon = '';
     if (!form || !popup) return;
+    
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       solana = document.getElementById('solana-wallet').value.trim();
@@ -178,25 +179,41 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       popup.style.display = 'block';
     });
+    
     document.getElementById('confirm-lock-btn').onclick = async function() {
+      // Get fresh values from the form fields to ensure they're current
+      const solanaWallet = document.getElementById('solana-wallet').value.trim();
+      const polygonWallet = document.getElementById('polygon-wallet').value.trim();
+      
+      if (!solanaWallet || !polygonWallet) {
+        alert('Please enter both wallet addresses.');
+        return;
+      }
+      
       const accessToken = localStorage.getItem('accessToken');
       try {
+        console.log('Locking wallets:', { solana_wallet: solanaWallet, polygon_wallet: polygonWallet });
         const res = await fetch(`${BACKEND_URL}/api/wallet-connections/lock`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ solana_wallet: solana, polygon_wallet: polygon })
+          body: JSON.stringify({ solana_wallet: solanaWallet, polygon_wallet: polygonWallet })
         });
+        
         if (res.ok) {
           popup.style.display = 'none';
           document.getElementById('wallet-locking-section').style.display = 'none';
           initializeWalletLockingUI();
         } else {
+          const errorData = await res.json().catch(() => ({}));
+          console.error('Wallet lock failed:', res.status, errorData);
           alert('Failed to lock wallets. Please try again.');
         }
       } catch (e) {
+        console.error('Error locking wallets:', e);
         alert('Error locking wallets.');
       }
     };
+    
     document.getElementById('cancel-lock-btn').onclick = function() {
       popup.style.display = 'none';
     };

@@ -206,71 +206,129 @@ document.addEventListener('DOMContentLoaded', function() {
   async function initializeWalletLockingUI() {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) return;
+    
+    console.log('🔐 Initializing wallet locking UI...');
+    
     let lockedWallets = null;
     try {
       const res = await fetch(`${BACKEND_URL}/api/wallet-connections/locked`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
       });
+      
+      console.log('🔐 Wallet locking API response status:', res.status);
+      
       if (res.ok) {
         lockedWallets = await res.json();
+        console.log('🔐 Locked wallets data:', lockedWallets);
+      } else {
+        console.log('⚠️ Wallet locking API failed:', res.status);
       }
-    } catch (e) { console.error('Failed to fetch locked wallets', e); }
+    } catch (e) { 
+      console.error('❌ Failed to fetch locked wallets:', e); 
+    }
   
     const walletLockingSection = document.getElementById('wallet-locking-section');
     const paymentForm = document.getElementById('payment-form');
     const walletSelect = document.getElementById('wallet-address-select');
   
-    if (!lockedWallets || !lockedWallets.locked || !lockedWallets.addresses) {
-      if (walletLockingSection) walletLockingSection.style.display = 'block';
-      if (paymentForm) paymentForm.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+    console.log('🔐 UI elements found:', {
+      walletLockingSection: !!walletLockingSection,
+      paymentForm: !!paymentForm,
+      walletSelect: !!walletSelect
+    });
+  
+    if (!lockedWallets || !lockedWallets.locked || !lockedWallets.addresses || lockedWallets.addresses.length === 0) {
+      console.log('🔐 No locked wallets found - showing wallet locking section');
+      
+      // Show wallet locking section
+      if (walletLockingSection) {
+        walletLockingSection.style.display = 'block';
+      }
+      
+      // Disable payment form
+      if (paymentForm) {
+        paymentForm.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+      }
+      
       setupWalletLockingHandlers();
     } else {
-        if (walletSelect) {
-            walletSelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Select your locked wallet address';
-            walletSelect.appendChild(defaultOption);
-          
-            lockedWallets.addresses.forEach(addr => {
-              const option = document.createElement('option');
-              option.value = addr.wallet_address;
-              option.textContent = `${addr.network.charAt(0).toUpperCase() + addr.network.slice(1)}: ${addr.wallet_address}`;
-              walletSelect.appendChild(option);
-            });
-            walletSelect.disabled = false;
-        }
-        
-        // Enable the payment form when wallets are locked
-        if (paymentForm) {
-            paymentForm.querySelectorAll('input, select, button').forEach(el => {
-                if (el.id !== 'wallet-address-select') { // Keep wallet select enabled
-                    el.disabled = false;
-                }
-            });
-        }
-    }
+      console.log('🔐 Locked wallets found - enabling payment form');
       
+      // Hide wallet locking section
+      if (walletLockingSection) {
+        walletLockingSection.style.display = 'none';
+      }
+      
+      // Populate wallet select dropdown
+      if (walletSelect) {
+        walletSelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select your locked wallet address';
+        walletSelect.appendChild(defaultOption);
+      
+        lockedWallets.addresses.forEach(addr => {
+          const option = document.createElement('option');
+          option.value = addr.wallet_address;
+          option.textContent = `${addr.network.charAt(0).toUpperCase() + addr.network.slice(1)}: ${addr.wallet_address.substring(0, 8)}...${addr.wallet_address.substring(addr.wallet_address.length - 4)}`;
+          walletSelect.appendChild(option);
+        });
+        
+        // Enable the wallet select
+        walletSelect.disabled = false;
+        
+        console.log('🔐 Wallet select populated with', lockedWallets.addresses.length, 'addresses');
+      }
+      
+      // Enable the payment form
+      if (paymentForm) {
+        paymentForm.querySelectorAll('input, select, button').forEach(el => {
+          if (el.id !== 'wallet-address-select') { // Keep wallet select enabled
+            el.disabled = false;
+          }
+        });
+        console.log('🔐 Payment form enabled');
+      }
+    }
   }
   
   function setupWalletLockingHandlers() {
     const form = document.getElementById('wallet-locking-form');
     const popup = document.getElementById('wallet-lock-confirm-popup');
-    let solana = '', polygon = '';
-    if (!form || !popup) return;
+    
+    console.log('🔐 Setting up wallet locking handlers...');
+    console.log('🔐 Form element:', !!form);
+    console.log('🔐 Popup element:', !!popup);
+    
+    if (!form || !popup) {
+      console.error('❌ Wallet locking form or popup not found');
+      return;
+    }
     
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      solana = document.getElementById('solana-wallet').value.trim();
-      polygon = document.getElementById('polygon-wallet').value.trim();
+      const solana = document.getElementById('solana-wallet').value.trim();
+      const polygon = document.getElementById('polygon-wallet').value.trim();
+      
+      console.log('🔐 Form submitted with wallets:', { solana: solana.substring(0, 8) + '...', polygon: polygon.substring(0, 8) + '...' });
+      
       if (!solana || !polygon) {
         alert('Please enter both wallet addresses.');
         return;
       }
+      
+      // Basic wallet address validation
+      if (solana.length < 32 || polygon.length < 32) {
+        alert('Please enter valid wallet addresses.');
+        return;
+      }
+      
       popup.style.display = 'block';
     });
     
     document.getElementById('confirm-lock-btn').onclick = async function() {
+      console.log('🔐 Confirm lock button clicked');
+      
       // Get fresh values from the form fields to ensure they're current
       const solanaWallet = document.getElementById('solana-wallet').value.trim();
       const polygonWallet = document.getElementById('polygon-wallet').value.trim();
@@ -281,26 +339,45 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        alert('Authentication required. Please log in again.');
+        return;
+      }
+      
       try {
-        console.log('Locking wallets:', { solana_wallet: solanaWallet, polygon_wallet: polygonWallet });
+        console.log('🔐 Locking wallets:', { 
+          solana_wallet: solanaWallet.substring(0, 8) + '...', 
+          polygon_wallet: polygonWallet.substring(0, 8) + '...' 
+        });
+        
         const res = await fetch(`${BACKEND_URL}/api/wallet-connections/lock`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ solana_wallet: solanaWallet, polygon_wallet: polygonWallet })
         });
         
+        console.log('🔐 Lock response status:', res.status);
+        
         if (res.ok) {
+          const result = await res.json();
+          console.log('🔐 Wallet lock successful:', result);
+          
           popup.style.display = 'none';
           document.getElementById('wallet-locking-section').style.display = 'none';
-          initializeWalletLockingUI();
+          
+          // Show success message
+          showPaymentNotification('Wallets locked successfully! Payment form is now enabled.', 'success');
+          
+          // Re-initialize wallet locking UI to enable payment form
+          await initializeWalletLockingUI();
         } else {
           const errorData = await res.json().catch(() => ({}));
-          console.error('Wallet lock failed:', res.status, errorData);
-          alert('Failed to lock wallets. Please try again.');
+          console.error('❌ Wallet lock failed:', res.status, errorData);
+          alert(`Failed to lock wallets: ${errorData.error || 'Unknown error'}`);
         }
       } catch (e) {
-        console.error('Error locking wallets:', e);
-        alert('Error locking wallets.');
+        console.error('❌ Error locking wallets:', e);
+        alert('Error locking wallets. Please check your connection and try again.');
       }
     };
     

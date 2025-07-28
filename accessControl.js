@@ -76,16 +76,35 @@ class HalaxaAccessControl {
     
     console.log(`🎨 Applying visual locks for ${plan} plan`);
     
+    // Clear ALL locks first
+    const allNavItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
+    allNavItems.forEach(navItem => {
+      navItem.classList.remove('locked-feature', 'locked-pro', 'locked-elite', 'nav-locked');
+      
+      // Remove any existing lock icons
+      const existingLockIcon = navItem.querySelector('.lock-icon');
+      if (existingLockIcon) {
+        existingLockIcon.remove();
+      }
+    });
+    
     // Add locked class to nav items for blocked pages
-    const navItems = document.querySelectorAll('.nav-item, .mobile-nav-item');
-    navItems.forEach(navItem => {
+    allNavItems.forEach(navItem => {
       const pageId = navItem.dataset.page;
       
       if (limits.blockedPages.includes(pageId)) {
         navItem.classList.add('locked-feature');
+        
+        // Add specific plan lock classes
+        if (pageId === 'capital-page' || pageId === 'automation-page') {
+          navItem.classList.add('locked-pro');
+        } else if (pageId === 'orders-page') {
+          navItem.classList.add('locked-elite');
+        }
+        
         console.log(`🔒 Locked nav item: ${pageId}`);
       } else {
-        navItem.classList.remove('locked-feature');
+        navItem.classList.remove('locked-feature', 'locked-pro', 'locked-elite');
         console.log(`✅ Unlocked nav item: ${pageId}`);
       }
     });
@@ -647,6 +666,9 @@ class HalaxaAccessControl {
     
     // Initialize automation page features
     this.initializeWebhookSystem();
+    
+    // Initialize automation platform buttons
+    this.initializeAutomationPlatforms();
   }
   
   initializeHomePage() {
@@ -706,6 +728,243 @@ class HalaxaAccessControl {
       });
     }
   }
+
+  initializeAutomationPlatforms() {
+    console.log('🤖 Initializing automation platforms...');
+    
+    // Get current user plan
+    const plan = this.getCurrentPlan();
+    console.log('🔍 User plan for automation setup:', plan);
+    
+    // Check if user has access to automation features
+    if (plan !== 'elite' && plan !== 'pro') {
+      console.log('🔒 ACCESS DENIED: Automation platforms require Pro or Elite plan, user has', plan);
+      return; // Exit early - don't set up automation for basic users
+    }
+    
+    console.log('✅ ACCESS GRANTED: Setting up automation platforms for', plan, 'user');
+    
+    const elitePlatforms = document.querySelector('.elite-automation-platforms');
+    
+    if (elitePlatforms) {
+      // Force show the platforms immediately
+      elitePlatforms.style.display = 'grid';
+      elitePlatforms.style.visibility = 'visible';
+      elitePlatforms.style.opacity = '1';
+      
+      // Also ensure all platform cards are visible
+      const platformCards = elitePlatforms.querySelectorAll('.automation-platform-card');
+      platformCards.forEach(card => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+      
+      console.log('✅ Automation platforms container and cards forced visible:', platformCards.length, 'cards found');
+    } else {
+      console.log('❌ Automation platforms container not found');
+    }
+    
+    // Platform Cards
+    const zapierCard = document.getElementById('zapier-platform-card');
+    const shopifyCard = document.getElementById('shopify-platform-card');
+    
+    // Platform Pages
+    const platformPages = document.querySelector('.platform-pages');
+    const zapierConfigPage = document.getElementById('zapier-config-page');
+    const shopifyConfigPage = document.getElementById('shopify-config-page');
+    
+    // Back Buttons
+    const backToZapier = document.getElementById('back-to-platforms');
+    const backToShopify = document.getElementById('back-to-platforms-shopify');
+    
+    // Configuration Forms
+    const zapierForm = document.getElementById('zapier-config-form');
+    const shopifyForm = document.getElementById('shopify-config-form');
+
+    // Simplified helper functions
+    const showPlatformSelection = () => {
+      if (elitePlatforms) {
+        elitePlatforms.style.display = 'grid';
+      }
+      if (platformPages) platformPages.style.display = 'none';
+      if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+      if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
+    };
+
+    const showZapierConfig = () => {
+      if (elitePlatforms) elitePlatforms.style.display = 'none';
+      if (platformPages) platformPages.style.display = 'block';
+      if (zapierConfigPage) zapierConfigPage.style.display = 'block';
+      if (shopifyConfigPage) shopifyConfigPage.style.display = 'none';
+    };
+
+    const showShopifyConfig = () => {
+      if (elitePlatforms) elitePlatforms.style.display = 'none';
+      if (platformPages) platformPages.style.display = 'block';
+      if (zapierConfigPage) zapierConfigPage.style.display = 'none';
+      if (shopifyConfigPage) shopifyConfigPage.style.display = 'block';
+    };
+
+    // Platform button click handlers
+    const zapierBtn = document.querySelector('.zapier-btn');
+    const shopifyBtn = document.querySelector('.shopify-btn');
+    
+    if (zapierBtn) {
+      // Remove existing listeners by cloning
+      const newZapierBtn = zapierBtn.cloneNode(true);
+      zapierBtn.parentNode.replaceChild(newZapierBtn, zapierBtn);
+      
+      newZapierBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🔌 Zapier button clicked');
+        showZapierConfig();
+      });
+    }
+
+    if (shopifyBtn) {
+      // Remove existing listeners by cloning
+      const newShopifyBtn = shopifyBtn.cloneNode(true);
+      shopifyBtn.parentNode.replaceChild(newShopifyBtn, shopifyBtn);
+      
+      newShopifyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🛍️ Shopify button clicked');
+        showShopifyConfig();
+      });
+    }
+
+    // Back button handlers
+    if (backToZapier) {
+      backToZapier.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPlatformSelection();
+      });
+    }
+
+    if (backToShopify) {
+      backToShopify.addEventListener('click', function(e) {
+        e.preventDefault();
+        showPlatformSelection();
+      });
+    }
+
+    // Form submission handlers
+    if (zapierForm) {
+      zapierForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const webhookUrl = document.getElementById('zapier-webhook-url').value;
+        const linkId = document.getElementById('zapier-link-id').value;
+        
+        if (!webhookUrl || !linkId) {
+          showAutomationNotification('Please fill in all required fields', 'error');
+          return;
+        }
+        
+        // Simulate API call
+        const submitBtn = document.querySelector('.config-submit-btn.zapier');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+        submitBtn.disabled = true;
+        
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          showAutomationNotification('Zapier integration connected successfully!', 'success');
+          zapierForm.reset();
+          setTimeout(() => showPlatformSelection(), 1500);
+        }, 2000);
+      });
+    }
+
+    if (shopifyForm) {
+      shopifyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const storeUrl = document.getElementById('shopify-store-url').value;
+        const apiKey = document.getElementById('shopify-api-key').value;
+        const apiSecret = document.getElementById('shopify-api-secret').value;
+        const accessToken = document.getElementById('shopify-access-token').value;
+        const linkId = document.getElementById('shopify-link-id').value;
+        
+        if (!storeUrl || !apiKey || !apiSecret || !accessToken || !linkId) {
+          showAutomationNotification('Please fill in all required fields', 'error');
+          return;
+        }
+        
+        // Validate store URL format
+        if (!storeUrl.includes('.myshopify.com') && !storeUrl.match(/^[a-zA-Z0-9-]+$/)) {
+          showAutomationNotification('Invalid Shopify store URL format', 'error');
+          return;
+        }
+        
+        // Call actual backend API
+        const submitBtn = document.querySelector('.config-submit-btn.shopify');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+        submitBtn.disabled = true;
+        
+        // Get auth token
+        const token = localStorage.getItem('halaxa_token');
+        if (!token) {
+          showAutomationNotification('Authentication required. Please log in again.', 'error');
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          return;
+        }
+        
+        // Send to backend
+        fetch('/api/shopify/hooks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            link_id: linkId,
+            shop_url: storeUrl,
+            api_key: apiKey,
+            api_secret: apiSecret,
+            access_token: accessToken,
+            product_name: '' // Optional field - can be enhanced later
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          
+          if (data.success) {
+            showAutomationNotification('Shopify integration connected successfully!', 'success');
+            shopifyForm.reset();
+            setTimeout(() => showPlatformSelection(), 1500);
+          } else {
+            showAutomationNotification(data.error || 'Failed to connect Shopify integration', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Shopify integration error:', error);
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          showAutomationNotification('Network error. Please try again.', 'error');
+        });
+      });
+    }
+
+    // Initialize - show platform selection by default
+    showPlatformSelection();
+    
+    // Add a small delay and force show again
+    setTimeout(() => {
+      if (elitePlatforms) {
+        elitePlatforms.style.display = 'grid';
+      }
+    }, 500);
+    
+    console.log('✅ Elite automation platforms setup complete');
+  }
   
   handleWebhookConnection() {
     console.log('🔌 Handling webhook connection...');
@@ -727,6 +986,48 @@ class HalaxaAccessControl {
         `;
       }
     }
+  }
+
+  // Helper function for automation notifications
+  showAutomationNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `automation-notification ${type}`;
+    notification.innerHTML = `
+      <div class="notification-content">
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    
+    // Style the notification
+    Object.assign(notification.style, {
+      position: 'fixed',
+      top: '20px',
+      right: '20px',
+      background: type === 'success' ? 'linear-gradient(135deg, #10B981, #059669)' : 
+                  type === 'error' ? 'linear-gradient(135deg, #EF4444, #DC2626)' : 
+                  'linear-gradient(135deg, #3B82F6, #2563EB)',
+      color: 'white',
+      padding: '1rem 1.5rem',
+      borderRadius: '0.75rem',
+      boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+      zIndex: '10000',
+      animation: 'slideInRight 0.3s ease-out',
+      fontWeight: '500',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      minWidth: '300px'
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+      setTimeout(() => notification.remove(), 300);
+    }, 4000);
   }
   
   handleDirectNavigation() {

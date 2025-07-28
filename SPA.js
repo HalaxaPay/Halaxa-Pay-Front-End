@@ -114,8 +114,10 @@ function startPlanChangeDetection() {
           if (window.forceRefreshUserPlan) {
             await window.forceRefreshUserPlan();
             
-            // Show notification
-            showUpgradeNotification(`Plan updated to ${freshPlan.toUpperCase()}!`, 'success');
+            // Show notification ONLY if plan actually upgraded (not downgraded)
+            if (['basic', 'pro', 'elite'].indexOf(freshPlan) > ['basic', 'pro', 'elite'].indexOf(cachedPlan)) {
+              showUpgradeNotification(`Plan updated to ${freshPlan.toUpperCase()}!`, 'success');
+            }
           }
         }
       }

@@ -293,27 +293,18 @@ export const database = {
         .from('user_subscriptions')
         .select('plan_tier, started_at, next_billing_date')
         .eq('user_id', userId)
-        .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
+        .single();
       
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.warn('getUserPlan error:', error);
-        // If it's a CORS or 406 error, fall back to basic
-        if (error.message.includes('CORS') || error.message.includes('406')) {
-          console.warn('CORS or 406 error detected, falling back to basic plan');
-          localStorage.setItem('userPlan', 'basic');
-          return { success: true, plan: 'basic', data: null };
-        }
-        throw error;
+        return { success: false, plan: 'basic', error: error.message };
       }
       
       const plan = data?.plan_tier || 'basic';
-      localStorage.setItem('userPlan', plan);
       
       return { success: true, plan, data };
     } catch (error) {
       console.error('Error fetching user plan:', error);
-      // Always fall back to basic on any error
-      localStorage.setItem('userPlan', 'basic');
       return { success: false, plan: 'basic', error: error.message };
     }
   },

@@ -611,136 +611,64 @@ async function verifyUserAuthenticationSync() {
  */
 function getUserPlanFromSession() {
     try {
-        // First check localStorage userPlan
-        const storedPlan = localStorage.getItem('userPlan');
-        if (storedPlan && ['basic', 'pro', 'elite'].includes(storedPlan)) {
-            console.log('✅ Plan found in localStorage:', storedPlan);
-            return storedPlan;
-        }
-        
-        // Fallback to user data
-        const userData = localStorage.getItem('user');
-        if (userData) {
-            const user = JSON.parse(userData);
-            if (user.plan && ['basic', 'pro', 'elite'].includes(user.plan)) {
-                console.log('✅ Plan found in user data:', user.plan);
-                localStorage.setItem('userPlan', user.plan); // Store for future use
-                return user.plan;
-            }
-        }
-        
-        // Default fallback
-        console.log('⚠️ No plan found, defaulting to basic');
-        localStorage.setItem('userPlan', 'basic');
+        // SIMPLE: Just return basic for now, let access control handle the real plan
+        console.log('✅ Using basic plan from session (access control will override)');
         return 'basic';
         
     } catch (error) {
         console.error('❌ Error getting user plan:', error);
-        localStorage.setItem('userPlan', 'basic');
         return 'basic';
     }
 }
 
 /**
- * SYNCHRONOUS user plan detection - Always fetches fresh from backend
+ * SYNCHRONOUS user plan detection - Always fetches fresh from database
  */
 async function getUserPlanSync() {
     try {
-        console.log('📋 Detecting user plan...');
+        console.log('📋 Detecting user plan from database...');
         
         // Get current user from localStorage
         const userData = localStorage.getItem('user');
         if (!userData) {
             console.log('⚠️ No user data found, defaulting to basic');
-            localStorage.setItem('userPlan', 'basic');
             return 'basic';
         }
         
         const user = JSON.parse(userData);
         if (!user.id) {
             console.log('⚠️ No user ID found, defaulting to basic');
-            localStorage.setItem('userPlan', 'basic');
             return 'basic';
         }
         
-        // Try to get plan from backend API
-        try {
-            const accessToken = localStorage.getItem('accessToken');
-            
-            // Try multiple backend endpoints for plan data
-            const endpoints = [
-                `${BACKEND_URL}/api/account/plan-status`,
-                `${BACKEND_URL}/api/account/profile`,
-                `${BACKEND_URL}/api/account/details`
-            ];
-            
-            for (const endpoint of endpoints) {
-                try {
-                    const response = await fetch(endpoint, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(accessToken && { 'Authorization': `Bearer ${accessToken}` })
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const result = await response.json();
-                        const userPlan = result.plan || result.user?.plan || result.userPlan || 'basic';
-                        if (userPlan && userPlan !== 'basic') {
-                            localStorage.setItem('userPlan', userPlan);
-                            console.log('✅ Fresh plan detected from backend:', userPlan);
-                            return userPlan;
-                        }
-                    }
-                } catch (endpointError) {
-                    console.log(`⚠️ Endpoint ${endpoint} failed:`, endpointError.message);
-                    continue;
-                }
-            }
-            
-            console.log('⚠️ All backend endpoints failed, trying fallbacks');
-        } catch (apiError) {
-            console.log('⚠️ Backend API error, trying fallbacks:', apiError.message);
+        // SIMPLE: Just read from database
+        const { data: userSubscription, error } = await supabase
+            .from('user_subscriptions')
+            .select('plan_tier')
+            .eq('user_id', user.id)
+            .single();
+        
+        if (error) {
+            console.log('⚠️ Database query error:', error.message);
+            return 'basic';
         }
         
-        // Fallback 1: Try to get plan from user object
-        if (user.plan) {
-            console.log('✅ Using plan from user object:', user.plan);
-            localStorage.setItem('userPlan', user.plan);
-            return user.plan;
-        }
-        
-        // Fallback 2: Try cached version if database is unavailable
-        let cachedPlan = localStorage.getItem('userPlan');
-        if (cachedPlan && cachedPlan !== 'null' && cachedPlan !== 'undefined') {
-            console.log('⚠️ Using cached plan (backend unavailable):', cachedPlan);
-            return cachedPlan;
-        }
-        
-        // Final fallback: Default to basic
-        console.log('⚠️ No plan found anywhere, defaulting to basic');
-        localStorage.setItem('userPlan', 'basic');
-        return 'basic';
+        const plan = userSubscription?.plan_tier || 'basic';
+        console.log('✅ Plan from database:', plan);
+        return plan;
         
     } catch (error) {
-        console.error('❌ Plan detection failed completely:', error);
-        
-        // Final emergency fallback
-        localStorage.setItem('userPlan', 'basic');
+        console.error('❌ Plan detection failed:', error);
         return 'basic';
     }
 }
 
 /**
- * Force refresh user plan from backend (clears cache)
+ * Force refresh user plan from database
  */
 async function refreshUserPlan() {
     try {
-        console.log('🔄 Refreshing user plan from backend...');
-        
-        // Clear cached plan
-        localStorage.removeItem('userPlan');
+        console.log('🔄 Refreshing user plan from database...');
         
         // Get fresh plan using getUserPlanSync
         const newPlan = await getUserPlanSync();
@@ -748,15 +676,15 @@ async function refreshUserPlan() {
         // Re-apply plan restrictions with new plan
         applyPlanRestrictionsImmediately(newPlan);
         
-                 // Re-apply FOMO locks
-         applyFOMOLockedStyling(newPlan);
+        // Re-apply FOMO locks
+        applyFOMOLockedStyling(newPlan);
         
         console.log('✅ Plan refreshed:', newPlan);
         return newPlan;
         
     } catch (error) {
         console.error('❌ Error refreshing plan:', error);
-        return localStorage.getItem('userPlan') || 'basic';
+        return 'basic';
     }
 }
 

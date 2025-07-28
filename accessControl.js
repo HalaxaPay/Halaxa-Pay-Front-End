@@ -123,149 +123,64 @@ class HalaxaAccessControl {
   }
 
   async getUserPlanFromMultipleSources() {
-    // Source 1: Check localStorage first (fastest)
-    const cachedPlan = localStorage.getItem('userPlan');
-    if (cachedPlan && ['basic', 'pro', 'elite'].includes(cachedPlan)) {
-      console.log('✅ Using cached plan:', cachedPlan);
-      return cachedPlan;
-    }
-
-    // Source 2: Try backend API (most reliable)
+    // SIMPLE: Just read directly from database, no caching bullshit
     try {
-      const accessToken = localStorage.getItem('accessToken');
-      if (accessToken) {
-        console.log('🔄 Fetching plan from backend API...');
-        const response = await fetch('https://halaxa-backend.onrender.com/api/account/profile', {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 5000 // 5 second timeout
-        });
-
-        if (response.ok) {
-          const profile = await response.json();
-          const plan = profile.plan || 'basic';
-          console.log('✅ Plan from backend API:', plan);
-          localStorage.setItem('userPlan', plan); // Cache it
-          return plan;
-        }
-      }
-    } catch (apiError) {
-      console.log('⚠️ Backend API failed:', apiError.message);
-    }
-
-    // Source 3: Try direct Supabase query (fallback)
-    try {
-      console.log('🔄 Trying direct database query...');
+      console.log('🔄 Reading plan directly from database...');
       const { data: userSubscription, error } = await supabase
         .from('user_subscriptions')
         .select('plan_tier')
         .eq('user_id', this.currentUser.id)
-        .maybeSingle(); // Use maybeSingle to handle no results gracefully
+        .single();
 
-      if (!error && userSubscription) {
-        const plan = userSubscription.plan_tier || 'basic';
-        console.log('✅ Plan from database:', plan);
-        localStorage.setItem('userPlan', plan); // Cache it
-        return plan;
-      } else if (error) {
+      if (error) {
         console.log('⚠️ Database query error:', error.message);
+        return 'basic';
       }
+
+      const plan = userSubscription?.plan_tier || 'basic';
+      console.log('✅ Plan from database:', plan);
+      return plan;
+      
     } catch (dbError) {
       console.log('⚠️ Database query failed:', dbError.message);
+      return 'basic';
     }
-
-    // Source 4: Check user data in localStorage (fallback)
-    if (this.currentUser.plan && ['basic', 'pro', 'elite'].includes(this.currentUser.plan)) {
-      console.log('✅ Using plan from user data:', this.currentUser.plan);
-      localStorage.setItem('userPlan', this.currentUser.plan);
-      return this.currentUser.plan;
-    }
-
-    // Final fallback
-    console.log('⚠️ All sources failed, defaulting to basic');
-    localStorage.setItem('userPlan', 'basic');
-    return 'basic';
   }
 
   // ==================== FORCE PLAN REFRESH ==================== //
   
   async forceRefreshUserPlan() {
-    console.log('🔄 FORCE REFRESH: Clearing all plan caches and fetching fresh data...');
+    console.log('🔄 FORCE REFRESH: Reading fresh plan from database...');
     
-    // Clear ALL caches - more comprehensive
-    localStorage.removeItem('userPlan');
-    localStorage.removeItem('user'); // Clear user data cache too
-    
-    // Clear any other potential cache keys
-    const cacheKeys = ['userPlan', 'user', 'accessToken', 'userActive'];
-    cacheKeys.forEach(key => localStorage.removeItem(key));
-    
-    // Try backend API first (most reliable)
+    // SIMPLE: Just read from database, no cache bullshit
     try {
-      const accessToken = localStorage.getItem('accessToken');
-      if (accessToken) {
-        console.log('🔄 Force refreshing plan from backend API...');
-        const response = await fetch('https://halaxa-backend.onrender.com/api/account/refresh-plan', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 5000
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const plan = result.plan || 'basic';
-          console.log('✅ Fresh plan from backend API:', plan);
-          localStorage.setItem('userPlan', plan);
-          this.userPlan = plan;
-          
-          // Re-apply restrictions with new plan
-          this.setupPageAccessControl();
-          this.applyVisualLocks();
-          
-          return plan;
-        }
-      }
-    } catch (apiError) {
-      console.log('⚠️ Backend API force refresh failed:', apiError.message);
-    }
-    
-    // Fallback to direct database query
-    try {
-      console.log('🔄 Force refreshing plan from database...');
       const { data: userSubscription, error } = await supabase
         .from('user_subscriptions')
         .select('plan_tier')
         .eq('user_id', this.currentUser.id)
-        .maybeSingle();
+        .single();
 
-      if (!error && userSubscription) {
-        const plan = userSubscription.plan_tier || 'basic';
-        console.log('✅ Fresh plan from database:', plan);
-        localStorage.setItem('userPlan', plan);
-        this.userPlan = plan;
-        
-        // Re-apply restrictions with new plan
-        this.setupPageAccessControl();
-        this.applyVisualLocks();
-        
-        return plan;
-      } else if (error) {
-        console.log('⚠️ Force refresh database error:', error.message);
+      if (error) {
+        console.log('⚠️ Database query error:', error.message);
+        this.userPlan = 'basic';
+        return 'basic';
       }
+
+      const plan = userSubscription?.plan_tier || 'basic';
+      console.log('✅ Fresh plan from database:', plan);
+      this.userPlan = plan;
+      
+      // Re-apply restrictions with new plan
+      this.setupPageAccessControl();
+      this.applyVisualLocks();
+      
+      return plan;
+      
     } catch (dbError) {
-      console.log('⚠️ Force refresh database failed:', dbError.message);
+      console.log('⚠️ Database query failed:', dbError.message);
+      this.userPlan = 'basic';
+      return 'basic';
     }
-    
-    // Final fallback to basic
-    console.log('⚠️ Force refresh failed, defaulting to basic');
-    localStorage.setItem('userPlan', 'basic');
-    this.userPlan = 'basic';
-    return 'basic';
   }
 
   // ==================== MANUAL CACHE CLEARING ==================== //
@@ -399,8 +314,7 @@ class HalaxaAccessControl {
   // Force refresh plan from backend (for when plan changes)
   async refreshPlanFromBackend() {
     try {
-      console.log('🔄 Force refreshing plan from backend...');
-      localStorage.removeItem('userPlan'); // Clear cache
+      console.log('🔄 Force refreshing plan from database...');
       this.userPlan = await this.getUserPlanFromMultipleSources();
       this.applyVisualLocks(); // Re-apply locks with new plan
       console.log('✅ Plan refreshed:', this.userPlan);

@@ -4,6 +4,9 @@ let fullTransactionId = '';
 let walletExpanded = false;
 let transactionExpanded = false;
 
+// Backend URL
+const BACKEND_URL = 'https://halaxa-backend.onrender.com';
+
 // Function to expand wallet address
 function expandWalletAddress() {
     const walletElement = document.getElementById('walletAddress');
@@ -70,19 +73,81 @@ function getUrlParams() {
     return { amount, chain, link_id, wallet_address, tx };
 }
 
-function initializeSuccessPage() {
+// Function to fetch payment link details from backend
+async function fetchPaymentLinkDetails(link_id) {
+    try {
+        console.log('🔍 Fetching payment link details for:', link_id);
+        
+        const response = await fetch(`${BACKEND_URL}/api/payment-links/${link_id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            console.error('❌ Failed to fetch payment link details:', response.status);
+            return null;
+        }
+        
+        const result = await response.json();
+        console.log('✅ Payment link details fetched:', result);
+        
+        if (result.success && result.data) {
+            return result.data;
+        } else {
+            console.error('❌ Payment link fetch failed:', result.error);
+            return null;
+        }
+    } catch (error) {
+        console.error('❌ Error fetching payment link details:', error);
+        return null;
+    }
+}
+
+async function initializeSuccessPage() {
     const params = getUrlParams();
     
-    // Store full values from URL params
-    fullWalletAddress = params.wallet_address;
+    // Try to fetch real payment link details from backend
+    let paymentDetails = null;
+    if (params.link_id && params.link_id !== 'demo') {
+        paymentDetails = await fetchPaymentLinkDetails(params.link_id);
+    }
+    
+    // Use backend data if available, otherwise fall back to URL params
+    const amount = paymentDetails?.amount_usdc || params.amount;
+    const wallet_address = paymentDetails?.wallet_address || params.wallet_address;
+    const network = paymentDetails?.network || params.chain;
+    
+    // Store full values
+    fullWalletAddress = wallet_address;
     fullTransactionId = params.tx || localStorage.getItem('transactionHash') || '0x1234567890abcdef1234567890abcdef123456789012345678901234567890abcdef';
 
     // Update the DOM with payment details
-    document.getElementById('amountPaid').textContent = `${params.amount} USDC`;
-    document.getElementById('walletAddress').textContent = shortenAddress(fullWalletAddress);
-    document.getElementById('transactionId').textContent = shortenAddress(fullTransactionId);
+    const amountElement = document.getElementById('amountPaid');
+    const walletElement = document.getElementById('walletAddress');
+    const transactionElement = document.getElementById('transactionId');
     
-    console.log('Success page initialized with:', params);
+    if (amountElement) {
+        amountElement.textContent = `${amount} USDC`;
+    }
+    
+    if (walletElement) {
+        walletElement.textContent = shortenAddress(fullWalletAddress);
+    }
+    
+    if (transactionElement) {
+        transactionElement.textContent = shortenAddress(fullTransactionId);
+    }
+    
+    console.log('✅ Success page initialized with:', {
+        amount,
+        wallet_address: fullWalletAddress,
+        network,
+        link_id: params.link_id,
+        transaction_hash: fullTransactionId,
+        source: paymentDetails ? 'backend' : 'url_params'
+    });
 }
 
 // Run the function when the page loads

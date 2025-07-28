@@ -125,6 +125,156 @@ function startPlanChangeDetection() {
   }, 30000); // Check every 30 seconds
 }
 
+// ==================== PLAN DEBUGGING TOOLS ==================== //
+
+// Comprehensive plan debugging function (call from browser console)
+window.debugPlanIssue = async () => {
+  console.log('🔍 === PLAN DETECTION DEBUGGING ===');
+  
+  const debugResults = {
+    timestamp: new Date().toISOString(),
+    localStorage: {},
+    database: {},
+    backend: {},
+    finalPlan: null,
+    recommendations: []
+  };
+  
+  // Check localStorage
+  debugResults.localStorage = {
+    userPlan: localStorage.getItem('userPlan'),
+    user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
+    accessToken: localStorage.getItem('accessToken') ? 'EXISTS' : 'MISSING',
+    userActive: localStorage.getItem('userActive')
+  };
+  
+  // Check database directly
+  try {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      const { data: userSubscription, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan_tier, plan_status, started_at, next_billing_date')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      debugResults.database = {
+        userId: user.id?.substring(0, 8) + '****',
+        plan: userSubscription?.plan_tier || 'No data',
+        status: userSubscription?.plan_status || 'No data',
+        started_at: userSubscription?.started_at || 'No data',
+        error: error?.message || null
+      };
+    } else {
+      debugResults.database = { error: 'No user data in localStorage' };
+    }
+  } catch (dbError) {
+    debugResults.database = { error: dbError.message };
+  }
+  
+  // Check backend API
+  try {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      const response = await fetch(`${BACKEND_URL}/api/account/debug-plan`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const backendDebug = await response.json();
+        debugResults.backend = backendDebug;
+      } else {
+        debugResults.backend = { error: `HTTP ${response.status}: ${response.statusText}` };
+      }
+    } else {
+      debugResults.backend = { error: 'No access token' };
+    }
+  } catch (apiError) {
+    debugResults.backend = { error: apiError.message };
+  }
+  
+  // Get final plan using access control
+  try {
+    if (window.HalaxaAccessControl) {
+      debugResults.finalPlan = await window.HalaxaAccessControl.getUserPlanFromMultipleSources();
+    } else {
+      debugResults.finalPlan = 'Access control not available';
+    }
+  } catch (error) {
+    debugResults.finalPlan = `Error: ${error.message}`;
+  }
+  
+  // Generate recommendations
+  if (debugResults.localStorage.userPlan === 'basic' && debugResults.database.plan !== 'basic') {
+    debugResults.recommendations.push('🚨 CACHE ISSUE: localStorage shows basic but database shows different plan');
+    debugResults.recommendations.push('💡 SOLUTION: Run window.clearAllCaches() then refresh page');
+  }
+  
+  if (debugResults.database.error) {
+    debugResults.recommendations.push('🚨 DATABASE ISSUE: Cannot fetch plan from database');
+    debugResults.recommendations.push('💡 SOLUTION: Check database connection and user_subscriptions table');
+  }
+  
+  if (debugResults.backend.error) {
+    debugResults.recommendations.push('🚨 BACKEND ISSUE: Cannot fetch plan from backend API');
+    debugResults.recommendations.push('💡 SOLUTION: Check backend server and authentication');
+  }
+  
+  if (debugResults.localStorage.userPlan && debugResults.database.plan && 
+      debugResults.localStorage.userPlan !== debugResults.database.plan) {
+    debugResults.recommendations.push('🚨 MISMATCH: localStorage and database show different plans');
+    debugResults.recommendations.push('💡 SOLUTION: Run window.forceRefreshUserPlan() to sync');
+  }
+  
+  if (debugResults.recommendations.length === 0) {
+    debugResults.recommendations.push('✅ All sources appear to be in sync');
+  }
+  
+  // Log results
+  console.log('🔍 Debug Results:', debugResults);
+  
+  // Show summary
+  console.log('📊 SUMMARY:');
+  console.log(`   localStorage: ${debugResults.localStorage.userPlan || 'null'}`);
+  console.log(`   database: ${debugResults.database.plan || 'error'}`);
+  console.log(`   backend: ${debugResults.backend.sources?.database?.plan || 'error'}`);
+  console.log(`   final: ${debugResults.finalPlan}`);
+  
+  console.log('💡 RECOMMENDATIONS:');
+  debugResults.recommendations.forEach(rec => console.log(`   ${rec}`));
+  
+  return debugResults;
+};
+
+// Quick fix function (call from browser console)
+window.fixPlanIssue = async () => {
+  console.log('🔧 === QUICK PLAN FIX ===');
+  
+  // Step 1: Clear all caches
+  console.log('1️⃣ Clearing all caches...');
+  if (window.clearAllCaches) {
+    window.clearAllCaches();
+  }
+  
+  // Step 2: Force refresh from backend
+  console.log('2️⃣ Force refreshing from backend...');
+  if (window.forceRefreshUserPlan) {
+    await window.forceRefreshUserPlan();
+  }
+  
+  // Step 3: Reload page
+  console.log('3️⃣ Reloading page...');
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
+  
+  return 'Fix applied - page will reload in 1 second';
+};
+
 // Add manual refresh button for testing (only in development)
 function addManualPlanRefreshButton() {
   // Only add in development or when explicitly enabled

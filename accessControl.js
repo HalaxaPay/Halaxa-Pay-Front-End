@@ -194,8 +194,13 @@ class HalaxaAccessControl {
   async forceRefreshUserPlan() {
     console.log('🔄 FORCE REFRESH: Clearing all plan caches and fetching fresh data...');
     
-    // Clear all caches
+    // Clear ALL caches - more comprehensive
     localStorage.removeItem('userPlan');
+    localStorage.removeItem('user'); // Clear user data cache too
+    
+    // Clear any other potential cache keys
+    const cacheKeys = ['userPlan', 'user', 'accessToken', 'userActive'];
+    cacheKeys.forEach(key => localStorage.removeItem(key));
     
     // Try backend API first (most reliable)
     try {
@@ -261,6 +266,96 @@ class HalaxaAccessControl {
     localStorage.setItem('userPlan', 'basic');
     this.userPlan = 'basic';
     return 'basic';
+  }
+
+  // ==================== MANUAL CACHE CLEARING ==================== //
+  
+  // Manual cache clearing function (for admin/testing)
+  clearAllCaches() {
+    console.log('🗑️ MANUAL CACHE CLEAR: Clearing all caches...');
+    
+    // Clear localStorage caches
+    const keysToRemove = [
+      'userPlan',
+      'user', 
+      'accessToken',
+      'userActive',
+      'userProfile',
+      'userMetrics',
+      'dashboardData'
+    ];
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+      console.log(`🗑️ Removed ${key} from localStorage`);
+    });
+    
+    // Force reload user data
+    this.currentUser = null;
+    this.userPlan = null;
+    
+    console.log('✅ All caches cleared successfully');
+    return true;
+  }
+
+  // ==================== DEBUG PLAN DETECTION ==================== //
+  
+  // Debug function to show all plan sources
+  async debugPlanDetection() {
+    console.log('🔍 DEBUG: Checking all plan sources...');
+    
+    const debugInfo = {
+      localStorage: localStorage.getItem('userPlan'),
+      userObject: null,
+      backendAPI: null,
+      database: null,
+      finalPlan: null
+    };
+    
+    // Check user object
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      debugInfo.userObject = user.plan;
+    }
+    
+    // Check backend API
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
+        const response = await fetch('https://halaxa-backend.onrender.com/api/account/profile', {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.ok) {
+          const profile = await response.json();
+          debugInfo.backendAPI = profile.plan;
+        }
+      }
+    } catch (error) {
+      debugInfo.backendAPI = `Error: ${error.message}`;
+    }
+    
+    // Check database directly
+    try {
+      const { data: userSubscription, error } = await supabase
+        .from('user_subscriptions')
+        .select('plan_tier')
+        .eq('user_id', this.currentUser?.id)
+        .maybeSingle();
+      
+      debugInfo.database = userSubscription?.plan_tier || 'No data';
+    } catch (error) {
+      debugInfo.database = `Error: ${error.message}`;
+    }
+    
+    // Get final plan
+    debugInfo.finalPlan = await this.getUserPlanFromMultipleSources();
+    
+    console.log('🔍 Plan Detection Debug Info:', debugInfo);
+    return debugInfo;
   }
 
   // ==================== BACKEND PLAN REFRESH ==================== //
@@ -1180,6 +1275,28 @@ window.forceRefreshUserPlan = async () => {
   } else {
     console.error('❌ Access control not available');
     return 'basic';
+  }
+};
+
+// Manual cache clearing (for admin/testing)
+window.clearAllCaches = () => {
+  console.log('🗑️ Global cache clear triggered...');
+  if (window.HalaxaAccessControl) {
+    return window.HalaxaAccessControl.clearAllCaches();
+  } else {
+    console.error('❌ Access control not available');
+    return false;
+  }
+};
+
+// Debug plan detection (for troubleshooting)
+window.debugPlanDetection = async () => {
+  console.log('🔍 Global plan debug triggered...');
+  if (window.HalaxaAccessControl) {
+    return await window.HalaxaAccessControl.debugPlanDetection();
+  } else {
+    console.error('❌ Access control not available');
+    return null;
   }
 };
 
